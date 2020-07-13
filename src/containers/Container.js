@@ -22,7 +22,7 @@ import Espaces from "../pages/ach_Espaces";
 import Regles from "../pages/ach_Regles";
 import Apropos from "../pages/ach_Apropos";
 import AlerteCommande from "../pages/ach_AlerteCommande";
-
+import ElvMoutons from '../pages/ach_Toutes_Les_Annonces_Eleveur';
 class Container extends Component {
     render() {
         return (
@@ -47,6 +47,7 @@ class Container extends Component {
                 <Route exact path="/DetailsMouton" component={DetailsMouton} />
                 <Route exact path="/Regles" component={Regles} />
                 <Route exact path="/Apropos" component={Apropos} />
+                <Route exact path="/ToutesLesAnnoncesEleveur" component={ElvMoutons} />
                 {/* DetailsCommande */}
                 </BrowserRouter>
             </div>

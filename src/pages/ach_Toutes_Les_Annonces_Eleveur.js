@@ -1,57 +1,35 @@
 import React, { Component } from "react";
 import axios from "axios";
-import { Link } from "react-router-dom";
-class HomeSheeps extends Component {
+class HomeSheepsElev extends Component {
   constructor() {
     super();
     // let redirect = false;
     this.state = {
       Annonces: [],
-      conditions: {
+
+      redirect: false,
+    };
+  }
+
+  
+  componentDidMount() {
+    // const ide = this.props.location.state.id;
+    axios.get("http://127.0.0.1:8000/api/mouton/", {
+      headers: {
+        // "x-access-token": token, // the token is a variable which holds the token
+      },
+      params: {
+        id_eleveur: this.props.location.state.id,
         statut: "disponible",
         order_by: "race",
         order_mode: "asc",
       },
-      redirect: false,
-    };
-    this.onChange = this.onChange.bind(this);
-  }
-
-  onChange(e) {
-    const n = e.target.name,
-      v = e.target.value;
-
-    this.setState({
-      conditions: Object.assign(this.state.conditions, { [n]: v }),
-    });
-    this.componentDidMount()
-  }
-
-  componentDidMount() {
-    // await this.myPromise;
-
-    axios
-      .get("http://127.0.0.1:8000/api/mouton", {
-        headers: {
-          // "x-access-token": token, // the token is a variable which holds the token
-          "Content-Type": "application/json",
-        },
-        params: this.state.conditions,
-      })
-      .then((res) => {
-        console.log(res);
-        this.setState({
-          Annonces: res.data,
-        });
+    })
+    .then((res) => {
+      this.setState({
+        Annonces:res.data,
       });
-  }
-
-  onChange(e) {
-    const n = e.target.name,
-      v = e.target.value;
-
-    this.setState({
-      conditions: Object.assign(this.state.conditions, { [n]: v }),
+     
     });
   }
 
@@ -109,8 +87,6 @@ class HomeSheeps extends Component {
                           type="text"
                           class="latest-product__item"
                           placeholder="Poids approximatif"
-                          name="piods"
-                          onChange={this.onChange}
                         />
                       </div>
                     </div>
@@ -197,6 +173,7 @@ class HomeSheeps extends Component {
                         <div
                           class="product__item__pic set-bg"
                           data-setbg={Annonces.images}
+                          key={Annonces._id}
                         >
                           {/* <img src={Annonces.images}/> */}
                           <li>
@@ -207,18 +184,9 @@ class HomeSheeps extends Component {
 
                           <ul class="product__item__pic__hover">
                             <li>
-                              <Link
-                                key={Annonces._id}
-                                to={{
-                                  pathname: "/DetailsMouton",
-                                  state: {
-                                    id: Annonces._id,
-                                  },
-                                }}
-                                // id={Eleveurs._id}
-                              >
+                              <a href="./DetailsMouton">
                                 <i class="fa fa-eye"></i>
-                              </Link>
+                              </a>
                             </li>
                             <li>
                               <a href="./Panier">
@@ -256,4 +224,4 @@ class HomeSheeps extends Component {
   }
 }
 
-export default HomeSheeps;
+export default HomeSheepsElev;

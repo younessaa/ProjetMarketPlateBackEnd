@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 class DetailsMouton extends Component {
     constructor() {
@@ -7,20 +8,39 @@ class DetailsMouton extends Component {
         // let redirect = false;
         this.state = {
           Mouton: {
-            Nboucle: "122554",
-            prix: "3100",
-            Race: "Sardi",
-            poids: "58",
-            age:"12",
-            Eleveur: "Mohamed Erraji",
-            image: "Images/Sardi3.jpg",
-            eleveur: "Mohamed Talmssi",
-            avance: "400",
-            dateAjout: "20/06/2020",
-            description:"La race Sardi est une bonne race locale ....etc"
+            // Nboucle: "122554",
+            // prix: "3100",
+            // Race: "Sardi",
+            // poids: "58",
+            // age:"12",
+            // Eleveur: "Mohamed Erraji",
+            // image: "Images/Sardi3.jpg",
+            // eleveur: "Mohamed Talmssi",
+            // avance: "400",
+            // dateAjout: "20/06/2020",
+            // description:"La race Sardi est une bonne race locale ....etc"
           },
+          eleveur:{},
           redirect: false,
         };
+      }
+      componentDidMount() {
+        const idm = this.props.location.state.id;
+        axios
+          .get("http://127.0.0.1:8000/api/mouton/" + idm, {
+            headers: {
+              // "x-access-token": token, // the token is a variable which holds the token
+            },
+          })
+          .then((res) => {
+            this.setState({
+              Mouton: res.data.objet,
+               eleveur:res.data.Eleveur[0]
+            });
+            console.log(res)
+          });
+
+          console.log(this.state.Mouton)
       }
       render() {
         return (
@@ -57,13 +77,13 @@ class DetailsMouton extends Component {
                       <ul>
                         <li>
                           <b>Date d'ajout</b>
-                          <span>{this.state.Mouton.dateAjout}</span>
+                          <span>{this.state.Mouton.created_at}</span>
                         </li>
                         <li>
-                          <b>Boucle</b> <span>{this.state.Mouton.Nboucle}</span>
+                          <b>Boucle</b> <span>{this.state.Mouton.boucle}</span>
                         </li>
                         <li>
-                          <b>Race</b> <span>{this.state.Mouton.Race}</span>
+                          <b>Race</b> <span>{this.state.Mouton.race}</span>
                         </li>
                         <li>
                           <b>Poids</b> <span>{this.state.Mouton.poids} Kg</span>
@@ -78,7 +98,7 @@ class DetailsMouton extends Component {
                         </li>
                         <li>
                           <b>Eleveur</b>
-                          {this.state.Mouton.eleveur}
+                          {this.state.eleveur.nom +"     "+ this.state.eleveur.prenom}
                         </li>
     
                         <li className="bg-ligh text-danger h6 center">

@@ -37,9 +37,9 @@ class HomeSheepsElev extends Component {
     return (
       <div>
         {/* <!-- Page Preloder --> */}
-        <div id="preloder">
+        {/* <div id="preloder">
           <div className="loader"></div>
-        </div>
+        </div> */}
 
         <section className="product spad">
           <div className="container">

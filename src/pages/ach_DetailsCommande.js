@@ -5,26 +5,24 @@ class DetailsCommande extends Component {
     super();
     // let redirect = false;
     this.state = {
-      Commandes: {
-        Nboucle: "122554",
-        prix: "3100",
-        Race: "Sardi",
-        poids: "58",
-        age:"12",
-        Eleveur: "Mohamed Erraji",
-        image: "Images/Sardi3.jpg",
-        eleveur: "Mohamed Talmssi",
-        avance: "400",
-        statut:"en attente de validation",
-        dateAjout: "20/06/2020",
-        point_relais: "Rue 1234 Hassan II Oujda",
-      },
+      Commandes: {},
 
       redirect: false,
     };
   }
+
+  componentDidMount() {
+    const cmd = this.props.location.state.id;
+
+    this.setState({ commandes: cmd });
+    
+  }
+
   render() {
+    const commandes= this.props.location.state.id
+  //  { console.log(this.state.commandes.mouton)}
     return (
+   
       <div>
         <section class="product-details spad">
           <div class="container">
@@ -54,58 +52,57 @@ class DetailsCommande extends Component {
               </div>
               <div className="col-lg-6 col-md-6">
                 <div className="product__details__text">
-                  <h3>Détails commande Numéro: <span>45789654</span></h3> 
+                  <h3>
+                    Détails commande Numéro: <span>{commandes._id}</span>
+                  </h3>
 
                   <div class="product__details__price">
-                     {this.state.Commandes.statut}
+                    {commandes.statut}
                   </div>
 
                   <ul>
                     <li>
                       <b>Effectuée le </b>
-                      <span>{this.state.Commandes.dateAjout}</span>
+                      <span>{commandes.date_creation.toLocaleString()}</span>
                     </li>
                     <li>
-                      <b>Boucle</b> <span>{this.state.Commandes.Nboucle}</span>
+                      <b>Boucle</b> <span>{commandes.mouton.boucle}</span>
                     </li>
                     <li>
-                      <b>Race</b> <span>{this.state.Commandes.Race}</span>
+                      <b>Race</b> <span>{commandes.mouton.race}</span>
                     </li>
                     <li>
-                      <b>Poids</b> <span>{this.state.Commandes.poids} Kg</span>
+                      <b>Poids</b> <span>{commandes.mouton.poids} Kg</span>
                     </li>
                     <li>
-                      <b>Age</b> <span>{this.state.Commandes.age} mois</span>
+                      <b>Age</b> <span>{commandes.mouton.age} mois</span>
                     </li>
 
                     <li>
                       <b>Avance</b>
-                      <span>{this.state.Commandes.avance} MAD</span>
+                      <span>{commandes.mouton.avance} MAD</span>
                     </li>
                     <li>
                       <b>Eleveur</b>
-                      {this.state.Commandes.eleveur}
+                      {commandes.eleveur.nom + " " +commandes.eleveur.prenom }
                     </li>
 
                     <li className="bg-ligh text-danger h6 center">
-                      <b>Prix total</b> 
-                      {this.state.Commandes.prix} MAD
+                      <b>Prix total</b>
+                      {commandes.mouton.prix} MAD
                     </li>
                   </ul>
 
                   <ul>
                     <li className="bg-ligh text-danger h6 center">
-                      <b>A livrer</b> 
-                      La veille de l'Aid 
+                      <b>A livrer</b>
+                      La veille de l'Aid
                     </li>
                     <li className="bg-ligh text-danger h6 center">
-                      <b>Au point de relais </b> 
-                      <span>{this.state.Commandes.point_relais}</span>
+                      <b>Au point de relais </b>
+                      <span>{commandes.point_relais}</span>
                     </li>
                   </ul>
-                  
-
-
                 </div>
               </div>
             </div>

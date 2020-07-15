@@ -10,17 +10,65 @@ class AlerteCommande extends Component {
     this.state = {
       commande: {},
       date: Date,
+      avance: "",
       redirect: false,
     };
     this.handlPost = this.handlPost.bind(this);
   }
+  // componentDidMount() {
+  //   const cmd = this.props.location.state.id;
+  //   const datee = new Date();
+
+  //   const D = datee.setHours(datee.getHours() + 8).toLocaleString();
+  //   // console.log(datee.toLocaleString().getHours())
+  //   this.setState({ commande: cmd, date: D });
+  // }
+
   componentDidMount() {
     const cmd = this.props.location.state.id;
-    const datee = new Date();
+    // console.log(cmd)
+    var currentdate = cmd.date_creation;
+    var day = currentdate.getDate();
+    var month = currentdate.getMonth() + 1;
+    var year = currentdate.getFullYear();
+    var hours = currentdate.getHours();
 
-    const D = datee.setHours(datee.getHours() + 8).toLocaleString();
-    // console.log(datee.toLocaleString().getHours())
-    this.setState({ commande: cmd, date: D });
+    if (hours > 8 && hours < 16) {
+      var day = day;
+      var month = month;
+      var year = year;
+      var hours = 16;
+    }
+    if ((hours > 16 && hours < 24) || hours == "00") {
+      var day = day + 1;
+      var month = month;
+      var year = year;
+      var hours = 12;
+    }
+    if (hours > 1 && hours < 8) {
+      var day = day;
+      var month = month;
+      var year = year;
+      var hours = 12;
+    }
+
+    var datetime = day + "/" + month + "/" + year + " à " + hours + ":00:00";
+    // this.setState({ date: datetime });
+    this.setState({ commande: cmd, date: datetime });
+
+    axios
+      .get("http://127.0.0.1:8000/api/mouton/" + cmd.id_mouton, {
+        headers: {
+          // "x-access-token": token, // the token is a variable which holds the token
+          "Content-Type": "application/json",
+        },
+      })
+
+      .then((res) => {
+        this.setState({
+          avance: res.data.objet.avance,
+        });
+      });
   }
 
   handlPost(e) {
@@ -64,7 +112,7 @@ class AlerteCommande extends Component {
                 vendeur.
               </h5>
               <br></br>
-              <h3>Montant avance à payer : 460 MAD</h3>
+              <h3>Montant avance à payer : {parseInt(this.state.avance)+60} MAD</h3>
               <br></br>
               <div class="checkout__input bg-ligh text-danger h6 center">
                 Attention: Il vous reste jusqu'au{" "}

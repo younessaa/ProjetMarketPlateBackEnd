@@ -7,23 +7,28 @@ class DetailsMouton extends Component {
     super();
     // let redirect = false;
     this.state = {
-      Mouton: {
-        // Nboucle: "122554",
-        // prix: "3100",
-        // Race: "Sardi",
-        // poids: "58",
-        // age:"12",
-        // Eleveur: "Mohamed Erraji",
-        // image: "Images/Sardi3.jpg",
-        // eleveur: "Mohamed Talmssi",
-        // avance: "400",
-        // dateAjout: "20/06/2020",
-        // description:"La race Sardi est une bonne race locale ....etc"
-      },
+      Mouton: {},
       eleveur: {},
       redirect: false,
+      image: "",
+      isDispo: false,
+      isLoged:false,
     };
+    this.onClickImageBoucle = this.onClickImageBoucle.bind(this);
+    this.onClickImageProfile = this.onClickImageProfile.bind(this);
+    this.onClickImageFace = this.onClickImageFace.bind(this);
   }
+
+  onClickImageBoucle() {
+    this.setState({ image: this.state.Mouton.image_boucle });
+  }
+  onClickImageProfile() {
+    this.setState({ image: this.state.Mouton.image_profile });
+  }
+  onClickImageFace() {
+    this.setState({ image: this.state.Mouton.image_face });
+  }
+
   componentDidMount() {
     const idm = this.props.location.state.id;
     axios
@@ -36,7 +41,16 @@ class DetailsMouton extends Component {
         this.setState({
           Mouton: res.data.objet,
           eleveur: res.data.Eleveur[0],
+          image: res.data.objet.image_profile,
         });
+        if (res.data.objet.statut === "disponible") {
+          this.setState({ isDispo: true });
+        }
+        const token = localStorage.getItem("usertoken");
+        if (token) {
+          this.setState({isLoged:true})
+          // this.props.history.push("/login");
+        } 
         console.log(res);
       });
 
@@ -53,21 +67,37 @@ class DetailsMouton extends Component {
                   <div class="product__details__pic__item">
                     <img
                       class="product__details__pic__item--large"
-                      src="Images/1.jpg"
+                      src={this.state.image}
                       alt=""
                     />
                   </div>
-                  <div className="product__details__pic__slider owl-carousel">
-                    <img
-                      data-imgbigurl="Images/1.jpg"
-                      src="Images/1.jpg"
-                      alt=""
-                    />
-                    <img
-                      data-imgbigurl="Images/1.jpg"
-                      src={this.state.Mouton.images}
-                      alt=""
-                    />
+
+                  <div className="row">
+                    <div className="container">
+                      <div className="col-lg-12 col-md-12">
+                        <img
+                          className="col-lg-4 col-md-4"
+                          // data-imgbigurl="Images/1.jpg"
+                          src={this.state.Mouton.image_boucle}
+                          alt=""
+                          onClick={this.onClickImageBoucle}
+                        />
+                        <img
+                          className="col-lg-4 col-md-4"
+                          // data-imgbigurl="Images/1.jpg"
+                          src={this.state.Mouton.image_face}
+                          alt=""
+                          onClick={this.onClickImageFace}
+                        />
+                        <img
+                          className="col-lg-4 col-md-4"
+                          // data-imgbigurl="Images/1.jpg"
+                          src={this.state.Mouton.image_profile}
+                          alt=""
+                          onClick={this.onClickImageProfile}
+                        />
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -116,6 +146,7 @@ class DetailsMouton extends Component {
                   </ul>
 
                   <ul>
+                  {(this.state.isDispo && this.state.isLoged) ? (   <div>
                     <a href="./Panier" class="primary-btn">
                       Ajouter au panier
                     </a>
@@ -132,7 +163,31 @@ class DetailsMouton extends Component {
                         Commander
                       </a>{" "}
                     </Link>
-                  </ul>
+                    </div>):null} 
+                    
+                    {(this.state.isDispo && !this.state.isLoged) ? (   <div>
+                    <a href="./Panier" class="primary-btn">
+                      Ajouter au panier
+                    </a>
+                    <Link
+                      to={{
+                        pathname: "/login",
+                        state: {
+                          id: this.state.Mouton._id,
+                        },
+                      }}
+                    >
+                      {" "}
+                      <a href="#" class="primary-btn">
+                        Commander
+                      </a>{" "}
+                    </Link>
+                    </div>):null}
+
+                    
+                    
+                    
+                    </ul>
                 </div>
               </div>
             </div>

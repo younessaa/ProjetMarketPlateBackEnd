@@ -27,6 +27,12 @@ import Apropos from "../pages/ach_Apropos";
 import AlerteCommande from "../pages/ach_AlerteCommande";
 import ElvMoutons from '../pages/ach_Toutes_Les_Annonces_Eleveur';
 import importpRecu from '../pages/ach_importRecuAvance'
+import importRecuReste from '../pages/ach_importRecuReste'
+import HomeSheepsParEleveur from '../pages/HomeSheepsParEleveur'
+import login from '../pages/auth/Login' 
+import register from '../pages/auth/SignUp'
+
+
 class Container extends Component {
     render() {
         return (
@@ -41,8 +47,8 @@ class Container extends Component {
                 <Route exact path="/DetailsCommande" component={DetailsCommande} />
                 <Route exact path="/Commander" component={Commander} />
                 <Route exact path="/AlerteCommande" component={AlerteCommande} />
-                {/* <Route exact path="/Login" component={Login} />
-                <Route exact path="/SignUp" component={SignUp} /> */}
+                <Route exact path="/login" component={login} />
+                <Route exact path="/register" component={register} />
                 <Route exact path="/" component={Espaces} />
                 <Route exact path="/ToutesLesAnnonces" component={ToutesLesAnnonces} />
                 <Route exact path="/AnnoncesParEleveurs" component={AnnoncesParEleveurs} />
@@ -54,6 +60,9 @@ class Container extends Component {
                 <Route exact path="/Apropos" component={Apropos} />
                 <Route exact path="/ToutesLesAnnoncesEleveur" component={ElvMoutons} />
                 <Route exact path="/importRecuAvance" component={importpRecu} />
+                <Route exact path="/importRecuReste" component={importRecuReste} />
+                <Route exact path="/HomeSheepsParEleveur" component={HomeSheepsParEleveur} />
+                
                 {/* DetailsCommande */}
                 </BrowserRouter>
                 <Footer/>

@@ -9,8 +9,8 @@ class Commandes extends Component {
       Commandes: [],
       redirect: false,
       // mouton: {},
-      showAvance: false,
-      showReste: false,
+      // showAvance: false,
+      // showReste: false,
     };
     // this.elv = this.elv.bind(this);
   }
@@ -46,17 +46,28 @@ class Commandes extends Component {
         })
 
         .then((res) => {
-          // console.log(res.data);
-          this.setState({
-            Commandes: res.data,
-          });
-          if (res.data.reçu_avance==null) {
-            this.setState({ showAvance: true });
-          } 
-
-          if (res.data.reçu_montant_restant ==null && res.data.reçu_avance!=null ) {
-            this.setState({ showRest: true });
-          }
+          this.setState(
+            {
+              Commandes: res.data,
+            },
+            () => console.log("in call" + this.state)
+          );
+          const cmd = this.state.Commandes;
+          // console.log(cmd);
+          // foreach (cmd as cmd_item)
+          // for(var cmd_item in cmd) {
+          // if (cmd_item.reçu_avance == null) {
+          //   console.log(res.data.reçu_avance);
+          //   this.setState({ showAvance: true });
+          // } else if (
+          //   cmd_item.reçu_montant_restant == null &&
+          //   cmd_item.reçu_avance != null
+          // ) {
+          //   // console.log("reste  null");
+          //   this.setState({ showReste: true }, () =>
+          //     console.log(this.state.showReste)
+          //   );
+          // }}
         });
     }
   }
@@ -78,124 +89,196 @@ class Commandes extends Component {
 
                 <div class="row">
                   {this.state.Commandes.map((Annonces) => (
-                    <div className="col-lg-6 col-md-6 col-sm-6">
-                      <div class="product__item">
+                    // <div className="col-lg-4 col-md-4 col-sm-4">
+                    //  <div className="product__item">
+                    //   <div class="product__item shoping__checkout">
+                    //     <div
+                    //       class="product__item__pic set-bg"
+                    //       // data-setbg={Annonces.image}
+                    //     >
+                    //       {/* {this.elv(Annonces.id_mouton)} */}
+                    //       <img
+                    //         src={Annonces.mouton.image_face}
+                    //         class="product__item__pic set-bg"
+                    //       />
+
+                    //       <ul class="product__item__pic__hover">
+                    //         <li>
+                    //           <Link
+                    //             to={{
+                    //               pathname: "/DetailsCommande",
+                    //               state: {
+                    //                 id: Annonces,
+                    //               },
+                    //             }}
+                    //             type="submit"
+                    //           >
+                    //             {" "}
+                    //             <a href="#">
+                    //               <i class="fa fa-eye"></i>
+                    //             </a>
+                    //           </Link>
+                    //         </li>
+                    //       </ul>
+                    //     </div>
+                    //     <div class="product__item__text">
+                    //       <div class="row">
+                    //         <div class="col-lg-6">
+                    //           <div class="checkout__input">
+                    //             <b>Boucle</b>
+                    //             <br></br>
+                    //             {"         " + Annonces.mouton.boucle}
+                    //           </div>
+                    //         </div>
+                    //         <div class="col-lg-6">
+                    //           <div class="checkout__input">
+                    //             <b>Race</b>
+                    //             <br></br>
+                    //             {"         " + Annonces.mouton.race}
+                    //           </div>
+                    //         </div>
+                    //       </div>
+
+                    //       <div class="row">
+                    //         <div class="col-lg-6">
+                    //           <div class="checkout__input">
+                    //             <b>Sexe</b>
+                    //             <br></br>
+                    //             {"         " + Annonces.mouton.sexe}
+                    //           </div>
+                    //         </div>
+                    //         <div class="col-lg-6">
+                    //           <div class="checkout__input">
+                    //             <b>Poids</b>
+                    //             <br></br>
+                    //             {"         " + Annonces.mouton.poids + "  Kg"}
+                    //           </div>
+                    //         </div>
+                    //       </div>
+
+                    //       <div class="row">
+                    //         <div class="col-lg-6">
+                    //           <div class="checkout__input">
+                    //             <b>Prix</b>
+                    //             <br></br>
+                    //             {"         " + Annonces.mouton.prix + "Dh"}
+                    //           </div>
+                    //         </div>
+                    //         <div class="col-lg-6">
+                    //           <div class="checkout__input">
+                    //             <b>Point de relais</b>
+                    //             <br></br>
+                    //             {"         " + Annonces.point_relais}
+                    //           </div>
+                    //         </div>
+                    //       </div>
+                    //       <div class="row">
+                    //         <div class="col-lg-6">
+                    //           <div class="checkout__input">
+                    //             {/* <b>Point de relais</b> */}
+                    //             {/* <br></br> */}
+                    //             <b>Statut</b>
+                    //           </div>
+                    //         </div>
+                    //         <div class="col-lg-6">
+                    //           <div class="checkout__input">
+
+                    //             {/* <br></br> */}
+                    //             {"         " + Annonces.statut}
+
+                    //             </div></div>
+                    //       </div>
+                    //     </div>
+                    //   </div>
+                    //   {/* <div class="shoping__checkout">
+                    //     {/* {this.state.showAvance ? (
+                    //       <div>
+                    //         <Link
+                    //           to={{
+                    //             pathname: "/importRecuAvance",
+                    //             state: {
+                    //               id: {
+                    //                 idc: Annonces._id,
+                    //                 idm: Annonces.id_mouton,
+                    //               },
+                    //             },
+                    //           }}
+                    //         >
+                    //           {" "}
+                    //           <a href="" class="primary-btn">
+                    //             Importer : reçu Avance
+                    //           </a>{" "}
+                    //         </Link>
+                    //       </div>
+                    //     ) : null}
+                    //     {this.state.showReste ? (
+                    //       <div>
+                    //         <Link
+                    //           to={{
+                    //             pathname: "/importRecuReste",
+                    //             state: {
+                    //               id: {
+                    //                 idc: Annonces._id,
+                    //                 idm: Annonces.id_mouton,
+                    //               },
+                    //             },
+                    //           }}
+                    //         >
+                    //           {" "}
+                    //           <a href="" class="primary-btn">
+                    //             Importer reçu : montant restant
+                    //           </a>{" "}
+                    //         </Link>
+                    //       </div>
+                    //     ) : null} */}
+
+                    //     {/* <br></br>
+                    //     <a href="./Commandes" class="primary-btn">
+                    //       Annuler commande
+                    //     </a> */}
+
+                    // </div></div>
+                    <div className="col-lg-3 col-md-3 col-sm-6">
+                      {console.log(Annonces.image_face)}
+                      <div className="product__item">
                         <div
-                          class="product__item__pic set-bg"
-                          // data-setbg={Annonces.image}
+                          className="product__item__pic set-bg"
+                          // data-setbg={Annonces.images}
+                          // src="Images/sardi1.jpg"
                         >
-                          {/* {this.elv(Annonces.id_mouton)} */}
-                          <img
-                            src={Annonces.mouton.images}
-                            class="product__item__pic set-bg"
-                          />
+                         <centre> <img
+                            src={Annonces.mouton.image_face}
+                            className="product__item__pic set-bg"
+                          /></centre>
+
                           <ul class="product__item__pic__hover">
                             <li>
-                            <Link
-                          to={{
-                            pathname: "/DetailsCommande",
-                            state: {
-                              id: Annonces,
-                            },
-                          }}
-                          type="submit"
-                        >  <a href="#">
-                                <i class="fa fa-eye"></i>
-                              </a></Link>
+                              <Link
+                                to={{
+                                  pathname: "/DetailsCommande",
+                                  state: {
+                                    id: Annonces,
+                                  },
+                                }}
+                                type="submit"
+                              >
+                                {" "}
+                                <a href="#">
+                                  <i class="fa fa-eye"></i>
+                                </a>
+                              </Link>
                             </li>
                           </ul>
                         </div>
-                        <div class="product__item__text">
-                          <div class="row">
-                            <div class="col-lg-6">
-                              <div class="checkout__input">
-                                <b>Boucle</b>
-                                <br></br>
-                                {"         " + Annonces.mouton.boucle}
-                              </div>
-                            </div>
-                            <div class="col-lg-6">
-                              <div class="checkout__input">
-                                <b>Race</b>
-                                <br></br>
-                                {"         " + Annonces.mouton.race}
-                              </div>
-                            </div>
-                          </div>
-
-                          <div class="row">
-                            <div class="col-lg-6">
-                              <div class="checkout__input">
-                                <b>Sexe</b>
-                                <br></br>
-                                {"         " + Annonces.mouton.sexe}
-                              </div>
-                            </div>
-                            <div class="col-lg-6">
-                              <div class="checkout__input">
-                                <b>Poids</b>
-                                <br></br>
-                                {"         " + Annonces.mouton.poids + "  Kg"}
-                              </div>
-                            </div>
-                          </div>
-
-                          <div class="row">
-                            <div class="col-lg-6">
-                              <div class="checkout__input">
-                                <b>Prix</b>
-                                <br></br>
-                                {"         " + Annonces.mouton.prix + "Dh"}
-                              </div>
-                            </div>
-                            <div class="col-lg-6">
-                              <div class="checkout__input">
-                                <b>Ville livraison</b>
-                                <br></br>
-                                {/* {"         " + Annonces.ville_livraison} */}
-                              </div>
-                            </div>
-                          </div>
-                          <div class="row">
-                            <div class="col-lg-6">
-                              <div class="checkout__input">
-                                <b>Point de relais</b>
-                                <br></br>
-                                {"         " + Annonces.point_relais}
-                              </div>
-                            </div>
-                            <div class="col-lg-6">
-                              <div class="checkout__input">
-                                <b>Date création</b>
-                                <br></br>
-                                {"         " + Annonces.date_creation}
-                              </div>
-                            </div>
-                          </div>
+                        <div className="product__item__text">
+                        <h6 className="text-danger">{"         " + Annonces.statut}</h6>
+                          
+                          <h6>{"   Livrer à :      " + Annonces.point_relais}</h6>
+                          <h6> {"         " + Annonces.mouton.prix + "  MAD"}</h6>
+                           
+                          {/* <h5>{"         " + Annonces.prix + " MAD"}</h5>  */}
                         </div>
                       </div>
-                      <div class="shoping__checkout">
-                        {this.state.showAvance ? (
-                          <div>
-                            <a href="" class="primary-btn">
-                              Importer : reçu Avance
-                            </a>{" "}
-                          </div>
-                        ) : null}
-                           {this.state.showReste? (
-                          <div>
-                            <a href="" class="primary-btn">
-                              Importer reçu : montant restant
-                            </a>{" "}
-                          </div>
-                        ) : null}
-
-                        <br></br>
-                        <a href="./Commandes" class="primary-btn">
-                          Annuler commande
-                        </a>
-                      </div>
-                      <br/><br/>
                     </div>
                   ))}
                 </div>

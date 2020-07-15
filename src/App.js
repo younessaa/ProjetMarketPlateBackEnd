@@ -22,9 +22,9 @@ function App() {
       {/* <DetailsEleveur /> */}
       {/* <Container /> */}
       <BrowserRouter>
-              <Route exact path="/login" component={login} />
-              <Route exact path="/regester" component={register} />
-              <Route  path={["/importRecuAvance","/Favoris","/DetailsCommande","/ToutesLesAnnonces","/Panier","/AnnoncesParEleveurs","/Commandes","/Commander","/AlerteCommande"]} component={Container} />
+              {/* <Route exact path="/login" component={login} />
+              <Route exact path="/regester" component={register} /> */}
+              <Route  path={["/login","/register","/","/HomeSheepsParEleveur","/importRecuReste","/importRecuAvance","/Favoris","/DetailsCommande","/ToutesLesAnnonces","/Panier","/AnnoncesParEleveurs","/Commandes","/Commander","/AlerteCommande"]} component={Container} />
       </BrowserRouter> 
       {/* <Footer /> */}
     </div>

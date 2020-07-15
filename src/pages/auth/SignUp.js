@@ -53,8 +53,10 @@ class SignUp extends Component {
             // "Access-Control-Allow-Origin": "*",
           },
         });
-
-        console.log(consommateur);
+        alert(
+          "Votre compte a été créé. Vous pouvez vous connecter maintenant avec l'adresse email que vous avez renseignée."
+        );
+        this.props.history.push("login");
       });
   };
 
@@ -104,6 +106,7 @@ class SignUp extends Component {
                       placeholder="Nom*"
                       name="nom"
                       onChange={this.onChange}
+                      required
                     />
                   </div>
                   <div className="col-lg-6 col-md-6">
@@ -112,14 +115,16 @@ class SignUp extends Component {
                       placeholder="Prénom"
                       name="prenom"
                       onChange={this.onChange}
+                      required
                     />
                   </div>
                   <div className="col-lg-12 col-md-12">
                     <input
-                      type="text"
+                      type="email"
                       placeholder="Email*"
                       name="login"
                       onChange={this.onChange}
+                      required
                     />
                   </div>
                   <div className="col-lg-12 col-md-12">
@@ -128,6 +133,8 @@ class SignUp extends Component {
                       placeholder="Numéro de téléphone*"
                       onChange={this.onChange}
                       name="tel"
+                      pattern="(\+212|0)([ \-_/]*)(\d[ \-_/]*){9}"
+                      required
                     />
                   </div>
                   <div className="col-lg-12 col-md-12">
@@ -136,6 +143,7 @@ class SignUp extends Component {
                       placeholder="Mot de passe*"
                       name="password"
                       onChange={this.onChange}
+                      required
                     />
                   </div>
                   <div className="col-lg-12 col-md-12">
@@ -144,6 +152,7 @@ class SignUp extends Component {
                       placeholder="Adresse*"
                       name="adresse"
                       onChange={this.onChange}
+                      required
                     />
                   </div>
                   <br></br>

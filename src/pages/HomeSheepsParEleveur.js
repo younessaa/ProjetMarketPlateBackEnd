@@ -1,14 +1,14 @@
 import React, { Component } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
-class HomeSheeps extends Component {
+class HomeSheepsParEleveur extends Component {
   constructor() {
     super();
     // let redirect = false;
     this.state = {
       Annonces: [],
       conditions: {
-        statut: "disponible",
+        // statut: "disponible",
         order_by: "race",
         order_mode: "asc",
       },
@@ -19,19 +19,15 @@ class HomeSheeps extends Component {
   }
 
   componentDidMount() {
-    // const token = localStorage.getItem("usertoken");
-    // if (!token) {
-    //   this.props.history.push("/login");
-    // } else {
-    //   console.log(token)
+    // const ide = this.props.location.state.id;
     axios
-      .get("http://127.0.0.1:8000/api/mouton", {
+      .get("http://127.0.0.1:8000/api/mouton/", {
         headers: {
           // "x-access-token": token, // the token is a variable which holds the token
-          "Content-Type": "application/json",
         },
         params: {
-          statut: "disponible",
+          id_eleveur: this.props.location.state.id.id,
+          // statut: "disponible",
           order_by: "race",
           order_mode: "asc",
         },
@@ -43,9 +39,7 @@ class HomeSheeps extends Component {
       });
   }
 
-
-
-onChange(e) {
+  onChange(e) {
     const n = e.target.name,
       v = e.target.value;
 
@@ -54,35 +48,38 @@ onChange(e) {
     });
   }
 
-handelChercher(){
-  const token = localStorage.getItem("usertoken");
-  if (!token) {
-    this.props.history.push("/login");
-  } else {
-    console.log(token)
-  axios
-    .get("http://127.0.0.1:8000/api/mouton", {
-      headers: {
-        // "x-access-token": token, // the token is a variable which holds the token
-        "Content-Type": "application/json",
-      },
-      params: this.state.conditions,
-    })
-    .then((res) => {
-      this.setState({
-        Annonces: res.data,
-      });
-    });
-}}
-
+  handelChercher() {
+    const token = localStorage.getItem("usertoken");
+    if (!token) {
+      this.props.history.push("/login");
+    } else {
+      console.log(token);
+      axios
+        .get("http://127.0.0.1:8000/api/mouton", {
+          headers: {
+            // "x-access-token": token, // the token is a variable which holds the token
+            "Content-Type": "application/json",
+          },
+          params: this.state.conditions,
+        })
+        .then((res) => {
+          this.setState({
+            Annonces: res.data,
+          });
+        });
+    }
+  }
 
   render() {
+    // item => item.news_id == id 
+//     X Têtes de moutons au total 
+// 
+    var reserv=this.state.Annonces.filter(Annonces => Annonces.statut=="reservé")
+    var dispo=this.state.Annonces.filter(Annonces => Annonces.statut=="disponible")
+    var vendu=this.state.Annonces.filter(Annonces => Annonces.statut=="vendu")
     return (
       <div>
-        {/* <!-- Page Preloder --> */}
-        {/* <div id="preloder">
-          <div className="loader"></div>
-        </div> */}
+
 
         <section className="product spad">
           <div className="container">
@@ -139,8 +136,9 @@ handelChercher(){
                           name="poids_min"
                           onChange={this.onChange}
                         />
-                      </div></div>
-                      <div className="row">
+                      </div>
+                    </div>
+                    <div className="row">
                       <div className="col-lg-6 col-md-6">
                         <input
                           type="text"
@@ -162,15 +160,20 @@ handelChercher(){
                           name="localisation"
                           onChange={this.onChange}
                         />
-                      </div></div>
-                      <div className="row">
-                      <div className="col-lg-6 col-md-6">
-                       {/* <button className="btn btn-success" onClick={this.handelChercher}> Rechercher </button><br/> */}
-                       <button className=" site-btn" onClick={this.handelChercher}> Rechercher </button>
                       </div>
-
                     </div>
-                    
+                    <div className="row">
+                      <div className="col-lg-6 col-md-6">
+                        {/* <button className="btn btn-success" onClick={this.handelChercher}> Rechercher </button><br/> */}
+                        <button
+                          className=" site-btn"
+                          onClick={this.handelChercher}
+                        >
+                          {" "}
+                          Rechercher{" "}
+                        </button>
+                      </div>
+                    </div>
 
                     {/* <label className="latest-product__item">
                       <input name="withImages" type="checkbox" /> Avec photos
@@ -186,15 +189,20 @@ handelChercher(){
               <div className="col-lg-9 col-md-7">
                 <div className="filter__item">
                   <div className="row">
-                    <div className="col-lg-4 col-md-5">
-                      
-                    </div>
+                    <div className="col-lg-4 col-md-5"></div>
                     <div className="col-lg-12 col-md-12">
+                  <h3>Espace éleveur : {this.props.location.state.id.nom +" "+this.props.location.state.id.prenom }</h3> <br/>
                       <div className="filter__found text-left">
                         <h6>
-                          <span>{this.state.Annonces.length}</span> Moutons disponibles à vendre
+                          <span>{this.state.Annonces.length}</span> Têtes de moutons au total 
                         </h6>
+                        <br/>
+                        
+                        
                       </div>
+                      <h6>
+                          <b>{vendu.length}</b> Vendus  <b>{dispo.length}</b> Disponibles    <b>{reserv.length}</b> Réservés
+                        </h6>
                     </div>
                   </div>
                 </div>
@@ -203,9 +211,8 @@ handelChercher(){
 
                 <div className="row">
                   {this.state.Annonces.map((Annonces) => (
-                   
                     <div className="col-lg-4 col-md-6 col-sm-6">
-                      { console.log(Annonces.image_face)}
+                      {console.log(Annonces.image_face)}
                       <div className="product__item">
                         <div
                           className="product__item__pic set-bg"
@@ -214,17 +221,16 @@ handelChercher(){
                         >
                           <img
                             src={Annonces.image_face}
-                          // src=Annonces.images
+                            // src=Annonces.images
                             className="product__item__pic set-bg"
                           />
-                          
 
                           <ul className="product__item__pic__hover">
-                          <li>
-                            <a href="">
-                              <i className="fa fa-heart"></i>
-                            </a>
-                          </li>
+                            {/* <li>
+                              <a href="">
+                                <i className="fa fa-heart"></i>
+                              </a>
+                            </li> */}
                             <li>
                               <Link
                                 key={Annonces._id}
@@ -239,11 +245,11 @@ handelChercher(){
                                 <i className="fa fa-eye"></i>
                               </Link>
                             </li>
-                            <li>
+                            {/* <li>
                               <a href="./Panier">
                                 <i className="fa fa-shopping-cart"></i>
                               </a>
-                            </li>
+                            </li> */}
                           </ul>
                         </div>
                         <div className="product__item__text">
@@ -251,21 +257,12 @@ handelChercher(){
                           <h6>{"         " + Annonces.poids + " Kg"}</h6>
                           <h6>{"         " + Annonces.age + " mois"}</h6>
                           <h5>{"         " + Annonces.prix + " MAD"}</h5>
+                          <h5 className="text-danger">{"         " + Annonces.statut  }</h5>
                         </div>
                       </div>
                     </div>
                   ))}
                 </div>
-                {/* <!-- Sheeps Grid Section End --> */}
-
-                {/* <div className="product__pagination">
-                  <a href="#">1</a>
-                  <a href="#">2</a>
-                  <a href="#">3</a>
-                  <a href="#">
-                    <i className="fa fa-long-arrow-right"></i>
-                  </a>
-                </div> */}
               </div>
             </div>
           </div>
@@ -275,4 +272,4 @@ handelChercher(){
   }
 }
 
-export default HomeSheeps;
+export default HomeSheepsParEleveur;

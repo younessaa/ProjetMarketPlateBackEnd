@@ -1,6 +1,30 @@
 import React, { Component } from "react";
 
 class Header extends Component {
+  constructor() {
+    super();
+    // let redirect = false;
+    this.state = {
+      isLoged: false,
+    };
+    this.HandelLogout = this.HandelLogout.bind(this);
+  }
+
+  componentDidMount() {
+    const token = localStorage.getItem("usertoken");
+    if (token) {
+      this.setState({ isLoged: true });
+      // this.props.history.push("/login");
+    }
+  }
+
+  HandelLogout() {
+    localStorage.removeItem("usertoken");
+
+    
+    window.location.reload();
+    this.props.history.push("login");
+  }
   render() {
     return (
       <div>
@@ -11,8 +35,12 @@ class Header extends Component {
                 <div className="col-lg-6 col-md-6">
                   <div className="header__top__left">
                     <ul>
-                      <li><a href="./Regles"> Règles de vente et achat</a></li>
-                      <li><a href="./Apropos"> A propos</a></li>
+                      <li>
+                        <a href="./Regles"> Règles de vente et achat</a>
+                      </li>
+                      <li>
+                        <a href="./Apropos"> A propos</a>
+                      </li>
                     </ul>
                   </div>
                 </div>
@@ -40,9 +68,33 @@ class Header extends Component {
                         <li>
                           <a href="#">العربية</a>
                         </li>
+                        
                       </ul>
+                      
                     </div>
                     <div className="header__top__right__auth">
+
+                    {this.state.isLoged ? (
+                      <div>
+                        {" "}
+                        
+                          <a href="#" onClick={this.HandelLogout}>
+                            <i className="fa fa-user"> Se déconnecter</i>
+                          </a>
+                        
+                      </div>
+                    ) : null}
+                    {!this.state.isLoged ? (
+                      <div>
+                        {" "}
+                        
+                          <a href="/login">
+                            <i className="fa fa-user"> Se connecter</i>
+                          </a>
+                        
+                      </div>
+                    ) : null}
+
                     </div>
                   </div>
                 </div>
@@ -70,7 +122,7 @@ class Header extends Component {
                     <li>
                       <a href="./Favoris"> Favoris</a>
                     </li>
-                   {/* <li>
+                    {/* <li>
                       <a href="./Panier"> Panier</a>
                    </li>*/}
                     <li>
@@ -82,24 +134,19 @@ class Header extends Component {
               <div className="col-lg-2">
                 <div className="header__cart">
                   <ul>
-
-                    <li>
+                    {/* <li>
                       <a href="#">
                         <i className="fa fa-envelope"></i> <span>3</span>
                       </a>
-                    </li>
+                    </li> */}
 
                     <li>
                       <a href="./Panier">
-                         <i className="fa fa-shopping-cart"></i> <span>3</span>
+                        <i className="fa fa-shopping-cart"></i> <span>3</span>
                       </a>
                     </li>
 
-                    <li>
-                      <a href="#">
-                        <i className="fa fa-user"></i> 
-                      </a>
-                    </li>
+                    
                   </ul>
                 </div>
               </div>
@@ -110,8 +157,8 @@ class Header extends Component {
           </div>
         </header>
 
-                {/* <!-- Humberger Begin --> */}
-                <div className="humberger__menu__overlay"></div>
+        {/* <!-- Humberger Begin --> */}
+        <div className="humberger__menu__overlay"></div>
         <div className="humberger__menu__wrapper">
           <div className="humberger__menu__logo">
             <a href="#">
@@ -173,7 +220,7 @@ class Header extends Component {
               <i className="fa fa-twitter"></i>
             </a>
             <a href="https://www.youtube.com/channel/UCzX4064MubkoUVL1ecFDGpQ">
-                      <i className="fa fa-youtube"></i>
+              <i className="fa fa-youtube"></i>
             </a>
           </div>
         </div>

@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import axios from "axios";
-class ach_importRecuAvance extends Component {
+class ach_importRecuReste extends Component {
   constructor() {
     super();
     // let redirect = false;
@@ -37,7 +37,7 @@ class ach_importRecuAvance extends Component {
         "http://127.0.0.1:8000/api/commande/" + id.idc,
         {
           statut: "en attente de validation reçu",
-          reçu_avance: this.state.dataUrl,
+          reçu_montant_restant: this.state.dataUrl,
           id_consommateur:id.idc
         },
         {
@@ -67,7 +67,7 @@ class ach_importRecuAvance extends Component {
       <center>
         <div className="col-lg-6 col-md-6">
           <form onSubmit={this.handlePut}>
-            <h2>importer le reçu : paiement d'avance</h2> <br />
+            <h2>importer le : reçu reçu_montant_restant</h2> <br />
             <div>
               <input
                 type="file"
@@ -98,4 +98,4 @@ class ach_importRecuAvance extends Component {
   }
 }
 
-export default ach_importRecuAvance;
+export default ach_importRecuReste;

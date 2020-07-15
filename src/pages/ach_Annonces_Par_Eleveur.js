@@ -68,9 +68,9 @@ class AllOffers extends Component {
   //       },
   //     })
   //     .then((res) => {
-      
+
   //       res.data.moutons.map((mouton) =>
-         
+
   //         axios
   //           .get("http://127.0.0.1:8000/api/mouton/" + mouton.id_mouton, {
   //             headers: {
@@ -84,15 +84,10 @@ class AllOffers extends Component {
   //             // this.state.Annonces.concat(resp.data.objet)
   //           })
   //       );
-  //       // window.location.reload(); 
+  //       // window.location.reload();
   //     });
   //     return this.state.Annonces
   // }
-
-
-
-
-  
 
   render() {
     return (
@@ -109,28 +104,10 @@ class AllOffers extends Component {
                 <div className="filter__item">
                   <div className="row">
                     <div className="col-lg-4 col-md-5">
-                      <div className="filter__sort">
-                        <span>Sort By</span>
-                        {/* Select not supported // */}
-                        <select>
-                          <option value="0">Default</option>
-                          <option value="1">Default</option>
-                        </select>
-                        <div className="nice-select" tabindex="0">
-                          <span class="current">Default</span>
-                          <ul class="list">
-                            <li data-value="0" class="option selected">
-                              Default
-                            </li>
-                            <li data-value="0" class="option">
-                              Default
-                            </li>
-                          </ul>
-                        </div>
-                      </div>
+                   
                     </div>
-                    <div className="col-lg-4 col-md-4">
-                      <div className="filter__found">
+                    <div className="col-lg-12 col-md-12">
+                      <div className="filter__found text-left">
                         <h6>
                           <span>{this.state.Eleveurs.length}</span> Eleveurs{" "}
                         </h6>
@@ -143,21 +120,25 @@ class AllOffers extends Component {
 
                 <div class="row">
                   {this.state.Eleveurs.map((Eleveurs) => (
-                    
                     <div class="col-lg-4 col-md-6 col-sm-6">
                       <div class="product__item">
                         <div
                           class="product__item__pic set-bg"
-                          data-setbg="Images/Eleveur.jpg"
+                          // data-setbg="Images/Eleveur.jpg"
                         >
+                         <center><img src="Images/profilEleveur.jpg" className="product__item__pic set-bg"/></center> 
                           <ul class="product__item__pic__hover">
                             <Link
-                            key={Eleveurs._id}
-                            // onClick={this.componentMoutons(Eleveurs._id)}
+                              key={Eleveurs._id}
+                              // onClick={this.componentMoutons(Eleveurs._id)}
                               to={{
-                                pathname: "/ToutesLesAnnoncesEleveur",
+                                pathname: "/HomeSheepsParEleveur",
                                 state: {
-                                  id: Eleveurs._id,
+                                  id: {
+                                    id: Eleveurs._id,
+                                    nom: Eleveurs.nom,
+                                    prenom: Eleveurs.prenom,
+                                  },
                                 },
                               }}
                               // id={Eleveurs._id}
@@ -166,7 +147,7 @@ class AllOffers extends Component {
                                 <a href="ToutesLesAnnoncesElveur">
                                   {" "}
                                   <i class="fa fa-eye"></i>{" "}
-                                  </a>
+                                </a>
                               </li>
                             </Link>
                           </ul>
@@ -177,8 +158,7 @@ class AllOffers extends Component {
                           </h6>
                           <h6>{"         " + Eleveurs.adresse}</h6>
                           <h5>
-                            {"         " + Eleveurs.moutons.length} moutons à
-                            vendre
+                            {"         " + Eleveurs.moutons.length} Têtes de moutons au total 
                           </h5>
                         </div>
                       </div>

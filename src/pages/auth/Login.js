@@ -29,16 +29,19 @@ class Login extends Component {
     axios
       .post("http://127.0.0.1:8000/api/login", user)
       .then((res) => {
-        console.log(res.data.success.token.token.user_id)
+        console.log(res.data.success.token.token.user_id);
         localStorage.setItem("usertoken", res.data.success.token.token.user_id);
         // return res.data.success.token;
-        this.props.history.push("ToutesLesAnnonces");
+
+        this.props.history.push("/ToutesLesAnnonces");
+        window.location.reload();
         // else
         //   alert("Email or password was incorrect.");
         // this.props.history.push("/login");
       })
       .catch((err) => {
         console.log(err);
+        alert("Votre Email ou mot de passe est incorrect");
       });
 
     // login(user).then(
@@ -73,7 +76,7 @@ class Login extends Component {
                       <br />{" "}
                       <input
                         type="text"
-                        placeholder="Email ou Numéro de téléphone"
+                        placeholder="Email "
                         name="login"
                         onChange={this.onChange}
                       />
@@ -93,7 +96,14 @@ class Login extends Component {
                       </button>
                       <br />
                       <br />
-                      <i className="text-right">Mot de passe oublié ? </i>
+                      <i className="text-right">
+                        Vous n'avez pas encore créé votre compte ? <br /> Vous
+                        pouvez le créer maintenant.{" "}
+                      </i>
+
+                      <a type="submit" href="/register">
+                        S'inscrire
+                      </a>
                     </div>
                   </div>
                 </center>

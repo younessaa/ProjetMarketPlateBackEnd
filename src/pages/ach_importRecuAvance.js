@@ -49,7 +49,7 @@ class ach_importRecuAvance extends Component {
           .put(
             "http://127.0.0.1:8000/api/mouton/" + id.idm,
             {
-              statut: "reservé",
+              statut: "réservé",
               //   msg_refus_avance: this.state.dataUrl,
             },
             {

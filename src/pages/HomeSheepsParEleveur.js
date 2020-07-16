@@ -74,7 +74,7 @@ class HomeSheepsParEleveur extends Component {
     // item => item.news_id == id 
 //     X Têtes de moutons au total 
 // 
-    var reserv=this.state.Annonces.filter(Annonces => Annonces.statut=="reservé")
+    var reserv=this.state.Annonces.filter(Annonces => Annonces.statut=="réservé")
     var dispo=this.state.Annonces.filter(Annonces => Annonces.statut=="disponible")
     var vendu=this.state.Annonces.filter(Annonces => Annonces.statut=="vendu")
     return (

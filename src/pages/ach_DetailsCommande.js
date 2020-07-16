@@ -80,7 +80,7 @@ class DetailsCommande extends Component {
     if (cmd.reçu_avance == null) {
       this.setState({ showAvance: false, showMsgavance: true });
     }
-    if (cmd.reçu_montant_restant == null && cmd.reçu_avance !== null) {
+    if (cmd.reçu_montant_restant == null && cmd.reçu_avance !== null ) {
       // console.log("reste  null");
       this.setState({ showReste: false, showMsgreste: true }, () =>
         console.log(this.state.showReste)
@@ -92,6 +92,13 @@ class DetailsCommande extends Component {
     if (cmd.reçu_montant_restant === null && cmd.reçu_avance === null) {
       this.setState({ showAvance: false, showMsgavance: true, showMsgR: true });
     }
+// if(cmd.statut=="en attente de paiement du reste"){
+
+//   this.setState({ showAvance: true, showMsgavance: false, showMsgR: true });
+// }
+
+ 
+
   }
 
   handelDelete() {

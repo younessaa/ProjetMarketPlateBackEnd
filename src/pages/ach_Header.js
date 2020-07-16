@@ -7,7 +7,7 @@ class Header extends Component {
     this.state = {
       isLoged: false,
     };
-    this.HandelLogout = this.HandelLogout.bind(this);
+    // this.HandelLogout = this.HandelLogout.bind(this);
   }
 
   componentDidMount() {
@@ -18,13 +18,13 @@ class Header extends Component {
     }
   }
 
-  HandelLogout() {
-    localStorage.removeItem("usertoken");
+  // HandelLogout() {
+  //   localStorage.removeItem("usertoken");
 
     
-    window.location.reload();
-    this.props.history.push("login");
-  }
+  //   window.location.reload();
+  //   this.props.history.push("login");
+  // }
   render() {
     return (
       <div>
@@ -78,7 +78,7 @@ class Header extends Component {
                       <div>
                         {" "}
                         
-                          <a href="#" onClick={this.HandelLogout}>
+                          <a href="/login" >
                             <i className="fa fa-user"> Se déconnecter</i>
                           </a>
                         

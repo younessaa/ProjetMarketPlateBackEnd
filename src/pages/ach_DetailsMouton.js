@@ -9,14 +9,18 @@ class DetailsMouton extends Component {
     this.state = {
       Mouton: {},
       eleveur: {},
+      Favoris: [],
       redirect: false,
       image: "",
       isDispo: false,
-      isLoged:false,
+      isLoged: false,
+      isFav: true,
     };
     this.onClickImageBoucle = this.onClickImageBoucle.bind(this);
     this.onClickImageProfile = this.onClickImageProfile.bind(this);
     this.onClickImageFace = this.onClickImageFace.bind(this);
+    this.handleFavoris = this.handleFavoris.bind(this);
+    this.handleDeleteFav = this.handleDeleteFav.bind(this);
   }
 
   onClickImageBoucle() {
@@ -48,14 +52,89 @@ class DetailsMouton extends Component {
         }
         const token = localStorage.getItem("usertoken");
         if (token) {
-          this.setState({isLoged:true})
+          this.setState({ isLoged: true });
           // this.props.history.push("/login");
-        } 
+        }
         console.log(res);
       });
 
-    console.log(this.state.Mouton);
+    //---------------------------------------------//
+    const token = localStorage.getItem("usertoken");
+    if (!token) {
+      this.props.history.push("/login");
+    } else {
+      axios
+        .get("http://127.0.0.1:8000/api/consommateur/" + token + "/favoris", {
+          headers: {
+            // "x-access-token": token, // the token is a variable which holds the token
+            "Content-Type": "application/json",
+          },
+        })
+
+        .then((res) => {
+          var fav = res.data;
+           var favoris = fav.filter((fav) => fav._id == idm);
+          console.log(res.data);
+          this.setState(
+            {
+              Favoris: favoris,
+            },
+            () => console.log("fav"+ favoris.length)
+          );
+          if (this.state.Favoris.length == 0) {
+            this.setState({ isFav: false });
+          }
+        });
+    }
+
+    
+    
   }
+
+  handleFavoris(Mid) {
+    console.log(Mid);
+    const token = localStorage.getItem("usertoken");
+    if (!token) {
+      this.props.history.push("/login");
+    } else {
+      // console.log(token);
+      axios
+        .put(
+          "http://127.0.0.1:8000/api/consommateur/" + token + "/favoris",
+          { id_mouton: Mid },
+
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        )
+        .then(this.setState({ isFav: true }));
+    }
+  }
+
+  handleDeleteFav(Mid) {
+    const idm = this.props.location.state.id;
+    console.log(Mid);
+    const token = localStorage.getItem("usertoken");
+    if (!token) {
+      this.props.history.push("/login");
+    } else {
+      // console.log(token);
+      axios
+        .put(
+          "http://127.0.0.1:8000/api/consommateur/" + token + "/favoris/" + idm,
+
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        )
+        .then(this.setState({ isFav: false }));
+    }
+  }
+
   render() {
     return (
       <div>
@@ -103,7 +182,40 @@ class DetailsMouton extends Component {
               </div>
               <div className="col-lg-6 col-md-6">
                 <div className="product__details__text">
-                  <h3>Détails annonce mouton</h3>
+                  <h3 ClassName="col-lg-12 col-md-12">
+                    <span ClassName="col-lg-11 col-md-11">
+                      {" "}
+                      Détails annonce mouton{"              "}
+                    </span>
+                    {this.state.isFav ? (
+                      <span className="text-left text-danger col-lg-2 col-md-2">
+                        {" "}
+                        <a
+                          id={this.state.Mouton._id}
+                          onClick={(e) =>
+                            this.handleDeleteFav(e.currentTarget.id)
+                          }
+                        >
+                          <i className="fa fa-heart"></i>
+                        </a>{" "}
+                      </span>
+                    ) : null}
+
+                    {!this.state.isFav ? (
+                      <span className="text-left text-muted col-lg-2 col-md-2">
+                        {" "}
+                        <a
+                          id={this.state.Mouton._id}
+                          onClick={(e) =>
+                            this.handleFavoris(e.currentTarget.id)
+                          }
+                        >
+                          <i className="fa fa-heart"></i>
+                        </a>{" "}
+                      </span>
+                    ) : null}
+                  </h3>
+
                   <ul>
                     <li>
                       <b>Date d'ajout</b>
@@ -146,48 +258,48 @@ class DetailsMouton extends Component {
                   </ul>
 
                   <ul>
-                  {(this.state.isDispo && this.state.isLoged) ? (   <div>
-                    <a href="./Panier" class="primary-btn">
-                      Ajouter au panier
-                    </a>
-                    <Link
-                      to={{
-                        pathname: "/Commander",
-                        state: {
-                          id: this.state.Mouton._id,
-                        },
-                      }}
-                    >
-                      {" "}
-                      <a href="#" class="primary-btn">
-                        Commander
-                      </a>{" "}
-                    </Link>
-                    </div>):null} 
-                    
-                    {(this.state.isDispo && !this.state.isLoged) ? (   <div>
-                    <a href="./Panier" class="primary-btn">
-                      Ajouter au panier
-                    </a>
-                    <Link
-                      to={{
-                        pathname: "/login",
-                        state: {
-                          id: this.state.Mouton._id,
-                        },
-                      }}
-                    >
-                      {" "}
-                      <a href="#" class="primary-btn">
-                        Commander
-                      </a>{" "}
-                    </Link>
-                    </div>):null}
+                    {this.state.isDispo && this.state.isLoged ? (
+                      <div>
+                        <a href="./Panier" class="primary-btn">
+                          Ajouter au panier
+                        </a>
+                        <Link
+                          to={{
+                            pathname: "/Commander",
+                            state: {
+                              id: this.state.Mouton._id,
+                            },
+                          }}
+                        >
+                          {" "}
+                          <a href="#" class="primary-btn">
+                            Commander
+                          </a>{" "}
+                        </Link>
+                      </div>
+                    ) : null}
 
-                    
-                    
-                    
-                    </ul>
+                    {this.state.isDispo && !this.state.isLoged ? (
+                      <div>
+                        <a href="./Panier" class="primary-btn">
+                          Ajouter au panier
+                        </a>
+                        <Link
+                          to={{
+                            pathname: "/login",
+                            state: {
+                              id: this.state.Mouton._id,
+                            },
+                          }}
+                        >
+                          {" "}
+                          <a href="#" class="primary-btn">
+                            Commander
+                          </a>{" "}
+                        </Link>
+                      </div>
+                    ) : null}
+                  </ul>
                 </div>
               </div>
             </div>

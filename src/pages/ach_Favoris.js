@@ -1,117 +1,135 @@
 import React, { Component } from "react";
 import axios from "axios";
-class Favoris extends Component {
+import { Link } from "react-router-dom";
+class Commandes extends Component {
   constructor() {
     super();
     // let redirect = false;
     this.state = {
-      Annonces: [
-        {
-          Nboucle: "122554",
-          prix: "3100",
-          Race: "Sardi",
-          poids: "58",
-          Eleveur: "Mohamed Erraji",
-          image: "Images/Sardi3.jpg",
-        },
-        {
-          Nboucle: "122554",
-          prix: "3000",
-          Race: "Sardi",
-          poids: "60",
-          Eleveur: "Mohamed Erraji",
-          image: "Images/Sardi1.jpg",
-        },
-        {
-          Nboucle: "122554",
-          prix: "2500",
-          Race: "Timahdit",
-          poids: "50",
-          Eleveur: "Mohamed Erraji",
-          image: "Images/Sardi2.jpg",
-        },
-        {
-          Nboucle: "122554",
-          prix: "3500",
-          Race: "Timahdit",
-          poids: "65",
-          Eleveur: "Mohamed Erraji",
-          image: "Images/Sardi2.jpg",
-        },
-      ],
+      Favoris: [],
       redirect: false,
+      // mouton: {},
+      // showAvance: false,
+      // showReste: false,
     };
+    // this.elv = this.elv.bind(this);
+   
   }
-  // componentDidMount() {
+  // elv = (id) => {
   //   axios
-  //     .get("http://127.0.0.1:8000/api/clients", {
-  //       headers: {
-  //         // "x-access-token": token, // the token is a variable which holds the token
-  //       },
-  //     })
+  //     .get("http://127.0.0.1:8000/api/mouton/" + id)
   //     .then((res) => {
-  //       console.log(res);
-  //       this.setState({
-  //         clients: res.data.data,
-  //       });
+  //       //  console.log(res.data.objet)
+  //       this.setState({ mouton: res.data.objet });
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
   //     });
-  // }
+  // };
+
+  componentDidMount() {
+    const token = localStorage.getItem("usertoken");
+    if (!token) {
+      this.props.history.push("/login");
+    } else {
+     
+      axios
+        .get("http://127.0.0.1:8000/api/consommateur/"+token+"/favoris", {
+          headers: {
+            // "x-access-token": token, // the token is a variable which holds the token
+            "Content-Type": "application/json",
+          },
+
+        })
+
+        .then((res) => {
+          this.setState(
+            {
+              Favoris: res.data,
+            },
+            () => console.log("in call" + this.state.Favoris)
+          );
+    
+        });
+    }
+  }
 
   render() {
+    var fav=this.state.Favoris.filter(
+      (Favoris) => (Favoris !== null)
+    );
+    console.log(fav)
+
     return (
       <div>
-        {/* <!-- Page Preloder --> */}
-        <div id="preloder">
-          <div className="loader"></div>
-        </div>
+        {/* //   {/* <!-- Page Preloder --> */}
+        {/* <div id="preloder">
+           <div className="loader"></div>
+        </div>  */}
 
-      <section className="product spad">
-        <div className="container">
+        <section className="product spad">
+          <div className="container">
             <h4 class="latest-product__item">Mes favoris</h4>
             <div className="row">
+              <div className="col-lg-12 col-md-7">
+                {/*<!-- Sheeps Grid Section Begin --> */}
 
-                  <div className="col-lg-12 col-md-7">
-                    
-                    { /*<!-- Sheeps Grid Section Begin --> */}
+                <div class="row">
+                  {fav.map((Annonces) => (
+    
+    //  {if(Annonces){}} 
+                    <div className="col-lg-3 col-md-3 col-sm-6">
+                      {console.log(Annonces)}
+                      <div className="product__item">
+                        <div
+                          className="product__item__pic set-bg"
+                          // data-setbg={Annonces.images}
+                          // src="Images/sardi1.jpg"
+                        >
+                         <centre> <img
+                            src={Annonces.image_face}
+                            className="product__item__pic set-bg"
+                          /></centre>
 
-                    <div class="row">
-                      {this.state.Annonces.map((Annonces) => (
-                                <div class="col-lg-6 col-md-6 col-sm-6">
-                                    <div class="product__item">
-                                        <div class="product__item__pic set-bg" data-setbg={Annonces.image} >
-                                            <ul class="product__item__pic__hover">
-                                                <li><a href="./Favoris"><i class="fa fa-heart"></i></a></li>
-                                                <li><a href="./DetailsMouton"><i class="fa fa-eye"></i></a></li>
-                                                <li><a href="./Panier"><i class="fa fa-shopping-cart"></i></a></li>
-                                            </ul>
-                                        </div>
-                                        <div class="product__item__text">
-                                          <h6>
-                                            {"         " + Annonces.Race}
-                                          </h6>
-                                          <h6>
-                                            {"         " + Annonces.poids+ " Kg"}
-                                          </h6>
-                                          <h5>
-                                            {"         " + Annonces.prix + " MAD"}
-                                          </h5>
-
-                                        </div>
-                                    </div>
-                                </div>
-                            ))}
+                          <ul class="product__item__pic__hover">
+                            <li>
+                              <Link
+                                to={{
+                                  pathname: "/DetailsMouton",
+                                  state: {
+                                    id: Annonces._id,
+                                  },
+                                }}
+                                type="submit"
+                              >
+                                {" "}
+                                <a href="#">
+                                  <i class="fa fa-eye"></i>
+                                </a>
+                              </Link>
+                            </li>
+                          </ul>
+                        </div>
+                        <div className="product__item__text">
+                        {/* <h6 className="text-danger">{"         " + Annonces.statut}</h6> */}
+                          
+                          {/* <h6>{"   Livrer à :      " + Annonces.point_relais}</h6> */}
+                          {/* <h6> {"         " + Annonces.prix + "  MAD"}</h6> */}
+                           
+                          <h5>{"         " + Annonces.prix + " MAD"}</h5> 
+                        </div>
+                      </div>
                     </div>
-                    {/* <!-- Sheeps Grid Section End --> */}
-
+                  ))}
                 </div>
+                {/* <!-- Sheeps Grid Section End --> */}
               </div>
             </div>
-
+          </div>
         </section>
-    </div>
-    
+      </div>
     );
   }
 }
 
-export default Favoris;
+export default Commandes;

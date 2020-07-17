@@ -10,17 +10,20 @@ class DetailsMouton extends Component {
       Mouton: {},
       eleveur: {},
       Favoris: [],
+      Panier: [],
       redirect: false,
       image: "",
       isDispo: false,
       isLoged: false,
       isFav: true,
+      isInpanier: false,
     };
     this.onClickImageBoucle = this.onClickImageBoucle.bind(this);
     this.onClickImageProfile = this.onClickImageProfile.bind(this);
     this.onClickImageFace = this.onClickImageFace.bind(this);
     this.handleFavoris = this.handleFavoris.bind(this);
     this.handleDeleteFav = this.handleDeleteFav.bind(this);
+    this.handlePanier = this.handlePanier.bind(this);
   }
 
   onClickImageBoucle() {
@@ -58,7 +61,7 @@ class DetailsMouton extends Component {
         console.log(res);
       });
 
-    //---------------------------------------------//
+    //-------------------favoris--------------------------//
     const token = localStorage.getItem("usertoken");
     if (!token) {
       this.props.history.push("/login");
@@ -73,22 +76,47 @@ class DetailsMouton extends Component {
 
         .then((res) => {
           var fav = res.data;
-           var favoris = fav.filter((fav) => fav._id == idm);
+          var favoris = fav.filter((fav) => fav._id == idm);
           console.log(res.data);
           this.setState(
             {
               Favoris: favoris,
             },
-            () => console.log("fav"+ favoris.length)
+            () => console.log("fav" + favoris.length)
           );
           if (this.state.Favoris.length == 0) {
             this.setState({ isFav: false });
           }
         });
     }
+    //------------------Panier----------------------------//
 
-    
-    
+    if (!token) {
+      this.props.history.push("/login");
+    } else {
+      axios
+        .get("http://127.0.0.1:8000/api/consommateur/" + token + "/panier", {
+          headers: {
+            // "x-access-token": token, // the token is a variable which holds the token
+            "Content-Type": "application/json",
+          },
+        })
+
+        .then((res) => {
+          var fav = res.data;
+          var favoris = fav.filter((fav) => fav._id == idm);
+          console.log(res.data);
+          this.setState(
+            {
+              Panier: favoris,
+            },
+            () => console.log("fav" + favoris.length)
+          );
+          if (this.state.Panier.length != 0) {
+            this.setState({ isInpanier: true });
+          }
+        });
+    }
   }
 
   handleFavoris(Mid) {
@@ -110,6 +138,28 @@ class DetailsMouton extends Component {
           }
         )
         .then(this.setState({ isFav: true }));
+    }
+  }
+
+  handlePanier(Mid) {
+    console.log(Mid);
+    const token = localStorage.getItem("usertoken");
+    if (!token) {
+      this.props.history.push("/login");
+    } else {
+      // console.log(token);
+      axios
+        .put(
+          "http://127.0.0.1:8000/api/consommateur/" + token + "/panier",
+          { id_mouton: Mid },
+
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        )
+        .then(this.setState({ isInpanier: true }));
     }
   }
 
@@ -260,9 +310,19 @@ class DetailsMouton extends Component {
                   <ul>
                     {this.state.isDispo && this.state.isLoged ? (
                       <div>
-                        <a href="./Panier" class="primary-btn">
-                          Ajouter au panier
-                        </a>
+                        {!this.state.isInpanier ? (
+                          <button
+                            id={this.state.Mouton._id}
+                            class="primary-btn"
+                            onClick={(e) =>
+                              this.handlePanier(e.currentTarget.id)
+                            }
+                          >
+                            <i className="fa fa-shopping-cart"></i> Ajouter au
+                            panier
+                          </button>
+                        ) : null}
+
                         <Link
                           to={{
                             pathname: "/Commander",
@@ -281,9 +341,20 @@ class DetailsMouton extends Component {
 
                     {this.state.isDispo && !this.state.isLoged ? (
                       <div>
-                        <a href="./Panier" class="primary-btn">
-                          Ajouter au panier
-                        </a>
+                        
+                        {!this.state.isInpanier ? (
+                          <button
+                            id={this.state.Mouton._id}
+                            class="primary-btn"
+                            onClick={(e) =>
+                              this.handlePanier(e.currentTarget.id)
+                            }
+                          >
+                            <i className="fa fa-shopping-cart"></i> Ajouter au
+                            panier
+                          </button>
+                        ) : null}
+
                         <Link
                           to={{
                             pathname: "/login",

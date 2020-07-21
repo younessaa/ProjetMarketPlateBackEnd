@@ -9,6 +9,7 @@ class DetailsCommande extends Component {
       Commandes: {},
       showAvance: true,
       showReste: true,
+      showStatut:false,
       showMsgreste: false,
       showMsgavance: false,
       showBtnAnnuler: true,
@@ -77,8 +78,11 @@ class DetailsCommande extends Component {
 
     // const cmd = this.state.Commandes;
     // console.log(cmd);
-    if (cmd.reçu_avance == null) {
+    if (cmd.reçu_avance == null ) {
+      if(cmd.statut !="commande annulée (deadline dépassé)")
       this.setState({ showAvance: false, showMsgavance: true });
+      else if(cmd.statut ==="commande annulée (deadline dépassé)")
+      this.setState({ showAvance: false, showMsgavance: false, showStatut:true,showReste: false, showMsgreste: false });
     }
     if (cmd.reçu_montant_restant == null && cmd.reçu_avance !== null ) {
       // console.log("reste  null");
@@ -89,7 +93,7 @@ class DetailsCommande extends Component {
     if (cmd.reçu_montant_restant !== null && cmd.reçu_avance !== null) {
       this.setState({ showBtnAnnuler: false });
     }
-    if (cmd.reçu_montant_restant === null && cmd.reçu_avance === null) {
+    if (cmd.reçu_montant_restant === null && cmd.reçu_avance === null && cmd.statut !="commande annulée (deadline dépassé)") {
       this.setState({ showAvance: false, showMsgavance: true, showMsgR: true });
     }
 // if(cmd.statut=="en attente de paiement du reste"){
@@ -274,6 +278,27 @@ class DetailsCommande extends Component {
                         />
                       </div>
                     </div> */}
+
+ {/* ------------------------------ */}
+
+
+ {this.state.showStatut ? (
+                      <div>
+                        <div class="product__details__pic">
+                          <div class="product__details__pic__item">
+                            {/* <img
+                              class="product__details__pic__item--large"
+                              src={commandes.reçu_avance}
+                              alt=""
+                            /> */}
+                            <h2 className="text-danger">{commandes.statut}</h2>
+                          </div>
+                        </div>
+                      </div>
+                    ) : null}
+
+
+                    {/* ------------------------------ */}
 
                     {this.state.showAvance ? (
                       <div>

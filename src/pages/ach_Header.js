@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import axios from 'axios'
 
 class Header extends Component {
   constructor() {
@@ -16,15 +17,70 @@ class Header extends Component {
       this.setState({ isLoged: true });
       // this.props.history.push("/login");
     }
+
+    //Ce bout de code permet de vérifier les commandes avec un deadline dépassé et les annuler
+    // avec envoie d'un email au consommateur relatif à la commande pour l'informer de l'annulation automatique
+    var now = new Date("22 Jul 2020 16:00:00 GMT");
+    // var now = new Date();
+    axios
+      .get(
+        "http://127.0.0.1:8000/api/commandes/",
+        {
+          //   msg_refus_avance: this.state.dataUrl,
+        },
+        {
+          headers: { "Content-Type": "application/json" },
+        }
+      )
+      .then((res) => {
+        var resultat = res;
+        for (let i = 0; i < res.data.length; i++) {
+          console.log(res.data[i].deadline);
+          var deadline = new Date(res.data[i].deadline);
+          if (
+            now.getTime() >= deadline.getTime() &&
+            res.data[i].statut == "en attente de paiement avance"
+          ) {
+            axios
+              .put(
+                "http://127.0.0.1:8000/api/commande/" + res.data[i]._id,
+                {
+                  //   msg_refus_avance: this.state.dataUrl,
+                  statut: "commande annulée (deadline dépassé)",
+                },
+                {
+                  headers: { "Content-Type": "application/json" },
+                }
+              )
+              .then(() => {
+                console.log(resultat);
+                const to = resultat.data[i].consommateur.email;
+                //console.log(to);
+                const content =
+                  "Votre commande a été annulée automatiquement car vous avez dépassé le deadline prévu pour l'importation de votre reçu de paiement.";
+                const subject =
+                  "Votre commande a été annulée (dépassement du deadline)";
+                axios.post(
+                  "http://127.0.0.1:8000/api/sendmail/" +
+                    to +
+                    "/" +
+                    content +
+                    "/" +
+                    subject,
+                  {
+                    headers: {
+                      Accept: "application/json",
+                      "Content-Type": "application/json",
+                      // "Access-Control-Allow-Origin": "*",
+                    },
+                  }
+                );
+              });
+          }
+        }
+      });
   }
 
-  // HandelLogout() {
-  //   localStorage.removeItem("usertoken");
-
-    
-  //   window.location.reload();
-  //   this.props.history.push("login");
-  // }
   render() {
     return (
       <div>
@@ -68,33 +124,25 @@ class Header extends Component {
                         <li>
                           <a href="#">العربية</a>
                         </li>
-                        
                       </ul>
-                      
                     </div>
                     <div className="header__top__right__auth">
-
-                    {this.state.isLoged ? (
-                      <div>
-                        {" "}
-                        
-                          <a href="/login" >
+                      {this.state.isLoged ? (
+                        <div>
+                          {" "}
+                          <a href="/login">
                             <i className="fa fa-user"> Se déconnecter</i>
                           </a>
-                        
-                      </div>
-                    ) : null}
-                    {!this.state.isLoged ? (
-                      <div>
-                        {" "}
-                        
+                        </div>
+                      ) : null}
+                      {!this.state.isLoged ? (
+                        <div>
+                          {" "}
                           <a href="/login">
                             <i className="fa fa-user"> Se connecter</i>
                           </a>
-                        
-                      </div>
-                    ) : null}
-
+                        </div>
+                      ) : null}
                     </div>
                   </div>
                 </div>
@@ -145,8 +193,6 @@ class Header extends Component {
                         <i className="fa fa-shopping-cart"></i> <span>3</span>
                       </a>
                     </li>
-
-                    
                   </ul>
                 </div>
               </div>

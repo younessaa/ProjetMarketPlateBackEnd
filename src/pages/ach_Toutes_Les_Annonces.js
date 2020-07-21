@@ -268,11 +268,11 @@ class HomeSheeps extends Component {
                                 <i className="fa fa-eye"></i>
                               </Link>
                             </li>
-                            <li>
+                            {/* <li>
                               <a href="./Panier">
                                 <i className="fa fa-shopping-cart"></i>
                               </a>
-                            </li>
+                            </li> */}
                           </ul>
                         </div>
                         <div className="product__item__text">

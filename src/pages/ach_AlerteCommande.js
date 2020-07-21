@@ -54,7 +54,15 @@ class AlerteCommande extends Component {
 
     var datetime = day + "/" + month + "/" + year + " à " + hours + ":00:00";
     // this.setState({ date: datetime });
-    this.setState({ commande: cmd, date: datetime });
+    // this.setState({ commande: cmd, date: datetime });
+    var dateTest = year + "-" + month + "-" + day + " " + hours + ":00:00";
+    var TestDate = new Date(dateTest);
+    console.log(TestDate);
+
+    this.setState({
+      commande: Object.assign(cmd, { deadline: dateTest }),
+      date: datetime,
+    });
 
     axios
       .get("http://127.0.0.1:8000/api/mouton/" + cmd.id_mouton, {
@@ -81,7 +89,21 @@ class AlerteCommande extends Component {
         },
       })
       .then((res) => {
-        this.props.history.push("/Commandes");
+        axios
+          .put(
+            "http://127.0.0.1:8000/api/mouton/" + this.state.commande.id_mouton,
+            {
+              statut: "réservé",
+              //   msg_refus_avance: this.state.dataUrl,
+            },
+            {
+              headers: { "Content-Type": "application/json" },
+            }
+          )
+          .then((res) => {
+            this.props.history.push("/Commandes");
+          });
+        // this.props.history.push("/Commandes");
       })
       .catch((err) => {
         console.log(err);
@@ -112,7 +134,9 @@ class AlerteCommande extends Component {
                 vendeur.
               </h5>
               <br></br>
-              <h3>Montant avance à payer : {parseInt(this.state.avance)+60} MAD</h3>
+              <h3>
+                Montant avance à payer : {parseInt(this.state.avance) + 60} MAD
+              </h3>
               <br></br>
               <div class="checkout__input bg-ligh text-danger h6 center">
                 Attention: Il vous reste jusqu'au{" "}

@@ -90,6 +90,11 @@ class AllOffers extends Component {
   // }
 
   render() {
+    var elv = this.state.Eleveurs.filter(
+      (Eleveurs) => Eleveurs.moutons !== undefined
+    );
+    console.log(elv);
+
     return (
       <div>
         {/* <!-- Page Preloder --> */}
@@ -103,13 +108,11 @@ class AllOffers extends Component {
               <div className="col-lg-12 col-md-7">
                 <div className="filter__item">
                   <div className="row">
-                    <div className="col-lg-4 col-md-5">
-                   
-                    </div>
+                    <div className="col-lg-4 col-md-5"></div>
                     <div className="col-lg-12 col-md-12">
                       <div className="filter__found text-left">
                         <h6>
-                          <span>{this.state.Eleveurs.length}</span> Eleveurs{" "}
+                          <span>{elv.length}</span> Eleveurs{" "}
                         </h6>
                       </div>
                     </div>
@@ -119,14 +122,19 @@ class AllOffers extends Component {
                 {/*<!-- Sheeps Grid Section Begin --> */}
 
                 <div class="row">
-                  {this.state.Eleveurs.map((Eleveurs) => (
+                  {elv.map((Eleveurs) => (
                     <div class="col-lg-4 col-md-6 col-sm-6">
                       <div class="product__item">
                         <div
                           class="product__item__pic set-bg"
                           // data-setbg="Images/Eleveur.jpg"
                         >
-                         <center><img src="Images/profilEleveur.jpg" className="product__item__pic set-bg"/></center> 
+                          <center>
+                            <img
+                              src="Images/profilEleveur.jpg"
+                              className="product__item__pic set-bg"
+                            />
+                          </center>
                           <ul class="product__item__pic__hover">
                             <Link
                               key={Eleveurs._id}
@@ -158,7 +166,8 @@ class AllOffers extends Component {
                           </h6>
                           <h6>{"         " + Eleveurs.adresse}</h6>
                           <h5>
-                            {"         " + Eleveurs.moutons.length} Têtes de moutons au total 
+                            {"         " + Eleveurs.moutons.length} Têtes de
+                            moutons au total
                           </h5>
                         </div>
                       </div>

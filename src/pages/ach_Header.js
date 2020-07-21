@@ -162,10 +162,10 @@ class Header extends Component {
                 <nav className="header__menu">
                   <ul>
                     <li>
-                      <a href="./ToutesLesAnnonces"> Annonces moutons </a>
+                      <a href="./ToutesLesAnnonces">  moutons </a>
                     </li>
                     <li>
-                      <a href="./AnnoncesParEleveurs"> Annonces par éleveurs</a>
+                      <a href="./AnnoncesParEleveurs"> moutons par éleveurs</a>
                     </li>
                     <li>
                       <a href="./Favoris"> Favoris</a>
@@ -175,6 +175,9 @@ class Header extends Component {
                    </li>*/}
                     <li>
                       <a href="./Commandes"> Commandes</a>
+                    </li>
+                    <li>
+                      <a href="./Panier"> Panier</a>
                     </li>
                   </ul>
                 </nav>
@@ -188,11 +191,11 @@ class Header extends Component {
                       </a>
                     </li> */}
 
-                    <li>
+                    {/* <li>
                       <a href="./Panier">
                         <i className="fa fa-shopping-cart"></i> <span>3</span>
                       </a>
-                    </li>
+                    </li> */}
                   </ul>
                 </div>
               </div>

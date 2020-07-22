@@ -52,6 +52,31 @@ class SignUp extends Component {
             "Content-Type": "application/json",
             // "Access-Control-Allow-Origin": "*",
           },
+        }).then((res) => {
+          const to = this.state.login;
+          const content =
+            "votre compte a été créé votre mot de passe est:"+this.state.password;
+          const subject = "votre compte ANOC MARKETPLACE a été créé  ";
+          axios
+            .post(
+              "http://127.0.0.1:8000/api/sendmail/" +
+                to +
+                "/" +
+                content +
+                "/" +
+                subject,
+              {
+                headers: {
+                  Accept: "application/json",
+                  "Content-Type": "application/json",
+                  // "Access-Control-Allow-Origin": "*",
+                },
+              }
+            )
+            .then((resultat) => {
+              console.log(resultat);
+            });
+
         });
         alert(
           "Votre compte a été créé. Vous pouvez vous connecter maintenant avec l'adresse email que vous avez renseignée."

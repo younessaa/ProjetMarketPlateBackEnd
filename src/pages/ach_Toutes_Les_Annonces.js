@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import axios from "axios";
+import Select from "react-select";
 import { Link } from "react-router-dom";
 class HomeSheeps extends Component {
   constructor() {
@@ -7,6 +8,20 @@ class HomeSheeps extends Component {
     // let redirect = false;
     this.state = {
       Annonces: [],
+      selectedOptionRace: null,
+      optionsRace: [
+        { value: "Sardi", label: "Sardi" },
+        { value: "Bargui", label: "Bargui" },
+      ],
+
+      selectedOptionVille: null,
+      optionsVille: [
+        { value: "Oujda", label: "Oujda" },
+        { value: "Berkan", label: "Berkan" },
+        { value: "Jrada", label: "Jrada" },
+        { value: "CASABLANCA", label: "CASABLANCA" },
+        
+      ],
       conditions: {
         statut: "disponible",
         order_by: "race",
@@ -18,6 +33,26 @@ class HomeSheeps extends Component {
     this.handelChercher = this.handelChercher.bind(this);
     // this.handleFavoris=this.handleFavoris.bind(this)
   }
+
+  handleChangeRace = (selectedOptionRace) => {
+    this.setState({ selectedOptionRace }, () =>
+      this.setState({
+        conditions: Object.assign(this.state.conditions, {
+          race: this.state.selectedOptionRace.value,
+        }),
+      })
+    );
+  };
+
+  handleChangeVille = (selectedOptionVille) => {
+    this.setState({ selectedOptionVille }, () =>
+      this.setState({
+        conditions: Object.assign(this.state.conditions, {
+          localisation: this.state.selectedOptionVille.value,
+        }),
+      })
+    );
+  };
 
   componentDidMount() {
     // const token = localStorage.getItem("usertoken");
@@ -91,13 +126,17 @@ class HomeSheeps extends Component {
   //             "Content-Type": "application/json",
   //           },
   //         }
-          
+
   //       )
   //       .then((res) => {});
   //   }
   // }
 
   render() {
+    const { selectedOptionRace } = this.state;
+    const { optionsRace } = this.state;
+    const { selectedOptionVille } = this.state;
+    const { optionsVille } = this.state;
     return (
       <div>
         {/* <!-- Page Preloder --> */}
@@ -139,14 +178,23 @@ class HomeSheeps extends Component {
 
                     <h6 className="latest-product__item">Race</h6>
                     <div className="row">
-                      <div className="col-lg-6 col-md-6">
-                        <input
+                      <div className="col-lg-9 col-md-9">
+                        {/* <input
                           type="text"
                           className="latest-product__item"
                           placeholder="Choisissez la race"
                           onChange={this.onChange}
                           name="race"
+                        /> */}
+                        <Select
+                          value={selectedOptionRace}
+                          onChange={this.handleChangeRace}
+                          options={optionsRace}
+                          placeholder="Race"
+                          required
+                          // className="Select"
                         />
+                        <br></br>
                       </div>
                     </div>
 
@@ -176,14 +224,16 @@ class HomeSheeps extends Component {
 
                     <h6 className="latest-product__item">Ville</h6>
                     <div className="row">
-                      <div className="col-lg-6 col-md-6">
-                        <input
-                          type="text"
-                          className="latest-product__item"
+                      <div className="col-lg-9 col-md-9">
+                        <Select
+                          value={selectedOptionVille}
+                          onChange={this.handleChangeVille}
+                          options={optionsVille}
                           placeholder="Ville"
-                          name="localisation"
-                          onChange={this.onChange}
+
+                          // className="Select"
                         />
+                        <br></br>
                       </div>
                     </div>
                     <div className="row">

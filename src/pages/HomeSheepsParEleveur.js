@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import axios from "axios";
+import Select from "react-select";
 import { Link } from "react-router-dom";
 class HomeSheepsParEleveur extends Component {
   constructor() {
@@ -7,6 +8,19 @@ class HomeSheepsParEleveur extends Component {
     // let redirect = false;
     this.state = {
       Annonces: [],
+      selectedOptionRace: null,
+      optionsRace: [
+        { value: "Sardi", label: "Sardi" },
+        { value: "Bargui", label: "Bargui" },
+      ],
+
+      selectedOptionVille: null,
+      optionsVille: [
+        { value: "Oujda", label: "Oujda" },
+        { value: "Berkan", label: "Berkan" },
+        { value: "Jrada", label: "Jrada" },
+        { value: "CASABLANCA", label: "CASABLANCA" },
+      ],
       conditions: {
         // statut: "disponible",
         order_by: "race",
@@ -17,6 +31,26 @@ class HomeSheepsParEleveur extends Component {
     this.onChange = this.onChange.bind(this);
     this.handelChercher = this.handelChercher.bind(this);
   }
+
+  handleChangeRace = (selectedOptionRace) => {
+    this.setState({ selectedOptionRace }, () =>
+      this.setState({
+        conditions: Object.assign(this.state.conditions, {
+          race: this.state.selectedOptionRace.value,
+        }),
+      })
+    );
+  };
+
+  handleChangeVille = (selectedOptionVille) => {
+    this.setState({ selectedOptionVille }, () =>
+      this.setState({
+        conditions: Object.assign(this.state.conditions, {
+          localisation: this.state.selectedOptionVille.value,
+        }),
+      })
+    );
+  };
 
   componentDidMount() {
     // const ide = this.props.location.state.id;
@@ -71,16 +105,21 @@ class HomeSheepsParEleveur extends Component {
   }
 
   render() {
-    // item => item.news_id == id 
-//     X Têtes de moutons au total 
-// 
-    var reserv=this.state.Annonces.filter(Annonces => Annonces.statut=="réservé")
-    var dispo=this.state.Annonces.filter(Annonces => Annonces.statut=="disponible")
-    var vendu=this.state.Annonces.filter(Annonces => Annonces.statut=="vendu")
+    const { selectedOptionRace } = this.state;
+    const { optionsRace } = this.state;
+    const { selectedOptionVille } = this.state;
+    const { optionsVille } = this.state;
+    var reserv = this.state.Annonces.filter(
+      (Annonces) => Annonces.statut == "réservé"
+    );
+    var dispo = this.state.Annonces.filter(
+      (Annonces) => Annonces.statut == "disponible"
+    );
+    var vendu = this.state.Annonces.filter(
+      (Annonces) => Annonces.statut == "vendu"
+    );
     return (
       <div>
-
-
         <section className="product spad">
           <div className="container">
             <div className="row">
@@ -115,14 +154,16 @@ class HomeSheepsParEleveur extends Component {
 
                     <h6 className="latest-product__item">Race</h6>
                     <div className="row">
-                      <div className="col-lg-6 col-md-6">
-                        <input
-                          type="text"
-                          className="latest-product__item"
-                          placeholder="Choisissez la race"
-                          onChange={this.onChange}
-                          name="race"
+                      <div className="col-lg-9 col-md-9">
+                        <Select
+                          value={selectedOptionRace}
+                          onChange={this.handleChangeRace}
+                          options={optionsRace}
+                          placeholder="Race"
+                          required
+                          // className="Select"
                         />
+                        <br></br>
                       </div>
                     </div>
 
@@ -152,14 +193,16 @@ class HomeSheepsParEleveur extends Component {
 
                     <h6 className="latest-product__item">Ville</h6>
                     <div className="row">
-                      <div className="col-lg-6 col-md-6">
-                        <input
-                          type="text"
-                          className="latest-product__item"
+                      <div className="col-lg-9 col-md-9">
+                        <Select
+                          value={selectedOptionVille}
+                          onChange={this.handleChangeVille}
+                          options={optionsVille}
                           placeholder="Ville"
-                          name="localisation"
-                          onChange={this.onChange}
+
+                          // className="Select"
                         />
+                        <br></br>
                       </div>
                     </div>
                     <div className="row">
@@ -191,18 +234,24 @@ class HomeSheepsParEleveur extends Component {
                   <div className="row">
                     <div className="col-lg-4 col-md-5"></div>
                     <div className="col-lg-12 col-md-12">
-                  <h3>Espace éleveur : {this.props.location.state.id.nom +" "+this.props.location.state.id.prenom }</h3> <br/>
+                      <h3>
+                        Espace éleveur :{" "}
+                        {this.props.location.state.id.nom +
+                          " " +
+                          this.props.location.state.id.prenom}
+                      </h3>{" "}
+                      <br />
                       <div className="filter__found text-left">
                         <h6>
-                          <span>{this.state.Annonces.length}</span> Têtes de moutons au total 
+                          <span>{this.state.Annonces.length}</span> Têtes de
+                          moutons au total
                         </h6>
-                        <br/>
-                        
-                        
+                        <br />
                       </div>
                       <h6>
-                          <b>{vendu.length}</b> Vendus  <b>{dispo.length}</b> Disponibles    <b>{reserv.length}</b> Réservés
-                        </h6>
+                        <b>{vendu.length}</b> Vendus <b>{dispo.length}</b>{" "}
+                        Disponibles <b>{reserv.length}</b> Réservés
+                      </h6>
                     </div>
                   </div>
                 </div>
@@ -257,7 +306,9 @@ class HomeSheepsParEleveur extends Component {
                           <h6>{"         " + Annonces.poids + " Kg"}</h6>
                           <h6>{"         " + Annonces.age + " mois"}</h6>
                           <h5>{"         " + Annonces.prix + " MAD"}</h5>
-                          <h5 className="text-danger">{"         " + Annonces.statut  }</h5>
+                          <h5 className="text-danger">
+                            {"         " + Annonces.statut}
+                          </h5>
                         </div>
                       </div>
                     </div>

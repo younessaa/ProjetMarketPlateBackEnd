@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import axios from "axios";
+import Select from "react-select";
 
 import { Link } from "react-router-dom";
 class Commander extends Component {
@@ -11,51 +12,100 @@ class Commander extends Component {
       Commande: {},
       Mouton: {},
       eleveur: {},
-      checked:false,
-      Empty:true,
-image:"",
+
+      checked: false,
+      Empty: true,
+      image: "",
+      selectedOptionVille: null,
+      optionsVille: [
+        { value: "Oujda", label: "Oujda" },
+        { value: "Berkan", label: "Berkan" },
+        { value: "Jrada", label: "Jrada" },
+        { value: "CASABLANCA", label: "CASABLANCA" },
+      ],
 
       redirect: false,
     };
-    this.onChange = this.onChange.bind(this);
-    this.onChangecheck=this.onChangecheck.bind(this);
+    // this.onChange = this.onChange.bind(this);
+    this.onChangecheck = this.onChangecheck.bind(this);
     this.onClickImageBoucle = this.onClickImageBoucle.bind(this);
     this.onClickImageProfile = this.onClickImageProfile.bind(this);
     this.onClickImageFace = this.onClickImageFace.bind(this);
   }
-  onChange(e) {
-    
-    const token = localStorage.getItem("usertoken");
-    // if
-    // console.log("tuseroken"+ token)
-    let cmd = {
-      // localisation: e.target.value,
-      point_relais: e.target.value,
-      id_mouton: this.props.location.state.id,
-      id_eleveur: this.state.eleveur._id,
-      id_consommateur: token,
-      statut: "en attente de paiement avance",
-      reçu_avance: "",
-      feedback_avance: "",
-      msg_refus_avance: null,
-      reçu_montant_restant: null,
-      feedback_reçu_montant_restant: null,
-      msg_refus_reste: null,
-      date_creation: new Date(),
-      // .toLocaleString()
-    };
-    this.setState({
-      Commande: cmd,
-      Empty:false
-    });
-  }
-  onChangecheck(e){
-    if(this.state.checked==true)
-    this.setState({checked:false})
-    else
-    this.setState({checked:true})
-  }
 
+  handleChangeVille = (selectedOptionVille) => {
+    this.setState({ selectedOptionVille }, () =>
+      // const token = localStorage.getItem("usertoken");
+      // if
+      // console.log("tuseroken"+ token)
+      // let cmd = {
+      //   // localisation: e.target.value,
+      //   point_relais: e.target.value,
+      //   id_mouton: this.props.location.state.id,
+      //   id_eleveur: this.state.eleveur._id,
+      //   id_consommateur: localStorage.getItem("usertoken");,
+      //   statut: "en attente de paiement avance",
+      //   reçu_avance: "",
+      //   feedback_avance: "",
+      //   msg_refus_avance: null,
+      //   reçu_montant_restant: null,
+      //   feedback_reçu_montant_restant: null,
+      //   msg_refus_reste: null,
+      //   date_creation: new Date(),
+      //   // .toLocaleString()
+      // }
+      this.setState({
+        Commande: {
+          // localisation: e.target.value,
+          point_relais: this.state.selectedOptionVille.value,
+          id_mouton: this.props.location.state.id,
+          id_eleveur: this.state.eleveur._id,
+          id_consommateur: localStorage.getItem("usertoken"),
+          statut: "en attente de paiement avance",
+          reçu_avance: "",
+          feedback_avance: "",
+          msg_refus_avance: null,
+          reçu_montant_restant: null,
+          feedback_reçu_montant_restant: null,
+          msg_refus_reste: null,
+          date_creation: new Date(),
+          // .toLocaleString()
+        },
+        Empty: false,
+      })
+    );
+  };
+
+  // onChange(e) {
+
+  //   const token = localStorage.getItem("usertoken");
+  //   // if
+  //   // console.log("tuseroken"+ token)
+  //   let cmd = {
+  //     // localisation: e.target.value,
+  //     point_relais: e.target.value,
+  //     id_mouton: this.props.location.state.id,
+  //     id_eleveur: this.state.eleveur._id,
+  //     id_consommateur: token,
+  //     statut: "en attente de paiement avance",
+  //     reçu_avance: "",
+  //     feedback_avance: "",
+  //     msg_refus_avance: null,
+  //     reçu_montant_restant: null,
+  //     feedback_reçu_montant_restant: null,
+  //     msg_refus_reste: null,
+  //     date_creation: new Date(),
+  //     // .toLocaleString()
+  //   };
+  //   this.setState({
+  //     Commande: cmd,
+  //     Empty:false
+  //   });
+  // }
+  onChangecheck(e) {
+    if (this.state.checked == true) this.setState({ checked: false });
+    else this.setState({ checked: true });
+  }
 
   componentDidMount() {
     const idm = this.props.location.state.id;
@@ -69,7 +119,7 @@ image:"",
         this.setState({
           Mouton: res.data.objet,
           eleveur: res.data.Eleveur[0],
-          image:res.data.objet.image_profile
+          image: res.data.objet.image_profile,
         });
         console.log(res);
       });
@@ -77,17 +127,20 @@ image:"",
     console.log(this.state.Mouton);
   }
 
-  onClickImageBoucle(){
-    this.setState({image:this.state.Mouton.image_boucle})
+  onClickImageBoucle() {
+    this.setState({ image: this.state.Mouton.image_boucle });
   }
-  onClickImageProfile(){
-    this.setState({image:this.state.Mouton.image_profile})
+  onClickImageProfile() {
+    this.setState({ image: this.state.Mouton.image_profile });
   }
-  onClickImageFace(){
-    this.setState({image:this.state.Mouton.image_face})
+  onClickImageFace() {
+    this.setState({ image: this.state.Mouton.image_face });
   }
 
   render() {
+
+    const { selectedOptionVille } = this.state;
+    const { optionsVille } = this.state;
     return (
       <div>
         <section class="product-details spad">
@@ -230,12 +283,17 @@ image:"",
                             <b>
                               Votre ville de livraison<span>*</span>
                             </b>
-                            <input
-                              type="text"
-                              name="point_relais"
-                              onChange={this.onChange}
-                              required
-                            />
+                            <div className="col-lg-9 col-md-9">
+                              <Select
+                                value={selectedOptionVille}
+                                onChange={this.handleChangeVille}
+                                options={optionsVille}
+                                placeholder="Ville"
+
+                                // className="Select"
+                              />
+                              <br></br>
+                            </div>
                           </div>
                         </div>
                         <div class="col-lg-6">
@@ -294,7 +352,12 @@ image:"",
                       <label for="regles">
                         J'accepte les conditions générales des règles de vente
                         et achat
-                        <input type="checkbox" id="regles" required onChange={this.onChangecheck}/>
+                        <input
+                          type="checkbox"
+                          id="regles"
+                          required
+                          onChange={this.onChangecheck}
+                        />
                         <span class="checkmark"></span>
                       </label>
                     </div>
@@ -309,26 +372,30 @@ image:"",
                         </li>
                         <li>
                           Prix Total{" "}
-                          <span>{parseInt(this.state.Mouton.prix)+60 } MAD</span>
+                          <span>
+                            {parseInt(this.state.Mouton.prix) + 60} MAD
+                          </span>
                         </li>
                         <li>
                           <a href="/ToutesLesAnnonces" class="primary-btn">
                             Annuler commande
                           </a>{" "}
                           <br></br>
-                          {(this.state.checked && !this.state.Empty)? (    <Link
-                            to={{
-                              pathname: "/AlerteCommande",
-                              state: {
-                                id: this.state.Commande,
-                              },
-                            }}
-                          >
-                            {" "}
-                            <a href="#" class="primary-btn" disabled>
-                              Valider
-                            </a>{" "}
-                          </Link>):null}
+                          {this.state.checked && !this.state.Empty ? (
+                            <Link
+                              to={{
+                                pathname: "/AlerteCommande",
+                                state: {
+                                  id: this.state.Commande,
+                                },
+                              }}
+                            >
+                              {" "}
+                              <a href="#" class="primary-btn" disabled>
+                                Valider
+                              </a>{" "}
+                            </Link>
+                          ) : null}
                         </li>
                       </ul>
                     </div>

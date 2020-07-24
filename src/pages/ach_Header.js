@@ -9,6 +9,7 @@ class Header extends Component {
       isLoged: false,
     };
     // this.HandelLogout = this.HandelLogout.bind(this);
+    this.logout = this.logout.bind(this);
   }
 
   componentDidMount() {
@@ -81,6 +82,15 @@ class Header extends Component {
       });
   }
 
+  logout() {
+    this.setState(
+      {
+        isLoged: false,
+      },()=>localStorage.removeItem("usertoken")
+    );
+    
+  }
+
   render() {
     return (
       <div>
@@ -130,7 +140,7 @@ class Header extends Component {
                       {this.state.isLoged ? (
                         <div>
                           {" "}
-                          <a href="/login">
+                          <a href="/login" onClick={this.logout}>
                             <i className="fa fa-user"> Se déconnecter</i>
                           </a>
                         </div>
@@ -169,7 +179,6 @@ class Header extends Component {
                     </li>
                     {this.state.isLoged ? (
                       <span>
-                        
                         <li>
                           <a href="./Favoris"> Mes favoris</a>
                         </li>
@@ -245,18 +254,18 @@ class Header extends Component {
                 <a href="./AnnoncesParEleveurs"> Nos éleveurs</a>
               </li>
               {this.state.isLoged ? (
-                      <span>
-              <li>
-                <a href="./Favoris">Mes favoris</a>
-              </li>
-              <li>
-                <a href="./Panier">Mon panier</a>
-              </li>
-              <li>
-                <a href="./Commandes">Mes commandes</a>
-              </li>
-              </span>
-                    ) : null}
+                <span>
+                  <li>
+                    <a href="./Favoris">Mes favoris</a>
+                  </li>
+                  <li>
+                    <a href="./Panier">Mon panier</a>
+                  </li>
+                  <li>
+                    <a href="./Commandes">Mes commandes</a>
+                  </li>
+                </span>
+              ) : null}
               <li>
                 <a href="./Regles">Règles de vente et achat</a>
               </li>

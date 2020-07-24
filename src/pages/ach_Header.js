@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import axios from 'axios'
+import axios from "axios";
 
 class Header extends Component {
   constructor() {
@@ -20,8 +20,8 @@ class Header extends Component {
 
     //Ce bout de code permet de vérifier les commandes avec un deadline dépassé et les annuler
     // avec envoie d'un email au consommateur relatif à la commande pour l'informer de l'annulation automatique
-    var now = new Date("22 Jul 2020 16:00:00 GMT");
-    // var now = new Date();
+    // var now = new Date("22 Jul 2020 16:00:00 GMT");
+    var now = new Date();
     axios
       .get(
         "http://127.0.0.1:8000/api/commandes/",
@@ -158,27 +158,29 @@ class Header extends Component {
                   </a>
                 </div>
               </div>
-              <div className="col-lg-8">
+              <div className="col-lg-9">
                 <nav className="header__menu">
                   <ul>
                     <li>
-                      <a href="./ToutesLesAnnonces">  moutons </a>
+                      <a href="./ToutesLesAnnonces"> Nos moutons </a>
                     </li>
                     <li>
-                      <a href="./AnnoncesParEleveurs"> moutons par éleveurs</a>
+                      <a href="./AnnoncesParEleveurs"> Nos eleveurs</a>
                     </li>
-                    <li>
-                      <a href="./Favoris"> Favoris</a>
-                    </li>
-                    {/* <li>
-                      <a href="./Panier"> Panier</a>
-                   </li>*/}
-                    <li>
-                      <a href="./Commandes"> Commandes</a>
-                    </li>
-                    <li>
-                      <a href="./Panier"> Panier</a>
-                    </li>
+                    {this.state.isLoged ? (
+                      <span>
+                        
+                        <li>
+                          <a href="./Favoris"> Mes favoris</a>
+                        </li>
+                        <li>
+                          <a href="./Commandes"> Mes commandes</a>
+                        </li>
+                        <li>
+                          <a href="./Panier"> Mon panier </a>
+                        </li>
+                      </span>
+                    ) : null}
                   </ul>
                 </nav>
               </div>
@@ -237,21 +239,24 @@ class Header extends Component {
           <nav className="humberger__menu__nav mobile-menu">
             <ul>
               <li className="active">
-                <a href="./ToutesLesAnnonces">Annonces moutons </a>
+                <a href="./ToutesLesAnnonces">Nos moutons </a>
               </li>
               <li>
-                <a href="./AnnoncesParEleveurs"> Annonces par éleveurs</a>
+                <a href="./AnnoncesParEleveurs"> Nos éleveurs</a>
+              </li>
+              {this.state.isLoged ? (
+                      <span>
+              <li>
+                <a href="./Favoris">Mes favoris</a>
               </li>
               <li>
-                <a href="./Favoris">Favoris</a>
+                <a href="./Panier">Mon panier</a>
               </li>
               <li>
-                <a href="./Panier">Panier</a>
+                <a href="./Commandes">Mes commandes</a>
               </li>
-              <li>
-                <a href="./Commandes">Commandes</a>
-              </li>
-
+              </span>
+                    ) : null}
               <li>
                 <a href="./Regles">Règles de vente et achat</a>
               </li>

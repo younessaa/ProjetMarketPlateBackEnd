@@ -57,6 +57,7 @@ class ach_importRecuReste extends Component {
             }
           )
           .then((res) => {
+            alert("Vous allez recevoir un email de validation de votre reçu sur votre email : "+ id.email)
             this.props.history.push("/Commandes");
           });
       });

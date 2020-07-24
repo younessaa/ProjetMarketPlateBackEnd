@@ -24,7 +24,7 @@ class ach_importRecuAvance extends Component {
       scope.setState({ dataUrl: dataURL });
     };
     reader.readAsDataURL(file);
-    // console.log(this.props.location.state.id)
+    console.log(this.props.location.state.id)
   }
 
   handlePut = (e) => {
@@ -57,6 +57,7 @@ class ach_importRecuAvance extends Component {
             }
           )
           .then((res) => {
+            alert("Vous allez recevoir un email de validation de votre reçu sur votre email : "+ id.email)
             this.props.history.push("/Commandes");
           });
       });

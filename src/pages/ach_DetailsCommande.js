@@ -240,7 +240,12 @@ class DetailsCommande extends Component {
                     <li>
                       <b>Eleveur</b>
                       {commandes.eleveur.nom + " " + commandes.eleveur.prenom}
-                    </li>
+                    </li> 
+                    <li>
+                      <b>Numéro du RIB</b>
+                      {commandes.eleveur.rib }
+                    </li> 
+                    
 
                     <li className="bg-ligh text-danger h6 center">
                       <b>Prix total</b>
@@ -335,6 +340,7 @@ class DetailsCommande extends Component {
                                   id: {
                                     idc: commandes._id,
                                     idm: commandes.id_mouton,
+                                    email:commandes.consommateur.email
                                   },
                                 },
                               }}
@@ -407,6 +413,7 @@ class DetailsCommande extends Component {
                                   id: {
                                     idc: commandes._id,
                                     idm: commandes.id_mouton,
+                                    email:commandes.consommateur.email
                                   },
                                 },
                               }}

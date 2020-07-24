@@ -11,6 +11,7 @@ class AlerteCommande extends Component {
       commande: {},
       date: Date,
       avance: "",
+      rib:"",
       redirect: false,
     };
     this.handlPost = this.handlPost.bind(this);
@@ -75,6 +76,7 @@ class AlerteCommande extends Component {
       .then((res) => {
         this.setState({
           avance: res.data.objet.avance,
+          rib:res.data.Eleveur[0].rib
         });
       });
   }
@@ -131,8 +133,9 @@ class AlerteCommande extends Component {
                 Vous pouvez maintenant payer l'avance de votre mouton pour
                 valider votre commande avec le moyen de paiement que vous avez
                 choisi précedement en vous munissant du numéro du RIB du
-                vendeur.
+                vendeur: <b>{this.state.rib}</b>
               </h5>
+              {/* {console.log("rib"+this.state.rib)} */}
               <br></br>
               <h3>
                 Montant avance à payer : {parseInt(this.state.avance) + 60} MAD

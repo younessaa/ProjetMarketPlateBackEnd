@@ -93,16 +93,7 @@ class Commandes extends Component {
 
                           <ul class="product__item__pic__hover">
                             <li>
-                              <Link
-                                to={{
-                                  pathname: "/DetailsMouton",
-                                  state: {
-                                    id: Annonces._id,
-                                  },
-                                }}
-                                type="submit"
-                              >
-                                {" "}
+                            <Link to={`/DetailsMouton/${Annonces._id}`}>
                                 <a href="#">
                                   <i class="fa fa-eye"></i>
                                 </a>

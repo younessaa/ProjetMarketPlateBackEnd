@@ -1,6 +1,19 @@
 import React, { Component } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import {
+  EmailShareButton,
+  EmailIcon,
+  FacebookShareButton,
+  FacebookIcon,
+  FacebookShareCount,
+  FacebookMessengerShareButton,
+  FacebookMessengerIcon,
+  WhatsappShareButton,
+  WhatsappIcon,
+  TwitterShareButton,
+  TwitterIcon,
+} from "react-share";
 
 class DetailsMouton extends Component {
   constructor() {
@@ -37,7 +50,9 @@ class DetailsMouton extends Component {
   }
 
   componentDidMount() {
-    const idm = this.props.location.state.id;
+    // const idm = this.props.location.state.id;
+    const idm = this.props.match.params.idMouton;
+
     axios
       .get("http://127.0.0.1:8000/api/mouton/" + idm, {
         headers: {
@@ -53,18 +68,21 @@ class DetailsMouton extends Component {
         if (res.data.objet.statut === "disponible") {
           this.setState({ isDispo: true });
         }
-        const token = localStorage.getItem("usertoken");
-        if (token) {
-          this.setState({ isLoged: true });
-          // this.props.history.push("/login");
-        }
-        console.log(res);
+        // const token = localStorage.getItem("usertoken");
+        // if (token) {
+        //   this.setState({ isLoged: true });
+        //   // this.props.history.push("/login");
+        // }
+        // console.log(res);
       });
 
     //-------------------favoris--------------------------//
     const token = localStorage.getItem("usertoken");
     if (!token) {
-      this.props.history.push("/login");
+      // this.props.history.push("/login");
+      this.setState({
+        Favoris: [],
+      },()=>this.setState({ isFav: false }));
     } else {
       axios
         .get("http://127.0.0.1:8000/api/consommateur/" + token + "/favoris", {
@@ -78,12 +96,9 @@ class DetailsMouton extends Component {
           var fav = res.data;
           var favoris = fav.filter((fav) => fav._id == idm);
           console.log(res.data);
-          this.setState(
-            {
-              Favoris: favoris,
-            },
-            () => console.log("fav" + favoris.length)
-          );
+          this.setState({
+            Favoris: favoris,
+          });
           if (this.state.Favoris.length == 0) {
             this.setState({ isFav: false });
           }
@@ -92,7 +107,10 @@ class DetailsMouton extends Component {
     //------------------Panier----------------------------//
 
     if (!token) {
-      this.props.history.push("/login");
+      // this.props.history.push("/login");
+      this.setState({
+        Panier: [],
+      });
     } else {
       axios
         .get("http://127.0.0.1:8000/api/consommateur/" + token + "/panier", {
@@ -120,12 +138,12 @@ class DetailsMouton extends Component {
   }
 
   handleFavoris(Mid) {
-    console.log(Mid);
+    console.log("idm" + Mid);
     const token = localStorage.getItem("usertoken");
     if (!token) {
       this.props.history.push("/login");
     } else {
-      // console.log(token);
+      console.log("token " + token);
       axios
         .put(
           "http://127.0.0.1:8000/api/consommateur/" + token + "/favoris",
@@ -164,7 +182,9 @@ class DetailsMouton extends Component {
   }
 
   handleDeleteFav(Mid) {
-    const idm = this.props.location.state.id;
+    // const idm = this.props.location.state.id;
+    const idm = this.props.match.params.idMouton;
+
     console.log(Mid);
     const token = localStorage.getItem("usertoken");
     if (!token) {
@@ -186,6 +206,7 @@ class DetailsMouton extends Component {
   }
 
   render() {
+    const shareUrl = "http://localhost:3000/DetailsMouton";
     return (
       <div>
         <section class="product-details spad">
@@ -341,7 +362,6 @@ class DetailsMouton extends Component {
 
                     {this.state.isDispo && !this.state.isLoged ? (
                       <div>
-                        
                         {!this.state.isInpanier ? (
                           <button
                             id={this.state.Mouton._id}
@@ -357,7 +377,7 @@ class DetailsMouton extends Component {
 
                         <Link
                           to={{
-                            pathname: "/login",
+                            pathname: "/Commander",
                             state: {
                               id: this.state.Mouton._id,
                             },
@@ -370,6 +390,46 @@ class DetailsMouton extends Component {
                         </Link>
                       </div>
                     ) : null}
+                    <br></br>
+                    {/* Ajouter ici Social Sharing Button */}
+                    <h6>Partager l'annonce avec vos proches sur :</h6>
+                    <br></br>
+                    <div className="">
+                      <EmailShareButton
+                        url={shareUrl + "/" + this.state.Mouton._id}
+                        subject="Annonce intéressante à voir (Mouton à vendre)"
+                        body="Voici une annonce d'un mouton à vendre qui peut vous interesser"
+                      >
+                        <EmailIcon size={36} round />
+                      </EmailShareButton>{" "}
+                      {/*<FacebookMessengerShareButton
+                            url="https://github.com/nygardk/react-share"
+                            appId="521270401588372"
+                          >
+                            <FacebookMessengerIcon size={36} round />
+                          </FacebookMessengerShareButton> {" "}*/}
+                      <FacebookShareButton
+                        // url= "https://youtube.com"
+                        url={shareUrl + "/" + this.state.Mouton._id}
+                        quote="Annonce intéressante à voir (Mouton à vendre)"
+                      >
+                        <FacebookIcon size={36} round />
+                      </FacebookShareButton>{" "}
+                      <WhatsappShareButton
+                        // url= "https://youtube.com"
+                        url={shareUrl + "/" + this.state.Mouton._id}
+                        title="Annonce intéressante à voir (Mouton à vendre)"
+                        separator=":: "
+                      >
+                        <WhatsappIcon size={36} round />
+                      </WhatsappShareButton>{" "}
+                      <TwitterShareButton
+                        url={shareUrl + "/" + this.state.Mouton._id}
+                        title="Annonce intéressante à voir (Mouton à vendre)"
+                      >
+                        <TwitterIcon size={36} round />
+                      </TwitterShareButton>
+                    </div>
                   </ul>
                 </div>
               </div>

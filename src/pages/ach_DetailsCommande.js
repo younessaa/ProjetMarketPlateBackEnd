@@ -134,7 +134,7 @@ class DetailsCommande extends Component {
               }
             )
             .then((res) => {
-              this.props.history.push("/Commandes");
+              this.props.history.push("/commandesParStatut");
             });
         });
     } else {

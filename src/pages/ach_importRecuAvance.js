@@ -36,7 +36,7 @@ class ach_importRecuAvance extends Component {
       .put(
         "http://127.0.0.1:8000/api/commande/" + id.idc,
         {
-          statut: "en attente de validation reçu",
+          statut: "en attente de validation avance",
           reçu_avance: this.state.dataUrl,
           id_consommateur:id.idc
         },
@@ -58,7 +58,7 @@ class ach_importRecuAvance extends Component {
           )
           .then((res) => {
             alert("Vous allez recevoir un email de validation de votre reçu sur votre email : "+ id.email)
-            this.props.history.push("/Commandes");
+            this.props.history.push("/commandesParStatut");
           });
       });
   };

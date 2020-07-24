@@ -183,7 +183,7 @@ class Header extends Component {
                           <a href="./Favoris"> Mes favoris</a>
                         </li>
                         <li>
-                          <a href="./Commandes"> Mes commandes</a>
+                          <a href="./commandesParStatut"> Mes commandes</a>
                         </li>
                         <li>
                           <a href="./Panier"> Mon panier </a>
@@ -262,7 +262,7 @@ class Header extends Component {
                     <a href="./Panier">Mon panier</a>
                   </li>
                   <li>
-                    <a href="./Commandes">Mes commandes</a>
+                    <a href="./commandesParStatut">Mes commandes</a>
                   </li>
                 </span>
               ) : null}

@@ -109,6 +109,10 @@ class Commander extends Component {
 
   componentDidMount() {
     const idm = this.props.location.state.id;
+    const token = localStorage.getItem("usertoken");
+    if (!token) {
+      this.props.history.push("/login");
+    } else{
     axios
       .get("http://127.0.0.1:8000/api/mouton/" + idm, {
         headers: {
@@ -124,7 +128,7 @@ class Commander extends Component {
         console.log(res);
       });
 
-    console.log(this.state.Mouton);
+    console.log(this.state.Mouton);}
   }
 
   onClickImageBoucle() {

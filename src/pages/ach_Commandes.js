@@ -28,6 +28,7 @@ class Commandes extends Component {
 
   componentDidMount() {
     const token = localStorage.getItem("usertoken");
+    const statut= this.props.location.state.id;
     if (!token) {
       this.props.history.push("/login");
     } else {
@@ -50,7 +51,12 @@ class Commandes extends Component {
             {
               Commandes: res.data,
             },
-            () => console.log("in call" + this.state)
+            () =>
+              this.setState({
+                Commandes: this.state.Commandes.filter(
+                  (Commandes) => Commandes.statut === statut
+                ),
+              })
           );
           const cmd = this.state.Commandes;
           // console.log(cmd);
@@ -193,17 +199,17 @@ class Commandes extends Component {
                     //   {/* <div class="shoping__checkout">
                     //     {/* {this.state.showAvance ? (
                     //       <div>
-                    //         <Link
-                    //           to={{
-                    //             pathname: "/importRecuAvance",
-                    //             state: {
-                    //               id: {
-                    //                 idc: Annonces._id,
-                    //                 idm: Annonces.id_mouton,
-                    //               },
-                    //             },
-                    //           }}
-                    //         >
+                            // <Link
+                            //   to={{
+                            //     pathname: "/importRecuAvance",
+                            //     state: {
+                            //       id: {
+                            //         idc: Annonces._id,
+                            //         idm: Annonces.id_mouton,
+                            //       },
+                            //     },
+                            //   }}
+                            // >
                     //           {" "}
                     //           <a href="" class="primary-btn">
                     //             Importer : reçu Avance
@@ -246,10 +252,13 @@ class Commandes extends Component {
                           // data-setbg={Annonces.images}
                           // src="Images/sardi1.jpg"
                         >
-                         <centre> <img
-                            src={Annonces.mouton.image_face}
-                            className="product__item__pic set-bg"
-                          /></centre>
+                          <centre>
+                            {" "}
+                            <img
+                              src={Annonces.mouton.image_face}
+                              className="product__item__pic set-bg"
+                            />
+                          </centre>
 
                           <ul class="product__item__pic__hover">
                             <li>
@@ -271,11 +280,18 @@ class Commandes extends Component {
                           </ul>
                         </div>
                         <div className="product__item__text">
-                        <h6 className="text-danger">{"         " + Annonces.statut}</h6>
-                          
-                          <h6>{"   Livrer à :      " + Annonces.point_relais}</h6>
-                          <h6> {"         " + Annonces.mouton.prix + "  MAD"}</h6>
-                           
+                          <h6 className="text-danger">
+                            {"         " + Annonces.statut}
+                          </h6>
+
+                          <h6>
+                            {"   Livrer à :      " + Annonces.point_relais}
+                          </h6>
+                          <h6>
+                            {" "}
+                            {"         " + Annonces.mouton.prix + "  MAD"}
+                          </h6>
+
                           {/* <h5>{"         " + Annonces.prix + " MAD"}</h5>  */}
                         </div>
                       </div>

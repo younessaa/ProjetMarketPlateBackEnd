@@ -281,24 +281,12 @@ class HomeSheepsParEleveur extends Component {
                               </a>
                             </li> */}
                             <li>
-                              <Link
-                                key={Annonces._id}
-                                to={{
-                                  pathname: "/DetailsMouton",
-                                  state: {
-                                    id: Annonces._id,
-                                  },
-                                }}
-                                // id={Eleveurs._id}
-                              >
-                                <i className="fa fa-eye"></i>
+                              <Link to={`/DetailsMouton/${Annonces._id}`}>
+                                <a href="#">
+                                  <i class="fa fa-eye"></i>
+                                </a>
                               </Link>
                             </li>
-                            {/* <li>
-                              <a href="./Panier">
-                                <i className="fa fa-shopping-cart"></i>
-                              </a>
-                            </li> */}
                           </ul>
                         </div>
                         <div className="product__item__text">

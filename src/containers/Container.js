@@ -31,6 +31,7 @@ import importRecuReste from '../pages/ach_importRecuReste'
 import HomeSheepsParEleveur from '../pages/HomeSheepsParEleveur'
 import login from '../pages/auth/Login' 
 import register from '../pages/auth/SignUp'
+import commandesParStatut from '../pages/ach_CommandesParStatut'
 
 
 class Container extends Component {
@@ -55,13 +56,14 @@ class Container extends Component {
                 <Route exact path="/Panier" component={Panier} />
                 <Route exact path="/Favoris" component={Favoris} />
                 <Route exact path="/Commandes" component={Commandes} />
-                <Route exact path="/DetailsMouton" component={DetailsMouton} />
+                <Route exact path="/DetailsMouton/:idMouton" component={DetailsMouton} />
                 <Route exact path="/Regles" component={Regles} />
                 <Route exact path="/Apropos" component={Apropos} />
                 <Route exact path="/ToutesLesAnnoncesEleveur" component={ElvMoutons} />
                 <Route exact path="/importRecuAvance" component={importpRecu} />
                 <Route exact path="/importRecuReste" component={importRecuReste} />
                 <Route exact path="/HomeSheepsParEleveur" component={HomeSheepsParEleveur} />
+                <Route exact path="/commandesParStatut" component={commandesParStatut} />
                 
                 {/* DetailsCommande */}
                 </BrowserRouter>

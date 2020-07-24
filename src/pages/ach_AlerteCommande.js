@@ -103,7 +103,7 @@ class AlerteCommande extends Component {
             }
           )
           .then((res) => {
-            this.props.history.push("/Commandes");
+            this.props.history.push("/commandesParStatut");
           });
         // this.props.history.push("/Commandes");
       })

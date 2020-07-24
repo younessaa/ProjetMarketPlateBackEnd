@@ -50,7 +50,7 @@ class Container extends Component {
                 <Route exact path="/AlerteCommande" component={AlerteCommande} />
                 <Route exact path="/login" component={login} />
                 <Route exact path="/register" component={register} />
-                <Route exact path="/" component={Espaces} />
+                <Route exact path="/" component={ToutesLesAnnonces} />
                 <Route exact path="/ToutesLesAnnonces" component={ToutesLesAnnonces} />
                 <Route exact path="/AnnoncesParEleveurs" component={AnnoncesParEleveurs} />
                 <Route exact path="/Panier" component={Panier} />

@@ -16,10 +16,17 @@ class HomeSheepsParEleveur extends Component {
 
       selectedOptionVille: null,
       optionsVille: [
-        { value: "Oujda", label: "Oujda" },
-        { value: "Berkan", label: "Berkan" },
-        { value: "Jrada", label: "Jrada" },
-        { value: "CASABLANCA", label: "CASABLANCA" },
+        { value: "Berkane", label: "Berkane" },
+        { value: "Driouch", label: "Driouch" },
+        { value: "Figuig", label: "Figuig" },
+        { value: "Guercif", label: "Guercif" },
+        { value: "Jerada", label: "Jerada" },
+        { value: "Nador", label: "Nador" },
+        { value: "Oujda-Angad", label: "Oujda-Angad" },
+        { value: "Taourirt", label: "Taourirt" },
+        { value: "Ahfir", label: "Ahfir" },
+        { value: "Saida", label: "Saidia" },
+        { value: "Tafoughalt", label: "Tafoughalt" },
       ],
       conditions: {
         // statut: "disponible",
@@ -120,7 +127,7 @@ class HomeSheepsParEleveur extends Component {
     );
     return (
       <div>
-        <section className="product spad">
+        <section className="">
           <div className="container">
             <div className="row">
               <div className="col-lg-3 col-md-5">

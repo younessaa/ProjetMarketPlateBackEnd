@@ -41,7 +41,7 @@ class HomeSheepsElev extends Component {
           <div className="loader"></div>
         </div> */}
 
-        <section className="product spad">
+        <section className="">
           <div className="container">
             <div className="row">
               <div className="col-lg-3 col-md-5">

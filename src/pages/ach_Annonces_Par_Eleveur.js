@@ -97,13 +97,9 @@ class AllOffers extends Component {
 
     return (
       <div>
-        {/* <!-- Page Preloder --> */}
-        <div id="preloder">
-          <div className="loader"></div>
-        </div>
-
-        <section className="product spad">
+        <section className="">
           <div className="container">
+          <div><p>Insert text here</p></div>
             <div className="row">
               <div className="col-lg-12 col-md-7">
                 <div className="filter__item">

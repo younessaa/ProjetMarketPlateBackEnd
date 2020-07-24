@@ -86,7 +86,7 @@ class Commandes extends Component {
            <div className="loader"></div>
         </div>  */}
 
-        <section className="product spad">
+        <section className="">
           <div className="container">
             <h4 class="latest-product__item">Mes commandes</h4>
             <div className="row">

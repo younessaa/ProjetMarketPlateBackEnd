@@ -81,9 +81,10 @@ class CommandesParStatut extends Component {
               <div class="row featured__filter">
                 {/* à ajouter */}
                 <div class="col-lg-12 col-md-12 col-sm-12">
+
                   <Link
                     to={{
-                      pathname: "/commandes",
+                      pathname: "/Commandes",
                       state: { id: "commande annulée (deadline dépassé)" },
                     }}
                   >
@@ -125,7 +126,7 @@ class CommandesParStatut extends Component {
                 <div class="col-lg-3 col-md-4 col-sm-6">
                   <Link
                     to={{
-                      pathname: "/commandes",
+                      pathname: "/Commandes",
                       state: { id: "en attente de paiement avance" },
                     }}
                   >
@@ -162,7 +163,7 @@ class CommandesParStatut extends Component {
                 <div class="col-lg-3 col-md-4 col-sm-6">
                   <Link
                     to={{
-                      pathname: "/commandes",
+                      pathname: "/Commandes",
                       state: { id: "en attente de validation avance" },
                     }}
                   >
@@ -199,7 +200,7 @@ class CommandesParStatut extends Component {
                 <div class="col-lg-3 col-md-4 col-sm-6">
                   <Link
                     to={{
-                      pathname: "/commandes",
+                      pathname: "/Commandes",
                       state: { id: "reçu avance refusé" },
                     }}
                   >
@@ -233,7 +234,7 @@ class CommandesParStatut extends Component {
                 <div class="col-lg-3 col-md-4 col-sm-6">
                   <Link
                     to={{
-                      pathname: "/commandes",
+                      pathname: "/Commandes",
                       state: { id: "en attente de paiement du reste" },
                     }}
                   >
@@ -270,7 +271,7 @@ class CommandesParStatut extends Component {
                 <div class="col-lg-3 col-md-4 col-sm-6">
                   <Link
                     to={{
-                      pathname: "/commandes",
+                      pathname: "/Commandes",
                       state: { id: "en attente de paiement du reste" },
                     }}
                   >
@@ -307,7 +308,7 @@ class CommandesParStatut extends Component {
                 <div class="col-lg-3 col-md-4 col-sm-6">
                   <Link
                     to={{
-                      pathname: "/commandes",
+                      pathname: "/Commandes",
                       state: { id: "en attente de validation reste" },
                     }}
                   >
@@ -346,7 +347,7 @@ class CommandesParStatut extends Component {
                 <div class="col-lg-3 col-md-4 col-sm-6">
                   <Link
                     to={{
-                      pathname: "/commandes",
+                      pathname: "/Commandes",
                       state: { id: "reçu reste refusé" },
                     }}
                   >
@@ -382,7 +383,7 @@ class CommandesParStatut extends Component {
 
                 <div class="col-lg-3 col-md-4 col-sm-6">
                   <Link
-                    to={{ pathname: "/commandes", state: { id: "validé" } }}
+                    to={{ pathname: "/Commandes", state: { id: "validé" } }}
                   >
                     <div class="featured__item">
                       <div

@@ -2,9 +2,10 @@ import React, { Component } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 
+
 class CommandesParStatut extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
 
     this.state = {
       Commandes: [],
@@ -73,6 +74,7 @@ class CommandesParStatut extends Component {
     );
 
     return (
+      <div>
       <center>
         <div>
           <section className="featured spad">
@@ -419,7 +421,7 @@ class CommandesParStatut extends Component {
             </div>
           </section>
         </div>
-      </center>
+      </center></div>
     );
   }
 }

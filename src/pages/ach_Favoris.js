@@ -59,7 +59,12 @@ class Commandes extends Component {
       (Favoris) => (Favoris !== null)
     );
     console.log(fav)
-
+    let titre;
+    if (fav.length == 1 || fav.length == 0) {
+      titre = <h6><span>{fav.length}</span> Mouton{" "}</h6>;
+    } else {
+      titre= <h6><span>{fav.length}</span> Moutons {" "}</h6>;
+    }
     return (
       <div>
         {/* //   {/* <!-- Page Preloder --> */}
@@ -73,7 +78,11 @@ class Commandes extends Component {
             <div className="row">
               <div className="col-lg-12 col-md-7">
                 {/*<!-- Sheeps Grid Section Begin --> */}
-
+                <div className="filter__found text-left">
+                    <h6>
+                      <span>{titre}</span> 
+                    </h6>
+                  </div>
                 <div class="row">
                   {fav.map((Annonces) => (
     

@@ -1,15 +1,17 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
+import { withRouter } from "react-router-dom";
+import { Redirect } from "react-router";
 import axios from "axios";
 class DetailsCommande extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     // let redirect = false;
     this.state = {
       Commandes: {},
       showAvance: true,
       showReste: true,
-      showStatut:false,
+      showStatut: false,
       showMsgreste: false,
       showMsgavance: false,
       showBtnAnnuler: true,
@@ -78,13 +80,19 @@ class DetailsCommande extends Component {
 
     // const cmd = this.state.Commandes;
     // console.log(cmd);
-    if (cmd.reçu_avance == null ) {
-      if(cmd.statut !="commande annulée (deadline dépassé)")
-      this.setState({ showAvance: false, showMsgavance: true });
-      else if(cmd.statut ==="commande annulée (deadline dépassé)")
-      this.setState({ showAvance: false, showMsgavance: false, showStatut:true,showReste: false, showMsgreste: false });
+    if (cmd.reçu_avance == null) {
+      if (cmd.statut != "commande annulée (deadline dépassé)")
+        this.setState({ showAvance: false, showMsgavance: true });
+      else if (cmd.statut === "commande annulée (deadline dépassé)")
+        this.setState({
+          showAvance: false,
+          showMsgavance: false,
+          showStatut: true,
+          showReste: false,
+          showMsgreste: false,
+        });
     }
-    if (cmd.reçu_montant_restant == null && cmd.reçu_avance !== null ) {
+    if (cmd.reçu_montant_restant == null && cmd.reçu_avance !== null) {
       // console.log("reste  null");
       this.setState({ showReste: false, showMsgreste: true }, () =>
         console.log(this.state.showReste)
@@ -93,16 +101,17 @@ class DetailsCommande extends Component {
     if (cmd.reçu_montant_restant !== null && cmd.reçu_avance !== null) {
       this.setState({ showBtnAnnuler: false });
     }
-    if (cmd.reçu_montant_restant === null && cmd.reçu_avance === null && cmd.statut !="commande annulée (deadline dépassé)") {
+    if (
+      cmd.reçu_montant_restant === null &&
+      cmd.reçu_avance === null &&
+      cmd.statut != "commande annulée (deadline dépassé)"
+    ) {
       this.setState({ showAvance: false, showMsgavance: true, showMsgR: true });
     }
-// if(cmd.statut=="en attente de paiement du reste"){
+    // if(cmd.statut=="en attente de paiement du reste"){
 
-//   this.setState({ showAvance: true, showMsgavance: false, showMsgR: true });
-// }
-
- 
-
+    //   this.setState({ showAvance: true, showMsgavance: false, showMsgR: true });
+    // }
   }
 
   handelDelete() {
@@ -134,7 +143,8 @@ class DetailsCommande extends Component {
               }
             )
             .then((res) => {
-              this.props.history.push("/commandesParStatut");
+              // this.props.history.replace("/commandesParStatut");
+              this.setState({ redirect: true });
             });
         });
     } else {
@@ -142,6 +152,11 @@ class DetailsCommande extends Component {
   }
 
   render() {
+
+    if (this.state.redirect) {
+      return <Redirect  to="./commandesParStatut" />;
+    }
+
     const commandes = this.props.location.state.id;
     console.log(commandes);
     // let commandes = "";
@@ -240,12 +255,11 @@ class DetailsCommande extends Component {
                     <li>
                       <b>Eleveur</b>
                       {commandes.eleveur.nom + " " + commandes.eleveur.prenom}
-                    </li> 
+                    </li>
                     <li>
                       <b>Numéro du RIB</b>
-                      {commandes.eleveur.rib }
-                    </li> 
-                    
+                      {commandes.eleveur.rib}
+                    </li>
 
                     <li className="bg-ligh text-danger h6 center">
                       <b>Prix total</b>
@@ -284,10 +298,9 @@ class DetailsCommande extends Component {
                       </div>
                     </div> */}
 
- {/* ------------------------------ */}
+                    {/* ------------------------------ */}
 
-
- {this.state.showStatut ? (
+                    {this.state.showStatut ? (
                       <div>
                         <div class="product__details__pic">
                           <div class="product__details__pic__item">
@@ -301,7 +314,6 @@ class DetailsCommande extends Component {
                         </div>
                       </div>
                     ) : null}
-
 
                     {/* ------------------------------ */}
 
@@ -326,11 +338,12 @@ class DetailsCommande extends Component {
                             <h4>
                               {" "}
                               Vous n'avez pas encore importé votre reçu ! <br />
-                             <b className="text-danger"> Attention: Il vous reste jusqu'au{" "}
-                              <span>
-                                {this.state.date}
-                              </span>{" "}
-                              pour payer et importer votre reçu de paiement.</b>
+                              <b className="text-danger">
+                                {" "}
+                                Attention: Il vous reste jusqu'au{" "}
+                                <span>{this.state.date}</span> pour payer et
+                                importer votre reçu de paiement.
+                              </b>
                             </h4>{" "}
                             <br />
                             <Link
@@ -340,7 +353,7 @@ class DetailsCommande extends Component {
                                   id: {
                                     idc: commandes._id,
                                     idm: commandes.id_mouton,
-                                    email:commandes.consommateur.email
+                                    email: commandes.consommateur.email,
                                   },
                                 },
                               }}
@@ -413,7 +426,7 @@ class DetailsCommande extends Component {
                                   id: {
                                     idc: commandes._id,
                                     idm: commandes.id_mouton,
-                                    email:commandes.consommateur.email
+                                    email: commandes.consommateur.email,
                                   },
                                 },
                               }}

@@ -12,13 +12,13 @@ class Footer extends Component {
                   <div className="footer__widget__social ">
                     <h6> SUIVEZ NOUS {"  "} </h6>
                     <a href="https://www.facebook.com/Association.nationale.ovine.et.caprine/">
-                      <i className="fa fa-facebook"></i>
+                      <i id="facebook" className="fa fa-facebook"></i>
                     </a>
                     <a href="#">
-                      <i className="fa fa-twitter"></i>
+                      <i id="twitter" className="fa fa-twitter"></i>
                     </a>
                     <a href="https://www.youtube.com/channel/UCzX4064MubkoUVL1ecFDGpQ">
-                      <i className="fa fa-youtube"></i>
+                      <i id="youtube" className="fa fa-youtube"></i>
                     </a>
                   </div>
                 </div>

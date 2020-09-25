@@ -31,44 +31,85 @@ import importRecuReste from '../pages/ach_importRecuReste'
 import HomeSheepsParEleveur from '../pages/HomeSheepsParEleveur'
 import login from '../pages/auth/Login' 
 import register from '../pages/auth/SignUp'
+import changePassword from "../pages/auth/changePassword"; 
+import changePasswordLink from "../pages/auth/changePasswordLink"; 
 import commandesParStatut from '../pages/ach_CommandesParStatut'
+
+import Commander1 from "../pages/step1";
+import Commander2 from "../pages/step2";
+import Commander3 from "../pages/step3";
 
 
 class Container extends Component {
+
     render() {
         return (
-            <div>
-                <Header />
-                <BrowserRouter>
-                <Route exact path="/Annonces" component={Home} />
-                {/*<Route exact path="/Commandes" component={HomeCommande} />*/}
-                <Route exact path="/Eleveurs" component={HomeEleveur} />
-                <Route exact path="/AddAnnonce" component={AddMouton} />
+          <div>
+            <Header />
+            <BrowserRouter>
+              <Route exact path="/Annonces" component={Home} />
+              {/*<Route exact path="/Commandes" component={HomeCommande} />*/}
+              <Route exact path="/Eleveurs" component={HomeEleveur} />
+              <Route exact path="/AddAnnonce" component={AddMouton} />
 
-                <Route exact path="/DetailsCommande" component={DetailsCommande} />
-                <Route exact path="/Commander" component={Commander} />
-                <Route exact path="/AlerteCommande" component={AlerteCommande} />
-                <Route exact path="/login" component={login} />
-                <Route exact path="/register" component={register} />
-                <Route exact path="/" component={ToutesLesAnnonces} />
-                <Route exact path="/ToutesLesAnnonces" component={ToutesLesAnnonces} />
-                <Route exact path="/AnnoncesParEleveurs" component={AnnoncesParEleveurs} />
-                <Route exact path="/Panier" component={Panier} />
-                <Route exact path="/Favoris" component={Favoris} />
-                <Route exact path="/Commandes" component={Commandes} />
-                <Route exact path="/DetailsMouton/:idMouton" component={DetailsMouton} />
-                <Route exact path="/Regles" component={Regles} />
-                <Route exact path="/Apropos" component={Apropos} />
-                <Route exact path="/ToutesLesAnnoncesEleveur" component={ElvMoutons} />
-                <Route exact path="/importRecuAvance" component={importpRecu} />
-                <Route exact path="/importRecuReste" component={importRecuReste} />
-                <Route exact path="/HomeSheepsParEleveur" component={HomeSheepsParEleveur} />
-                <Route exact path="/commandesParStatut" component={commandesParStatut} />
-                
-                {/* DetailsCommande */}
-                </BrowserRouter>
-                <Footer/>
-            </div>
+              <Route
+                exact
+                path="/DetailsCommande"
+                component={DetailsCommande}
+              />
+              <Route exact path="/Commander" component={Commander} />
+              <Route exact path="/AlerteCommande" component={AlerteCommande} />
+              <Route exact path="/login" component={login} />
+              <Route exact path="/register" component={register} />
+              <Route exact path="/changePassword" component={changePassword} />
+              <Route exact path="/changePasswordLink" component={changePassword} />
+              <Route exact path="/" component={ToutesLesAnnonces} />
+              <Route
+                exact
+                path="/ToutesLesAnnonces"
+                component={ToutesLesAnnonces}
+              />
+              <Route
+                exact
+                path="/AnnoncesParEleveurs"
+                component={AnnoncesParEleveurs}
+              />
+              <Route exact path="/Panier" component={Panier} />
+              <Route exact path="/Favoris" component={Favoris} />
+              <Route exact path="/Commandes" component={Commandes} />
+              <Route
+                exact
+                path="/DetailsMouton/:idMouton"
+                component={DetailsMouton}
+              />
+              <Route exact path="/Regles" component={Regles} />
+              <Route exact path="/Apropos" component={Apropos} />
+              <Route
+                exact
+                path="/ToutesLesAnnoncesEleveur"
+                component={ElvMoutons}
+              />
+              <Route exact path="/importRecuAvance" component={importpRecu} />
+              <Route
+                exact
+                path="/importRecuReste"
+                component={importRecuReste}
+              />
+              <Route
+                exact
+                path="/HomeSheepsParEleveur"
+                component={HomeSheepsParEleveur}
+              />
+              <Route
+                exact
+                path="/commandesParStatut"
+                component={commandesParStatut}
+              />
+
+              {/* DetailsCommande */}
+            </BrowserRouter>
+            <Footer />
+          </div>
         );
     }
 }

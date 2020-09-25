@@ -22,10 +22,31 @@ function App() {
       {/* <DetailsEleveur /> */}
       {/* <Container /> */}
       <BrowserRouter>
-              {/* <Route exact path="/login" component={login} />
+        {/* <Route exact path="/login" component={login} />
               <Route exact path="/regester" component={register} /> */}
-              <Route  path={["/commandesParStatut","/login","/register","/","/HomeSheepsParEleveur","/importRecuReste","/importRecuAvance","/Favoris","/DetailsCommande","/ToutesLesAnnonces","/Panier","/AnnoncesParEleveurs","/Commandes","/Commander","/AlerteCommande"]} component={Container} />
-      </BrowserRouter> 
+        <Route
+          path={[
+            "/commandesParStatut",
+            "/login",
+            "/register",
+            "/changePassword",
+            "/changePasswordLink",
+            "/",
+            "/HomeSheepsParEleveur",
+            "/importRecuReste",
+            "/importRecuAvance",
+            "/Favoris",
+            "/DetailsCommande",
+            "/ToutesLesAnnonces",
+            "/Panier",
+            "/AnnoncesParEleveurs",
+            "/Commandes",
+            "/Commander",
+            "/AlerteCommande",
+          ]}
+          component={Container}
+        />
+      </BrowserRouter>
       {/* <Footer /> */}
     </div>
   );

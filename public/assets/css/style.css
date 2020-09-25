@@ -5,8 +5,277 @@
   Author URI: https://colorlib.com
   Version: 1.0
   Created: Colorlib
-******************************************************************/
 
+
+******************************************************************/
+/*** FONTS ***/
+@import url(https://fonts.googleapis.com/css?family=Montserrat:900|Raleway:400,400i,700,700i);
+/*** VARIABLES ***/
+/* Colors */
+/*** EXTEND ***/
+/* box-shadow */
+ol.gradient-list > li, ol.gradient-list > li::before {
+  box-shadow: 0.25rem 0.25rem 0.6rem rgba(0, 0, 0, 0.05), 0 0.5rem 1.125rem rgba(75, 0, 0, 0.05);
+}
+/*** STYLE ***/
+*,
+*:before,
+*:after {
+  box-sizing: border-box;
+}
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+body {
+  background-color: #fafafa;
+  color: #1d1f20;
+  font-family: 'Raleway', sans-serif;
+}
+main {
+  display: block;
+  margin: 0 auto;
+  max-width: 60rem;
+  padding: 1rem;
+}
+ol.gradient-list {
+  counter-reset: gradient-counter;
+  list-style: none;
+  margin: 1.75rem 0;
+  padding-left: 1rem;
+}
+ol.gradient-list > li {
+  background: white;
+  border-radius: 0 0.5rem 0.5rem 0.5rem;
+  counter-increment: gradient-counter;
+  margin-top: 1rem;
+  min-height: 3rem;
+  padding: 1rem 1rem 1rem 3rem;
+  position: relative;
+}
+ol.gradient-list > li::before, ol.gradient-list > li::after {
+  background: linear-gradient(135deg, #83e4e2 0%, #579618 100%);
+  border-radius: 1rem 1rem 0 1rem;
+  content: '';
+  height: 3rem;
+  left: -1rem;
+  overflow: hidden;
+  position: absolute;
+  top: -1rem;
+  width: 3rem;
+}
+ol.gradient-list > li::before {
+  align-items: flex-end;
+  content: counter(gradient-counter);
+  color: #1d1f20;
+  display: flex;
+  font: 900 1.5em/1 'Montserrat';
+  justify-content: flex-end;
+  padding: 0.125em 0.25em;
+  z-index: 1;
+}
+ol.gradient-list > li:nth-child(10n+1):before {
+  background: linear-gradient(135deg, rgba(162, 237, 86, 0.2) 0%, rgba(253, 220, 50, 0.2) 100%);
+}
+ol.gradient-list > li:nth-child(10n+2):before {
+  background: linear-gradient(135deg, rgba(162, 237, 86, 0.4) 0%, rgba(253, 220, 50, 0.4) 100%);
+}
+ol.gradient-list > li:nth-child(10n+3):before {
+  background: linear-gradient(135deg, rgba(162, 237, 86, 0.6) 0%, rgba(253, 220, 50, 0.6) 100%);
+}
+ol.gradient-list > li:nth-child(10n+4):before {
+  background: linear-gradient(135deg, rgba(162, 237, 86, 0.8) 0%, rgba(253, 220, 50, 0.8) 100%);
+}
+ol.gradient-list > li:nth-child(10n+5):before {
+  background: linear-gradient(135deg, #a2ed56 0%, #fddc32 100%);
+}
+ol.gradient-list > li:nth-child(10n+6):before {
+  background: linear-gradient(135deg, rgba(162, 237, 86, 0.8) 0%, rgba(253, 220, 50, 0.8) 100%);
+}
+ol.gradient-list > li:nth-child(10n+7):before {
+  background: linear-gradient(135deg, rgba(162, 237, 86, 0.6) 0%, rgba(253, 220, 50, 0.6) 100%);
+}
+ol.gradient-list > li:nth-child(10n+8):before {
+  background: linear-gradient(135deg, rgba(162, 237, 86, 0.4) 0%, rgba(253, 220, 50, 0.4) 100%);
+}
+ol.gradient-list > li:nth-child(10n+9):before {
+  background: linear-gradient(135deg, rgba(162, 237, 86, 0.2) 0%, rgba(253, 220, 50, 0.2) 100%);
+}
+ol.gradient-list > li:nth-child(10n+10):before {
+  background: linear-gradient(135deg, rgba(162, 237, 86, 0) 0%, rgba(253, 220, 50, 0) 100%);
+}
+ol.gradient-list > li + li {
+  margin-top: 2rem;
+}
+/*******
+******/
+.site-btn1 {
+	font-size: 18px;
+	color: #ffffff;
+	font-weight: 800;
+	text-transform: uppercase;
+	display: inline-block;
+	padding: 12px 60px;
+	background: #7fad39;
+	border: none;
+}
+
+.stylePagination{
+	text-align: center;
+  border: 1px solid #7fad39;
+ /* border-radius: 2px; */
+}
+.center-div {
+     margin: auto;
+  width: 50%;
+}
+#Head{
+	padding-right: 2%;
+	padding-left: 2%;
+}
+.shoping__checkout_ {
+	padding: 30px;
+	padding-top: 20px;
+	margin-top: 50px;
+}
+
+.vert{
+	color: #7fad39;
+}
+
+#aStyle{
+	width: 33%;
+	margin-left: auto; 
+	margin-right: auto;
+/*	right: 5%;
+	position: absolute;*/
+}
+#img-background{
+	background-image: url("../img/upload.png");
+  
+   background-repeat: no-repeat;
+  
+  background-position: center;
+ 
+}
+
+.newBtn{
+	width: 100%;
+}
+
+#gras{
+	font-weight: bold;
+	padding-left: 2px;
+}
+
+#apropos{
+	background-color: rgb(240, 245, 244);
+}
+#aproposh{
+	color: rgb(10, 150, 52);
+}
+#apropo1{
+	text-indent: 100px;
+}
+#h11 {
+	text-align: center;
+  }
+
+#styleEleveur{
+	background-color: rgb(252, 252, 252);
+ 
+ border: 1px ridge #d3d3d3;
+  
+  margin-left: 8px;
+  margin-right: 8px;
+  margin-top:8px;
+  margin-bottom:8px;
+  
+}
+
+#centrerH{
+	text-align: center;
+}
+#anonce{
+	/*border-radius: 2px;*/
+		
+ border-style: inset;
+ border-color:black;
+ border: 1px ridge #d3d3d3;
+ /*border-color:  rgb(45, 187, 80); ;*/
+ /*black;*/
+}
+#imageRleveur{
+	border-radius: 50%;
+	
+  padding: 10px;
+}
+#txteFormat{
+	text-transform: capitalize;
+	text-align: center;
+	color: rgb(144, 144, 153);
+	border: 1px ridge rgb(133, 133, 141)
+}
+#PanierStyle{
+	background-color:  #F3F6FA;
+	/* #cfd4d3; */
+
+	width: 205px;
+ border-style:inset;
+ border-color:black;
+ border: 1px ridge #d3d3d3;
+  border-radius: 1px;
+  margin-left: 8px;
+  margin-right: 8px;
+  margin-top:8px;
+  margin-bottom:8px;
+}
+
+#style{
+	color:  #d3d3d3;
+	background-color: #D62D2D;
+}
+
+#LoginIcon{
+	background: rgb(233, 231, 231);
+	width:200px;
+	height:50px;
+	padding: 0;
+}
+
+#loginStyle{
+	background-color: rgb(253, 255, 254);
+
+	
+ border-style:inset;
+ border-color:black;
+ border: 2px solid rgb(219, 237, 238);
+  border-radius: 8px;
+  margin-left: 8px;
+  margin-right: 8px;
+  margin-top:8px;
+  margin-bottom:8px;
+}
+
+.preload{
+	margin: 0;
+	position : absolute;
+	top : 50%;
+	left: 50%;
+	margin-right: -50%;
+	transform: translate(-50%, -50%);
+}
+
+#recherchePlace{
+	
+	border-radius: 4px;	
+ 	
+}
+
+#filterPlace{
+	padding: 0;
+}
 /*------------------------------------------------------------------
 [Table of contents]
 
@@ -145,6 +414,14 @@ ol {
 	padding-bottom: 100px;
 }
 
+#cadre {
+
+	 border-style:inset;
+ border-color:black;
+ border: 1px ridge #d3d3d3;
+  border-radius: 1px;
+}
+
 .text-white h1,
 .text-white h2,
 .text-white h3,
@@ -163,12 +440,15 @@ ol {
 .primary-btn {
 	display: inline-block;
 	font-size: 14px;
+	size: 25px 54px; 
+	
 	padding: 10px 28px 10px;
 	color: #ffffff;
 	text-transform: uppercase;
 	font-weight: 700;
 	background: #7fad39;
 	letter-spacing: 2px;
+  border-radius: 4px;
 }
 
 .site-btn {
@@ -249,9 +529,12 @@ ol {
 /*---------------------
   Header
 -----------------------*/
+.Header{
+  margin-left: 20px;
+}
 
 .header__top {
-	background: #f5f5f5;
+	background: #cfd4d3;
 }
 
 .header__top__left {
@@ -286,10 +569,32 @@ ol {
 }
 
 .header__top__left ul li i {
-	color: #252525;
+	color: #1c1c1c;
 	margin-right: 5px;
 }
 
+.header__top__left ul li a {
+	color: #1c1c1c;
+	margin-right: 5px;
+}
+
+.header__top__left ul li a:hover {
+	color: #177521;
+	margin-right: 5px;
+}
+
+
+#facebook {
+	color: #3b5998 ;
+}
+
+#twitter {
+	color: #00acee ;
+}
+
+#youtube {
+	color: #c4302b ;
+}
 .header__top__right {
 	text-align: right;
 	padding: 10px 0 13px;
@@ -307,7 +612,7 @@ ol {
 	top: 1px;
 	height: 20px;
 	width: 1px;
-	background: #000000;
+	background: #ffffff;
 	opacity: 0.1;
 	content: "";
 }
@@ -315,7 +620,7 @@ ol {
 .header__top__right__social a {
 	font-size: 14px;
 	display: inline-block;
-	color: #1c1c1c;
+	color: #ffffff;
 	margin-right: 20px;
 }
 
@@ -417,13 +722,65 @@ ol {
 
 .header__menu {
 	padding: 24px 0;
+	
 }
 
+/*
 .header__menu ul li {
 	list-style: none;
 	display: inline-block;
-	margin-right: 50px;
+	margin-right: 0px;
 	position: relative;
+}
+*/
+
+
+
+
+#topcorner{
+   position:absolute;
+   text-align: center;
+   padding: 14px 16px;
+   right:0;
+  }
+
+.header__menu ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+.header__menu li {
+float: left;
+
+}
+
+.header__menu li a {
+  display: block;
+  color: rgb(66, 11, 11);
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+}
+
+.header__menu li a:hover {
+  background-color: #b8d1ae;
+  color: #040112;
+}
+
+.header__menu li a:active {
+  background-color: #111610;
+  color: #076824;
+}
+
+.header__menu li span {
+  
+  color: #040112;
+}
+
+.header__menu li .active {
+  background-color: #b8d1ae;
 }
 
 .header__menu ul li .header__menu__dropdown {
@@ -459,8 +816,8 @@ ol {
 	padding: 5px 15px;
 }
 
-.header__menu ul li.active a {
-	color: #7fad39;
+.header__menu ul li a:active {
+	color: #cf1b24;
 }
 
 .header__menu ul li:hover .header__menu__dropdown {
@@ -470,7 +827,7 @@ ol {
 }
 
 .header__menu ul li:hover>a {
-	color: #7fad39;
+	color: #ac292f;
 }
 
 .header__menu ul li:last-child {
@@ -753,6 +1110,15 @@ ol {
 	margin-bottom: 35px;
 }
 
+#rechercher {
+	background-color: #F3F6FA;
+	padding-left: 8px;
+	padding-right: 8px;
+	/* #F3F6FA;*/
+	border-radius: 3px;
+	/*#aeb8b5;*/
+}
+
 /*---------------------
   Categories
 -----------------------*/
@@ -946,7 +1312,15 @@ ol {
 /*---------------------
   Latest Product
 -----------------------*/
+h3 {
 
+	font-weight: bold;
+	
+}
+
+#nbEspece {
+	color: /*maroon;*/ rgb(15, 134, 25);
+}
 .latest-product {
 	padding-top: 80px;
 	padding-bottom: 0;
@@ -985,7 +1359,8 @@ ol {
 }
 
 .latest-product__item {
-	margin-bottom: 20px;
+	
+	margin-bottom: 10px;
 	overflow: hidden;
 	display: block;
 }
@@ -995,15 +1370,33 @@ ol {
 	margin-right: 26px;
 }
 
-.latest-product__item__pic img {
-	height: 110px;
-	width: 110px;
+.product__item__picy img {
+	height: 170px;
+	width: 155px;
 }
 
-.latest-product__item__text {
+.product__item__text {
 	overflow: hidden;
+	/*background-color:  #F3F6FA;*/
+	/*#cfd4d3;*/
 	padding-top: 10px;
 }
+
+#race{
+	color: #cfd4d3;
+}
+
+#prixFav{
+	color: #056319;
+	font-weight: bold;
+	padding-bottom: 12px;
+}
+#mad {
+	color: #056319;
+	font-weight: bold;
+}
+
+
 
 .latest-product__item__text h6 {
 	color: #252525;
@@ -1078,6 +1471,9 @@ ol {
 /*---------------------
   Sidebar
 -----------------------*/
+.form-control {
+	margin-bottom: 5px;
+}
 
 .sidebar__item {
 	margin-bottom: 35px;
@@ -1528,6 +1924,7 @@ ol {
 
 .product__item {
 	margin-bottom: 50px;
+	
 }
 
 .product__item:hover .product__item__pic .product__item__pic__hover {
@@ -1535,9 +1932,17 @@ ol {
 }
 
 .product__item__pic {
-	height: 270px;
+
+	height: 210px;
+	width: 205px;
+	width: 100%;
+  max-width: 400px;
+  
 	position: relative;
 	overflow: hidden;
+	display: block;
+margin-left: auto;
+margin-right: auto;
 }
 
 .product__item__pic__hover {
@@ -1658,7 +2063,80 @@ ol {
 /*---------------------
   Shop Details
 -----------------------*/
+#lesImagesM{
+	background-color:  #F3F6FA;
+	/*#aec5bc94;*/
+	border-radius: 1px;
+		
+ border: 1px ridge #d3d3d3;
+	display: block;
+    margin-left: auto;
+	margin-right: auto;
+}
 
+#centrer{
+	display: block;
+    margin-left: auto;
+	margin-right: auto;
+	border-radius: 1px;
+ 	border: 1px ridge #d3d3d3;
+	background-color: #F3F6FA;
+	/* #cfd4d3;*/
+}
+
+#centrerT{
+text-align: center;
+    margin-left: auto;
+	margin-right: auto;
+	
+
+}
+
+
+#centre{
+	border-radius: 8px;
+		
+ border-style:inset;
+	display: block;
+    margin-left: auto;
+	margin-right: auto;
+
+}
+#roundB{
+	border-radius: 8px;	
+	
+ 	
+}
+
+#centrer2{
+	/*margin-left: auto;
+	margin-right: auto;*/
+	padding-left: auto;
+	padding-right: auto;
+	
+}
+
+#gris{
+	background-color: #F3F6FA
+	/* rgb(225, 231, 219); */;
+border-style:inset;
+ border-color:black;
+ border: 1px ridge #d3d3d3;
+  border-radius: 1px;
+	margin-left: auto;
+	margin-right: auto;
+	
+}
+
+#coul{
+	background-color:  #F3F6FA;
+	/*rgb(187, 194, 199);*/
+	border-radius: 1px;
+		
+ 
+ border-color:black;
+ border: 1px ridge #d3d3d3;
+}
 .product-details {
 	padding-top: 80px;
 }
@@ -1669,6 +2147,9 @@ ol {
 
 .product__details__pic__item img {
 	min-width: 100%;
+	height: 350px;
+	width: 300px;
+
 }
 
 .product__details__pic__slider img {
@@ -2019,7 +2500,7 @@ ol {
 }
 
 .shoping__checkout {
-	background: #f5f5f5;
+	/*background: #f5f5f5;*/
 	padding: 30px;
 	padding-top: 20px;
 	margin-top: 50px;
@@ -2615,9 +3096,22 @@ ol {
 
 .footer {
 	background: #F3F6FA;
-	padding-top: 70px;
+	
+	/*padding-top: 70px;
 	padding-bottom: 0;
 	position: center;
+
+   bottom: 0;
+   width: 100%;*/
+   position: relative;;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  padding: 1rem;
+
+ 
+   
+	
 }
 
 .footer__about {
@@ -3469,3 +3963,4 @@ ol {
 		font-size: 24px;
 	}
 }
+

@@ -6,48 +6,24 @@ class AllOffers extends Component {
     super();
     // let redirect = false;
     this.state = {
-      Eleveurs: [
-        // {
-        //   Nom: "Mohamed Rachidi ",
-        //   Région: "Oujda",
-        //   image: "Images/Eleveur.jpg",
-        //   nombre_moutons: "50"
-        // },
-        // {
-        //   Nom: "Taher Hamid ",
-        //   Région: "Berkane",
-        //   image: "Images/Eleveur.jpg",
-        //   nombre_moutons: "25"
-        // },
-        // {
-        //   Nom: "Madani Ali",
-        //   Région: "Nador",
-        //   image: "Images/Eleveur.jpg",
-        //   nombre_moutons: "60"
-        // },
-        // {
-        //   Nom: "Mohamed Rachidi ",
-        //   Région: "Oujda",
-        //   image: "Images/Eleveur.jpg",
-        //   nombre_moutons: "20"
-        // },
-        // {
-        //   Nom: "Mohamed Oujidi ",
-        //   Région: "Berkane",
-        //   image: "Images/Eleveur.jpg",
-        //   nombre_moutons: "15"
-        // },
-      ],
+      Eleveurs: [],
+      activePage: 1,
+      nombrePages: [],
+      currentPage: 1,
+      eleveursPerPage: 2,
       // Annonces:[],
       redirect: false,
     };
+    this.paginate = this.paginate.bind(this);
   }
 
   componentDidMount() {
+     const myToken = `Bearer ` + localStorage.getItem("myToken");
     axios
       .get("http://127.0.0.1:8000/api/eleveurs", {
         headers: {
           // "x-access-token": token, // the token is a variable which holds the token
+           
         },
       })
       .then((res) => {
@@ -55,56 +31,55 @@ class AllOffers extends Component {
         this.setState({
           Eleveurs: res.data,
         });
+
+        const elv = this.state.Eleveurs.filter(
+          (Eleveurs) => Eleveurs.Especes !== undefined
+        );
+        console.log(this.state.Eleveurs);
+        const pageNumbers = [];
+        for (
+          let i = 1;
+          i <=
+          Math.ceil(elv.length / this.state.eleveursPerPage);
+          i++
+        ) {
+          pageNumbers.push(i);
+        }
+        this.setState({ nombrePages: pageNumbers });
       });
   }
-
-  // componentMoutons= (ide) =>  {
-  //   // const ide = this.props.location.state.id;
-
-  //   axios
-  //     .get("http://127.0.0.1:8000/api/eleveur/" + ide, {
-  //       headers: {
-  //         // "x-access-token": token, // the token is a variable which holds the token
-  //       },
-  //     })
-  //     .then((res) => {
-
-  //       res.data.moutons.map((mouton) =>
-
-  //         axios
-  //           .get("http://127.0.0.1:8000/api/mouton/" + mouton.id_mouton, {
-  //             headers: {
-  //               // "x-access-token": token, // the token is a variable which holds the token
-  //             },
-  //           })
-  //           .then((resp) => {
-  //             this.setState({
-  //               Annonces: this.state.Annonces.concat(resp.data.objet)
-  //             });
-  //             // this.state.Annonces.concat(resp.data.objet)
-  //           })
-  //       );
-  //       // window.location.reload();
-  //     });
-  //     return this.state.Annonces
-  // }
+  
+  paginate(pageNumber) {
+    this.setState({ currentPage: pageNumber });
+  }
 
   render() {
     var elv = this.state.Eleveurs.filter(
-      (Eleveurs) => Eleveurs.moutons !== undefined
+      (Eleveurs) => Eleveurs.Especes!== undefined
+    );
+
+    const indexOfLastEleveur =
+      this.state.currentPage * this.state.eleveursPerPage;
+    const indexOfFirstEleveur =
+      indexOfLastEleveur - this.state.eleveursPerPage;
+    const currentEleveurs = elv.slice(
+      indexOfFirstEleveur,
+      indexOfLastEleveur
     );
     console.log(elv);
-
     return (
       <div>
         <section className="">
           <div className="container">
-          <div><p>Insert text here</p></div>
+            <h3>Nos Eleveurs</h3>
+            <br></br>
+            <div>
+              <p>Insert text here</p>
+            </div>
             <div className="row">
               <div className="col-lg-12 col-md-7">
                 <div className="filter__item">
                   <div className="row">
-                    <div className="col-lg-4 col-md-5"></div>
                     <div className="col-lg-12 col-md-12">
                       <div className="filter__found text-left">
                         <h6>
@@ -114,19 +89,19 @@ class AllOffers extends Component {
                     </div>
                   </div>
                 </div>
-
                 {/*<!-- Sheeps Grid Section Begin --> */}
-
                 <div class="row">
-                  {elv.map((Eleveurs) => (
-                    <div class="col-lg-4 col-md-6 col-sm-6">
-                      <div class="product__item">
+                  {currentEleveurs.map((Eleveurs) => (
+                    <div class="col-lg-3 col-md-6 col-sm-6">
+                      <div id="styleEleveur" class="product__item">
                         <div
                           class="product__item__pic set-bg"
                           // data-setbg="Images/Eleveur.jpg"
                         >
+                          <br></br>
                           <center>
                             <img
+                              id="imageRleveur"
                               src="Images/profilEleveur.jpg"
                               className="product__item__pic set-bg"
                             />
@@ -134,7 +109,7 @@ class AllOffers extends Component {
                           <ul class="product__item__pic__hover">
                             <Link
                               key={Eleveurs._id}
-                              // onClick={this.componentMoutons(Eleveurs._id)}
+                              
                               to={{
                                 pathname: "/HomeSheepsParEleveur",
                                 state: {
@@ -156,20 +131,38 @@ class AllOffers extends Component {
                             </Link>
                           </ul>
                         </div>
-                        <div class="product__item__text">
-                          <h6>
-                            {Eleveurs.prenom + "         " + Eleveurs.nom}
-                          </h6>
+                        <br></br>
+                        <div id="txteFormat" class="product__item__text">
+                          <p>{Eleveurs.prenom + "         " + Eleveurs.nom}</p>
                           <h6>{"         " + Eleveurs.adresse}</h6>
-                          <h5>
-                            {"         " + Eleveurs.moutons.length} Têtes de
-                            moutons au total
-                          </h5>
+                          <p>
+                            {"         " + Eleveurs.Especes.length + " "}
+                            bêtes
+                          </p>
                         </div>
                       </div>
                     </div>
                   ))}
                 </div>
+                <br></br>
+
+                <div className="center-div">
+                  <nav className="row">
+                    <ul className="pagination center-div">
+                      {this.state.nombrePages.map((number) => (
+                        <li key={number} className="page-item stylePagination">
+                          <a
+                            onClick={() => this.paginate(number)}
+                            className="page-link"
+                          >
+                            {number}
+                          </a>
+                        </li>
+                      ))}
+                    </ul>
+                  </nav>
+                </div>
+                <br></br>
                 {/* <!-- Sheeps Grid Section End --> */}
               </div>
             </div>
@@ -179,5 +172,4 @@ class AllOffers extends Component {
     );
   }
 }
-
 export default AllOffers;

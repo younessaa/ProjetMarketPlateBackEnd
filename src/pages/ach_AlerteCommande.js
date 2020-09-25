@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import axios from "axios";
+import Swal from "sweetalert2";
 
 //import menu_eleveur from '/public/Images/eleveurs.png'; // with import
 
@@ -27,6 +28,7 @@ class AlerteCommande extends Component {
 
   componentDidMount() {
     const cmd = this.props.location.state.id;
+    const myToken = `Bearer ` + localStorage.getItem("myToken");
     // console.log(cmd)
     var currentdate = cmd.date_creation;
     var day = currentdate.getDate();
@@ -66,10 +68,11 @@ class AlerteCommande extends Component {
     });
 
     axios
-      .get("http://127.0.0.1:8000/api/mouton/" + cmd.id_mouton, {
+      .get("http://127.0.0.1:8000/api/Espece/" + cmd.id_espece, {
         headers: {
           // "x-access-token": token, // the token is a variable which holds the token
           "Content-Type": "application/json",
+          "Authorization": myToken,
         },
       })
 
@@ -83,29 +86,41 @@ class AlerteCommande extends Component {
 
   handlPost(e) {
     e.preventDefault();
-
+    const myToken = `Bearer ` + localStorage.getItem("myToken");
     axios
       .post("http://127.0.0.1:8000/api/commande", this.state.commande, {
         headers: {
           Accept: "application/json",
+          "Authorization": myToken,
         },
       })
       .then((res) => {
         axios
           .put(
-            "http://127.0.0.1:8000/api/mouton/" + this.state.commande.id_mouton,
+            "http://127.0.0.1:8000/api/Espece/" + this.state.commande.id_espece,
             {
               statut: "réservé",
               //   msg_refus_avance: this.state.dataUrl,
             },
             {
-              headers: { "Content-Type": "application/json" },
+              headers: { "Content-Type": "application/json",
+            "Authorization": myToken, },
             }
           )
           .then((res) => {
             this.props.history.push("/commandesParStatut");
           });
-        // this.props.history.push("/Commandes");
+          
+        Swal.fire({
+          title: "Commande validée",
+          text: "Finalisez votre commande dans Mes Commandes",
+          icon: "success",
+         
+          heightAuto: false,
+          confirmButtonColor: "#7fad39",
+
+          confirmButtonText: "Ok!",
+        });
       })
       .catch((err) => {
         console.log(err);
@@ -115,6 +130,10 @@ class AlerteCommande extends Component {
 
     //   // console.log('loged')
     // );
+  }
+
+  annulerCommande () {
+    Swal.fire("commande annulée");
   }
 
   render() {
@@ -130,7 +149,7 @@ class AlerteCommande extends Component {
             <div class="col-lg-12 col-md-6">
               <h3>Votre commande s'est déroulé avec succès</h3> <br></br>
               <h5>
-                Vous pouvez maintenant payer l'avance de votre mouton pour
+                Vous pouvez maintenant payer l'avance de votre bête pour
                 valider votre commande avec le moyen de paiement que vous avez
                 choisi précedement en vous munissant du numéro du RIB du
                 vendeur: <b>{this.state.rib}</b>
@@ -154,12 +173,23 @@ class AlerteCommande extends Component {
               </div>
               <div class="shoping__checkout">
                 <ul>
+                  <br></br>
                   <li>
-                    <a href="./Toutes" class="primary-btn">
+                    <a
+                      onClick={this.annulerCommande}
+                      href="./Toutes"
+                      class="primary-btn"
+                      id="aStyle"
+                    >
                       Annuler commande
                     </a>{" "}
                     <br></br>
-                    <a href="#" class="primary-btn" onClick={this.handlPost}>
+                    <a
+                      href="/commandesParStatut"
+                      class="primary-btn"
+                      onClick={this.handlPost}
+                      id="aStyle"
+                    >
                       Valider
                     </a>
                   </li>

@@ -13,10 +13,13 @@ class HomeSheepsElev extends Component {
 
   
   componentDidMount() {
+
+    const myToken = `Bearer ` + localStorage.getItem("myToken");
     // const ide = this.props.location.state.id;
-    axios.get("http://127.0.0.1:8000/api/mouton/", {
+    axios.get("http://127.0.0.1:8000/api/Espece/", {
       headers: {
         // "x-access-token": token, // the token is a variable which holds the token
+        "Authorization": myToken,
       },
       params: {
         id_eleveur: this.props.location.state.id,
@@ -47,12 +50,29 @@ class HomeSheepsElev extends Component {
               <div className="col-lg-3 col-md-5">
                 <div className="sidebar">
                   <div className="sidebar__item">
-                    <h4>Rechercher</h4>
+                    <h4>Rechercher bbb__</h4>
 
-                    <h6 class="latest-product__item">Prix</h6>
+                    <h6 id="gras" class="latest-product__item">
+                      Race
+                    </h6>
                     <div class="row">
                       <div class="col-lg-6 col-md-6">
                         <input
+                          id="recherchePlace"
+                          type="text"
+                          class="latest-product__item"
+                          placeholder="Choisissez la race"
+                        />
+                      </div>
+                    </div>
+
+                    <h6 id="gras" class="latest-product__item">
+                      Prix
+                    </h6>
+                    <div class="row">
+                      <div class="col-lg-6 col-md-6">
+                        <input
+                          id="recherchePlace"
                           type="text"
                           class="latest-product__item"
                           placeholder="Budget min"
@@ -62,6 +82,7 @@ class HomeSheepsElev extends Component {
                     <div class="row">
                       <div class="col-lg-6 col-md-6">
                         <input
+                          id="recherchePlace"
                           type="text"
                           class="latest-product__item"
                           placeholder="Budget max"
@@ -69,21 +90,11 @@ class HomeSheepsElev extends Component {
                       </div>
                     </div>
 
-                    <h6 class="latest-product__item">Race</h6>
+                    <h6 id="gras" class="latest-product__item">Poids Environ</h6>
                     <div class="row">
                       <div class="col-lg-6 col-md-6">
                         <input
-                          type="text"
-                          class="latest-product__item"
-                          placeholder="Choisissez la race"
-                        />
-                      </div>
-                    </div>
-
-                    <h6 class="latest-product__item">Poids Environ</h6>
-                    <div class="row">
-                      <div class="col-lg-6 col-md-6">
-                        <input
+                          id="recherchePlace"
                           type="text"
                           class="latest-product__item"
                           placeholder="Poids approximatif"
@@ -91,10 +102,11 @@ class HomeSheepsElev extends Component {
                       </div>
                     </div>
 
-                    <h6 class="latest-product__item">Ville</h6>
+                    <h6 id="gras" class="latest-product__item">Ville</h6>
                     <div class="row">
                       <div class="col-lg-6 col-md-6">
                         <input
+                        id="recherchePlace"
                           type="text"
                           class="latest-product__item"
                           placeholder="Ville"

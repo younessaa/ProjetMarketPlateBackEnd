@@ -3,15 +3,14 @@ import { login } from "./UserFunctions";
 import Swal from "sweetalert2";
 import axios from "axios";
 import Loader from "react-loader-spinner";
-class Login extends Component {
+class changePassword extends Component {
   constructor() {
     super();
     this.state = {
-      login: "",
-      password: "",
+      email: "",
       redirect: true,
-      loading : false,
-     // timeConnexion: new(Date),
+      loading: false,
+      // timeConnexion: new(Date),
     };
     this.onChange = this.onChange.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
@@ -20,53 +19,86 @@ class Login extends Component {
     this.setState({ [e.target.name]: e.target.value });
   }
 
-  componentDidMount() {
-    localStorage.removeItem("usertoken");
-    localStorage.removeItem("myToken");
-    localStorage.removeItem("expiredTimeToken");
-  }
 
   onSubmit(e) {
     e.preventDefault();
-    const user = {
-      login: this.state.login,
-      password: this.state.password,
-    };
-
+    const adress = this.state.email;
+    console.log(this.state.email)
     this.setState({ loading: true }, () => {
-    axios
-      .post("http://127.0.0.1:8000/api/login", user)
-      .then((res) => {
-        console.log(res.data.success.token.token.user_id);
-        localStorage.setItem("usertoken", res.data.success.token.token.user_id);
-        localStorage.setItem("myToken", res.data.success.token.accessToken);
-        localStorage.setItem(
-          "expiredTimeToken",
-          res.data.success.token.token.expires_at
-        );
+      axios
+        .post(
+          "http://127.0.0.1:8000/api/password/email",
+          { email: adress },
+          {
+            headers: {
+              // "Access-Control-Allow-Origin": "*",
+              "Content-Type": "application/json",
+              Accept: "application/json",
+              //Authorization: myToken,
+              // "Access-Control-Allow-Origin": "*",
+            },
+          }
+        )
+        .then((res) => {
+          this.props.history.push("/ToutesLesAnnonces");
+          this.setState({ loading: false });
+          Swal.fire({
+            title: "Email de réinitailisation envoyé",
+            text:
+              "Un lien vient de vous être envoyé par mail. Consulter votre boîte mail pour finaliser la réiniatisation de votre mot de passe.",
+            icon: "success",
+            width: 400,
+            heightAuto: false,
+            confirmButtonColor: "#7fad39",
 
-        // return res.data.success.token;
-        this.props.history.push("/ToutesLesAnnonces");
-        window.location.reload();
-        this.setState({loading:false});
-        // else
-        //   alert("Email or password was incorrect.");
-        // this.props.history.push("/login");
-      })
-      .catch((err) => {
-        this.setState({ loading: false });
-        console.log(err);
-        Swal.fire({
-         /* title: "Erreur de connection",*/
-          text: "Votre email ou mot de passe est incorrect",
-          icon: "error",
-          width: 400,
-          heightAuto: false,
-          confirmButtonColor: "#7fad39",
+            confirmButtonText: "Ok",
+          });
+        })
+        .catch((err) => {
+          this.setState({ loading: false });
+          console.log(err.response.data.error);
+          if (
+            err.response.data.error ===
+            "You have requested password reset recently, please check your email.."
+          ) {
+            Swal.fire({
+              /* title: "Erreur de connection",*/
+              text:
+                "Lien de réinitailisation déja envoyé sur votre adresse mail. Vérifiez votre boîte mail!",
+              icon: "info",
+              width: 400,
+              heightAuto: false,
+              confirmButtonColor: "#7fad39",
 
-          confirmButtonText: "Ok!",
+              confirmButtonText: "Ok",
+            });
+          } else if (
+            (err.response.data.error ===
+              "We can't find a user with that e-mail address.")
+          ) {
+            Swal.fire({
+              /* title: "Erreur de connection",*/
+              text: "Vous n'avez de compte avec cette adresse",
+              icon: "error",
+              width: 400,
+              heightAuto: false,
+              confirmButtonColor: "#7fad39",
+
+              confirmButtonText: "Ok",
+            });
+          } else {
+            Swal.fire({
+              title: "Oooops...",
+              text: "Erreur Serveur",
+              icon: "info",
+              width: 400,
+              heightAuto: false,
+              confirmButtonColor: "#7fad39",
+
+              confirmButtonText: "Ok",
+            });
+          }
         });
-      });
     });
   }
   render() {
@@ -94,7 +126,7 @@ class Login extends Component {
                     <div className="col-lg-12 col-md-12">
                       <center>
                         {" "}
-                        <br /> <h2 className="text-center">Se connecter</h2>
+                        <br /> <h2 className="text-center">Réinitialiser Mot de Passe</h2>
                       </center>
                       <br />
                       <br />{" "}
@@ -110,29 +142,13 @@ class Login extends Component {
                             type="text"
                             placeholder="Email "
                             aria-hidden="true"
-                            name="login"
+                            name="email"
                             onChange={this.onChange}
                           />
                         </div>
                       </div>
                       <p></p>
-                      <div className="row">
-                        <div id="LoginIcon" className="col-lg-1 col-md-1">
-                          <p></p>
-                          <span class="symbol-input100">
-                            <i class="fa fa-lock" aria-hidden="true"></i>
-                          </span>{" "}
-                        </div>
-                        <div id="LoginIcon" className="col-lg-11 col-md-11">
-                          <input
-                            type="password"
-                            placeholder="Password"
-                            name="password"
-                            onChange={this.onChange}
-                          />
-                        </div>
-                      </div>
-                      <p></p>
+                     
                     </div>
                     <p></p>
                     <div className="col-lg-12 text-center">
@@ -156,27 +172,13 @@ class Login extends Component {
                         </div>
                       ) : (
                         <button type="submit" className="site-btn">
-                          Se connecter
+                          Valider
                         </button>
                       )}
                       <p></p>
                     </div>
-                    <div className="col-lg-12 text-center">
-                      <a type="submit" href="/register" className="site-btn1">
-                        S'inscrire
-                      </a>
-                    </div>
-                    <div>
-                      <br />
-                      <i className="text-right">
-                        Mot de passe oublié ? Vous
-                        pouvez créer un nouveau.{" "}
-                      </i>
-
-                      <a type="submit" href="/changePassword">
-                        Réinitialiser
-                      </a>
-                    </div>
+                    
+                    
                   </div>
                 </center>
               </form>
@@ -187,4 +189,4 @@ class Login extends Component {
     );
   }
 }
-export default Login;
+export default changePassword;

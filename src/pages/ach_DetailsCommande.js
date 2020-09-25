@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import { withRouter } from "react-router-dom";
 import { Redirect } from "react-router";
+import Swal from "sweetalert2";
 import axios from "axios";
 class DetailsCommande extends Component {
   constructor(props) {
@@ -28,15 +29,15 @@ class DetailsCommande extends Component {
 
   onClickImageBoucle() {
     const cmd = this.props.location.state.id;
-    this.setState({ image: cmd.mouton.image_boucle });
+    this.setState({ image: cmd.espece.image_boucle });
   }
   onClickImageProfile() {
     const cmd = this.props.location.state.id;
-    this.setState({ image: cmd.mouton.image_profile });
+    this.setState({ image: cmd.espece.image_profile });
   }
   onClickImageFace() {
     const cmd = this.props.location.state.id;
-    this.setState({ image: cmd.mouton.image_face });
+    this.setState({ image: cmd.espece.image_face });
   }
 
   componentDidMount() {
@@ -74,7 +75,7 @@ class DetailsCommande extends Component {
     // console.log(cmd)
     this.setState({
       commandes: cmd,
-      image: cmd.mouton.image_face,
+      image: cmd.espece.image_face,
       date: datetime,
     });
 
@@ -116,39 +117,75 @@ class DetailsCommande extends Component {
 
   handelDelete() {
     // const token = localStorage.getItem("usertoken");
+     const myToken = `Bearer ` + localStorage.getItem("myToken");
     // if (!token) {
     //   this.props.history.push("/login");
-    // } else {
-    if (window.confirm(`  ... !`)) {
+    const swalWithBootstrapButtons = Swal.mixin({
+      customClass: {
+        confirmButton: "btn btn-success",
+        cancelButton: "btn btn-danger",
+      },
+      buttonsStyling: false,
+    });
+
+    swalWithBootstrapButtons.fire({
+      title: "Etes-vous sûr?",
+      text: "Voulez-vous annuler votre commande!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "  Oui!  ",
+      cancelButtonText: "  Non!  ",
+      reverseButtons: true,
+    }).then((result) => {
+  if (result.isConfirmed) {
+      //debut
       axios
         .delete(
           "http://127.0.0.1:8000/api/commande/" + this.state.commandes._id,
           {
             headers: {
               // "x-access-token": token, // the token is a variable which holds the token
+              "Authorization": myToken,
             },
           }
         )
         .then((res) => {
           axios
             .put(
-              "http://127.0.0.1:8000/api/mouton/" +
-                this.state.commandes.id_mouton,
+              "http://127.0.0.1:8000/api/Espece/" +
+                this.state.commandes.id_espece,
               {
                 statut: "disponible",
                 //   msg_refus_avance: this.state.dataUrl,
               },
               {
-                headers: { "Content-Type": "application/json" },
+                headers: { "Content-Type": "application/json",
+              "Authorization": myToken,},
               }
             )
             .then((res) => {
+
               // this.props.history.replace("/commandesParStatut");
               this.setState({ redirect: true });
-            });
-        });
-    } else {
-    }
+            });swalWithBootstrapButtons.fire(
+      'Annulation !',
+      'Votre commande a bien été annulée',
+      'success'
+    ) 
+        }); 
+
+//fin
+    } else if (
+    /* Read more about handling dismissals below */
+    result.dismiss === Swal.DismissReason.cancel
+  ) {
+    swalWithBootstrapButtons.fire(
+      'Annulation',
+      'Commande non annulée !',
+      'error'
+    )
+  }
+})
   }
 
   render() {
@@ -159,20 +196,15 @@ class DetailsCommande extends Component {
 
     const commandes = this.props.location.state.id;
     console.log(commandes);
-    // let commandes = "";
-    // if (this.props.location.state.id !== undefined) {
-    //   commandes = this.props.location.state.id;
-    //   localStorage.setItem("commandes", commandes);
-    // } else {
-    //   commandes = localStorage.getItem("commandes");
-    // }
-    // // localStorage.setItem("commandes", res.data.success.token.token.user_id);
-    //  { console.log(this.state.commandes.mouton)}
+    
     return (
       <div>
-        <section class="product-details spad">
-          <div class="container">
+        <div class="container">
+          <h3>Détails commande</h3>
+          <br></br>
+          <div>
             <div className="row">
+              <h3></h3>
               <div class="col-lg-6 col-md-6">
                 <div class="product__details__pic">
                   <div class="product__details__pic__item">
@@ -189,21 +221,21 @@ class DetailsCommande extends Component {
                         <img
                           className="col-lg-4 col-md-4"
                           // data-imgbigurl="Images/1.jpg"
-                          src={commandes.mouton.image_boucle}
+                          src={commandes.espece.image_boucle}
                           alt=""
                           onClick={this.onClickImageBoucle}
                         />
                         <img
                           className="col-lg-4 col-md-4"
                           // data-imgbigurl="Images/1.jpg"
-                          src={commandes.mouton.image_face}
+                          src={commandes.espece.image_face}
                           alt=""
                           onClick={this.onClickImageFace}
                         />
                         <img
                           className="col-lg-4 col-md-4"
                           // data-imgbigurl="Images/1.jpg"
-                          src={commandes.mouton.image_profile}
+                          src={commandes.espece.image_profile}
                           alt=""
                           onClick={this.onClickImageProfile}
                         />
@@ -214,73 +246,85 @@ class DetailsCommande extends Component {
               </div>
               <div className="col-lg-6 col-md-6">
                 <div className="product__details__text">
-                  <h3>Détails commande</h3>
-                  <h4>
-                    Réf : <span>{commandes._id} </span>
-                  </h4>
-                  <div class="product__details__price">{commandes.statut}</div>
+                  <div id="gris">
+                    <h4 id="centrerT">
+                      Réf : <span>{commandes._id} </span>
+                    </h4>
+                    <div id="centrerT" class="product__details__price">
+                      {commandes.statut}
+                    </div>
+                  </div>
+                  <br></br>
                   {this.state.showBtnAnnuler ? (
                     <div>
                       {/* <a  href="#" class="primary-btn" onClick={this.handelDelete}>
                         Annuler commande
                       </a> */}
-                      <button class="primary-btn" onClick={this.handelDelete}>
+                      <button
+                        id="centre"
+                        class="primary-btn"
+                        onClick={this.handelDelete}
+                      >
                         {" "}
                         Annuler commande{" "}
                       </button>
                     </div>
                   ) : null}
+                  <br></br>
+                  <div id="centrer" className="container">
+                    <ul>
+                      <li>
+                        <b>Effectuée le </b>
+                        <span>{commandes.date_creation.toLocaleString()}</span>
+                      </li>
+                      <li>
+                        <b>Boucle</b> <span>{commandes.espece.boucle}</span>
+                      </li>
+                      <li>
+                        <b>Race</b> <span>{commandes.espece.race}</span>
+                      </li>
+                      <li>
+                        <b>Poids</b> <span>{commandes.espece.poids} Kg</span>
+                      </li>
+                      <li>
+                        <b>Age</b> <span>{commandes.espece.age} mois</span>
+                      </li>
+
+                      <li>
+                        <b>Avance</b>
+                        <span>{commandes.espece.avance} MAD</span>
+                      </li>
+                      <li>
+                        <b>Eleveur</b>
+                        {commandes.eleveur.nom + " " + commandes.eleveur.prenom}
+                      </li>
+                      <li>
+                        <b>Numéro du RIB</b>
+                        {commandes.eleveur.rib}
+                      </li>
+
+                      <li className="bg-ligh text-danger h6 center">
+                        <b>Prix total</b>
+                        {commandes.espece.prix} MAD
+                      </li>
+                    </ul>
+                  </div>
+
                   <ul>
-                    <li>
-                      <b>Effectuée le </b>
-                      <span>{commandes.date_creation.toLocaleString()}</span>
-                    </li>
-                    <li>
-                      <b>Boucle</b> <span>{commandes.mouton.boucle}</span>
-                    </li>
-                    <li>
-                      <b>Race</b> <span>{commandes.mouton.race}</span>
-                    </li>
-                    <li>
-                      <b>Poids</b> <span>{commandes.mouton.poids} Kg</span>
-                    </li>
-                    <li>
-                      <b>Age</b> <span>{commandes.mouton.age} mois</span>
-                    </li>
-
-                    <li>
-                      <b>Avance</b>
-                      <span>{commandes.mouton.avance} MAD</span>
-                    </li>
-                    <li>
-                      <b>Eleveur</b>
-                      {commandes.eleveur.nom + " " + commandes.eleveur.prenom}
-                    </li>
-                    <li>
-                      <b>Numéro du RIB</b>
-                      {commandes.eleveur.rib}
-                    </li>
-
-                    <li className="bg-ligh text-danger h6 center">
-                      <b>Prix total</b>
-                      {commandes.mouton.prix} MAD
-                    </li>
-                  </ul>
-
-                  <ul>
-                    <li className="bg-ligh text-danger h6 center">
-                      <b>A livrer</b>
+                    <li className="bg-ligh text-danger h4 center">
+                      <b>A livrer : </b>
                       La veille de l'Aid
                     </li>
-                    <li className="bg-ligh text-danger h6 center">
-                      <b>Au point de relais </b>
+                    <li className="bg-ligh text-danger h4 center">
+                      <b>Au point de relais : </b>
                       <span>{commandes.point_relais}</span>
                     </li>
                   </ul>
                 </div>
               </div>
             </div>
-
+          </div>
+          <div class="container">
             <div className="row">
               <div className="col-lg-6 col-md-6">
                 <div className="product__details__text">
@@ -352,14 +396,14 @@ class DetailsCommande extends Component {
                                 state: {
                                   id: {
                                     idc: commandes._id,
-                                    idm: commandes.id_mouton,
+                                    idm: commandes.id_espece,
                                     email: commandes.consommateur.email,
                                   },
                                 },
                               }}
                             >
                               {" "}
-                              <a href="" class="primary-btn">
+                              <a href="" id="roundB" class="primary-btn">
                                 Importer votre reçu
                               </a>{" "}
                             </Link>
@@ -425,7 +469,7 @@ class DetailsCommande extends Component {
                                 state: {
                                   id: {
                                     idc: commandes._id,
-                                    idm: commandes.id_mouton,
+                                    idm: commandes.id_espece,
                                     email: commandes.consommateur.email,
                                   },
                                 },
@@ -445,7 +489,7 @@ class DetailsCommande extends Component {
               </div>
             </div>
           </div>
-        </section>
+        </div>
       </div>
     );
   }

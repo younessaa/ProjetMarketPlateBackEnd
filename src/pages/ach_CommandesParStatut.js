@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
-
+// import blu from ;
 
 class CommandesParStatut extends Component {
   constructor(props) {
@@ -119,8 +119,11 @@ class CommandesParStatut extends Component {
                       {" "}
                       <div id="cadre" class="featured__item">
                         <div
-                          class="featured__item__pic set-bg"
-                          data-setbg="Images/bg_purple.jpg"
+                          class="featured__item__pic"
+                          // data-setbg="Images/bg_purple.jpg"
+                          style={{
+                            backgroundImage: "url("+ require("./Images/bg_purple.jpg")+")"
+                          }}
                           padding-left="10px"
                           padding-right="10px"
                         >
@@ -161,8 +164,11 @@ class CommandesParStatut extends Component {
                     >
                       <div id="cadre" class="featured__item">
                         <div
-                          class="featured__item__pic set-bg"
-                          data-setbg="Images/bg_red.jpg"
+                          class="featured__item__pic"
+                          // data-setbg="Images/bg_red.jpg"
+                          style={{
+                            backgroundImage: "url("+ require("./Images/bg_red.jpg")+")"
+                          }}
                           padding-left="10px"
                           padding-right="10px"
                         >
@@ -198,8 +204,13 @@ class CommandesParStatut extends Component {
                     >
                       <div id="cadre" class="featured__item">
                         <div
-                          class="featured__item__pic set-bg"
-                          data-setbg="Images/bg_bleu.jpg"
+                         style={{
+                            backgroundImage: "url("+ require("./Images/bg_bleu.jpg")+")"
+                          }}
+                          class="featured__item__pic "
+                          // data-setbg="Images/bg_bleu.jpg"
+                         
+
                           padding-left="10px"
                           padding-right="10px"
                         >
@@ -235,8 +246,11 @@ class CommandesParStatut extends Component {
                     >
                       <div id="cadre" class="featured__item">
                         <div
-                          class="featured__item__pic set-bg"
-                          data-setbg="Images/bg_orange.jpg"
+                          class="featured__item__pic "
+                          // data-setbg="Images/bg_orange.jpg"
+                          style={{
+                            backgroundImage: "url("+ require("./Images/bg_orange.jpg")+")"
+                          }}
                           padding-left="10px"
                           padding-right="10px"
                         >
@@ -271,8 +285,11 @@ class CommandesParStatut extends Component {
                     >
                       <div id="cadre" class="featured__item">
                         <div
-                          class="featured__item__pic set-bg"
-                          data-setbg="Images/bg_green.png"
+                          class="featured__item__pic "
+                          // data-setbg="Images/bg_green.png"
+                          style={{
+                            backgroundImage: "url("+ require("./Images/bg_green.png")+")"
+                          }}
                           padding-left="10px"
                           padding-right="10px"
                         >
@@ -310,8 +327,11 @@ class CommandesParStatut extends Component {
                     >
                       <div id="cadre" class="featured__item">
                         <div
-                          class="featured__item__pic set-bg"
-                          data-setbg="Images/bg_red1.jpg"
+                          class="featured__item__pic "
+                          // data-setbg="Images/bg_red1.jpg"
+                          style={{
+                            backgroundImage: "url("+ require("./Images/bg_red1.jpg")+")"
+                          }}
                           padding-left="10px"
                           padding-right="10px"
                         >
@@ -347,8 +367,11 @@ class CommandesParStatut extends Component {
                     >
                       <div id="cadre" class="featured__item">
                         <div
-                          class="featured__item__pic set-bg"
-                          data-setbg="Images/bg_bleu1.png"
+                          class="featured__item__pic "
+                          // data-setbg="Images/bg_bleu1.png"
+                          style={{
+                            backgroundImage: "url("+ require("./Images/bg_bleu1.png")+")"
+                          }}
                           padding-left="10px"
                           padding-right="10px"
                         >
@@ -386,8 +409,11 @@ class CommandesParStatut extends Component {
                     >
                       <div id="cadre" class="featured__item">
                         <div
-                          class="featured__item__pic set-bg"
-                          data-setbg="Images/bg_orange1.jpg"
+                          class="featured__item__pic"
+                          // data-setbg="Images/bg_orange1.jpg"
+                          style={{
+                            backgroundImage: "url("+ require("./Images/bg_orange1.jpg")+")"
+                          }}
                           padding-left="10px"
                           padding-right="10px"
                         >
@@ -420,8 +446,11 @@ class CommandesParStatut extends Component {
                     >
                       <div id="cadre" class="featured__item">
                         <div
-                          class="featured__item__pic set-bg"
-                          data-setbg="Images/bg_green1.jpg"
+                          class="featured__item__pic "
+                          // data-setbg="Images/bg_green1.jpg"
+                          style={{
+                            backgroundImage: "url("+ require("./Images/bg_green1.jpg")+")"
+                          }}
                           padding-left="10px"
                           padding-right="10px"
                         >

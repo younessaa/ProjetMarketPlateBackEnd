@@ -223,7 +223,7 @@ class Header extends Component {
                       <a>Espèces</a>
                       <ul class="header__menu__dropdown">
                         <li>
-                          <a href="./mouton">Ovins</a>
+                          <a href="./">Ovins</a>
                         </li>
                         <li>
                           <a href="./">Bovins</a>
@@ -247,7 +247,7 @@ class Header extends Component {
                           </li>
 
                           <li>
-                            <a className="Header" href="basket.html">
+                            <a className="Header" href="./panier">
                               <i class="fa fa-shopping-cart"></i>
                               <span> Pannier</span>
                             </a>

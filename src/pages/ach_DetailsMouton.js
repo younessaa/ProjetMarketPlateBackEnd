@@ -44,7 +44,7 @@ class DetailsMouton extends Component {
     this.setState({ image: this.state.Espece.image_boucle });
   }
   onClickImageProfile() {
-    this.setState({ image: this.state.Espce.image_profile });
+    this.setState({ image: this.state.Espece.image_profile });
   }
   onClickImageFace() {
     this.setState({ image: this.state.Espece.image_face });

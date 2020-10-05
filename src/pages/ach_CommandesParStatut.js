@@ -2,12 +2,13 @@ import React, { Component } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 // import blu from ;
-
+import Loader from "react-loader-spinner";
 class CommandesParStatut extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
+      loading: true,
       Commandes: [],
       redirect: false,
     };
@@ -46,29 +47,36 @@ class CommandesParStatut extends Component {
       this.props.history.push("/login");
     } else {
       // console.log(token);
-      axios
-        .get("http://127.0.0.1:8000/api/commande", {
-          headers: {
-            // "x-access-token": token, // the token is a variable which holds the token
-            "Content-Type": "application/json",
-            Authorization: myToken,
-          },
-          params: {
-            id_consommateur: token,
-            order_by: "date_creation",
-            order_mode: "asc",
-          },
-        })
+      this.setState({ loading: true }, () => {
+        axios
+          .get("http://127.0.0.1:8000/api/commande", {
+            headers: {
+              // "x-access-token": token, // the token is a variable which holds the token
+              "Content-Type": "application/json",
+              Authorization: myToken,
+            },
+            params: {
+              id_consommateur: token,
+              order_by: "date_creation",
+              order_mode: "asc",
+            },
+          })
 
-        .then((res) => {
-          this.setState({
-            Commandes: res.data,
+          .then((res) => {
+            this.setState({
+              Commandes: res.data,
+              loading: false,
+            });
           });
-        });
+      });
     }
+
+
+
   }
 
   render() {
+    const { loading } = this.state;
     const cmdDeadlineDépassé = this.state.Commandes.filter(
       (Commandes) => Commandes.statut === "commande annulée (deadline dépassé)"
     );
@@ -102,6 +110,25 @@ class CommandesParStatut extends Component {
 
     return (
       <div>
+        {loading ? (
+                    <div
+                      style={{
+                        width: "100%",
+                        height: "100",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                      }}
+                    > 
+                    <br></br>
+                      <Loader
+                        type="Oval"
+                        color="#7fad39"
+                        height="80"
+                        width="80"
+                      />
+                    </div>
+                  ) : (
         <center>
           <div>
             <section className="featured spad">
@@ -122,7 +149,7 @@ class CommandesParStatut extends Component {
                           class="featured__item__pic"
                           // data-setbg="Images/bg_purple.jpg"
                           style={{
-                            backgroundImage: "url("+ require("./Images/bg_purple.jpg")+")"
+                            backgroundImage: "url(" + require("./Images/bg_purple.jpg") + ")"
                           }}
                           padding-left="10px"
                           padding-right="10px"
@@ -167,7 +194,7 @@ class CommandesParStatut extends Component {
                           class="featured__item__pic"
                           // data-setbg="Images/bg_red.jpg"
                           style={{
-                            backgroundImage: "url("+ require("./Images/bg_red.jpg")+")"
+                            backgroundImage: "url(" + require("./Images/bg_red.jpg") + ")"
                           }}
                           padding-left="10px"
                           padding-right="10px"
@@ -204,12 +231,12 @@ class CommandesParStatut extends Component {
                     >
                       <div id="cadre" class="featured__item">
                         <div
-                         style={{
-                            backgroundImage: "url("+ require("./Images/bg_bleu.jpg")+")"
+                          style={{
+                            backgroundImage: "url(" + require("./Images/bg_bleu.jpg") + ")"
                           }}
                           class="featured__item__pic "
                           // data-setbg="Images/bg_bleu.jpg"
-                         
+
 
                           padding-left="10px"
                           padding-right="10px"
@@ -249,7 +276,7 @@ class CommandesParStatut extends Component {
                           class="featured__item__pic "
                           // data-setbg="Images/bg_orange.jpg"
                           style={{
-                            backgroundImage: "url("+ require("./Images/bg_orange.jpg")+")"
+                            backgroundImage: "url(" + require("./Images/bg_orange.jpg") + ")"
                           }}
                           padding-left="10px"
                           padding-right="10px"
@@ -288,7 +315,7 @@ class CommandesParStatut extends Component {
                           class="featured__item__pic "
                           // data-setbg="Images/bg_green.png"
                           style={{
-                            backgroundImage: "url("+ require("./Images/bg_green.png")+")"
+                            backgroundImage: "url(" + require("./Images/bg_green.png") + ")"
                           }}
                           padding-left="10px"
                           padding-right="10px"
@@ -330,7 +357,7 @@ class CommandesParStatut extends Component {
                           class="featured__item__pic "
                           // data-setbg="Images/bg_red1.jpg"
                           style={{
-                            backgroundImage: "url("+ require("./Images/bg_red1.jpg")+")"
+                            backgroundImage: "url(" + require("./Images/bg_red1.jpg") + ")"
                           }}
                           padding-left="10px"
                           padding-right="10px"
@@ -370,7 +397,7 @@ class CommandesParStatut extends Component {
                           class="featured__item__pic "
                           // data-setbg="Images/bg_bleu1.png"
                           style={{
-                            backgroundImage: "url("+ require("./Images/bg_bleu1.png")+")"
+                            backgroundImage: "url(" + require("./Images/bg_bleu1.png") + ")"
                           }}
                           padding-left="10px"
                           padding-right="10px"
@@ -412,7 +439,7 @@ class CommandesParStatut extends Component {
                           class="featured__item__pic"
                           // data-setbg="Images/bg_orange1.jpg"
                           style={{
-                            backgroundImage: "url("+ require("./Images/bg_orange1.jpg")+")"
+                            backgroundImage: "url(" + require("./Images/bg_orange1.jpg") + ")"
                           }}
                           padding-left="10px"
                           padding-right="10px"
@@ -449,7 +476,7 @@ class CommandesParStatut extends Component {
                           class="featured__item__pic "
                           // data-setbg="Images/bg_green1.jpg"
                           style={{
-                            backgroundImage: "url("+ require("./Images/bg_green1.jpg")+")"
+                            backgroundImage: "url(" + require("./Images/bg_green1.jpg") + ")"
                           }}
                           padding-left="10px"
                           padding-right="10px"
@@ -482,6 +509,7 @@ class CommandesParStatut extends Component {
             </section>
           </div>
         </center>
+        )}
       </div>
     );
   }

@@ -64,6 +64,7 @@ class Commandes extends Component {
     if (!token || expiredTimeToken < formatted_date) {
       this.props.history.push("/login");
     } else {
+      this.setState({ loading: true }, () => {  
       axios
         .get("http://127.0.0.1:8000/api/consommateur/" + token + "/favoris", {
           headers: {
@@ -76,6 +77,7 @@ class Commandes extends Component {
           this.setState(
             {
               Favoris: res.data,
+              loading: false,
             },
             () => console.log("in call" + this.state.Favoris)
           );
@@ -89,7 +91,7 @@ class Commandes extends Component {
             pageNumbers.push(i);
           }
           this.setState({ nombrePages: pageNumbers });
-        });
+        });});
     }
   }
 
@@ -149,6 +151,25 @@ class Commandes extends Component {
                     <span>{titre}</span>
                   </h6>
                 </div>
+                {loading ? (
+                    <div
+                      style={{
+                        width: "100%",
+                        height: "100",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                      }}
+                    >
+                      <Loader
+                        type="Oval"
+                        color="#7fad39"
+                        height="80"
+                        width="80"
+                      />
+                    </div>
+                  ) : (
+                <div>
                 <div class="row">
                   {fav.map((Annonces) => (
                     //  {if(Annonces){}}
@@ -190,6 +211,7 @@ class Commandes extends Component {
                     </div>
                   ))}
                 </div>
+                </div>)}
                 <div className="center-div">
                   <nav className="row">
                     <ul className="pagination center-div">
@@ -206,9 +228,10 @@ class Commandes extends Component {
                     </ul>
                   </nav>
                 </div>
+                 
                 <br></br>
                 {/* <!-- Sheeps Grid Section End --> */}
-              </div>
+              </div> 
             </div>
           </div>
         </section>

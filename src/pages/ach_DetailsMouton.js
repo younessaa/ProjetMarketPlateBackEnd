@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { Link } from "react-router-dom";
+import Loader from "react-loader-spinner";
 import {
   EmailShareButton,
   EmailIcon,
@@ -21,6 +22,7 @@ class DetailsMouton extends Component {
     super();
     // let redirect = false;
     this.state = {
+      loading: true,
       Espece: {},
       eleveur: {},
       Favoris: [],
@@ -56,7 +58,7 @@ class DetailsMouton extends Component {
      const token = localStorage.getItem("usertoken");
      const myToken = `Bearer ` + localStorage.getItem("myToken");
         
-
+     this.setState({ loading: true }, () => {
     axios
       .get("http://127.0.0.1:8000/api/Espece/" + idm, {
         headers: {
@@ -69,6 +71,8 @@ class DetailsMouton extends Component {
           Espece: res.data.objet,
           eleveur: res.data.Eleveur[0],
           image: res.data.objet.image_profile,
+          loading: false,
+
         });
         if (res.data.objet.statut === "disponible") {
           this.setState({ isDispo: true });
@@ -80,7 +84,7 @@ class DetailsMouton extends Component {
         // }
         // console.log(res);
       });
-
+    });
     //-------------------favoris--------------------------//
    
 
@@ -245,9 +249,29 @@ class DetailsMouton extends Component {
   }
 
   render() {
+    const { loading } = this.state;
     const shareUrl = "http://localhost:3000/DetailsEspece";
     return (
       <div>
+          {loading ? (
+                    <div
+                      style={{
+                        width: "100%",
+                        height: "100",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                      }}
+                    > 
+                    <br></br>
+                      <Loader
+                        type="Oval"
+                        color="#7fad39"
+                        height="80"
+                        width="80"
+                      />
+                    </div>
+                  ) : (
         <section class="product-details spad">
           <div class="container">
             <div className="row">
@@ -502,6 +526,7 @@ class DetailsMouton extends Component {
             </div>
           </div>
         </section>
+         )}
       </div>
     );
   }

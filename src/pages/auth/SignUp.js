@@ -66,20 +66,19 @@ class SignUp extends Component {
            .then((res) => {
             
              const to = this.state.email;
+             const url='http://www.anoc.ma';
              //const myToken = `Bearer ` + localStorage.getItem("myToken");
              const content =
-               "votre compte a été créé votre mot de passe est:" +
-               this.state.password;
-             const subject = "votre compte ANOC MARKETPLACE a été créé  ";
+             "Bonjour "+this.state.prenom+",\nMerci de vous étre inscrit sur LA Marketplace MyANOC . Nous sommes ravis de vous compter parmis nos clients!\nAvec nous, vous bénéficierez de:\nLes meilleurs prix au Maroc\nUne expérience shopping pratique\nNous vous invitons à profiter de votre liberté de acheter n'importe quand! Asseyez-vous et détendez-vous alors que nous nous efforçons de transformer votre expérience d'achat quotidienne en une expérience d’achat exceptionnelle.\nBonne journée,\n\nANOC\nAssociation Nationale des ovins et caprins\n"+url;
+             const subject = "Votre compte ANOC MARKETPLACE a été créé  ";
              axios
                .post(
                  "http://127.0.0.1:8000/api/sendmail/" +
                    to +
                    "/" +
-                   content +
-                   "/" +
+                    
                    subject,
-                 {
+                 {"messagee":content},{
                    headers: {
                      Accept: "application/json",
                      "Content-Type": "application/json",

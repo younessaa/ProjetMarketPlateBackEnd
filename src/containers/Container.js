@@ -62,7 +62,7 @@ class Container extends Component {
               <Route exact path="/login" component={login} />
               <Route exact path="/register" component={register} />
               <Route exact path="/changePassword" component={changePassword} />
-              <Route exact path="/changePasswordLink" component={changePassword} />
+              <Route exact path="/changePasswordLink" component={changePasswordLink} />
               <Route exact path="/" component={ToutesLesAnnonces} />
               <Route
                 exact

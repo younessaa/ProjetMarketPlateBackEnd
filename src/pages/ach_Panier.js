@@ -1,5 +1,7 @@
 import React, { Component } from "react";
 import axios from "axios";
+import Swal from "sweetalert2";
+
 import { Link } from "react-router-dom";
 import Loader from "react-loader-spinner";
 class Commandes extends Component {
@@ -73,7 +75,8 @@ class Commandes extends Component {
               Authorization: myToken,
             },
           })
-          .then((res) => {
+          .then((res) => {            
+
             this.setState(
               {
                 Favoris: res.data,
@@ -106,23 +109,48 @@ class Commandes extends Component {
     // console.log(Mid);
     const token = localStorage.getItem("usertoken");
     const myToken = `Bearer ` + localStorage.getItem("myToken");
-    if (!token) {
+     if (!token) {
       this.props.history.push("/login");
     } else {
-      // console.log(token);
+     
+       console.log(localStorage.getItem("myToken"));
+
       axios
         .put(
           "http://127.0.0.1:8000/api/consommateur/" + token + "/panier/" + Mid,
+          {  },
           {
             headers: {
-              "Content-Type": "application/json",
+              //"Content-Type": "application/json",
+
               Authorization: myToken,
             },
           }
         )
-        .then(this.props.history.push("ToutesLesAnnonces"));
-    }
-  }
+        .then(()=>{
+          this.setState(
+            {
+              Favoris: this.state.Favoris.filter(
+                (Favoris) => Favoris._id !== Mid
+              ),
+            });
+            this.props.history.push("/Panier")
+
+          });
+          Swal.fire({
+            title: "Supprimé avec succès ",
+            icon: "success",
+            width: 400,
+            heightAuto: false,
+            timer: 1500,
+            showConfirmButton: false,
+            /* confirmButtonColor: "#7fad39",
+    
+            confirmButtonText: "Ok!",*/
+          });
+    
+    
+  }}
 
   paginate(pageNumber) {
     this.setState({ currentPage: pageNumber });

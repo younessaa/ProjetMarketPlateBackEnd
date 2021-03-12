@@ -10,14 +10,18 @@ class Login extends Component {
       login: "",
       password: "",
       redirect: true,
-      loading : false,
-     // timeConnexion: new(Date),
+      loading: false,
+      isChecked: false,
+      // timeConnexion: new(Date),
     };
     this.onChange = this.onChange.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
   }
   onChange(e) {
     this.setState({ [e.target.name]: e.target.value });
+  }
+  handleChecked() {
+    this.setState({ isChecked: !this.state.isChecked });
   }
 
   componentDidMount() {
@@ -34,39 +38,39 @@ class Login extends Component {
     };
 
     this.setState({ loading: true }, () => {
-    axios
-      .post("http://127.0.0.1:8000/api/login", user)
-      .then((res) => {
-        console.log(res.data.success.token.token.user_id);
-        localStorage.setItem("usertoken", res.data.success.token.token.user_id);
-        localStorage.setItem("myToken", res.data.success.token.accessToken);
-        localStorage.setItem(
-          "expiredTimeToken",
-          res.data.success.token.token.expires_at
-        );
+      axios
+        .post("http://127.0.0.1:8000/api/login", user)
+        .then((res) => {
+          console.log(res.data.success.token.token.user_id);
+          localStorage.setItem("usertoken", res.data.success.token.token.user_id);
+          localStorage.setItem("myToken", res.data.success.token.accessToken);
+          localStorage.setItem(
+            "expiredTimeToken",
+            res.data.success.token.token.expires_at
+          );
 
-        // return res.data.success.token;
-        this.props.history.push("/ToutesLesAnnonces");
-        window.location.reload();
-        this.setState({loading:false});
-        // else
-        //   alert("Email or password was incorrect.");
-        // this.props.history.push("/login");
-      })
-      .catch((err) => {
-        this.setState({ loading: false });
-        console.log(err);
-        Swal.fire({
-         /* title: "Erreur de connection",*/
-          text: "Votre email ou mot de passe est incorrect",
-          icon: "error",
-          width: 400,
-          heightAuto: false,
-          confirmButtonColor: "#7fad39",
+          // return res.data.success.token;
+          this.props.history.push("/ToutesLesAnnonces");
+          window.location.reload();
+          this.setState({ loading: false });
+          // else
+          //   alert("Email or password was incorrect.");
+          // this.props.history.push("/login");
+        })
+        .catch((err) => {
+          this.setState({ loading: false });
+          console.log(err);
+          Swal.fire({
+            /* title: "Erreur de connection",*/
+            text: "Votre email ou mot de passe est incorrect",
+            icon: "error",
+            width: 400,
+            heightAuto: false,
+            confirmButtonColor: "#7fad39",
 
-          confirmButtonText: "Ok!",
+            confirmButtonText: "Ok!",
+          });
         });
-      });
     });
   }
   render() {
@@ -108,7 +112,7 @@ class Login extends Component {
                         <div id="LoginIcon" className="col-lg-11 col-md-11">
                           <input
                             type="text"
-                            placeholder="Email "
+                            placeholder="Email / Téléphone "
                             aria-hidden="true"
                             name="login"
                             onChange={this.onChange}
@@ -131,8 +135,18 @@ class Login extends Component {
                             onChange={this.onChange}
                           />
                         </div>
+                        <div class="custom-control custom-checkbox mt-3">
+                          <input type="checkbox" class="custom-control-input" id="checkbox-1"  onChange={() => this.handleChecked()} checked={this.state.isChecked}/>
+                          <label class="custom-control-label" for="checkbox-1"  onChange={() => this.handleChecked()}>
+                            <i className="text-right">Se souvenir de moi </i>
+                             </label>
+                        </div>
                       </div>
-                      <p></p>
+                      <p>
+
+
+
+                      </p>
                     </div>
                     <p></p>
                     <div className="col-lg-12 text-center">

@@ -10,9 +10,6 @@ import {
   EmailIcon,
   FacebookShareButton,
   FacebookIcon,
-  FacebookShareCount,
-  FacebookMessengerShareButton,
-  FacebookMessengerIcon,
   WhatsappShareButton,
   WhatsappIcon,
   TwitterShareButton,
@@ -109,7 +106,6 @@ class DetailsMouton extends Component {
         .then((res) => {
           var fav = res.data;
           var favoris = fav.filter((fav) => fav._id == idm);
-          console.log(res.data);
           this.setState({
             Favoris: favoris,
           });
@@ -136,7 +132,6 @@ class DetailsMouton extends Component {
         .then((res) => {
           var fav = res.data;
           var favoris = fav.filter((fav) => fav._id == idm);
-          console.log(res.data);
           this.setState(
             {
               Panier: favoris,
@@ -151,13 +146,11 @@ class DetailsMouton extends Component {
   }
 
   handleFavoris(Mid) {
-    console.log("idm" + Mid);
     const token = localStorage.getItem("usertoken");
     const myToken = `Bearer ` + localStorage.getItem("myToken");
     if (!token) {
       this.props.history.push("/login");
     } else {
-      console.log("token " + token);
       axios
         .put(
           "http://127.0.0.1:8000/api/consommateur/" + token + "/favoris",
@@ -189,7 +182,6 @@ class DetailsMouton extends Component {
   }
 
   handlePanier(Mid) {
-    console.log(Mid);
     const token = localStorage.getItem("usertoken");
     const myToken = `Bearer ` + localStorage.getItem("myToken");
     if (!token) {
@@ -229,7 +221,6 @@ class DetailsMouton extends Component {
     // const idm = this.props.location.state.id;
     const idm = this.props.match.params.idMouton;
 
-    console.log(Mid);
     const token = localStorage.getItem("usertoken");
     const myToken = `Bearer ` + localStorage.getItem("myToken");
     if (!token) {
@@ -291,28 +282,28 @@ class DetailsMouton extends Component {
             />
           </div>
         ) : (
-          <section class="product-details spad">
-            <div class="container">
+          <section className="product-details spad">
+            <div className="container">
               <div className="row">
-                <div class="col-lg-6 col-md-6">
-                  <div class="product__details__pic" >
-                    {this.state.Espece.anoc ? <div class="product__details__pic__item mb-1">
+                <div className="col-lg-6 col-md-6">
+                  <div className="product__details__pic" >
+                    {this.state.Espece.anoc ? <div className="product__details__pic__item mb-1">
                       <img
-                        class="product__details__pic__item--large"
+                        className="product__details__pic__item--large"
                         src={this.state.image}
                         alt=""
                         id="roundB"
                       />
-                    </div> : <div class="product__details__pic__item">
+                    </div> : <div className="product__details__pic__item">
                       <img
-                        class="product__details__pic__item--large"
+                        className="product__details__pic__item--large"
                         src={this.state.image}
                         alt=""
                         id="roundB"
                       />
                     </div>}
                     {this.state.Espece.anoc ?
-                      <h1 style={{ fontSize: "14px" }} class=" badge badge-success   rounded-0  w-100  ">
+                      <h1 style={{ fontSize: "14px" }} className=" badge badge-success   rounded-0  w-100  ">
                         <HiOutlineBadgeCheck className=" mr-1 fa-lg " />
                         <span>Labélisé ANOC</span>  </h1>
                       :
@@ -345,18 +336,18 @@ class DetailsMouton extends Component {
                         {this.state.Espece.anoc ?
                           <span className=" text-success ">
                             <HiOutlineBadgeCheck className=" mr-1 fa-lg " /> Le label de l'ANOC est un gage de la qualité du produit. <br></br></span>
-                          :    null}
-<br></br>                           <div >
+                          : null}
+                        <br></br>                           <div >
                           <br></br>
-        
+
                           <div id="centrer2">
                             {/* Ajouter ici Social Sharing Button */}
                             <h4 id="centrer2">
                               Partager l'annonce avec vos proches sur :
                               </h4>
-                              <br></br> 
+                            <br></br>
                             <div>
-                              <EmailShareButton 
+                              <EmailShareButton
                                 url={shareUrl + "/" + this.state.Espece._id}
                                 subject="Annonce intéressante à voir (Animal à vendre)"
                                 body="Voici une annonce d'un mouton/vache/chèvre à vendre qui peut vous interesser"
@@ -392,7 +383,7 @@ class DetailsMouton extends Component {
                               </TwitterShareButton>
                             </div>
                           </div>
-        
+
                         </div>
                       </div>
                     </div>
@@ -400,8 +391,8 @@ class DetailsMouton extends Component {
                 </div>
                 <div className="col-lg-6 col-md-6">
                   <div className="product__details__text">
-                    <h3 ClassName="col-lg-12 col-md-12  ">
-                      <span ClassName="col-lg-11 col-md-11">
+                    <h3 className="col-lg-12 col-md-12  ">
+                      <span className="col-lg-11 col-md-11">
                         {" "}
                       Détails annonce espèce{"              "}
                         <h4 className="d-inline">
@@ -412,7 +403,6 @@ class DetailsMouton extends Component {
                                 id={this.state.Espece._id}
                                 onClick={(e) => {
                                   this.handleDeleteFav(e.currentTarget.id);
-                                  console.log(e.currentTarget.id);
                                 }}
                               >
                                 <i className="fa fa-heart "></i>
@@ -502,7 +492,7 @@ class DetailsMouton extends Component {
                         {!this.state.isInpanier ? (
                           <button style={{ borderColor: 'transparent' }}
                             id={this.state.Espece._id}
-                            class="primary-btn rounded mb-1"
+                            className="primary-btn rounded mb-1"
                             onClick={(e) =>
                               this.handlePanier(e.currentTarget.id)
                             }
@@ -563,7 +553,7 @@ class DetailsMouton extends Component {
                     <br></br>
                   </div>
                 </div>
-            
+
               </div>
             </div>
           </section>

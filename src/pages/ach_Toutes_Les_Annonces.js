@@ -391,11 +391,6 @@ import{HiOutlineBadgeCheck} from  'react-icons/hi';
       indexOfLastAnnonce
     );
     const { selectedOptionRace } = this.state;
-    const { selectedOptionSort } = this.state;
-    const { optionsRace } = this.state;
-    const { optionsRaceVache } = this.state;
-    const { optionsRaceCaprine } = this.state;
-
     const { selectedOptionCategorie } = this.state;
     const { optionsCategorie } = this.state;
     const { selectedOptionVille } = this.state;
@@ -614,7 +609,7 @@ import{HiOutlineBadgeCheck} from  'react-icons/hi';
                         value={this.state.selectedOptionSort}
                         onChange={this.sortData}
                         options={optionsSort}
-                        placeholder="&#xf161;"
+                        placeholder="&#xf161; Trier par"
                       //
                       //f0b0
 
@@ -700,7 +695,7 @@ import{HiOutlineBadgeCheck} from  'react-icons/hi';
                                    <HiOutlineBadgeCheck className=" mr-1 fa-lg " />
                              <span>Labélisé ANOC</span>  </h1>
                                 :
-                                <span className="badge pt-3 w-100    ">{"  "}</span>}
+                                <span className="badge pt-3 w-100  mt-1  ">{"  "}</span>}
 
                               <div className="product__item__text p-2 text-justify">
                                 <h6 ><GiSheep className=" mr-1 fa-lg " />{  Annonces.categorie}
@@ -716,7 +711,7 @@ import{HiOutlineBadgeCheck} from  'react-icons/hi';
                                   <span className="float-right mt-1">
                                     { Annonces.age + " mois"}</span></h6>
 
-                                <h5 id="mad" className="ml-5"> 
+                                <h5  className="ml-5 text-danger"> 
                                   {Annonces.prix + " MAD"}
                                 </h5>
                                </div>

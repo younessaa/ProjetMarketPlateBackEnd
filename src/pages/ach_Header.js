@@ -1,5 +1,9 @@
 import React, { Component } from "react";
 import axios from "axios";
+import { GiSheep } from 'react-icons/gi';
+import { MdAssignment } from 'react-icons/md'
+import { AiFillHeart, AiOutlineSearch } from 'react-icons/ai'
+import { FaShoppingCart, FaUserAlt, FaUniversity } from 'react-icons/fa'
 
 class Header extends Component {
   constructor() {
@@ -7,9 +11,15 @@ class Header extends Component {
     // let redirect = false;
     this.state = {
       isLoged: false,
+      connectedUser: "",
+      colorMenuAc: "#28a745",
+       colors: [],
+
+
     };
     // this.HandelLogout = this.HandelLogout.bind(this);
     this.logout = this.logout.bind(this);
+
   }
 
   componentDidMount() {
@@ -34,16 +44,24 @@ class Header extends Component {
       ":" +
       appendLeadingZeroes(current_datetime.getSeconds());
 
-    console.log(formatted_date);
 
     const expiredTimeToken = localStorage.getItem("expiredTimeToken");
     const token = localStorage.getItem("usertoken");
     const myToken = `Bearer ` + localStorage.getItem("myToken");
-    console.log(expiredTimeToken);
 
     if (token && expiredTimeToken > formatted_date) {
       this.setState({ isLoged: true });
-      console.log(myToken);
+      axios
+        .get("http://127.0.0.1:8000/api/consommateur/" + token, {
+          headers: {
+            "Content-Type": "application/json",
+            // "Authorization": Mytoken,
+          },
+        })
+
+        .then((res) => {
+          this.setState({ connectedUser: res.data.nom.toUpperCase() + " " + res.data.prenom });
+        })
       // this.props.history.push("/login");
 
       //Ce bout de code permet de vérifier les commandes avec un deadline dépassé et les annuler
@@ -63,7 +81,6 @@ class Header extends Component {
         .then((res) => {
           var resultat = res;
           for (let i = 0; i < res.data.length; i++) {
-            console.log(res.data[i].deadline);
             var deadline = new Date(res.data[i].deadline);
             if (
               now.getTime() >= deadline.getTime() &&
@@ -84,20 +101,18 @@ class Header extends Component {
                   }
                 )
                 .then(() => {
-                  console.log(resultat);
                   const to = resultat.data[i].consommateur.email;
-                  //console.log(to);
                   const content =
                     "Votre commande a été annulée automatiquement car vous avez dépassé le deadline prévu pour l'importation de votre reçu de paiement.";
                   const subject =
                     "Votre commande a été annulée (dépassement du deadline)";
                   axios.post(
                     "http://127.0.0.1:8000/api/sendmail/" +
-                      to +
-                      "/" +
-                      content +
-                      "/" +
-                      subject,
+                    to +
+                    "/" +
+                    content +
+                    "/" +
+                    subject,
                     {
                       headers: {
                         Accept: "application/json",
@@ -131,9 +146,43 @@ class Header extends Component {
     );
   }
 
+
+
   render() {
+    /** active menu item */
+    var { colors } = this.state;
+    const CSS = ` .header__menu ul li:hover>a {color:black !important; text-decoration: underline; background-color: transparent !important;} .humberger__menu__wrapper .slicknav_nav a {color:black}	.humberger__menu__wrapper .slicknav_nav a:hover  {text-decoration: underline; color:black}`
+    switch (window.location.pathname) {
+      case "/":
+        colors[0] = this.state.colorMenuAc;
+        break;
+      case "/ToutesLesAnnonces":
+        colors[0] = this.state.colorMenuAc;
+        break;
+      case "/AnnoncesParEleveurs":
+        colors[1] = this.state.colorMenuAc;
+        break;
+      case "/commandesParStatut":
+        colors[2] = this.state.colorMenuAc;
+        break;
+      case "/Favoris":
+        colors[3] = this.state.colorMenuAc;
+        break;
+      case "/panier":
+        colors[4] = this.state.colorMenuAc;
+        break;
+      case "/Regles":
+        colors[5] = this.state.colorMenuAc;
+        break;
+      case "/Apropos":
+        colors[6] = this.state.colorMenuAc;
+        break;
+
+    }
+      /** */
     return (
       <div>
+        <style>{CSS}</style>
         <header className="header">
           {/* Comment goes here */}
           <div className="header__top">
@@ -142,14 +191,14 @@ class Header extends Component {
                 <div className="col-lg-6 col-md-6">
                   <div className="header__top__left">
                     <ul>
-                      <li>
-                        <a href="./Regles" class="btn btn-light btn-sm">
+                      <li  >
+                        <a style={{ color: colors[5] }} href="./Regles" className="btn btn-light btn-sm">
                           {" "}
-                          Règles de vente et d'achat
+                          <FaUniversity /> Règles de vente et d'achat
                         </a>
                       </li>
                       <li>
-                        <a href="./Apropos"> A propos</a>
+                        <a style={{ color: colors[6] }} href="./Apropos">  <AiOutlineSearch className=" fa-lg " /> A propos</a>
                       </li>
                     </ul>
                   </div>
@@ -170,9 +219,9 @@ class Header extends Component {
                         <i className="fa fa-youtube"></i>
                       </a>
                     </div>
-                    <div className="header__top__right__language">
-                      <img src="assets/img/language.png" alt="" />
-                      <div>Français</div>
+                    <div className="header__top__right__language "style={{marginRight: "26px"}}>
+                    <i className="fa fa-globe mr-2" aria-hidden="true">{" "}</i>
+                      <div> Français</div>
                       <span className="arrow_carrot-down"></span>
                       <ul>
                         <li>
@@ -183,20 +232,28 @@ class Header extends Component {
                         </li>
                       </ul>
                     </div>
-                    <div className="header__top__right__auth">
-                      {this.state.isLoged ? (
+                    {this.state.isLoged ? (
+                      <div className="header__top__right__language mr-0">
                         <div>
+                          <h6 style={{color:"#009141",fontFamily:"inherit",fontSize:"0.924rem"}}><i className="fa fa-user-circle" /><b>{" "+this.state.connectedUser}</b></h6>
+                        </div>
+                      </div>) : null}
+                    <div className="header__top__right__auth ml-4 " >
+                      {this.state.isLoged ? (
+
+                        <div>
+
                           {" "}
-                          <a href="/login" onClick={this.logout}>
-                            <i className="fa fa-user"> Se déconnecter</i>
+                          <a style={{fontFamily:"inherit", fontSize:"0.924rem"}} href="/login" onClick={this.logout} >
+                            <i className="fa fa-sign-out"><b>Se déconnecter</b> </i>
                           </a>
                         </div>
                       ) : null}
                       {!this.state.isLoged ? (
                         <div>
                           {" "}
-                          <a href="/login">
-                            <i className="fa fa-user"> Se connecter</i>
+                          <a style={{fontFamily:"inherit", fontSize:"0.924rem"}} href="/login">
+                            <i  className="fa fa-sign-in"> <b> Se connecter</b> </i>
                           </a>
                         </div>
                       ) : null}
@@ -219,40 +276,39 @@ class Header extends Component {
               <div className="col-lg-10">
                 <nav className="header__menu">
                   <ul>
-                    <li class="header__menu__dropdown">
-                      <a>Espèces</a>
-                      <ul class="header__menu__dropdown">
-                        <li>
-                          <a href="./">Ovins</a>
-                        </li>
-                        <li>
-                          <a href="./">Bovins</a>
-                        </li>
-                      </ul>
+                    <li className="header__menu__dropdown">
+                      <a style={{ color: colors[0] }} href="./"><GiSheep className=" mr-1 fa-lg " />Nos espèces</a>
+
                     </li>
                     <li>
-                      <a className="Header" href="./AnnoncesParEleveurs">Nos eleveurs</a>
+                      {/**<a onclick={this.activateMenuEleveurs} id="eleveur" className="Header" href="./AnnoncesParEleveurs">
+*/}
+                      <a style={{ color: colors[1] }} href="./AnnoncesParEleveurs" className="Header"  >
+
+                        <FaUserAlt className="  mb-1 " />  Nos éleveurs</a>
                     </li>
                     {this.state.isLoged ? (
                       <span>
                         <li>
-                          <a className="Header" href="./commandesParStatut">Mes commandes</a>
+                          <a style={{ color: colors[2] }} className="Header" href="./commandesParStatut">
+                            <MdAssignment className="  fa-lg " /> Commandes</a>
                         </li>
-                        <span class="form-inline my-2 my-lg-0">
+                        <span className="form-inline my-2 my-lg-0">
                           <li>
-                            <a className="Header" href="./Favoris">
-                              <i className="fa fa-heart"> </i>
-                              <span> Favoris</span>
+                            <a style={{ color: colors[3] }} className="Header" href="./Favoris">
+                              <AiFillHeart className=" fa-lg " />  Favoris
+
                             </a>
                           </li>
 
                           <li>
-                            <a className="Header" href="./panier">
-                              <i class="fa fa-shopping-cart"></i>
-                              <span> Pannier</span>
+                            <a className="Header" style={{ color: colors[4] }} href="./panier">
+
+                              <FaShoppingCart className="fa-sm mb-1 " /> Panier
                             </a>
                           </li>
                         </span>
+
                       </span>
                     ) : null}
                   </ul>
@@ -275,8 +331,14 @@ class Header extends Component {
           </div>
           <div className="humberger__menu__widget">
             <div className="header__top__right__language">
-              <img src="assets/img/language.png" alt="" />
-              <div>Français</div>
+                    {this.state.isLoged ? (
+                <div className="header__top__right__language ">
+                  <div>
+                    <h6 style={{color:"#009141"}}><i className="fa fa-user-circle" /> {this.state.connectedUser}</h6>
+                  </div>
+                </div>) : null}
+              <br></br>
+              <i className="fa fa-globe" aria-hidden="true"></i>      <div>Français</div>
               <span className="arrow_carrot-down"></span>
               <ul>
                 <li>
@@ -288,37 +350,52 @@ class Header extends Component {
               </ul>
             </div>
             <div className="header__top__right__auth">
-              <a href="#">
-                <i className="fa fa-user"></i>Login
-              </a>
+              {this.state.isLoged ? (
+
+                <div>
+
+                  {" "}
+                  <a href="/login" onClick={this.logout}>
+                    <i className="fa fa-sign-out"> Se déconnecter</i>
+                  </a>
+                </div>
+              ) : null}
+              {!this.state.isLoged ? (
+                <div>
+                  {" "}
+                  <a href="/login">
+                    <i className="fa fa-sign-in"> Se connecter</i>
+                  </a>
+                </div>
+              ) : null}
             </div>
           </div>
           <nav className="humberger__menu__nav mobile-menu">
             <ul>
               <li className="active">
-                <a className="Header" href="./ToutesLesAnnonces">Nos Espèces </a>
+                <a className="Header" href="./ToutesLesAnnonces" style={{ color: colors[0] }}> <GiSheep className=" mr-1 fa-lg " /> Nos Espèces </a>
               </li>
-              <li>
-                <a className="Header" href="./AnnoncesParEleveurs"> Nos éleveurs</a>
+              <li  >
+                <a className="Header" style={{ color: colors[1] }} href="./AnnoncesParEleveurs">  <FaUserAlt className="  mb-1 " />  Nos éleveurs</a>
               </li>
               {this.state.isLoged ? (
                 <span>
                   <li>
-                    <a className="Header" href="./Favoris">Mes favoris</a>
+                    <a className="Header" href="./Favoris" style={{ color: colors[3] }}>      <AiFillHeart className=" fa-lg " /> Mes favoris</a>
                   </li>
-                  <li>
-                    <a className="Header" href="./Panier">Mon panier</a>
+                  <li >
+                    <a className="Header" href="./panier" style={{ color: colors[4] }}  >  <FaShoppingCart className="fa-sm mb-1 " /> Mon panier d'achat</a>
                   </li>
-                  <li>
-                    <a className="Header" href="./commandesParStatut">Mes commandes</a>
+                  <li >
+                    <a className="Header" href="./commandesParStatut" style={{ color: colors[2] }}  >  <MdAssignment className="  fa-lg " /> Mes commandes</a>
                   </li>
                 </span>
               ) : null}
-              <li>
-                <a href="./Regles">Règles de vente et achat</a>
+              <li  >
+                <a href="./Regles" style={{ color: colors[5] }}>   <FaUniversity /> Règles de vente et achat</a>
               </li>
               <li>
-                <a href="./Apropos">A propos de nous</a>
+                <a style={{ color: colors[6] }} href="./Apropos"> <AiOutlineSearch className=" fa-lg " /> A propos de nous</a>
               </li>
             </ul>
           </nav>

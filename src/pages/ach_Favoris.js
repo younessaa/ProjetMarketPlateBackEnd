@@ -18,7 +18,7 @@ class Commandes extends Component {
       activePage: 1,
       nombrePages: [],
       currentPage: 1,
-      annoncesPerPage: 5,
+      annoncesPerPage: 4,
       Favoris: [],
       redirect: false,
       activePage: 15,
@@ -133,14 +133,7 @@ this.setState( { idp:p })
     } else return a.race;
   }
   ispanier(a) {
-   // let find = false;
-   // let i = 0;
-   // while (!find && i < this.state.idp.length) {
-  //    if (this.state.idp[i] == a) { find = true; break }
-   //   else { find = false; }
-   //   i++;
-   // }
-   // return find;
+  
    return this.state.idp.includes(a);
   }
   handlePanier(Mid) {
@@ -178,11 +171,11 @@ this.setState( { idp:p })
 
         confirmButtonText: "Ok!",*/
       });
+      
     }
   }
   handleDeleteFromFavoris(Mid) {
-    // const idm = this.props.location.state.id;
-    // console.log(Mid);
+   
     const token = localStorage.getItem("usertoken");
     const myToken = `Bearer ` + localStorage.getItem("myToken");
     if (!token) {
@@ -223,6 +216,16 @@ this.setState( { idp:p })
  
         confirmButtonText: "Ok!",*/
       });
+      const pageNumbers = [];
+      for (
+        let i = 1;
+        i <=
+        Math.ceil(this.state.Favoris.length / this.state.annoncesPerPage);
+        i++
+      ) {
+        pageNumbers.push(i);
+      }
+      this.setState({ nombrePages: pageNumbers });
 
 
     }
@@ -302,7 +305,7 @@ this.setState( { idp:p })
                 ) : (
                   <div>
                     <div class="row">
-                      {fav.map((Annonces) => (
+                      {currentAnnonces.map((Annonces) => (
                         //  {if(Annonces){}}
                         <div className="col-lg-3 col-md-3 col-sm-6">
                           <div id="anonce" className="product__item">

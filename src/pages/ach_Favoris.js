@@ -18,7 +18,7 @@ class Commandes extends Component {
       activePage: 1,
       nombrePages: [],
       currentPage: 1,
-      annoncesPerPage: 4,
+      annoncesPerPage: 8,
       Favoris: [],
       redirect: false,
       activePage: 15,
@@ -273,7 +273,7 @@ this.setState( { idp:p })
         <section className="">
           <div className="container">
             <br></br>
-            <h3 class="latest-product__item">
+            <h3 className="latest-product__item">
               Mes favoris <i className="fa fa-heart"> </i>
             </h3>
             <div className="row">
@@ -304,7 +304,7 @@ this.setState( { idp:p })
                   </div>
                 ) : (
                   <div>
-                    <div class="row">
+                    <div className="row">
                       {currentAnnonces.map((Annonces) => (
                         //  {if(Annonces){}}
                         <div className="col-lg-3 col-md-3 col-sm-6">
@@ -321,11 +321,11 @@ this.setState( { idp:p })
                                   className="product__item__pic set-bg"
                                 />
                               </centre>
-                              <ul class="product__item__pic__hover">
+                              <ul className="product__item__pic__hover">
                                 <li>
                                   <Link to={`/DetailsMouton/${Annonces._id}`}>
                                     <a href="#">
-                                      <i class="fa fa-eye"></i>
+                                      <i className="fa fa-eye"></i>
                                     </a>
                                   </Link>
                                 </li>
@@ -338,13 +338,13 @@ this.setState( { idp:p })
                                       )
                                     }
                                   >
-                                    <i class="fa fa-trash"></i>
+                                    <i className="fa fa-trash"></i>
                                   </a>
                                 </li>
                               </ul>
                             </div>
                             {Annonces.anoc ?
-                              <h1 style={{ borderRadius: "0% 0% 0% 40%", fontSize: "14px" }} class=" badge badge-success pt-2 w-100  ">
+                              <h1 style={{ borderRadius: "0% 0% 0% 40%", fontSize: "14px" }} className=" badge badge-success pt-2 w-100  ">
                                 <HiOutlineBadgeCheck className=" mr-1 fa-lg " />
                                 <span>Labélisé ANOC</span>  </h1>
                               :
@@ -355,7 +355,7 @@ this.setState( { idp:p })
                               <h6 ><GiSheep className=" mr-1 fa-lg " />{Annonces.categorie}
 
                                 <span className="float-right">
-                                  <i class="fa fa-dot-circle-o"></i> {this.annonceVision(Annonces)}
+                                  <i className="fa fa-dot-circle-o"></i> {this.annonceVision(Annonces)}
                                 </span> </h6>
 
                               <h6><GiWeight className=" mr-1 fa-lg " />
@@ -366,7 +366,7 @@ this.setState( { idp:p })
                                   {Annonces.age + " mois"}</span></h6>
 
                               <h5 id="mad">
-                                {"         " + Annonces.prix + " MAD"}
+                                {"         " + Annonces.prix + "  Dhs"}
                               </h5>
 
 

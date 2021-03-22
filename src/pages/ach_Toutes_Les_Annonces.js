@@ -16,7 +16,7 @@ import{HiOutlineBadgeCheck} from  'react-icons/hi';
       nombrePages: [],
       currentPage: 1,
       annoncesPerPage: 6,
-      Disabled: false,
+      Disabled: true,
       Annonces: [],
       selectedOptionRace: null,
       race:[],
@@ -72,8 +72,8 @@ import{HiOutlineBadgeCheck} from  'react-icons/hi';
         { value: "age", label: "Plus jeune au plus age" },
         { value: "age_dec", label: "plus age au plus jeune" },
 
-        { value: "poids", label: "Poids croissant" },
-        { value: "poids_dec", label: "Poids décroissant" },
+        { value: "poids", label: "Moins lourd au plus lourd" },
+        { value: "poids_dec", label: "Plus lourd au moins lourd" },
       ],
     };
 
@@ -299,7 +299,7 @@ import{HiOutlineBadgeCheck} from  'react-icons/hi';
             },
             selectedOptionCategorie: null,
             selectedOptionRace: null,
-            Disabled: false,
+            Disabled: true,
             selectedOptionVille: null,
           });
           var all = document.querySelectorAll('input[name="reference"],input[name="prix_min"],input[name="prix_max"],input[name="poids_min"],input[name="poids_max"]')
@@ -712,7 +712,7 @@ import{HiOutlineBadgeCheck} from  'react-icons/hi';
                                     { Annonces.age + " mois"}</span></h6>
 
                                 <h5  className="ml-5 text-danger"> 
-                                  {Annonces.prix + " MAD"}
+                                  {Annonces.prix + "  Dhs"}
                                 </h5>
                                </div>
                             </div>

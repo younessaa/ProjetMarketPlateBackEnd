@@ -3,6 +3,8 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 // import blu from ;
 import Loader from "react-loader-spinner";
+import { GiSheep } from 'react-icons/gi';
+
 class CommandesParStatut extends Component {
   constructor(props) {
     super(props);
@@ -36,18 +38,15 @@ class CommandesParStatut extends Component {
       ":" +
       appendLeadingZeroes(current_datetime.getSeconds());
 
-    console.log(formatted_date);
-
+ 
     const expiredTimeToken = localStorage.getItem("expiredTimeToken");
     const token = localStorage.getItem("usertoken");
     const myToken = `Bearer ` + localStorage.getItem("myToken");
-    console.log(expiredTimeToken);
-
+ 
     if (!token || expiredTimeToken < formatted_date) {
       this.props.history.push("/login");
     } else {
-      // console.log(token);
-      this.setState({ loading: true }, () => {
+       this.setState({ loading: true }, () => {
         axios
           .get("http://127.0.0.1:8000/api/commande", {
             headers: {
@@ -77,35 +76,30 @@ class CommandesParStatut extends Component {
 
   render() {
     const { loading } = this.state;
+     // Commandes annulées
     const cmdDeadlineDépassé = this.state.Commandes.filter(
-      (Commandes) => Commandes.statut === "commande annulée (deadline dépassé)"
+      (Commandes) => Commandes.statut === "commande annulée (deadline dépassé)"||
+      Commandes.statut === "reçu avance refusé"||
+      Commandes.statut === "reçu reste refusé"||
+      Commandes.statut === "rejeté"||
+      Commandes.statut === "produit avarié"
     );
+    //Avances a payer
     const cmdAvancesEnAttenteDePaiement = this.state.Commandes.filter(
       (Commandes) => Commandes.statut === "en attente de paiement avance"
     );
+   //Produit réservé
     const cmdAvancesEnAttenteDeValidationt = this.state.Commandes.filter(
       (Commandes) => Commandes.statut === "en attente de validation avance"
     );
-    const cmdAvancesRefusées = this.state.Commandes.filter(
-      (Commandes) => Commandes.statut === "reçu avance refusé"
-    );
-
-    const cmdAvancesValidées = this.state.Commandes.filter(
-      (Commandes) => Commandes.statut === "en attente de paiement du reste"
-    );
+ // Reste à payer
 
     const cmdAvancesMontantinalEnAttenteP = this.state.Commandes.filter(
       (Commandes) => Commandes.statut === "en attente de paiement du reste"
     );
-    const cmdPaiementFinalEnAttenteDeValidation = this.state.Commandes.filter(
-      (Commandes) => Commandes.statut === "en attente de validation reste"
-    );
-    const cmdPaiementFinalR = this.state.Commandes.filter(
-      (Commandes) => Commandes.statut === "reçu reste refusé"
-    );
-
+ //Produit à livrer
     const cmdPaiementFinalvalidé = this.state.Commandes.filter(
-      (Commandes) => Commandes.statut === "validé"
+      (Commandes) => Commandes.statut === "validé"|| Commandes.statut === "en attente de validation reste"
     );
 
     return (
@@ -134,9 +128,9 @@ class CommandesParStatut extends Component {
             <section className="featured spad">
               <div className="container">
                 {/*<!-- Categorie Menus Grid Section Begin --> */}
-                <div class="row featured__filter">
+                <div className="row featured__filter">
                   {/* à ajouter */}
-                  <div class="col-lg-12 col-md-12 col-sm-12">
+                  <div className="col-lg-6 col-md-6 col-sm-6">
                     <Link
                       to={{
                         pathname: "/Commandes",
@@ -144,137 +138,10 @@ class CommandesParStatut extends Component {
                       }}
                     >
                       {" "}
-                      <div id="cadre" class="featured__item">
+                      <div id="cadre" className="featured__item">
                         <div
-                          class="featured__item__pic"
+                          className="featured__item__pic"
                           // data-setbg="Images/bg_purple.jpg"
-                          style={{
-                            backgroundImage: "url(" + require("./Images/bg_purple.jpg") + ")"
-                          }}
-                          padding-left="10px"
-                          padding-right="10px"
-                        >
-                          <center>
-                            <a href="">
-                              <br></br>{" "}
-                              <h2 style={{ color: "white" }}>
-                                <b>{cmdDeadlineDépassé.length}</b>
-                              </h2>
-                              <br></br>
-                              <h6 style={{ color: "white" }}>
-                                Commandes annulées automatiquement{" "}
-                              </h6>
-                              <br></br>
-                              <img
-                                src="Images/warning.png"
-                                width="95px"
-                                height="95px"
-                              />
-                              <h6 style={{ color: "white" }}>
-                                <br></br> <b>Deadline dépassé</b>
-                              </h6>
-                              <br></br>
-                            </a>
-                          </center>
-                        </div>
-                      </div>
-                    </Link>
-                  </div>
-
-                  {/* à ajouter */}
-                  <div class="col-lg-3 col-md-4 col-sm-6">
-                    <Link
-                      to={{
-                        pathname: "/Commandes",
-                        state: { id: "en attente de paiement avance" },
-                      }}
-                    >
-                      <div id="cadre" class="featured__item">
-                        <div
-                          class="featured__item__pic"
-                          // data-setbg="Images/bg_red.jpg"
-                          style={{
-                            backgroundImage: "url(" + require("./Images/bg_red.jpg") + ")"
-                          }}
-                          padding-left="10px"
-                          padding-right="10px"
-                        >
-                          <center>
-                            <a href="">
-                              <br></br>{" "}
-                              <h2 style={{ color: "white" }}>
-                                <b>{cmdAvancesEnAttenteDePaiement.length}</b>
-                              </h2>
-                              <br></br>
-                              <h6 style={{ color: "white" }}>
-                                Avances en attente de paiement
-                              </h6>
-                              <br></br>
-                              <img
-                                src="Images/waiting_payment.png"
-                                width="95px"
-                                height="95px"
-                              />
-                            </a>
-                          </center>
-                        </div>
-                      </div>
-                    </Link>
-                  </div>
-
-                  <div class="col-lg-3 col-md-4 col-sm-6">
-                    <Link
-                      to={{
-                        pathname: "/Commandes",
-                        state: { id: "en attente de validation avance" },
-                      }}
-                    >
-                      <div id="cadre" class="featured__item">
-                        <div
-                          style={{
-                            backgroundImage: "url(" + require("./Images/bg_bleu.jpg") + ")"
-                          }}
-                          class="featured__item__pic "
-                          // data-setbg="Images/bg_bleu.jpg"
-
-
-                          padding-left="10px"
-                          padding-right="10px"
-                        >
-                          <center>
-                            <a href="">
-                              <br></br>{" "}
-                              <h2 style={{ color: "white" }}>
-                                <b>{cmdAvancesEnAttenteDeValidationt.length}</b>
-                              </h2>
-                              <br></br>
-                              <h6 style={{ color: "white" }}>
-                                Avances en attente de validation
-                              </h6>
-                              <br></br>
-                              <img
-                                src="Images/hourglass.png"
-                                width="95px"
-                                height="95px"
-                              />
-                            </a>
-                          </center>
-                        </div>
-                      </div>
-                    </Link>
-                  </div>
-
-                  <div class="col-lg-3 col-md-4 col-sm-6">
-                    <Link
-                      to={{
-                        pathname: "/Commandes",
-                        state: { id: "reçu avance refusé" },
-                      }}
-                    >
-                      <div id="cadre" class="featured__item">
-                        <div
-                          class="featured__item__pic "
-                          // data-setbg="Images/bg_orange.jpg"
                           style={{
                             backgroundImage: "url(" + require("./Images/bg_orange.jpg") + ")"
                           }}
@@ -284,100 +151,18 @@ class CommandesParStatut extends Component {
                           <center>
                             <a href="">
                               <br></br>{" "}
-                              <h2 style={{ color: "white" }}>
-                                <b>{cmdAvancesRefusées.length}</b>
-                              </h2>
-                              <br></br>
-                              <h6 style={{ color: "white" }}>
-                                Avances refusées
-                              </h6>
-                              <br></br>
-                              <img
-                                src="Images/sad.png"
-                                width="95px"
-                                height="95px"
-                              />
-                            </a>
-                          </center>
-                        </div>
-                      </div>
-                    </Link>
-                  </div>
-                  <div class="col-lg-3 col-md-4 col-sm-6">
-                    <Link
-                      to={{
-                        pathname: "/Commandes",
-                        state: { id: "en attente de paiement du reste" },
-                      }}
-                    >
-                      <div id="cadre" class="featured__item">
-                        <div
-                          class="featured__item__pic "
-                          // data-setbg="Images/bg_green.png"
-                          style={{
-                            backgroundImage: "url(" + require("./Images/bg_green.png") + ")"
-                          }}
-                          padding-left="10px"
-                          padding-right="10px"
-                        >
-                          <center>
-                            <a href="">
+                               
                               <br></br>{" "}
-                              <h2 style={{ color: "white" }}>
-                                <b>{cmdAvancesValidées.length}</b>
-                              </h2>
-                              <br></br>
-                              <h6 style={{ color: "white" }}>
-                                Avances validées
-                              </h6>
-                              <br></br>
-                              <img
-                                src="Images/smile.png"
-                                width="95px"
-                                height="95px"
-                              />
-                            </a>
-                          </center>
-                        </div>
-                      </div>
-                    </Link>
-                  </div>
-
-                  {/* à ajouter */}
-
-                  <div class="col-lg-3 col-md-4 col-sm-6">
-                    <Link
-                      to={{
-                        pathname: "/Commandes",
-                        state: { id: "en attente de paiement du reste" },
-                      }}
-                    >
-                      <div id="cadre" class="featured__item">
-                        <div
-                          class="featured__item__pic "
-                          // data-setbg="Images/bg_red1.jpg"
-                          style={{
-                            backgroundImage: "url(" + require("./Images/bg_red1.jpg") + ")"
-                          }}
-                          padding-left="10px"
-                          padding-right="10px"
-                        >
-                          <center>
-                            <a href="">
                               <br></br>{" "}
-                              <h2 style={{ color: "white" }}>
-                                <b>{cmdAvancesMontantinalEnAttenteP.length}</b>
-                              </h2>
-                              <br></br>
-                              <h6 style={{ color: "white" }}>
-                                Montant final en attente <br></br> de paiement
-                              </h6>
-                              <br></br>
                               <img
-                                src="Images/waiting_payment.png"
+                                src="Images/info.png"
                                 width="95px"
                                 height="95px"
                               />
+                              <h4 style={{ color: "white" }}>
+                                <br></br> Comment utiliser cette rubrique ?
+                              </h4>
+                              <br></br>
                             </a>
                           </center>
                         </div>
@@ -385,59 +170,20 @@ class CommandesParStatut extends Component {
                     </Link>
                   </div>
 
-                  <div class="col-lg-3 col-md-4 col-sm-6">
+               
+                  <div className="col-lg-6 col-md-6 col-sm-6">
                     <Link
                       to={{
                         pathname: "/Commandes",
-                        state: { id: "en attente de validation reste" },
+               
+                        state: { id: "commande annulée (deadline dépassé)#reçu avance refusé#reçu reste refusé#rejeté#produit avarié" },
                       }}
                     >
-                      <div id="cadre" class="featured__item">
+                      {" "}
+                      <div id="cadre" className="featured__item">
                         <div
-                          class="featured__item__pic "
-                          // data-setbg="Images/bg_bleu1.png"
-                          style={{
-                            backgroundImage: "url(" + require("./Images/bg_bleu1.png") + ")"
-                          }}
-                          padding-left="10px"
-                          padding-right="10px"
-                        >
-                          <center>
-                            <a href="">
-                              <br></br>
-                              <h2 style={{ color: "white" }}>
-                                <b>
-                                  {cmdPaiementFinalEnAttenteDeValidation.length}
-                                </b>
-                              </h2>
-                              <br></br>
-                              <h6 style={{ color: "white" }}>
-                                Paiement final en attente de validation
-                              </h6>
-                              <br></br>
-                              <img
-                                src="Images/hourglass.png"
-                                width="95px"
-                                height="95px"
-                              />
-                            </a>
-                          </center>
-                        </div>
-                      </div>
-                    </Link>
-                  </div>
-
-                  <div class="col-lg-3 col-md-4 col-sm-6">
-                    <Link
-                      to={{
-                        pathname: "/Commandes",
-                        state: { id: "reçu reste refusé" },
-                      }}
-                    >
-                      <div id="cadre" class="featured__item">
-                        <div
-                          class="featured__item__pic"
-                          // data-setbg="Images/bg_orange1.jpg"
+                          className="featured__item__pic"
+                          // data-setbg="Images/bg_purple.jpg"
                           style={{
                             backgroundImage: "url(" + require("./Images/bg_orange1.jpg") + ")"
                           }}
@@ -447,19 +193,23 @@ class CommandesParStatut extends Component {
                           <center>
                             <a href="">
                               <br></br>{" "}
-                              <h2 style={{ color: "white" }}>
-                                <b>{cmdPaiementFinalR.length}</b>
-                              </h2>
-                              <br></br>
-                              <h6 style={{ color: "white" }}>
-                                Paiement final refusé
-                              </h6>
-                              <br></br>
+                             
                               <img
-                                src="Images/sad.png"
+                                 src="Images/sad.png"
                                 width="95px"
                                 height="95px"
                               />
+                              <br></br>
+                              <br></br>
+                              <h4 style={{ color: "white" }}>
+                                Commandes annulées{" "}
+                              </h4>
+                              <br></br>
+                              <h2 style={{ color: "white" }}>
+                                <b>{cmdDeadlineDépassé.length}{" "}<GiSheep className=" mr-1  " /></b>
+                              </h2> 
+                          
+                              <br></br>
                             </a>
                           </center>
                         </div>
@@ -467,16 +217,20 @@ class CommandesParStatut extends Component {
                     </Link>
                   </div>
 
-                  <div class="col-lg-3 col-md-4 col-sm-6">
+                  {/* à ajouter */}
+                  <div className="col-lg-6 col-md-6 col-sm-6">
                     <Link
-                      to={{ pathname: "/Commandes", state: { id: "validé" } }}
+                      to={{
+                        pathname: "/Commandes",
+                        state: { id: "en attente de paiement avance" },
+                      }}
                     >
-                      <div id="cadre" class="featured__item">
+                      <div id="cadre" className="featured__item">
                         <div
-                          class="featured__item__pic "
-                          // data-setbg="Images/bg_green1.jpg"
+                          className="featured__item__pic"
+                          // data-setbg="Images/bg_red.jpg"
                           style={{
-                            backgroundImage: "url(" + require("./Images/bg_green1.jpg") + ")"
+                            backgroundImage: "url(" + require("./Images/bg_bleu.jpg") + ")"
                           }}
                           padding-left="10px"
                           padding-right="10px"
@@ -484,25 +238,154 @@ class CommandesParStatut extends Component {
                           <center>
                             <a href="">
                               <br></br>{" "}
-                              <h2 style={{ color: "white" }}>
-                                <b>{cmdPaiementFinalvalidé.length}</b>
-                              </h2>
-                              <br></br>
-                              <h6 style={{ color: "white" }}>
-                                Paiement final validé
-                              </h6>
-                              <br></br>
                               <img
-                                src="Images/smile.png"
+                                src="Images/waiting_payment.png"
                                 width="95px"
                                 height="95px"
-                              />
+                              />  
+                                <br></br>
+                              <br></br>
+                              <h4 style={{ color: "white" }}>
+                                Avances a payer
+                              </h4>
+                              <br></br>
+                            
+                              <h2 style={{ color: "white" }}>
+                                <b>{cmdAvancesEnAttenteDePaiement.length}{" "} <GiSheep className=" mr-1  " /></b>
+                              </h2>
+                              <br></br>
                             </a>
                           </center>
                         </div>
                       </div>
                     </Link>
                   </div>
+
+                  <div className="col-lg-6 col-md-6 col-sm-6">
+                    <Link
+                      to={{
+                        pathname: "/Commandes",
+                        state: { id: "en attente de validation avance" },
+                      }}
+                    >
+                      <div id="cadre" className="featured__item">
+                        <div
+                          style={{
+                            backgroundImage: "url(" + require("./Images/bg_bleu.jpg") + ")"
+                          }}
+                          className="featured__item__pic "
+                          // data-setbg="Images/bg_bleu.jpg"
+
+
+                          padding-left="10px"
+                          padding-right="10px"
+                        >
+                          <center>
+                            <a href="">
+                              <br></br>{" "}
+                              <img
+                                src="Images/hourglass.png"
+                                width="95px"
+                                height="95px"
+                              />
+                              
+                              <br></br>
+                              <br></br>
+                              <h4 style={{ color: "white" }}>
+                               Produit réservé
+                              </h4>
+                              <br></br>
+                              <h2 style={{ color: "white" }}>
+                                <b>{cmdAvancesEnAttenteDeValidationt.length}{" "}<GiSheep className=" mr-1  " /></b>
+                              </h2>
+                            </a>
+                          </center>
+                        </div>
+                      </div>
+                    </Link>
+                  </div>
+
+              
+
+                  <div className="col-lg-6 col-md-6 col-sm-6">
+                    <Link
+                      to={{
+                        pathname: "/Commandes",
+                        state: { id: "en attente de paiement du reste" },
+                      }}
+                    >
+                      <div id="cadre" className="featured__item">
+                        <div
+                          className="featured__item__pic "
+                          // data-setbg="Images/bg_red1.jpg"
+                          style={{
+                            backgroundImage: "url(" + require("./Images/bg_green.png") + ")"
+                          }}
+                          padding-left="10px"
+                          padding-right="10px"
+                        >
+                          <center>
+                            <a href="">
+                              <br></br>{" "}
+                              <img
+                                src="Images/waiting_payment.png"
+                                width="95px"
+                                height="95px"
+                              />
+                              <br></br><br></br>
+                              <h4 style={{ color: "white" }}>
+                               Reste à payer
+                              </h4>
+                              <br></br>
+                              <h2 style={{ color: "white" }}>
+                                <b>{cmdAvancesMontantinalEnAttenteP.length}{" "}<GiSheep className=" mr-1  " /></b>
+                              </h2>
+                             
+                            </a>
+                          </center>
+                        </div>
+                      </div>
+                    </Link>
+                  </div>
+
+                 <div className="col-lg-6 col-md-6 col-sm-6">
+                    <Link
+                      to={{ pathname: "/Commandes", state: { id: "validé#en attente de validation reste" } }}
+                    >
+                      <div id="cadre" className="featured__item">
+                        <div
+                          className="featured__item__pic "
+                          // data-setbg="Images/bg_green1.jpg"
+                          style={{
+                            backgroundImage: "url(" + require("./Images/bg_green.png") + ")"
+                          }}
+                          padding-left="10px"
+                          padding-right="10px"
+                        >
+                          <center>
+                            <a href="">
+                              <br></br>{" "}
+                              <img
+                                src="Images/smile.png"
+                                width="95px"
+                                height="95px"
+                              />
+                             
+                             <br></br><br></br>
+                             <h4 style={{ color: "white" }}>
+                             Produit à livrer
+                              </h4>
+                              
+                              <h2 style={{ color: "white" }}>
+                              <b>{cmdPaiementFinalvalidé.length}{" "}<GiSheep className=" mr-1  " /></b>
+                              </h2>
+                            </a>
+                          </center>
+                        </div>
+                      </div>
+                    </Link>
+                  </div>
+               
                 </div>
                 {/* <!-- Categorie Menus Grid Section End --> */}
               </div>

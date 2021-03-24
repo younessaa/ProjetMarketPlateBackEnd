@@ -10,8 +10,9 @@ class Commander2 extends Component {
     // let redirect = false;
 
     // this.onChange = this.onChange.bind(this);
-  
+
   }
+
 
   // onChange(e) {
 
@@ -44,105 +45,43 @@ class Commander2 extends Component {
 
 
   render() {
-    const { selectedOptionVille } = this.props.data;
-    const { optionsVille } = this.props.data;
+    let resultat = null;
+  resultat =  (this.props.data.date!=null&&(this.props.data.check1 || (this.props.data.check2 &&this.props.data.selectedOptionVille!=""&& this.props.data.selectedOptionPoint!="") || (this.props.data.check3 && this.props.data.selectedOptionVille!="" &&this.props.data.adresse!="")))?
+     this.props.data.check2 || this.props.data.check3 ? this.props.data.livraison.find((f) => f.Ville_livraison == this.props.data.selectedOptionVille.value).prix_transport :0:null;
     return (
       <div>
-        <div class="container">
-          <br></br>
-          <div className="row">
-            <div class="col-lg-6 col-md-6">
-              <div class="checkout__form">
-                <h4>Détails livraison</h4>
-                <div class="checkout__input">
-                  <b>
-                    Votre ville de livraison<span>*</span>
-                  </b>
-                  <div>
-                    <Select
-                      value={selectedOptionVille}
-                      onChange={this.props.handleChangeVille}
-                      options={this.props.data.optionsVille}
-                      placeholder="Ville"
+        <div className="container">
+          <div className="product-details spad">
+            {resultat!=null? 
+            <div id="centrer" className="col-lg-12 col-md-6">
+              <br></br>
+            
+              <h3>Montant a payer : </h3>
+              <div className="shoping__checkout mt-2 pb-0">
+                <ul>
+                  <li>
+                    Prix Net <span>{this.props.data.prix} Dhs</span>
+                  </li>
+                  <li style={{ borderBottomStyle: "dashed", borderColor: "black" }}>
+                    Prix Transport <span>{this.props.data.prix_transport} Dhs   {this.props.data.check2 ? "(Prix/Point de relais)" : null}</span>
+                  </li>
 
-                      // className="Select"
-                    />
-                    <br></br>
-                  </div>
+                  <li>
+                    Prix Total{" "}
+                    <span>{resultat-(-this.props.data.prix)}  Dhs</span>
+                  </li>
+                  <li>
+                    Frais de reservation(*){" "}
+                    <span>{this.props.data.avance}Dhs</span>
+                  </li>
 
-                  <div class="checkout__input">
-                    <p>
-                      <b>Le point de relais</b>
-                    </p>
-                    <span>Rue 233 Hassan II Oujda</span>
-                  </div>
 
-                  <div>
-                    <div class="checkout__input">
-                      <p>
-                        <b>Date de livraison</b>
-                      </p>
-                      <span>La veille de l'Aid</span>
-                    </div>
+                </ul>   </div>
+              <span><small>* Avance non rembourssable</small></span>
 
-                    <div>
-                      <div class="checkout__input bg-ligh text-danger h6 center">
-                        <p>
-                          <b>Heure de livraison</b>
-                        </p>
-                        <span>
-                          Un agent ANOC va vous appeler pour vous informer de
-                          l'heure exacte de livraison au point de relais
-                          spécifié en haut
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="col-lg-6 col-md-6">
-              <div class="checkout__form">
-                <h4>Détails paiement</h4>
-                <div class="checkout__input bg-ligh text-danger h6 center">
-                  <p>
-                    <b>Mode de paiement</b>
-                  </p>
-                  <span>
-                    <b>Virement bancaire</b>
-                  </span>
-                </div>
-                <h6>
-                  Vous devez accepter{" "}
-                  <a href="./Regles">
-                    <b>
-                      <u>les conditions générales de vente et achat</u>
-                    </b>
-                  </a>{" "}
-                  pour continuer.
-                </h6>
-                <br></br>
-                <div class="checkout__input__checkbox">
-                  <label for="regles">
-                    J'accepte les conditions générales des règles de vente et
-                    achat
-                    <input
-                      type="checkbox"
-                      id="regles"
-                      required
-                      onChange={this.props.onChangecheck}
-                    />
-                    <span id="monCheck" class="checkmark"></span>
-                  </label>
-                </div>
-                <div id="coul" class="checkout__input__checkbox">
-                  <label for="regles">
-                    Veuillez saisir votre ville et accepter les conditions
-                    générales pour valider votre commande.
-                  </label>
-                </div>
-              </div>
-            </div>
+
+
+            </div> : null}
           </div>
         </div>
       </div>

@@ -7,61 +7,61 @@ class Commander3 extends Component {
     super(props);
   }
 
- 
+
   render() {
+
+
     return (
       <div>
-        <div class="container">
-          <div class="product-details spad">
-            <div id="centrer" class="col-lg-12 col-md-6">
+        <div className="container">
+          <div className="product-details spad">
+            {(this.props.data.date != null && (this.props.data.check1 || (this.props.data.check2 && this.props.data.selectedOptionVille != "" && this.props.data.selectedOptionPoint != "") || (this.props.data.check3 && this.props.data.selectedOptionVille != "" && this.props.data.adresse != ""))) ? (<div id="centrer" className="col-lg-12 col-md-6">
               <br></br>
-              <h3>Détails du prix</h3>
-              <div class="shoping__checkout">
-                <ul>
-                  <li>
-                    Avance <span>{this.props.data.Espece.avance} MAD</span>
-                  </li>
-                  <li>
-                    Prix Transport <span>60 MAD</span>
-                  </li>
-                  <li>
-                    Prix Total{" "}
-                    <span>{parseInt(this.props.data.Espece.prix) + 60} MAD</span>
-                  </li>
-                  <li>
-                    <a
-                      href="/ToutesLesAnnonces"
-                      id="aStyle"
-                      class="primary-btn"
-                    >
-                      Annuler commande
-                    </a>{" "}
-                    <br></br>
-                    {this.props.data.checked && !this.props.data.vide ? (
-                      <Link
-                        to={{
-                          pathname: "/AlerteCommande",
-                          state: {
-                            id: this.props.data.Commande,
-                          },
-                        }}
-                      >
-                        {" "}
-                        <a
-                         
-                          id="aStyle"
-                          class="primary-btn"
-                          disabled
-                        >
-                          Valider
-                        </a>{" "}
-                      </Link>
-                    ) : null}
-                  </li>
-                </ul>
+              <h3>Moyens de paiement:</h3>
+              <div className="shoping__checkout mt-2 pb-0">
+
+                <div className="form-check">
+                  <input checked={this.props.data.paiement == "virement"} onChange={this.props.onPaiementChanged} className="form-check-input" type="radio" name="paiement" id="virement" value="virement" />
+                  <label className="form-check-label" htmlFor="virement">
+                    <b> Virement bancaire</b>
+                  </label>
+                </div>
+                <div className="form-check mt-2">
+                  <input checked={this.props.data.paiement == "transfert"} onChange={this.props.onPaiementChanged} className="form-check-input" type="radio" name="paiement" id="transfert" value="transfert" />
+                  <label className="form-check-label" htmlFor="transfert">
+                    <b>Par agence de transfert d'argent (*)</b>
+                  </label>
+                </div>
+              </div>
+              <span><small>* les frais de transfert sont a la charge de l'achteur</small></span>
+              <br></br>
+              <div className="form-check mt-5">
+                <input id="monCheck" checked={this.props.data.checked} className="form-check-input" type="checkbox" value="" id="condition" onChange={this.props.onChangecheck} />
+                <label className="form-check-label" htmlFor="condition">
+                  J'accepte les conditions generales de vente
+  </label>
               </div>
             </div>
-          </div>
+            ) : null}
+          </div>{console.log(this.props.data.Commande)}
+          {this.props.data.checked && this.props.data.paiement != null ? <Link
+            to={{
+              pathname: "/AlerteCommande",
+              state: {
+                id: this.props.data.Commande,
+              },
+            }}
+          >
+            {" "}
+            <a
+              style={{ borderColor: 'black' }}
+              id=""
+              className="primary-btn float-right text-white"
+              disabled
+            >
+              Valider
+                        </a>{" "}
+          </Link> : null}
         </div>
       </div>
     );

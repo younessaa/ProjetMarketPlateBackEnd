@@ -121,7 +121,7 @@ export default function MultiStep(props) {
       setStepState(evt.currentTarget.value);
     }
   };
-const a=["Bête", "Livraison", "Prix"];
+const a=["Livraison", "Montan à payer","Moyens de paiement"];
 const ab=[1,2,3]
   const renderSteps = () => 
     

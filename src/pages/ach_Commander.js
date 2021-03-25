@@ -235,7 +235,7 @@ class Commander extends Component {
       Commande: {
 
         // localisation: e.target.value,
-        point_relais: this.state.selectedOptionPoint.value,
+        point_relais: this.state.check1? "Récupérer à la coopérative":this.state.selectedOptionPoint.value,
         id_consommateur: localStorage.getItem("usertoken"),
         statut: "en attente de paiement avance",
         reçu_avance: "",
@@ -248,7 +248,7 @@ class Commander extends Component {
         deadline: this.state.deadline,
         rating: null,
         date_de_livraison: this.state.date,
-        ville_livraison: this.state.selectedOptionVille.value,
+        ville_livraison: this.state.check1? "Récupérer à la coopérative":this.state.selectedOptionVille.value,
         avance: this.state.avance,
         prix_total: this.state.prix-(-this.state.prix_transport),
         avance_transmis_le: null,

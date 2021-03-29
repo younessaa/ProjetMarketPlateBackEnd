@@ -3,6 +3,8 @@ import axios from "axios";
 import Select from "react-select";
 import { Link } from "react-router-dom";
 import Loader from "react-loader-spinner";
+import { GiWeight,GiSheep } from 'react-icons/gi';
+import{HiOutlineBadgeCheck} from  'react-icons/hi';
 import ReactPaginate from "react-paginate";
 class HomeSheepsParEleveur extends Component {
   constructor() {
@@ -11,7 +13,7 @@ class HomeSheepsParEleveur extends Component {
     this.state = {
       Annonces: [],
       loading: true,
-
+      Disabled: true,
       /* AnnoncesPage: [],
       offset: 0,
       data: [],
@@ -23,11 +25,22 @@ class HomeSheepsParEleveur extends Component {
       nombrePages: [],
       currentPage: 1,
       annoncesPerPage: 6,
-      Disabled: false,
-      selectedOptionRace: null,
+       selectedOptionRace: null,
       optionsRace: [
         { value: "Sardi", label: "Sardi" },
         { value: "Bargui", label: "Bargui" },
+      ],
+      optionsRaceVache: [
+        { value: "brune de l’Atlas", label: "Brune de l’Atlas" },
+        { value: "oulmés-Zear", label: "Oulmés-Zear" },
+        { value: "noir-Pie de Meknés", label: "Noir-Pie de Meknés" },
+        { value: "tidili", label: "Tidili" },
+      ],
+      optionsRaceCaprine: [
+        { value: "benadir", label: "Benadir" },
+        { value: "boer", label: "Boer" },
+        { value: "drâa", label: "Drâa" },
+        { value: "rahali", label: "Rahali" },
       ],
       selectedOptionCategorie: null,
       optionsCategorie: [
@@ -57,39 +70,68 @@ class HomeSheepsParEleveur extends Component {
       redirect: false,
       selectedOptionSort: null,
       optionsSort: [
-        { value: null, label: "Options de tri" },
-        { value: "created_at", label: "Date plus récent" },
-        { value: "disponible", label: "Bêtes disponibles" },
-        { value: "réservé", label: "Bêtes réservées" },
+ 
+        { value: "prix", label: "Moins cher au plus cher" },
+        { value: "prix_dec", label: "Plus cher au moins cher" },
 
-        { value: "prix", label: "Prix croissant" },
-        { value: "prix_dec", label: "Prix décroissant" },
+        { value: "age", label: "Plus jeune au plus age" },
+        { value: "age_dec", label: "plus age au plus jeune" },
 
-        { value: "poids", label: "Poids croissant" },
-
-        { value: "poids_dec", label: "Poids décroissant" },
-
-        /*   { value: "age", label: "Date descendante" },
-        { value: "prix", label: "Prix descendante" },
-        { value: "poids", label: "Poids descendante" }, */
+        { value: "poids", label: "Moins lourd au plus lourd" },
+        { value: "poids_dec", label: "Plus lourd au moins lourd" },
       ],
     };
     this.onChange = this.onChange.bind(this);
+    this.handleChangeCategorie = this.handleChangeCategorie.bind(this);
     this.handelChercher = this.handelChercher.bind(this);
-    this.paginate = this.paginate.bind(this);
+    this.handelReinitialiser = this.handelReinitialiser.bind(this);
+
     this.sortData = this.sortData.bind(this);
+
+    this.paginate = this.paginate.bind(this);
   }
 
   handleChangeCategorie = (selectedOptionCategorie) => {
-    if (selectedOptionCategorie.value != "mouton") {
+    this.setState({selectedOptionRace:null})
+    if (selectedOptionCategorie.value == "vache") {
       this.setState({
-        selectedOptionRace: null,
-        conditions: Object.assign(this.state.conditions, {
-          race: null,
-        }),
-        Disabled: true,
+        
+        race:this.state.optionsRaceVache ,
+        Disabled: false,
       });
-      console.log(this.state.selectedOptionRace);
+      this.setState({ selectedOptionCategorie }, () =>
+      this.setState({
+        conditions: Object.assign(this.state.conditions, {
+          categorie: this.state.selectedOptionCategorie.value,
+        }),
+      })
+    );
+    } 
+    else if (selectedOptionCategorie.value == "mouton") {
+      this.setState({
+        race:this.state.optionsRace ,
+        Disabled: false,
+      });
+      this.setState({ selectedOptionCategorie }, () =>
+      this.setState({
+        conditions: Object.assign(this.state.conditions, {
+          categorie: this.state.selectedOptionCategorie.value,
+        }),
+      })
+    );
+    } 
+    else if (selectedOptionCategorie.value == "chevre") {
+      this.setState({
+        race:this.state.optionsRaceCaprine ,
+        Disabled: false,
+      });
+      this.setState({ selectedOptionCategorie }, () =>
+      this.setState({
+        conditions: Object.assign(this.state.conditions, {
+          categorie: this.state.selectedOptionCategorie.value,
+        }),
+      })
+    );
     } else
       this.setState({
         Disabled: false,
@@ -102,7 +144,6 @@ class HomeSheepsParEleveur extends Component {
       })
     );
   };
-
   handleChangeRace = (selectedOptionRace) => {
     this.setState({ selectedOptionRace }, () =>
       this.setState({
@@ -130,6 +171,51 @@ class HomeSheepsParEleveur extends Component {
       })
     );
   };
+  handelReinitialiser() {
+    this.setState({ loading: true }, () => {
+      axios
+        .get("http://127.0.0.1:8000/api/Espece", {
+          headers: {
+
+            "Content-Type": "application/json",
+
+          },
+          params: {
+            statut: "disponible",
+            order_by: "categorie",
+            order_mode: "asc",
+          },
+        })
+        .then((res) => {
+          this.setState({
+            Annonces: res.data.filter((data)=>data.id_eleveur===this.props.location.state.id.id),
+            loading: false,
+            conditions: {
+               order_by: "categorie",
+              order_mode: "asc",
+            },
+            selectedOptionCategorie: null,
+            selectedOptionRace: null,
+            Disabled: true,
+            selectedOptionVille: null,
+          });
+          var all = document.querySelectorAll('input[name="reference"],input[name="prix_min"],input[name="prix_max"],input[name="poids_min"],input[name="poids_max"]')
+          Array.from(all).map((a) => (a.value = null))
+
+          const pageNumbers = [];
+          for (
+            let i = 1;
+            i <=
+            Math.ceil(this.state.Annonces.length / this.state.annoncesPerPage);
+            i++
+          ) {
+            pageNumbers.push(i);
+          }
+          this.setState({ nombrePages: pageNumbers });
+        });
+    });
+
+  }
 
   componentDidMount() {
     // const myToken = `Bearer ` + localStorage.getItem("myToken");
@@ -154,7 +240,7 @@ class HomeSheepsParEleveur extends Component {
             /* pageCount: Math.ceil(res.data.length / this.state.perPage),*/
           });
           /*this.setElementsForCurrentPage();*/
-          console.log(this.state.Annonces);
+       //   console.log(this.state.Annonces);
           const pageNumbers = [];
           for (
             let i = 1;
@@ -172,15 +258,18 @@ class HomeSheepsParEleveur extends Component {
   sortData(e) {
     //this.setState({ selectedOptionSort: Object.values(e)[0] });
     //console.log(this.state.selectedOptionSort);
-    console.log(Object.values(e)[0]);
+    // console.log(Object.values(e)[0]);
     // console.log( (Object.values(e)[0]).getFullYear());
     // created_date.getTime();
     const sortProperty = Object.values(e)[0];
     const sorted = this.state.Annonces;
-    if (sortProperty === "prix" || sortProperty === "poids") {
+    if (sortProperty === "prix" || sortProperty === "poids" || sortProperty === "age") {
       this.setState({ loading: true }, () => {
         sorted.sort((a, b) => a[sortProperty] - b[sortProperty]);
-        this.setState({ Annonces: sorted, loading: false });
+        this.setState({
+          Annonces: sorted,
+          loading: false
+        });
       });
     } else if (sortProperty === "prix_dec") {
       const sort_ = "prix";
@@ -194,90 +283,23 @@ class HomeSheepsParEleveur extends Component {
         sorted.sort((a, b) => b[sort_] - a[sort_]);
         this.setState({ Annonces: sorted, loading: false });
       });
-    } else if (sortProperty === "created_at") {
+    } else if (sortProperty === "age_dec") {
+      const sort_ = "age";
       this.setState({ loading: true }, () => {
-        sorted.sort(function (a, b) {
-          console.log(a[sortProperty]);
-          console.log(new Date(a[sortProperty]));
-          return new Date(b[sortProperty]) - new Date(a[sortProperty]);
-        });
+        sorted.sort((a, b) => b[sort_] - a[sort_]);
         this.setState({ Annonces: sorted, loading: false });
       });
-    } else if (sortProperty === "réservé") {
+    }
+    else {
       this.setState({ loading: true }, () => {
-        axios
-          .get("http://127.0.0.1:8000/api/Espece", {
-            headers: {
-              // "x-access-token": token, // the token is a variable which holds the token
-            },
-            params: {
-              id_eleveur: this.props.location.state.id.id,
-              statut: "réservé",
-              order_by: "race",
-              order_mode: "asc",
-            },
-          })
-          .then((res) => {
-            this.setState({
-              Annonces: res.data,
-              loading: false,
-              /* pageCount: Math.ceil(res.data.length / this.state.perPage),*/
-            });
-            /*this.setElementsForCurrentPage();*/
-            console.log(this.state.Annonces);
-            const pageNumbers = [];
-            for (
-              let i = 1;
-              i <=
-              Math.ceil(
-                this.state.Annonces.length / this.state.annoncesPerPage
-              );
-              i++
-            ) {
-              pageNumbers.push(i);
-            }
-            this.setState({ nombrePages: pageNumbers });
+        sorted.sort(
+          function (a, b) {
+
+            return new Date(b[sortProperty]) - new Date(a[sortProperty]);
           });
-      });
-    } else if (sortProperty === "disponible") {
-      this.setState({ loading: true }, () => {
-        axios
-          .get("http://127.0.0.1:8000/api/Espece", {
-            headers: {
-              // "x-access-token": token, // the token is a variable which holds the token
-            },
-            params: {
-              id_eleveur: this.props.location.state.id.id,
-              statut: "disponible",
-              order_by: "race",
-              order_mode: "asc",
-            },
-          })
-          .then((res) => {
-            this.setState({
-              Annonces: res.data,
-              loading: false,
-              /* pageCount: Math.ceil(res.data.length / this.state.perPage),*/
-            });
-            /*this.setElementsForCurrentPage();*/
-            console.log(this.state.Annonces);
-            const pageNumbers = [];
-            for (
-              let i = 1;
-              i <=
-              Math.ceil(
-                this.state.Annonces.length / this.state.annoncesPerPage
-              );
-              i++
-            ) {
-              pageNumbers.push(i);
-            }
-            this.setState({ nombrePages: pageNumbers });
-          });
+        this.setState({ Annonces: sorted, loading: false });
       });
     }
-
-    console.log(this.state.Annonces);
   }
 
   paginate(pageNumber) {
@@ -317,11 +339,12 @@ class HomeSheepsParEleveur extends Component {
             // "x-access-token": token, // the token is a variable which holds the token
             "Content-Type": "application/json",
           },
+        
           params: this.state.conditions,
         })
         .then((res) => {
           this.setState({
-            Annonces: res.data,
+            Annonces: res.data.filter((data)=>data.id_eleveur===this.props.location.state.id.id),
             loading: false,
           });
           const pageNumbers = [];
@@ -345,6 +368,8 @@ class HomeSheepsParEleveur extends Component {
   }
 
   render() {
+    var mois = new Array("Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre");
+
     /* let paginationElement;
     if (this.state.pageCount > 1) {
       paginationElement = (
@@ -417,7 +442,7 @@ class HomeSheepsParEleveur extends Component {
                           options={optionsCategorie}
                           placeholder="Espece"
                           required
-                          // className="Select"
+                        // className="Select"
                         />
                         <br></br>
                       </div>
@@ -435,19 +460,36 @@ class HomeSheepsParEleveur extends Component {
                           onChange={this.onChange}
                           name="race"
                         /> */}
-                        <Select
+                       <Select
                           id="recherchePlace"
+                          isDisabled={this.state.Disabled}
                           value={selectedOptionRace}
                           onChange={this.handleChangeRace}
-                          options={optionsRace}
+                          options={this.state.race}
                           placeholder=" Race"
                           required
-                          // className="Select"
+                        // className="Select"
                         />
                         <br></br>
                       </div>
                     </div>
+                    <h6 id="gras" className="latest-product__item">
+                      Reference
+                    </h6>
+                    <div className="row">
+                      <div className="col-lg-12 col-md-12">
+                        <input
+                          id="recherchePlace"
 
+                          type="text"
+                          class="form-control"
+                          placeholder=" Reference de l'annonce"
+                          name="reference"
+                          onChange={this.onChange}
+                        />
+                      </div>
+                    </div>
+                    <br/>
                     <h6 id="gras" className="latest-product__item">
                       Prix
                     </h6>
@@ -518,7 +560,7 @@ class HomeSheepsParEleveur extends Component {
                           options={optionsVille}
                           placeholder=" Ville"
 
-                          // className="Select"
+                        // className="Select"
                         />
                         <br></br>
                         <br></br>
@@ -530,10 +572,21 @@ class HomeSheepsParEleveur extends Component {
                         <button
                           id="roundB"
                           className="newBtn site-btn"
-                          onClick={this.handelChercher}
-                        >
+                          onClick={this.handelChercher} >
+                          <i className="fa fa-search "></i>
+
                           {" "}
                           Rechercher{" "}
+                        </button>
+                        <br></br>
+                        <br></br>
+                        <button
+                          id="roundB"
+                          className="newBtn site-btn"
+                          onClick={this.handelReinitialiser} >
+                          <i className="fa fa-refresh"></i>
+                          {" "}
+                          Reinitialiser{" "}
                         </button>
                         <br></br>
                         <br></br>
@@ -553,18 +606,18 @@ class HomeSheepsParEleveur extends Component {
 
               <div className="col-lg-9 col-md-7">
                 <div className="filter__item">
-                  <div>
+                <div>
                     <div id="filterPlace" className="col-lg-5 col-md-5 fa ">
                       <Select
                         id="filterPlace"
                         value={this.state.selectedOptionSort}
                         onChange={this.sortData}
                         options={optionsSort}
-                        placeholder="&#xf161;"
-                        //
-                        //f0b0
+                        placeholder="&#xf161; Trier par"
+                      //
+                      //f0b0
 
-                        // className="Select"
+                      // className="Select"
                       />
                     </div>
                   </div>
@@ -622,12 +675,12 @@ class HomeSheepsParEleveur extends Component {
                       <div className="row">
                         {currentAnnonces.map((Annonces) => (
                           <div className="col-lg-4 col-md-6 col-sm-6">
-                            {console.log(Annonces.image_face)}
+                            {/*console.log(Annonces.image_face)*/}
                             <div id="anonce" className="product__item">
                               <div
                                 className="product__item__pic set-bg"
                                 data-setbg={Annonces.images}
-                                // src="Images/sardi1.jpg"
+                              // src="Images/sardi1.jpg"
                               >
                                 <img
                                   src={Annonces.image_face}
@@ -650,17 +703,30 @@ class HomeSheepsParEleveur extends Component {
                                   </li>
                                 </ul>
                               </div>
-                              <div className="product__item__text">
-                                <h6>{"         " + Annonces.race}</h6>
-                                <h6>{"         " + Annonces.poids + " Kg"}</h6>
-                                <h6>{"         " + Annonces.age + " mois"}</h6>
-                                <h5>{"         " + Annonces.prix + " MAD"}</h5>
-                                <br></br>
-                                <h5 className="text-danger">
-                                  {"         " + Annonces.statut}
-                                </h5>
-                                <br></br>
-                              </div>
+                              {Annonces.anoc ?
+                                <h1 style={{ borderRadius: "0% 0% 0% 40%",fontSize:"14px" }} class=" badge badge-success pt-2 w-100  ">
+                                   <HiOutlineBadgeCheck className=" mr-1 fa-lg " />
+                             <span>Labélisé ANOC</span>  </h1>
+                                :
+                                <span className="badge pt-3 w-100  mt-1  ">{"  "}</span>}
+                             <div className="product__item__text p-2 text-justify">
+                                <h6 ><GiSheep className=" mr-1 fa-lg " />{  Annonces.categorie}
+
+                                  <span className="float-right">
+                                    <i   class="fa fa-dot-circle-o"></i> {this.annonceVision(Annonces)}
+                                  </span> </h6>
+
+                                <h6><GiWeight className=" mr-1 fa-lg " />
+                                  {Annonces.poids + " Kg"}
+                                  <img  style={{width:"10%",marginLeft:"38%",marginBottom:"10px"}} src="./Images/age.png"></img>
+
+                                  <span className="float-right mt-1">
+                                    { Annonces.age + " mois"}</span></h6>
+
+                                    <h5 id="mad">{"         " + Annonces.prix + " MAD"}
+                                <h5 className="text-danger float-right" >
+                                    {"         " + Annonces.statut}</h5></h5>
+                               </div>
                             </div>
                           </div>
                         ))}

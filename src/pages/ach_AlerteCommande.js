@@ -1,6 +1,11 @@
 import React, { Component } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
+import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
+import { Carousel } from 'react-responsive-carousel';
+import { Link } from "react-router-dom";
+ 
+
 
 //import menu_eleveur from '/public/Images/eleveurs.png'; // with import
 
@@ -10,9 +15,12 @@ class AlerteCommande extends Component {
     // let redirect = false;
     this.state = {
       commande: {},
+      cooperative: null,
+      rib: '',
+      tech: '',
+      deadline: '',
+      avance: '',
       date: Date,
-      avance: "",
-      rib:"",
       redirect: false,
     };
     this.handlPost = this.handlPost.bind(this);
@@ -26,49 +34,28 @@ class AlerteCommande extends Component {
   //   this.setState({ commande: cmd, date: D });
   // }
 
-  componentDidMount() {
+  sleep = (milliseconds) => {
+    return new Promise(resolve => setTimeout(resolve, milliseconds))
+  }
+
+   
+ 
+  componentDidMount = async () => {
     const cmd = this.props.location.state.id;
     const myToken = `Bearer ` + localStorage.getItem("myToken");
-    // console.log(cmd)
-    var currentdate = cmd.date_creation;
-    var day = currentdate.getDate();
-    var month = currentdate.getMonth() + 1;
-    var year = currentdate.getFullYear();
-    var hours = currentdate.getHours();
-
-    if (hours > 8 && hours < 16) {
-      var day = day;
-      var month = month;
-      var year = year;
-      var hours = 16;
-    }
-    if ((hours > 16 && hours < 24) || hours == "00") {
-      var day = day + 1;
-      var month = month;
-      var year = year;
-      var hours = 12;
-    }
-    if (hours > 1 && hours < 8) {
-      var day = day;
-      var month = month;
-      var year = year;
-      var hours = 12;
-    }
-
-    var datetime = day + "/" + month + "/" + year + " à " + hours + ":00:00";
-    // this.setState({ date: datetime });
-    // this.setState({ commande: cmd, date: datetime });
-    var dateTest = year + "-" + month + "-" + day + " " + hours + ":00:00";
-    var TestDate = new Date(dateTest);
-    console.log(TestDate);
-
     this.setState({
-      commande: Object.assign(cmd, { deadline: dateTest }),
-      date: datetime,
+      commande: this.props.location.state.id,
+      deadline: (this.props.location.state.id.deadline.replace(",", "  à ")).substr(0, 20),
+      avance: this.props.location.state.id.avance,
+      //date: datetime,
     });
 
+
+
+
+
     axios
-      .get("http://127.0.0.1:8000/api/Espece/" + cmd.id_espece, {
+      .get("http://127.0.0.1:8000/api/cooperative/" + cmd.id_cooperative, {
         headers: {
           // "x-access-token": token, // the token is a variable which holds the token
           "Content-Type": "application/json",
@@ -77,11 +64,12 @@ class AlerteCommande extends Component {
       })
 
       .then((res) => {
-        this.setState({
-          avance: res.data.objet.avance,
-          rib:res.data.Eleveur[0].rib
-        });
+        this.setState({ cooperative: res.data, tech: res.data.tech[0].prenom + " " + res.data.tech[0].nom, rib: res.data.rib });
       });
+    await this.sleep(1000)
+
+
+
   }
 
   handlPost(e) {
@@ -95,27 +83,33 @@ class AlerteCommande extends Component {
         },
       })
       .then((res) => {
-        axios
-          .put(
-            "http://127.0.0.1:8000/api/Espece/" + this.state.commande.id_espece,
-            {
-              statut: "réservé",
-              //   msg_refus_avance: this.state.dataUrl,
-            },
-            {
-              headers: { "Content-Type": "application/json",
-            "Authorization": myToken, },
-            }
-          )
-          .then((res) => {
-            this.props.history.push("/commandesParStatut");
-          });
-          
+        console.log(this.state.commande.especes)
+        this.state.commande.especes.map((e) =>
+        (
+          axios
+            .put(
+              "http://127.0.0.1:8000/api/Espece/" + e.id_espece,
+              {
+                statut: "réservé",
+                //   msg_refus_avance: this.state.dataUrl,
+              },
+              {
+                headers: {
+                  "Content-Type": "application/json",
+                  "Authorization": myToken,
+                },
+              }
+            )
+            .then((res) => {
+              this.props.history.push("./commandesParStatut");
+            })
+        ))
+
         Swal.fire({
           title: "Commande validée",
           text: "Finalisez votre commande dans Mes Commandes",
           icon: "success",
-         
+
           heightAuto: false,
           confirmButtonColor: "#7fad39",
 
@@ -132,69 +126,118 @@ class AlerteCommande extends Component {
     // );
   }
 
-  annulerCommande () {
+  annulerCommande() {
     Swal.fire("commande annulée");
   }
 
   render() {
-    return (
-      <div>
-        {/* <!-- Page Preloder --> */}
-        {/* <div id="preloder">
-                <div className="loader"></div>
-            </div> */}
+    //control-arrow control-next
 
+    return (
+      <div className="">  
+        <style>{` .carousel {    height:400px;}`}</style>
         <section className="product spad">
           <div className="container">
-            <div class="col-lg-12 col-md-6">
+            <div class="col-lg-12 col-md-6 mx-5 ">
               <h3>Votre commande s'est déroulé avec succès</h3> <br></br>
-              <h5>
-                Vous pouvez maintenant payer l'avance de votre bête pour
-                valider votre commande avec le moyen de paiement que vous avez
-                choisi précedement en vous munissant du numéro du RIB du
-                vendeur: <b>{this.state.rib}</b>
+              <h5 className="mw-75 " style={{ marginLeft: "2%", marginRight: "10%" }} >
+                Pour valider votre commande , il vous suffit de payer les frais de reservation en effectuant
+               {this.state.commande.mode_paiement_choisi == "transfert" ? <span>
+                  {" un transfert d'argent au  technicien : "}<span className="text-danger">{this.state.tech.toUpperCase()}</span> </span> :
+                  <span>
+                    {"  un virement sur le rib suivant : "}<span className="text-danger">{this.state.rib}</span></span>}
+                <br></br>
+                <br></br>
+                Frais de reservation  à payer  : <span className="text-danger" >{this.state.avance} Dhs</span>
               </h5>
-              {/* {console.log("rib"+this.state.rib)} */}
               <br></br>
-              <h3>
-                Montant avance à payer : {parseInt(this.state.avance) + 60} MAD
-              </h3>
-              <br></br>
+        
+              <div style={{ maxHeight:"600px",maxWidth: "50%", marginLeft: "20%" }}>
+
+                <Carousel  >
+                  {this.state.commande.mode_paiement_choisi == "transfert" ? <div>
+                    <img src="/Images/1p.jpg" />
+                   </div> : <div>
+                    <img src="/Images/11p.jpg" />
+                   </div>}
+
+                  <div>
+                    <img src="/Images/2p.jpg" />
+                     
+                  </div>
+                  <div>
+                    <img src="/Images/3p.png" />
+                   </div>
+                  <div>
+                    <img src="/Images/4p.png" />
+                  </div>
+                  <div>
+                    <img src="/Images/5p.png" />
+                  </div>
+                  <div>
+                    <img src="/Images/6p.png" />
+
+                  </div>
+                  <div>
+                    <img src="/Images/7p.jpg" />
+                   </div>
+                </Carousel>
+              </div>
               <div class="checkout__input bg-ligh text-danger h6 center">
-                Attention: Il vous reste jusqu'au{" "}
+                Attention: Il vous reste jusqu'au{" "}{this.state.deadline}
                 <span>
-                  <b> {this.state.date}</b>
+                  <b> {/*this.state.date*/}</b>
                 </span>{" "}
                 pour payer et importer votre reçu de paiement.
               </div>
-              <div class="checkout__input bg-ligh text-danger h6 center">
+              <div class="checkout__input bg-ligh text-danger h6 center  " style={{ marginBottom: "90px" }}>
                 Au delà de ce délai, votre commande sera annulée automatiquement
                 !
               </div>
-              <div class="shoping__checkout">
-                <ul>
-                  <br></br>
-                  <li>
-                    <a
-                      onClick={this.annulerCommande}
-                      href="./Toutes"
-                      class="primary-btn"
-                      id="aStyle"
-                    >
-                      Annuler commande
-                    </a>{" "}
-                    <br></br>
-                    <a
-                      href="/commandesParStatut"
-                      class="primary-btn"
+              <div className="mw-75 " style={{ marginRight: "45%" }} >
+                <Link
+                  to={{
+                    pathname: "./commandesParStatut",
+                  }}
+                >
+                  <b className="text-danger float-right">
+                    <button
+
+                      className=" rounded text-white bg-success py-1 px-3 "
                       onClick={this.handlPost}
-                      id="aStyle"
-                    >
-                      Valider
-                    </a>
-                  </li>
-                </ul>
+                      style={{ fontSize: "19px", border: "none" }}
+                    //  onClick={(e) => {
+                    //   this.handlePanier(e.currentTarget.id);
+                    //  }
+                    // }
+                    > Valider la commande</button>
+                  </b></Link>
               </div>
+              <br></br>
+              <br></br>
+
+
+              <div className="mw-75  " style={{ marginRight: "45%" }} >
+                <Link
+                  to={{
+                    pathname: "./",
+                  }}
+                >
+                  <b className="text-danger float-right ">
+                    <button
+
+                      className=" rounded text-white bg-danger py-1 px-2 "
+                      onClick={this.annulerCommande}
+                      style={{ fontSize: "20px", border: "none" }}
+                    //  onClick={(e) => {
+                    //   this.handlePanier(e.currentTarget.id);
+                    //  }
+                    // }
+                    >{""} Annuler la commande{" "} </button>
+                  </b></Link>
+              </div>
+
+
             </div>
           </div>
         </section>

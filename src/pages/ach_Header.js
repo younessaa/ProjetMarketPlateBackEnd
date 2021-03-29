@@ -78,12 +78,19 @@ class Header extends Component {
             },
           }
         )
-        .then((res) => {
+        .then((res) => {console.log(now.getTime());console.log(now.getTime());
           var resultat = res;
           for (let i = 0; i < res.data.length; i++) {
             var deadline = new Date(res.data[i].deadline);
+         
+            var dd =new Date(res.data[i].deadline.substr(6, 4),
+              res.data[i].deadline.substr(3, 2)
+              ,res.data[i].deadline.substr(0, 2),
+              res.data[i].deadline.substr(12, 2),
+              res.data[i].deadline.substr(15, 2),
+              res.data[i].deadline.substr(18, 2));
             if (
-              now.getTime() >= deadline.getTime() &&
+              now.getTime() >= dd.getTime() &&
               res.data[i].statut == "en attente de paiement avance"
             ) {
               axios
@@ -291,12 +298,12 @@ class Header extends Component {
                       <span>
                         <li>
                           <a style={{ color: colors[2] }} className="Header" href="./commandesParStatut">
-                            <MdAssignment className="  fa-lg " /> Commandes</a>
+                            <MdAssignment className="  fa-lg " /> Mes commandes</a>
                         </li>
                         <span className="form-inline my-2 my-lg-0">
                           <li>
                             <a style={{ color: colors[3] }} className="Header" href="./Favoris">
-                              <AiFillHeart className=" fa-lg " />  Favoris
+                              <AiFillHeart className=" fa-lg " />  Mes favoris
 
                             </a>
                           </li>
@@ -304,7 +311,7 @@ class Header extends Component {
                           <li>
                             <a className="Header" style={{ color: colors[4] }} href="./panier">
 
-                              <FaShoppingCart className="fa-sm mb-1 " /> Panier
+                              <FaShoppingCart className="fa-sm mb-1 " /> Mon panier d'achat
                             </a>
                           </li>
                         </span>

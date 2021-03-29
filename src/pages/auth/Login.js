@@ -35,6 +35,7 @@ class Login extends Component {
     const user = {
       login: this.state.login,
       password: this.state.password,
+      remember:this.state.isChecked,
     };
 
     this.setState({ loading: true }, () => {
@@ -136,7 +137,7 @@ class Login extends Component {
                           />
                         </div>
                         <div class="custom-control custom-checkbox mt-3">
-                          <input type="checkbox" class="custom-control-input" id="checkbox-1"  onChange={() => this.handleChecked()} checked={this.state.isChecked}/>
+                          <input type="checkbox" name="remember" class="custom-control-input" id="checkbox-1"  onChange={() => this.handleChecked()} checked={this.state.isChecked}/>
                           <label class="custom-control-label" for="checkbox-1"  onChange={() => this.handleChecked()}>
                             <i className="text-right">Se souvenir de moi </i>
                              </label>

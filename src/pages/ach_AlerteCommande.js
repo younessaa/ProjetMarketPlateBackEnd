@@ -135,7 +135,7 @@ class AlerteCommande extends Component {
 
     return (
       <div className="">  
-        <style>{` .carousel {    height:400px;}`}</style>
+        <style>{` .carousel {    height:300px;}`}</style>
         <section className="product spad">
           <div className="container">
             <div class="col-lg-12 col-md-6 mx-5 ">

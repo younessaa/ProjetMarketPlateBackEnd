@@ -116,37 +116,40 @@ class CommandesParStatut extends Component {
     let id_esp=[];
     nbr.map((m)=>id_esp.push(m.id_commande))
      // avarié
-    let avarié=( this.state.Commandes.filter(cmd=>cmd.espece.filter(stat=>(stat.statut=='produit avarié')).length>=1))
-  
+    let avarié=( this.state.Commandes.filter(cmd=>cmd.espece.filter(stat=>(stat.statut=='produit avarié')).length>=1
+    &&cmd.especes.filter((esp)=>esp.motif_annulation!=null && esp.choix_client==null  ).length>=1))
+ // console.log(avarié.filter(cmd=>cmd.espece.filter(stat=>(stat.statut=='produit avarié')).length>=1
+  //&&cmd.especes.filter((esp)=>esp.motif_annulation!=null && esp.choix_client==null  ).length>=1))
      // Commandes annulées
 
 const cmdDeadlineDépassé = this.state.Commandes.filter(
       (Commandes) => Commandes.statut === "commande annulée (deadline dépassé)" ||
         Commandes.statut === "reçu avance refusé" ||
-        Commandes.statut === "reçu reste refusé" 
+        Commandes.statut === "reçu reste refusé" ||
+        Commandes.statut==="annulé par client"
     );
   
      //Avances a payer
     const cmdAvancesEnAttenteDePaiement = this.state.Commandes.filter(
       (Commandes) => id_esp.includes(Commandes._id)==false
       && Commandes.statut === "en attente de paiement avance"
-      && Commandes.espece.filter(stat=>(stat.statut=='produit avarié')).length<1
-    );
+      &&(Commandes.espece.filter(stat=>(stat.statut=='produit avarié')).length<1||(Commandes.espece.filter(stat=>(stat.statut=='produit avarié')).length>=1 && Commandes.especes.filter((esp)=>(esp.motif_annulation!=null && esp.choix_client!=null)||(esp.motif_annulation==null && esp.choix_client==null)  ).length==Commandes.especes.length))
+      );
   
     //Produit réservé
     const cmdAvancesEnAttenteDeValidationt = this.state.Commandes.filter(
       (Commandes) => id_esp.includes(Commandes._id)==false
       && Commandes.statut === "en attente de validation avance"
-      
-      && Commandes.espece.filter(stat=>(stat.statut=='produit avarié')).length<1
+      &&(Commandes.espece.filter(stat=>(stat.statut=='produit avarié')).length<1||(Commandes.espece.filter(stat=>(stat.statut=='produit avarié')).length>=1 && Commandes.especes.filter((esp)=>(esp.motif_annulation!=null && esp.choix_client!=null)||(esp.motif_annulation==null && esp.choix_client==null)  ).length==Commandes.especes.length))
+       
     );
     // Reste à payer
 
     const cmdAvancesMontantinalEnAttenteP = this.state.Commandes.filter(
       (Commandes) => id_esp.includes(Commandes._id)==false
       && Commandes.statut === "en attente de paiement du reste"
-      
-      && Commandes.espece.filter(stat=>(stat.statut=='produit avarié')).length<1
+      &&(Commandes.espece.filter(stat=>(stat.statut=='produit avarié')).length<1||(Commandes.espece.filter(stat=>(stat.statut=='produit avarié')).length>=1 && Commandes.especes.filter((esp)=>(esp.motif_annulation!=null && esp.choix_client!=null)||(esp.motif_annulation==null && esp.choix_client==null)  ).length==Commandes.especes.length))
+
     );
  
     //Produit à livrer
@@ -155,7 +158,8 @@ const cmdDeadlineDépassé = this.state.Commandes.filter(
      (Commandes) =>  
     id_esp.includes(Commandes._id)==false
       && Commandes.statut === "validé" || Commandes.statut === "en attente de validation reste" 
-     && Commandes.espece.filter(stat=>(stat.statut=='produit avarié')).length<1
+      &&(Commandes.espece.filter(stat=>(stat.statut=='produit avarié')).length<1||(Commandes.espece.filter(stat=>(stat.statut=='produit avarié')).length>=1 && Commandes.especes.filter((esp)=>(esp.motif_annulation!=null && esp.choix_client!=null)||(esp.motif_annulation==null && esp.choix_client==null)  ).length==Commandes.especes.length))
+
     );
   
    return (

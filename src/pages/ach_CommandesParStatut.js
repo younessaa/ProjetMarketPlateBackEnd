@@ -13,7 +13,7 @@ class CommandesParStatut extends Component {
       loading: true,
       Commandes: [],
       redirect: false,
-      Livraison:[],
+      Livraison: [],
     };
   }
 
@@ -68,29 +68,26 @@ class CommandesParStatut extends Component {
               loading: false,
             });
             axios
-            .get("http://127.0.0.1:8000/api/livraisons", {
-              headers: {
-                // "x-access-token": token, // the token is a variable which holds the token
-                "Content-Type": "application/json",
-                Authorization: myToken,
-              }
-            })
-  
-            .then((res) => { 
-              let liv=[];
-              Object.values(res.data).map((m)=>m.map((k)=>liv.push(k)));
-              this.setState({
-                Livraison:  liv,
-               
+              .get("http://127.0.0.1:8000/api/livraisons", {
+                headers: {
+                  // "x-access-token": token, // the token is a variable which holds the token
+                  "Content-Type": "application/json",
+                  Authorization: myToken,
+                }
+              })
+
+              .then((res) => {
+                let liv = [];
+                Object.values(res.data).map((m) => m.map((k) => liv.push(k)));
+                this.setState({
+                  Livraison: liv,
+
+                });
+
               });
-              
-            });
           });
       });
     }
-
-
-
   }
 
   render() {
@@ -105,64 +102,60 @@ class CommandesParStatut extends Component {
           if (found) { k.push(c) }
           break;
         }
-      } 
+      }
     })
 
     //rejet
-   let nbr=[] ;
-   this.state.Livraison.map(liv=>(liv.commandes.filter(
-     cmd=>cmd.especes.filter(stat=>(stat.statut_livraison=='Livré et refusé')).length>=1)).map((l)=>nbr.push(l)) );
-    let nbr_rejet=nbr.length;
-    let id_esp=[];
-    nbr.map((m)=>id_esp.push(m.id_commande))
-     // avarié
-    let avarié=( this.state.Commandes.filter(cmd=>cmd.espece.filter(stat=>(stat.statut=='produit avarié')).length>=1
-    &&cmd.especes.filter((esp)=>esp.motif_annulation!=null && esp.choix_client==null  ).length>=1))
- // console.log(avarié.filter(cmd=>cmd.espece.filter(stat=>(stat.statut=='produit avarié')).length>=1
-  //&&cmd.especes.filter((esp)=>esp.motif_annulation!=null && esp.choix_client==null  ).length>=1))
-     // Commandes annulées
-
-const cmdDeadlineDépassé = this.state.Commandes.filter(
+    let nbr = [];
+    this.state.Livraison.map(liv => (liv.commandes.filter(
+      cmd => cmd.especes.filter(stat => (stat.statut_livraison == 'Livré et refusé')).length >= 1)).map((l) => nbr.push(l)));
+    let id_esp = [];
+    nbr.map((m) => id_esp.push(m.id_commande))
+    // avarié
+    let avarié = (this.state.Commandes.filter(cmd => cmd.espece.filter(stat => (stat.statut == 'produit avarié')).length >= 1
+      && cmd.especes.filter((esp) => esp.motif_annulation != null && esp.choix_client == null).length >= 1))
+    //commandes annulees
+    const cmdDeadlineDépassé = [...new Set(avarié.concat(nbr).concat(this.state.Commandes.filter(
       (Commandes) => Commandes.statut === "commande annulée (deadline dépassé)" ||
         Commandes.statut === "reçu avance refusé" ||
         Commandes.statut === "reçu reste refusé" ||
-        Commandes.statut==="annulé par client"
-    );
-  
-     //Avances a payer
+        Commandes.statut === "annulé par client"
+    )))];
+
+    //Avances a payer
     const cmdAvancesEnAttenteDePaiement = this.state.Commandes.filter(
-      (Commandes) => id_esp.includes(Commandes._id)==false
-      && Commandes.statut === "en attente de paiement avance"
-      &&(Commandes.espece.filter(stat=>(stat.statut=='produit avarié')).length<1||(Commandes.espece.filter(stat=>(stat.statut=='produit avarié')).length>=1 && Commandes.especes.filter((esp)=>(esp.motif_annulation!=null && esp.choix_client!=null)||(esp.motif_annulation==null && esp.choix_client==null)  ).length==Commandes.especes.length))
-      );
-  
+      (Commandes) => id_esp.includes(Commandes._id) == false
+        && Commandes.statut === "en attente de paiement avance"
+        && (Commandes.espece.filter(stat => (stat.statut == 'produit avarié')).length < 1 || (Commandes.espece.filter(stat => (stat.statut == 'produit avarié')).length >= 1 && Commandes.especes.filter((esp) => (esp.motif_annulation != null && esp.choix_client != null) || (esp.motif_annulation == null && esp.choix_client == null)).length == Commandes.especes.length))
+    );
+
     //Produit réservé
     const cmdAvancesEnAttenteDeValidationt = this.state.Commandes.filter(
-      (Commandes) => id_esp.includes(Commandes._id)==false
-      && Commandes.statut === "en attente de validation avance"
-      &&(Commandes.espece.filter(stat=>(stat.statut=='produit avarié')).length<1||(Commandes.espece.filter(stat=>(stat.statut=='produit avarié')).length>=1 && Commandes.especes.filter((esp)=>(esp.motif_annulation!=null && esp.choix_client!=null)||(esp.motif_annulation==null && esp.choix_client==null)  ).length==Commandes.especes.length))
-       
+      (Commandes) => id_esp.includes(Commandes._id) == false
+        && Commandes.statut === "en attente de validation avance"
+        && (Commandes.espece.filter(stat => (stat.statut == 'produit avarié')).length < 1 || (Commandes.espece.filter(stat => (stat.statut == 'produit avarié')).length >= 1 && Commandes.especes.filter((esp) => (esp.motif_annulation != null && esp.choix_client != null) || (esp.motif_annulation == null && esp.choix_client == null)).length == Commandes.especes.length))
+
     );
     // Reste à payer
 
     const cmdAvancesMontantinalEnAttenteP = this.state.Commandes.filter(
-      (Commandes) => id_esp.includes(Commandes._id)==false
-      && Commandes.statut === "en attente de paiement du reste"
-      &&(Commandes.espece.filter(stat=>(stat.statut=='produit avarié')).length<1||(Commandes.espece.filter(stat=>(stat.statut=='produit avarié')).length>=1 && Commandes.especes.filter((esp)=>(esp.motif_annulation!=null && esp.choix_client!=null)||(esp.motif_annulation==null && esp.choix_client==null)  ).length==Commandes.especes.length))
+      (Commandes) => id_esp.includes(Commandes._id) == false
+        && Commandes.statut === "en attente de paiement du reste"
+        && (Commandes.espece.filter(stat => (stat.statut == 'produit avarié')).length < 1 || (Commandes.espece.filter(stat => (stat.statut == 'produit avarié')).length >= 1 && Commandes.especes.filter((esp) => (esp.motif_annulation != null && esp.choix_client != null) || (esp.motif_annulation == null && esp.choix_client == null)).length == Commandes.especes.length))
 
     );
- 
+
     //Produit à livrer
-  
+
     const cmdPaiementFinalvalidé = this.state.Commandes.filter(
-     (Commandes) =>  
-    id_esp.includes(Commandes._id)==false
-      && Commandes.statut === "validé" || Commandes.statut === "en attente de validation reste" 
-      &&(Commandes.espece.filter(stat=>(stat.statut=='produit avarié')).length<1||(Commandes.espece.filter(stat=>(stat.statut=='produit avarié')).length>=1 && Commandes.especes.filter((esp)=>(esp.motif_annulation!=null && esp.choix_client!=null)||(esp.motif_annulation==null && esp.choix_client==null)  ).length==Commandes.especes.length))
+      (Commandes) =>
+        id_esp.includes(Commandes._id) == false
+        && Commandes.statut === "validé" || Commandes.statut === "en attente de validation reste"
+        && (Commandes.espece.filter(stat => (stat.statut == 'produit avarié')).length < 1 || (Commandes.espece.filter(stat => (stat.statut == 'produit avarié')).length >= 1 && Commandes.especes.filter((esp) => (esp.motif_annulation != null && esp.choix_client != null) || (esp.motif_annulation == null && esp.choix_client == null)).length == Commandes.especes.length))
 
     );
-  
-   return (
+
+    return (
       <div>
         {loading ? (
           <div
@@ -194,7 +187,7 @@ const cmdDeadlineDépassé = this.state.Commandes.filter(
                       <Link
                         to={{
                           pathname: "/Commandes",
-                          state: { id: "commande annulée (deadline dépassé)" },
+                          state: { id: "Comment utiliser cette rubrique" },
                         }}
                       >
                         {" "}
@@ -266,7 +259,8 @@ const cmdDeadlineDépassé = this.state.Commandes.filter(
                                 </h4>
                                 <br></br>
                                 <h2 style={{ color: "white" }}>
-                                  <b>{cmdDeadlineDépassé.length-(-avarié.length)-(-nbr_rejet)}{" "}<GiSheep className=" mr-1  " /></b>
+                                  {/**[...new Set( */}
+                                  <b>{[...new Set(cmdDeadlineDépassé)].length}{" "}<GiSheep className=" mr-1  " /></b>
                                 </h2>
 
                                 <br></br>
@@ -303,8 +297,7 @@ const cmdDeadlineDépassé = this.state.Commandes.filter(
                                   width="95px"
                                   height="95px"
                                 />
-                                <br></br>
-                                <br></br>
+                                <br></br><br></br>
                                 <h4 style={{ color: "white" }}>
                                   Avances a payer
                               </h4>
@@ -335,8 +328,6 @@ const cmdDeadlineDépassé = this.state.Commandes.filter(
                             }}
                             className="featured__item__pic "
                             // data-setbg="Images/bg_bleu.jpg"
-
-
                             padding-left="10px"
                             padding-right="10px"
                           >
@@ -364,8 +355,6 @@ const cmdDeadlineDépassé = this.state.Commandes.filter(
                         </div>
                       </Link>
                     </div>
-
-
 
                     <div className="col-lg-6 col-md-6 col-sm-6">
                       <Link

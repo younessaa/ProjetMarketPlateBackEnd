@@ -174,7 +174,7 @@ class Commandes extends Component {
 
     else if (sortProperty === "Annulation") {
       this.setState({ loading: true }, () => {
-        sortCmd = sorted.filter((c) => c.statut == "annulé par client")
+        sortCmd = sorted.filter((c) => c.statut == "annulée manuellement")
         this.setState({
           Commandes: sortCmd,
           loading: false
@@ -219,7 +219,7 @@ class Commandes extends Component {
     const statut = this.props.location.state.id;
     let statuts = statut.split('#')
     const pageNumbers = [];
-    if (this.props.location.state.id.split("#").includes("produit avarié" || "rejeté")) {
+    if (this.props.location.state.id.split("#").includes("produit avarié" || "rejetée")) {
       this.setState({ optionsSort: this.state.optionsSort1, selectedOptionSort: this.state.selectedOptionSort1 })
     }
     else if (this.props.location.state.id.split("#").includes("en attente de paiement avance") || this.props.location.state.id.split("#").includes("en attente de validation avance")) {
@@ -266,13 +266,7 @@ class Commandes extends Component {
                 },
               })
               .then((res) => {
-                //les commandes livrées et refusées
-                let nbr = [];
-                this.state.Livraison.map(liv => (liv.commandes.filter(
-                  cmd => cmd.especes.filter(stat => (stat.statut_livraison == 'Livré et refusé')).length >= 1)).map((l) => nbr.push(l)));
-                let id_esp = [];
-                nbr.map((m) => id_esp.push(m.id_commande))
-
+             
                 this.setState(
                   { CommandesT: res.data, },
                   () => {
@@ -280,13 +274,12 @@ class Commandes extends Component {
                     let avarié = (this.state.CommandesT.filter(cmd => cmd.espece.filter(stat => (stat.statut == 'produit avarié')).length >= 1
                       && cmd.especes.filter((esp) => esp.motif_annulation != null && esp.choix_client == null).length >= 1))
                     //
-                    let rejet = (this.state.CommandesT.filter(cmd => id_esp.includes(cmd._id) == true))
-                    //les commandes annulées
-                    if (this.props.location.state.id.split("#").includes("produit avarié" || "rejeté")) {
+                     //les commandes annulées
+                    if (this.props.location.state.id.split("#").includes("produit avarié" || "rejetée")) {
                       this.setState((prevState, props) => ({
-                        CommandesR: rejet,
-                        Commandes: [...new Set(avarié.concat(rejet).concat(this.state.CommandesT.filter(
-                          (Commandes) => statuts.includes(Commandes.statut) == true || Commandes.statut == "annulé par client")))]
+                       
+                        Commandes: [...new Set(avarié.concat(this.state.CommandesT.filter(
+                          (Commandes) => statuts.includes(Commandes.statut) == true )))]
                       }), () => {
                         for (let i = 1; i <= Math.ceil(this.state.Commandes.length / this.state.annoncesPerPage); i++) {
                           pageNumbers.push(i);
@@ -300,7 +293,7 @@ class Commandes extends Component {
 
                       this.setState((prevState, props) => ({
                         Commandes: [...new Set(this.state.CommandesT.filter(
-                          (Commandes) => id_esp.includes(Commandes._id) == false &&
+                          (Commandes) =>
                             statuts.includes(Commandes.statut) == true
                             && (Commandes.espece.filter(stat => (stat.statut == 'produit avarié')).length < 1 || (Commandes.espece.filter(stat => (stat.statut == 'produit avarié')).length >= 1 && Commandes.especes.filter((esp) => (esp.motif_annulation != null && esp.choix_client != null) || (esp.motif_annulation == null && esp.choix_client == null)).length == Commandes.especes.length))
                         ))]
@@ -342,7 +335,7 @@ class Commandes extends Component {
           .put(
             "http://127.0.0.1:8000/api/commande/" + c._id,
             {
-              statut: "annulé par client",
+              statut: "annulée manuellement",
             },
             {
               headers: {
@@ -369,9 +362,9 @@ class Commandes extends Component {
                 )
             ))
 
-            if (!this.props.location.state.id.split("#").includes("produit avarié" || "rejeté")) { this.setState({ redirect: true, Commandes: this.state.Commandes.filter((cmd) => cmd != c) }); }
+            if (!this.props.location.state.id.split("#").includes("produit avarié" || "rejetée")) { this.setState({ redirect: true, Commandes: this.state.Commandes.filter((cmd) => cmd != c) }); }
             else {
-              this.state.Commandes.filter((cmd) => cmd == c)[0].statut = "annulé par client"
+              this.state.Commandes.filter((cmd) => cmd == c)[0].statut = "annulée manuellement"
               this.setState({ redirect: true, Commandes: this.state.Commandes });
             }
 
@@ -536,7 +529,7 @@ class Commandes extends Component {
                                   </a>
                                 </Link>
                               </li>
-                              {Annonces.statut === "validé" || Annonces.statut === "en attente de validation reste" || Annonces.statut === "annulé par client" ? null : <li>
+                              {Annonces.statut === "validé" || Annonces.statut === "en attente de validation reste" || Annonces.statut === "annulée manuellement" ? null : <li>
                                 <a onClick={(e) => this.handelDelete(Annonces)} >
                                   <i className="fa fa-trash"></i>
                                 </a>

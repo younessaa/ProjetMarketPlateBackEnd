@@ -105,42 +105,37 @@ class CommandesParStatut extends Component {
       }
     })
 
-    //rejet
-    let nbr = [];
-    this.state.Livraison.map(liv => (liv.commandes.filter(
-      cmd => cmd.especes.filter(stat => (stat.statut_livraison == 'Livré et refusé')).length >= 1)).map((l) => nbr.push(l)));
-    let id_esp = [];
-    nbr.map((m) => id_esp.push(m.id_commande))
+    
     // avarié
     let avarié = (this.state.Commandes.filter(cmd => cmd.espece.filter(stat => (stat.statut == 'produit avarié')).length >= 1
       && cmd.especes.filter((esp) => esp.motif_annulation != null && esp.choix_client == null).length >= 1))
     //commandes annulees
-    const cmdDeadlineDépassé = [...new Set(avarié.concat(nbr).concat(this.state.Commandes.filter(
+    const cmdDeadlineDépassé = [...new Set(avarié.concat(this.state.Commandes.filter(
       (Commandes) => Commandes.statut === "commande annulée (deadline dépassé)" ||
         Commandes.statut === "reçu avance refusé" ||
         Commandes.statut === "reçu reste refusé" ||
-        Commandes.statut === "annulé par client"
+        Commandes.statut === "annulée manuellement"|| Commandes.statut ==="rejetée"
     )))];
 
     //Avances a payer
     const cmdAvancesEnAttenteDePaiement = this.state.Commandes.filter(
-      (Commandes) => id_esp.includes(Commandes._id) == false
-        && Commandes.statut === "en attente de paiement avance"
+      (Commandes) => 
+         Commandes.statut === "en attente de paiement avance"
         && (Commandes.espece.filter(stat => (stat.statut == 'produit avarié')).length < 1 || (Commandes.espece.filter(stat => (stat.statut == 'produit avarié')).length >= 1 && Commandes.especes.filter((esp) => (esp.motif_annulation != null && esp.choix_client != null) || (esp.motif_annulation == null && esp.choix_client == null)).length == Commandes.especes.length))
     );
 
     //Produit réservé
     const cmdAvancesEnAttenteDeValidationt = this.state.Commandes.filter(
-      (Commandes) => id_esp.includes(Commandes._id) == false
-        && Commandes.statut === "en attente de validation avance"
+      (Commandes) => 
+        Commandes.statut === "en attente de validation avance"
         && (Commandes.espece.filter(stat => (stat.statut == 'produit avarié')).length < 1 || (Commandes.espece.filter(stat => (stat.statut == 'produit avarié')).length >= 1 && Commandes.especes.filter((esp) => (esp.motif_annulation != null && esp.choix_client != null) || (esp.motif_annulation == null && esp.choix_client == null)).length == Commandes.especes.length))
 
     );
     // Reste à payer
 
     const cmdAvancesMontantinalEnAttenteP = this.state.Commandes.filter(
-      (Commandes) => id_esp.includes(Commandes._id) == false
-        && Commandes.statut === "en attente de paiement du reste"
+      (Commandes) => 
+       Commandes.statut === "en attente de paiement du reste"
         && (Commandes.espece.filter(stat => (stat.statut == 'produit avarié')).length < 1 || (Commandes.espece.filter(stat => (stat.statut == 'produit avarié')).length >= 1 && Commandes.especes.filter((esp) => (esp.motif_annulation != null && esp.choix_client != null) || (esp.motif_annulation == null && esp.choix_client == null)).length == Commandes.especes.length))
 
     );
@@ -149,8 +144,7 @@ class CommandesParStatut extends Component {
 
     const cmdPaiementFinalvalidé = this.state.Commandes.filter(
       (Commandes) =>
-        id_esp.includes(Commandes._id) == false
-        && Commandes.statut === "validé" || Commandes.statut === "en attente de validation reste"
+         Commandes.statut === "validé" || Commandes.statut === "en attente de validation reste"
         && (Commandes.espece.filter(stat => (stat.statut == 'produit avarié')).length < 1 || (Commandes.espece.filter(stat => (stat.statut == 'produit avarié')).length >= 1 && Commandes.especes.filter((esp) => (esp.motif_annulation != null && esp.choix_client != null) || (esp.motif_annulation == null && esp.choix_client == null)).length == Commandes.especes.length))
 
     );
@@ -229,7 +223,7 @@ class CommandesParStatut extends Component {
                         to={{
                           pathname: "/Commandes",
 
-                          state: { id: "commande annulée (deadline dépassé)#reçu avance refusé#reçu reste refusé#rejeté#produit avarié" },
+                          state: { id: "commande annulée (deadline dépassé)#reçu avance refusé#reçu reste refusé#rejetée#produit avarié#annulée manuellement" },
                         }}
                       >
                         {" "}

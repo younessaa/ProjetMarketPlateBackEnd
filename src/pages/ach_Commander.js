@@ -23,10 +23,10 @@ class Commander extends Component {
       date: null,
       id_cooperative: null,
       prix: null,
-      avance:0,
-      reste:0,
-      prix_total:0,
-      prix_transport:0,
+      avance: 0,
+      reste: 0,
+      prix_total: 0,
+      prix_transport: 0,
       Commande: {},
       Espece: {},
       eleveur: {},
@@ -44,7 +44,6 @@ class Commander extends Component {
       optionsVille: [],
       selectedOptionPoint: "",
       optionsPoint: [],
-
       redirect: false,
     };
     this.onPaiementChanged = this.onPaiementChanged.bind(this);
@@ -68,47 +67,7 @@ class Commander extends Component {
 
       this.setState({
         checked: false,
-        prix_transport:this.state.livraison.find((f) => f.Ville_livraison == selectedOptionVille.value).prix_transport ,
-        Commande: {
-
-          // localisation: e.target.value,
-          point_relais: this.state.selectedOptionPoint.value,
-          id_consommateur: localStorage.getItem("usertoken"),
-          statut: "en attente de paiement avance",
-          reçu_avance: "",
-          feedback_avance: "",
-          msg_refus_avance: null,
-          reçu_montant_restant: null,
-          feedback_reçu_montant_restant: null,
-          msg_refus_reste: null,
-          date_creation: new Date(),
-          deadline: this.state.deadline,
-          rating: null,
-          date_de_livraison: this.state.date,
-          ville_livraison: this.state.selectedOptionVille.value,
-          avance: this.state.avance,
-          prix_total: this.state.prix-(-this.state.livraison.find((f) => f.Ville_livraison == selectedOptionVille.value).prix_transport),
-          avance_transmis_le: null,
-          reste_transmis_le: null,
-          reste: this.state.prix-(-this.state.prix_transport)-this.state.avance,
-          mode_paiement_choisi: this.state.paiement,
-          date_annulation: null,
-          date_suppression_max: null,
-          isDelivered: false,
-          motif_rejet: null,
-          justification_rejet: null,
-          rating_livraison: null,
-          justification_rating_livraison: null,
-          rating_produit: null,
-          justification_rating_produit: null,
-          especes: this.state.especes,
-          reference: null,
-          id_cooperative: this.state.id_cooperative,
-          isDeliveredTo_Home: this.state.check3,
-          adresse_domicile: this.state.adresse,
-          isDeliveredTo_PointRelais: this.state.check2,
-          isTakenFrom_Cooperative: this.state.check1,
-        },
+        prix_transport: this.state.livraison.find((f) => f.Ville_livraison == selectedOptionVille.value).prix_transport,
         vide: false,
       })
 
@@ -118,50 +77,8 @@ class Commander extends Component {
   handleChangePoint = (selectedOptionPoint) => {
     this.setState({ selectedOptionPoint }, () =>
 
-
       this.setState({
         checked: false,
-        Commande: {
-
-          // localisation: e.target.value,
-          point_relais: this.state.selectedOptionPoint.value,
-          id_consommateur: localStorage.getItem("usertoken"),
-          statut: "en attente de paiement avance",
-          reçu_avance: "",
-          feedback_avance: "",
-          msg_refus_avance: null,
-          reçu_montant_restant: null,
-          feedback_reçu_montant_restant: null,
-          msg_refus_reste: null,
-          date_creation: new Date(),
-          deadline: this.state.deadline,
-          rating: null,
-          date_de_livraison: this.state.date,
-          ville_livraison: this.state.selectedOptionVille.value,
-          avance: this.state.avance,
-          prix_total: this.state.prix-(-this.state.prix_transport),
-          avance_transmis_le: null,
-          reste_transmis_le: null,
-          reste:  this.state.prix-(-this.state.prix_transport)-this.state.avance,
-          mode_paiement_choisi: this.state.paiement,
-          date_annulation: null,
-          date_suppression_max: null,
-          isDelivered: false,
-          motif_rejet: null,
-          justification_rejet: null,
-          rating_livraison: null,
-          justification_rating_livraison: null,
-          rating_produit: null,
-          justification_rating_produit: null,
-          especes: this.state.especes,
-          reference: null,
-          id_cooperative: this.state.id_cooperative,
-          isDeliveredTo_Home: this.state.check3,
-          adresse_domicile: this.state.adresse,
-          isDeliveredTo_PointRelais: this.state.check2,
-          isTakenFrom_Cooperative: this.state.check1,
-        },
-        vide: false,
       })
 
     );
@@ -178,38 +95,51 @@ class Commander extends Component {
       Commande: {
 
         // localisation: e.target.value,
-        point_relais: this.state.selectedOptionPoint.value,
+        point_relais: this.state.check1 ? "Récupérer à la coopérative" : this.state.selectedOptionPoint.value,
+        ville_livraison: this.state.check1 ? "Récupérer à la coopérative" : this.state.selectedOptionVille.value,
+        especes: this.state.especes,
+        details_remboursement: {
+          "rib_client": null,
+          "nom_prenom_client": null,
+          "montant_de_remboursement": null,
+          "isPaid": null
+        },
+        id_cooperative: this.state.id_cooperative,
+        reference: null,
         id_consommateur: localStorage.getItem("usertoken"),
         statut: "en attente de paiement avance",
+        ancien_statut: "",
+        deadline: this.state.deadline,
+        avance: this.state.avance,
+        prix_total: this.state.prix - (-this.state.prix_transport),
+        reste: this.state.prix - (-this.state.prix_transport) - this.state.avance,
+
         reçu_avance: "",
         feedback_avance: "",
         msg_refus_avance: null,
+
         reçu_montant_restant: null,
         feedback_reçu_montant_restant: null,
         msg_refus_reste: null,
+
         date_creation: new Date(),
-        deadline: this.state.deadline,
-        rating: null,
         date_de_livraison: this.state.date,
-        ville_livraison: this.state.selectedOptionVille.value,
-        avance: this.state.avance,
-        prix_total: this.state.prix-(-this.state.prix_transport),
-        avance_transmis_le: null,
-        reste_transmis_le: null,
-        reste: this.state.prix-(-this.state.prix_transport)-this.state.avance,
         mode_paiement_choisi: this.state.paiement,
         date_annulation: null,
         date_suppression_max: null,
         isDelivered: false,
-        motif_rejet: null,
-        justification_rejet: null,
         rating_livraison: null,
         justification_rating_livraison: null,
         rating_produit: null,
         justification_rating_produit: null,
-        especes: this.state.especes,
-        reference: null,
-        id_cooperative: this.state.id_cooperative,
+
+        avance_transmis_le: null,
+        reste_transmis_le: null,
+        complement_transmis_le:null,
+         motif_rejet: null,
+        justification_rejet: null,
+        
+        rating: null,
         isDeliveredTo_Home: this.state.check3,
         adresse_domicile: this.state.adresse,
         isDeliveredTo_PointRelais: this.state.check2,
@@ -224,56 +154,12 @@ class Commander extends Component {
     return new Promise(resolve => setTimeout(resolve, milliseconds))
   }
 
-  onPaiementChanged = async (e) => {
-    this.setState({ [e.target.name]: e.target.value });
-    this.setState({
-      checked: false
-    })
-    await this.sleep(2000)
+  onPaiementChanged(e) {
+    this.setState({ [e.target.name]: e.target.value }, () => {
+      this.setState({ loading: false });
+    });
 
-    this.setState({
-      Commande: {
 
-        // localisation: e.target.value,
-        point_relais: this.state.check1? "Récupérer à la coopérative":this.state.selectedOptionPoint.value,
-        id_consommateur: localStorage.getItem("usertoken"),
-        statut: "en attente de paiement avance",
-        reçu_avance: "",
-        feedback_avance: "",
-        msg_refus_avance: null,
-        reçu_montant_restant: null,
-        feedback_reçu_montant_restant: null,
-        msg_refus_reste: null,
-        date_creation: new Date(),
-        deadline: this.state.deadline,
-        rating: null,
-        date_de_livraison: this.state.date,
-        ville_livraison: this.state.check1? "Récupérer à la coopérative":this.state.selectedOptionVille.value,
-        avance: this.state.avance,
-        prix_total: this.state.prix-(-this.state.prix_transport),
-        avance_transmis_le: null,
-        reste_transmis_le: null,
-        reste: this.state.prix-(-this.state.prix_transport)-this.state.avance,
-        mode_paiement_choisi: this.state.paiement,
-        date_annulation: null,
-        date_suppression_max: null,
-        isDelivered: false,
-        motif_rejet: null,
-        justification_rejet: null,
-        rating_livraison: null,
-        justification_rating_livraison: null,
-        rating_produit: null,
-        justification_rating_produit: null,
-        especes: this.state.especes,
-        reference: null,
-        id_cooperative: this.state.id_cooperative,
-        isDeliveredTo_Home: this.state.check3,
-        adresse_domicile: this.state.adresse,
-        isDeliveredTo_PointRelais: this.state.check2,
-        isTakenFrom_Cooperative: this.state.check1,
-      },
-      vide: false,
-    })
   }
 
 
@@ -326,8 +212,8 @@ class Commander extends Component {
               eleveur: res.data.Eleveur,
               id_cooperative: res.data.objet.id_cooperative,
               prix: res.data.objet.prix,
-              avance:res.data.objet.avance,
-              
+              avance: res.data.objet.avance,
+
               // image: res.data.objet.image_profile,
             });
             p.splice(0, 0, {
@@ -355,7 +241,7 @@ class Commander extends Component {
               eleveur: res.data.Eleveur,
               id_cooperative: res.data.objet.id_cooperative,
               prix: this.state.prix - (-res.data.objet.prix),
-              avance:this.state.avance-(-res.data.objet.avance),
+              avance: this.state.avance - (-res.data.objet.avance),
 
               // image: res.data.objet.image_profile,
             });
@@ -387,7 +273,7 @@ class Commander extends Component {
               - ((new Date()).getTimezoneOffset() * 60 * 1000)).toISOString()
             this.setState({ date_min: d.substr(0, 10) })
           }
-          
+
           this.setState({
             deadline: new Date(new Date().getTime()
               - (-3600 * (res.data.Parametres.delais_paiement.delai_avance - 1) * 1000)

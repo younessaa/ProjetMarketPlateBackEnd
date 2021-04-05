@@ -12,8 +12,9 @@ class Header extends Component {
     this.state = {
       isLoged: false,
       connectedUser: "",
+      connectedUserEmail: "",
       colorMenuAc: "#28a745",
-       colors: [],
+      colors: [],
 
 
     };
@@ -60,7 +61,7 @@ class Header extends Component {
         })
 
         .then((res) => {
-          this.setState({ connectedUser: res.data.nom.toUpperCase() + " " + res.data.prenom });
+          this.setState({ connectedUser: res.data.nom.toUpperCase() + " " + res.data.prenom, connectedUserEmail: res.data.email });
         })
       // this.props.history.push("/login");
 
@@ -78,24 +79,22 @@ class Header extends Component {
             },
           }
         )
-        .then((res) => {console.log(now.getTime());console.log(now.getTime());
+        .then((res) => {
           var resultat = res;
           for (let i = 0; i < res.data.length; i++) {
-            var deadline = new Date(res.data[i].deadline);
-         
-            var dd =new Date(res.data[i].deadline.substr(6, 4),
-              res.data[i].deadline.substr(3, 2)
-              ,res.data[i].deadline.substr(0, 2),
-              res.data[i].deadline.substr(12, 2),
-              res.data[i].deadline.substr(15, 2),
-              res.data[i].deadline.substr(18, 2));
+            var deadline = res.data[i].deadline;
+             var dd = new Date(deadline.substr(6, 4),
+              deadline.substr(3, 2), deadline.substr(0, 2),
+              deadline.substr(12, 2),deadline.substr(15, 2),
+              deadline.substr(18, 2));
             if (
               now.getTime() >= dd.getTime() &&
-              res.data[i].statut == "en attente de paiement avance"
+              res.data[i].statut == "en attente de paiement avance" ||
+              res.data[i].statut == "en attente de paiement du reste"
             ) {
               axios
                 .put(
-                  "http://127.0.0.1:8000/api/commande/" + res.data[i]._id,
+                  "http://127.0.0.1:8000/api/commande/" + res.data[i]._id.$oid,
                   {
                     //   msg_refus_avance: this.state.dataUrl,
                     statut: "commande annulée (deadline dépassé)",
@@ -108,7 +107,8 @@ class Header extends Component {
                   }
                 )
                 .then(() => {
-                  const to = resultat.data[i].consommateur.email;
+
+                  const to = this.state.connectedUserEmail;
                   const content =
                     "Votre commande a été annulée automatiquement car vous avez dépassé le deadline prévu pour l'importation de votre reçu de paiement.";
                   const subject =
@@ -186,7 +186,7 @@ class Header extends Component {
         break;
 
     }
-      /** */
+    /** */
     return (
       <div>
         <style>{CSS}</style>
@@ -226,8 +226,8 @@ class Header extends Component {
                         <i className="fa fa-youtube"></i>
                       </a>
                     </div>
-                    <div className="header__top__right__language "style={{marginRight: "26px"}}>
-                    <i className="fa fa-globe mr-2" aria-hidden="true">{" "}</i>
+                    <div className="header__top__right__language " style={{ marginRight: "26px" }}>
+                      <i className="fa fa-globe mr-2" aria-hidden="true">{" "}</i>
                       <div> Français</div>
                       <span className="arrow_carrot-down"></span>
                       <ul>
@@ -242,7 +242,7 @@ class Header extends Component {
                     {this.state.isLoged ? (
                       <div className="header__top__right__language mr-0">
                         <div>
-                          <h6 style={{color:"#009141",fontFamily:"inherit",fontSize:"0.924rem"}}><i className="fa fa-user-circle" /><b>{" "+this.state.connectedUser}</b></h6>
+                          <h6 style={{ color: "#009141", fontFamily: "inherit", fontSize: "0.924rem" }}><i className="fa fa-user-circle" /><b>{" " + this.state.connectedUser}</b></h6>
                         </div>
                       </div>) : null}
                     <div className="header__top__right__auth ml-4 " >
@@ -251,7 +251,7 @@ class Header extends Component {
                         <div>
 
                           {" "}
-                          <a style={{fontFamily:"inherit", fontSize:"0.924rem"}} href="/login" onClick={this.logout} >
+                          <a style={{ fontFamily: "inherit", fontSize: "0.924rem" }} href="/login" onClick={this.logout} >
                             <i className="fa fa-sign-out"><b>Se déconnecter</b> </i>
                           </a>
                         </div>
@@ -259,8 +259,8 @@ class Header extends Component {
                       {!this.state.isLoged ? (
                         <div>
                           {" "}
-                          <a style={{fontFamily:"inherit", fontSize:"0.924rem"}} href="/login">
-                            <i  className="fa fa-sign-in"> <b> Se connecter</b> </i>
+                          <a style={{ fontFamily: "inherit", fontSize: "0.924rem" }} href="/login">
+                            <i className="fa fa-sign-in"> <b> Se connecter</b> </i>
                           </a>
                         </div>
                       ) : null}
@@ -338,10 +338,10 @@ class Header extends Component {
           </div>
           <div className="humberger__menu__widget">
             <div className="header__top__right__language">
-                    {this.state.isLoged ? (
+              {this.state.isLoged ? (
                 <div className="header__top__right__language ">
                   <div>
-                    <h6 style={{color:"#009141"}}><i className="fa fa-user-circle" /> {this.state.connectedUser}</h6>
+                    <h6 style={{ color: "#009141" }}><i className="fa fa-user-circle" /> {this.state.connectedUser}</h6>
                   </div>
                 </div>) : null}
               <br></br>

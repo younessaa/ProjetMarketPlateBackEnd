@@ -64,7 +64,6 @@ class Commander extends Component {
   handleChangeVille = (selectedOptionVille) => {
 
     this.setState({ selectedOptionVille }, () =>
-
       this.setState({
         checked: false,
         prix_transport: this.state.livraison.find((f) => f.Ville_livraison == selectedOptionVille.value).prix_transport,
@@ -72,6 +71,14 @@ class Commander extends Component {
       })
 
     );
+    this.setState({
+
+      optionsPoint:
+        [{
+          "value": this.state.livraison.find((f) => f.Ville_livraison == selectedOptionVille.value).point_relais,
+          "label": this.state.livraison.find((f) => f.Ville_livraison == selectedOptionVille.value).point_relais
+        }],
+    })
   };
 
   handleChangePoint = (selectedOptionPoint) => {
@@ -98,12 +105,7 @@ class Commander extends Component {
         point_relais: this.state.check1 ? "Récupérer à la coopérative" : this.state.selectedOptionPoint.value,
         ville_livraison: this.state.check1 ? "Récupérer à la coopérative" : this.state.selectedOptionVille.value,
         especes: this.state.especes,
-        details_remboursement: {
-          "rib_client": null,
-          "nom_prenom_client": null,
-          "montant_de_remboursement": null,
-          "isPaid": null
-        },
+
         id_cooperative: this.state.id_cooperative,
         reference: null,
         id_consommateur: localStorage.getItem("usertoken"),
@@ -135,10 +137,10 @@ class Commander extends Component {
 
         avance_transmis_le: null,
         reste_transmis_le: null,
-        complement_transmis_le:null,
-         motif_rejet: null,
+        complement_transmis_le: null,
+        motif_rejet: null,
         justification_rejet: null,
-        
+
         rating: null,
         isDeliveredTo_Home: this.state.check3,
         adresse_domicile: this.state.adresse,
@@ -194,9 +196,7 @@ class Commander extends Component {
 
     if (!token || expiredTimeToken < formatted_date) {
       this.props.history.push("/login");
-    } else {
-      //if(idm.length>1){idm.map((r)=>console.log(r))}
-      //  
+    } else { 
       let p = [];
       if (!Array.isArray(idm)) {
         axios
@@ -215,15 +215,24 @@ class Commander extends Component {
               avance: res.data.objet.avance,
 
               // image: res.data.objet.image_profile,
+            }, () => {
+              p.splice(0, 0, {
+                "id_espece": res.data.objet._id,
+                "id_eleveur": res.data.Eleveur[0]._id,
+                "motif_annulation": null,
+                "produits_changement": [],
+                "choix_client": "",
+                "details_remboursement": {
+                  "rib_client": null,
+                  "nom_prenom_client": null,
+                  "montant_de_remboursement": null,
+                  "isPaid": null
+                },
+              })
+              this.setState({ especes: p })
+
+
             });
-            p.splice(0, 0, {
-              "id_espece": res.data.objet._id, "id_eleveur": res.data.Eleveur[0]._id, "motif_annulation": "",
-              "produits_changement": [],
-              "choix_client": ""
-            })
-            this.setState({ especes: p })
-
-
           });
       }
       else if (Array.isArray(idm)) {
@@ -244,13 +253,22 @@ class Commander extends Component {
               avance: this.state.avance - (-res.data.objet.avance),
 
               // image: res.data.objet.image_profile,
+            }, () => {
+              p.splice(0, 0, {
+                "id_espece": res.data.objet._id,
+                "id_eleveur": res.data.Eleveur[0]._id,
+                "motif_annulation": null,
+                "produits_changement": [],
+                "choix_client": "",
+                "details_remboursement": {
+                  "rib_client": null,
+                  "nom_prenom_client": null,
+                  "montant_de_remboursement": null,
+                  "isPaid": null
+                },
+              })
+              this.setState({ especes: p })
             });
-            p.splice(0, 0, {
-              "id_espece": res.data.objet._id, "id_eleveur": res.data.Eleveur[0]._id, "motif_annulation": "",
-              "produits_changement": [],
-              "choix_client": ""
-            })
-            this.setState({ especes: p })
           }
 
           )))
@@ -266,7 +284,6 @@ class Commander extends Component {
         .then((res) => {
           let d = "";
           if (res.data.Parametres.occasion != "aid") {
-
             d = new Date(
               new Date().getTime()
               - (-3600 * (res.data.Parametres.delais_paiement.delai_reste - (-res.data.Parametres.delais_paiement.delai_avance) - (-res.data.Parametres.delais_paiement.bonus)) * 1000)
@@ -283,11 +300,8 @@ class Commander extends Component {
             avant_aid: res.data.Parametres.Jourlivraisonavant,
           })
           res.data.Parametres.livraison.map((l) => (
-            this.state.optionsVille.splice(0, 0, { "value": l.Ville_livraison, "label": l.Ville_livraison }),
-            this.state.optionsPoint.splice(0, 0, { "value": l.point_relais, "label": l.point_relais })
-          )
-          )
-
+            this.state.optionsVille.splice(0, 0, { "value": l.Ville_livraison, "label": l.Ville_livraison })
+          ))
         });
 
     }

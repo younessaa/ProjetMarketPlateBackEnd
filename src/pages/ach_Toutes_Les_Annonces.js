@@ -193,7 +193,7 @@ import{HiOutlineBadgeCheck} from  'react-icons/hi';
             order_mode: "asc",
           },
         })
-        .then((res) => {
+        .then((res) => {console.log(res.data)
           this.setState({
             Annonces: res.data,
             loading: false,
@@ -682,8 +682,8 @@ import{HiOutlineBadgeCheck} from  'react-icons/hi';
                               </a>
                             </li> */}
                                   <li>
-                                    <Link to={`/DetailsMouton/${Annonces._id}`}>
-                                      <a href="#">
+                                    <Link to={`/DetailsMouton/${Annonces._id.$oid}`}>
+                                       <a href="#">
                                         <i class="fa fa-eye"></i>
                                       </a>
                                     </Link>

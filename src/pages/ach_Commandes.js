@@ -17,11 +17,10 @@ class Commandes extends Component {
       CommandesN: [],
       CommandesR: [],
       nbrEspece: [],
-      Livraison: [],
       activePage: 1,
       nombrePages: [],
       currentPage: 1,
-      annoncesPerPage: 4,
+      annoncesPerPage: 8,
       loading: true,
       redirect: false,
       selectedOptionSort: null,
@@ -219,7 +218,7 @@ class Commandes extends Component {
     const statut = this.props.location.state.id;
     let statuts = statut.split('#')
     const pageNumbers = [];
-    if (this.props.location.state.id.split("#").includes("produit avarié" || "rejetée")) {
+    if (this.props.location.state.id.split("#").includes("avarié")) {
       this.setState({ optionsSort: this.state.optionsSort1, selectedOptionSort: this.state.selectedOptionSort1 })
     }
     else if (this.props.location.state.id.split("#").includes("en attente de paiement avance") || this.props.location.state.id.split("#").includes("en attente de validation avance")) {
@@ -239,75 +238,42 @@ class Commandes extends Component {
       }
       else {
         axios
-          .get("http://127.0.0.1:8000/api/livraisons", {
+          .get("http://127.0.0.1:8000/api/commande", {
             headers: {
               // "x-access-token": token, // the token is a variable which holds the token
               "Content-Type": "application/json",
-              Authorization: myToken,
-            }
+              "Authorization": myToken,
+            },
+            params: {
+              id_consommateur: token,
+              order_by: "date_creation",
+              order_mode: "asc",
+            },
           })
-
           .then((res) => {
-            let liv = [];
-            Object.values(res.data).map((m) => m.map((k) => liv.push(k)));
-            this.setState({ Livraison: liv, });
 
-            axios
-              .get("http://127.0.0.1:8000/api/commande", {
-                headers: {
-                  // "x-access-token": token, // the token is a variable which holds the token
-                  "Content-Type": "application/json",
-                  "Authorization": myToken,
-                },
-                params: {
-                  id_consommateur: token,
-                  order_by: "date_creation",
-                  order_mode: "asc",
-                },
-              })
-              .then((res) => {
-             
-                this.setState(
-                  { CommandesT: res.data, },
-                  () => {
-                    //produit avarié + le consommateur n'a pas choisi une solution
-                    let avarié = (this.state.CommandesT.filter(cmd => cmd.espece.filter(stat => (stat.statut == 'produit avarié')).length >= 1
-                      && cmd.especes.filter((esp) => esp.motif_annulation != null && esp.choix_client == null).length >= 1))
-                    //
-                     //les commandes annulées
-                    if (this.props.location.state.id.split("#").includes("produit avarié" || "rejetée")) {
-                      this.setState((prevState, props) => ({
-                       
-                        Commandes: [...new Set(avarié.concat(this.state.CommandesT.filter(
-                          (Commandes) => statuts.includes(Commandes.statut) == true )))]
-                      }), () => {
-                        for (let i = 1; i <= Math.ceil(this.state.Commandes.length / this.state.annoncesPerPage); i++) {
-                          pageNumbers.push(i);
-                        }
-                        this.setState((prevState, props) => ({
-                          nombrePages: pageNumbers, CommandesN: this.state.Commandes, loading: false
-                        }), () => { });
-                      });
-                    }
-                    else {
+            this.setState(
+              { CommandesT: res.data, },
+              () => {
 
-                      this.setState((prevState, props) => ({
-                        Commandes: [...new Set(this.state.CommandesT.filter(
-                          (Commandes) =>
-                            statuts.includes(Commandes.statut) == true
-                            && (Commandes.espece.filter(stat => (stat.statut == 'produit avarié')).length < 1 || (Commandes.espece.filter(stat => (stat.statut == 'produit avarié')).length >= 1 && Commandes.especes.filter((esp) => (esp.motif_annulation != null && esp.choix_client != null) || (esp.motif_annulation == null && esp.choix_client == null)).length == Commandes.especes.length))
-                        ))]
-                      }), () => {
-                        for (let i = 1; i <= Math.ceil(this.state.Commandes.length / this.state.annoncesPerPage); i++) { pageNumbers.push(i); }
-                        this.setState((prevState, props) => ({
-                          nombrePages: pageNumbers, CommandesN: this.state.Commandes, loading: false
-                        }), () => { });
-                      });
-                    };
+                this.setState((prevState, props) => ({
+
+                  Commandes: [...new Set(this.state.CommandesT.filter(
+                    (Commandes) => statuts.includes(Commandes.statut) == true))]
+                }), () => {
+                  for (let i = 1; i <= Math.ceil(this.state.Commandes.length / this.state.annoncesPerPage); i++) {
+                    pageNumbers.push(i);
                   }
-                );
-              });
-          })
+                  this.setState((prevState, props) => ({
+                    nombrePages: pageNumbers, CommandesN: this.state.Commandes, loading: false
+                  }), () => { });
+                });
+
+
+              }
+            );
+          });
+
       }
     })
   }
@@ -335,6 +301,7 @@ class Commandes extends Component {
           .put(
             "http://127.0.0.1:8000/api/commande/" + c._id,
             {
+              ancien_statut: c.statut,
               statut: "annulée manuellement",
             },
             {
@@ -362,7 +329,7 @@ class Commandes extends Component {
                 )
             ))
 
-            if (!this.props.location.state.id.split("#").includes("produit avarié" || "rejetée")) { this.setState({ redirect: true, Commandes: this.state.Commandes.filter((cmd) => cmd != c) }); }
+            if (!this.props.location.state.id.split("#").includes("annulée manuellement")) { this.setState({ Commandes: this.state.Commandes.filter((cmd) => cmd != c) }); }
             else {
               this.state.Commandes.filter((cmd) => cmd == c)[0].statut = "annulée manuellement"
               this.setState({ redirect: true, Commandes: this.state.Commandes });
@@ -445,18 +412,25 @@ class Commandes extends Component {
   }
 
   render() {
-    let avarié = (this.state.CommandesT.filter(cmd => cmd.espece.filter(stat => (stat.statut == 'produit avarié')).length >= 1
-      && cmd.especes.filter((esp) => esp.motif_annulation != null && esp.choix_client == null).length >= 1))
 
     const { loading } = this.state;
     const { optionsSort } = this.state;
+    let AnnonceAll = [];
+    let AnnonceA = [];
+    this.state.Commandes.map((m)=>{
+ if(m.statut=="avarié") {AnnonceAll.push(m)}
+ else {AnnonceA.push(m)}
+})
 
     const indexOfLastAnnonce =
       this.state.currentPage * this.state.annoncesPerPage;
     const indexOfFirstAnnonce = indexOfLastAnnonce - this.state.annoncesPerPage;
-    const currentAnnonces = this.state.Commandes.slice(indexOfFirstAnnonce, indexOfLastAnnonce);
+    const currentAnnonces = AnnonceAll.concat(AnnonceA).slice(indexOfFirstAnnonce, indexOfLastAnnonce);
     return (
       <div>
+        <style>{`.scrollbar{  height: 200px;overflow-y: scroll;  }
+ #style-scroll::-webkit-scrollbar{	width: 8px;	background-color: #F5F5F5;} #style-scroll::-webkit-scrollbar-thumb
+{	border-radius: 10px; 	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);	background-color: #bbb;}`}</style>
         <section className="">
           {loading ? (
             <div
@@ -502,11 +476,12 @@ class Commandes extends Component {
                       <div className="col-lg-3 col-md-3 col-sm-6">
 
                         <div id="anonce" className="product__item">
-                          <div className="product__item__pic set-bg"
+                          <div className="product__item__pic set-bg" style={{height:"150px"}}
                           >
                             <centre>
                               {" "}
                               <img
+                              style={{height:"150px"}}
                                 src={this.ImageEspece(Annonces)}
                                 className="product__item__pic set-bg"
                               />
@@ -524,19 +499,25 @@ class Commandes extends Component {
                                   type="submit" >
                                   {" "}
                                   <a href="#">
-                                    {Annonces.espece.filter(stat => (stat.statut == 'produit avarié')).length < 1 && (Annonces.statut == "en attente de paiement avance" || Annonces.statut == "en attente de paiement du reste") ?
+                                    {(Annonces.statut == "en attente de paiement avance" || Annonces.statut == "en attente de paiement du reste" || Annonces.statut === "en attente de paiement du complément") ?
                                       <CgFileAdd className="fa-lg" /> : <i class="fa fa-eye"></i>}
                                   </a>
                                 </Link>
-                              </li>
-                              {Annonces.statut === "validé" || Annonces.statut === "en attente de validation reste" || Annonces.statut === "annulée manuellement" ? null : <li>
+                              </li> 
+                               {Annonces.statut === "commande annulée (deadline dépassé)"
+                                || Annonces.statut === "reçu avance refusé"
+                                || Annonces.statut === "reçu reste refusé"
+                                || Annonces.statut === "en attente de paiement avance"
+                                || Annonces.statut === "en attente de validation avance"
+                                || Annonces.statut === "en attente de paiement du reste"
+                                || (Annonces.statut === "avarié" && (Annonces.ancien_statut === "en attente de paiement avance" || Annonces.ancien_statut === "en attente de paiement du reste")) ? <li>
                                 <a onClick={(e) => this.handelDelete(Annonces)} >
                                   <i className="fa fa-trash"></i>
                                 </a>
-                              </li>}
+                              </li> : null}
                             </ul>
                           </div>
-                          <div className="product__item__text p-2 text-justify" style={{ backgroundRepeat: "no-repeat", backgroundImage: avarié.includes(Annonces) ? "url(./Images/back.png)" : null, backgroundSize: "cover" }}>
+                          <div id="style-scroll" className="scrollbar product__item__text p-2 text-justify" style={{ backgroundRepeat: "no-repeat", backgroundImage: Annonces.statut === "avarié" ? "linear-gradient(rgb(255,153,153), rgb(255,204,204))" : null, backgroundSize: "cover" }}>
                             <h6 id="mad">
                               {" "}
                               {"         " + Annonces.prix_total + "  Dhs"}

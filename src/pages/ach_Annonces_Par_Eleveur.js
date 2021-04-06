@@ -72,7 +72,35 @@ class AllOffers extends Component {
   }
 
   componentDidMount() {
+    function appendLeadingZeroes(n) {
+      if (n <= 9) {
+        return "0" + n;
+      }
+      return n;
+    }
+
+    let current_datetime = new Date();
+    let formatted_date =
+      current_datetime.getFullYear() +
+      "-" +
+      appendLeadingZeroes(current_datetime.getMonth() + 1) +
+      "-" +
+      appendLeadingZeroes(current_datetime.getDate()) +
+      " " +
+      appendLeadingZeroes(current_datetime.getHours()) +
+      ":" +
+      appendLeadingZeroes(current_datetime.getMinutes()) +
+      ":" +
+      appendLeadingZeroes(current_datetime.getSeconds());
+
+
+    const expiredTimeToken = localStorage.getItem("expiredTimeToken");
+    const token = localStorage.getItem("usertoken");
     const myToken = `Bearer ` + localStorage.getItem("myToken");
+
+    if (!token || expiredTimeToken < formatted_date) {
+      this.props.history.push("/login");
+    } else {
     this.setState({ loading: true }, () => {
       axios
         .get("http://127.0.0.1:8000/api/eleveurs", {
@@ -122,7 +150,7 @@ class AllOffers extends Component {
           }
           this.setState({ nombrePages: pageNumbers });
         });
-    });
+    });}
   }
 
   handleChangeCategorie = (selectedOptionCategorie) => {
@@ -518,9 +546,7 @@ class AllOffers extends Component {
                                       pathname: "/HomeSheepsParEleveur",
                                       state: {
                                         id: {
-                                          id: Eleveurs._id,
-                                          nom: Eleveurs.nom,
-                                          prenom: Eleveurs.prenom,
+                                          id: Eleveurs,
                                         },
                                       },
                                     }}

@@ -3,9 +3,12 @@ import axios from "axios";
 import Select from "react-select";
 import { Link } from "react-router-dom";
 import Loader from "react-loader-spinner";
-import { GiWeight,GiSheep } from 'react-icons/gi';
-import{HiOutlineBadgeCheck} from  'react-icons/hi';
+import { GiWeight, GiSheep } from 'react-icons/gi';
+import { HiOutlineBadgeCheck } from 'react-icons/hi';
 import ReactPaginate from "react-paginate";
+import Rating from '@material-ui/lab/Rating';
+import Box from '@material-ui/core/Box';
+
 class HomeSheepsParEleveur extends Component {
   constructor() {
     super();
@@ -14,18 +17,12 @@ class HomeSheepsParEleveur extends Component {
       Annonces: [],
       loading: true,
       Disabled: true,
-      /* AnnoncesPage: [],
-      offset: 0,
-      data: [],
-      elements: [],
-      perPage: 3,
-      currentPage: 0,*/
       longueur: 0,
       activePage: 1,
       nombrePages: [],
       currentPage: 1,
       annoncesPerPage: 6,
-       selectedOptionRace: null,
+      selectedOptionRace: null,
       optionsRace: [
         { value: "Sardi", label: "Sardi" },
         { value: "Bargui", label: "Bargui" },
@@ -49,19 +46,7 @@ class HomeSheepsParEleveur extends Component {
         { value: "chevre", label: "Chèvre" },
       ],
       selectedOptionVille: null,
-      optionsVille: [
-        { value: "Berkane", label: "Berkane" },
-        { value: "Driouch", label: "Driouch" },
-        { value: "Figuig", label: "Figuig" },
-        { value: "Guercif", label: "Guercif" },
-        { value: "Jerada", label: "Jerada" },
-        { value: "Nador", label: "Nador" },
-        { value: "Oujda-Angad", label: "Oujda-Angad" },
-        { value: "Taourirt", label: "Taourirt" },
-        { value: "Ahfir", label: "Ahfir" },
-        { value: "Saida", label: "Saidia" },
-        { value: "Tafoughalt", label: "Tafoughalt" },
-      ],
+      optionsVille: [],
       conditions: {
         // statut: "disponible",
         order_by: "race",
@@ -70,7 +55,7 @@ class HomeSheepsParEleveur extends Component {
       redirect: false,
       selectedOptionSort: null,
       optionsSort: [
- 
+
         { value: "prix", label: "Moins cher au plus cher" },
         { value: "prix_dec", label: "Plus cher au moins cher" },
 
@@ -92,46 +77,46 @@ class HomeSheepsParEleveur extends Component {
   }
 
   handleChangeCategorie = (selectedOptionCategorie) => {
-    this.setState({selectedOptionRace:null})
+    this.setState({ selectedOptionRace: null })
     if (selectedOptionCategorie.value == "vache") {
       this.setState({
-        
-        race:this.state.optionsRaceVache ,
+
+        race: this.state.optionsRaceVache,
         Disabled: false,
       });
       this.setState({ selectedOptionCategorie }, () =>
-      this.setState({
-        conditions: Object.assign(this.state.conditions, {
-          categorie: this.state.selectedOptionCategorie.value,
-        }),
-      })
-    );
-    } 
+        this.setState({
+          conditions: Object.assign(this.state.conditions, {
+            categorie: this.state.selectedOptionCategorie.value,
+          }),
+        })
+      );
+    }
     else if (selectedOptionCategorie.value == "mouton") {
       this.setState({
-        race:this.state.optionsRace ,
+        race: this.state.optionsRace,
         Disabled: false,
       });
       this.setState({ selectedOptionCategorie }, () =>
-      this.setState({
-        conditions: Object.assign(this.state.conditions, {
-          categorie: this.state.selectedOptionCategorie.value,
-        }),
-      })
-    );
-    } 
+        this.setState({
+          conditions: Object.assign(this.state.conditions, {
+            categorie: this.state.selectedOptionCategorie.value,
+          }),
+        })
+      );
+    }
     else if (selectedOptionCategorie.value == "chevre") {
       this.setState({
-        race:this.state.optionsRaceCaprine ,
+        race: this.state.optionsRaceCaprine,
         Disabled: false,
       });
       this.setState({ selectedOptionCategorie }, () =>
-      this.setState({
-        conditions: Object.assign(this.state.conditions, {
-          categorie: this.state.selectedOptionCategorie.value,
-        }),
-      })
-    );
+        this.setState({
+          conditions: Object.assign(this.state.conditions, {
+            categorie: this.state.selectedOptionCategorie.value,
+          }),
+        })
+      );
     } else
       this.setState({
         Disabled: false,
@@ -181,17 +166,16 @@ class HomeSheepsParEleveur extends Component {
 
           },
           params: {
-            statut: "disponible",
             order_by: "categorie",
             order_mode: "asc",
           },
         })
         .then((res) => {
           this.setState({
-            Annonces: res.data.filter((data)=>data.id_eleveur===this.props.location.state.id.id),
+            Annonces: res.data.filter((data) => data.id_eleveur === this.props.location.state.id.id._id),
             loading: false,
             conditions: {
-               order_by: "categorie",
+              order_by: "categorie",
               order_mode: "asc",
             },
             selectedOptionCategorie: null,
@@ -218,49 +202,81 @@ class HomeSheepsParEleveur extends Component {
   }
 
   componentDidMount() {
-    // const myToken = `Bearer ` + localStorage.getItem("myToken");
-    // const ide = this.props.location.state.id;
-    this.setState({ loading: true }, () => {
-      axios
-        .get("http://127.0.0.1:8000/api/Espece", {
-          headers: {
-            // "x-access-token": token, // the token is a variable which holds the token
-          },
-          params: {
-            id_eleveur: this.props.location.state.id.id,
-            // statut: "disponible",
-            order_by: "race",
-            order_mode: "asc",
-          },
-        })
-        .then((res) => {
-          this.setState({
-            Annonces: res.data,
-            loading: false,
-            /* pageCount: Math.ceil(res.data.length / this.state.perPage),*/
+    function appendLeadingZeroes(n) {
+      if (n <= 9) {
+        return "0" + n;
+      }
+      return n;
+    }
+
+    let current_datetime = new Date();
+    let formatted_date =
+      current_datetime.getFullYear() +
+      "-" +
+      appendLeadingZeroes(current_datetime.getMonth() + 1) +
+      "-" +
+      appendLeadingZeroes(current_datetime.getDate()) +
+      " " +
+      appendLeadingZeroes(current_datetime.getHours()) +
+      ":" +
+      appendLeadingZeroes(current_datetime.getMinutes()) +
+      ":" +
+      appendLeadingZeroes(current_datetime.getSeconds());
+
+
+    const expiredTimeToken = localStorage.getItem("expiredTimeToken");
+    const token = localStorage.getItem("usertoken");
+    const myToken = `Bearer ` + localStorage.getItem("myToken");
+
+    if (!token || expiredTimeToken < formatted_date) {
+      this.props.history.push("/login");
+    } else {
+      this.setState({ loading: true }, () => {
+        axios
+          .get("http://127.0.0.1:8000/api/Espece", {
+            headers: {
+              // "x-access-token": token, // the token is a variable which holds the token
+            },
+            params: {
+              id_eleveur: this.props.location.state.id.id._id,
+              order_by: "race",
+              order_mode: "asc",
+            },
+          })
+          .then((res) => {
+            let ville = [];
+            res.data.map((e) => {
+              ville.splice(0, 0, { "value": e.localisation, "label": e.localisation });
+            });
+            ville = Array.from(new Set(ville.map(s => s.value))).map(value => {
+              return {
+                value: value,
+                label: ville.find(s => s.value === value).label
+              }
+            });
+            this.setState({
+              Annonces: res.data,
+              loading: false,
+              optionsVille: [...new Set(ville)]
+
+            });
+            const pageNumbers = [];
+            for (
+              let i = 1;
+              i <=
+              Math.ceil(this.state.Annonces.length / this.state.annoncesPerPage);
+              i++
+            ) {
+              pageNumbers.push(i);
+            }
+            this.setState({ nombrePages: pageNumbers });
           });
-          /*this.setElementsForCurrentPage();*/
-       //   console.log(this.state.Annonces);
-          const pageNumbers = [];
-          for (
-            let i = 1;
-            i <=
-            Math.ceil(this.state.Annonces.length / this.state.annoncesPerPage);
-            i++
-          ) {
-            pageNumbers.push(i);
-          }
-          this.setState({ nombrePages: pageNumbers });
-        });
-    });
+      });
+    }
   }
 
   sortData(e) {
-    //this.setState({ selectedOptionSort: Object.values(e)[0] });
-    //console.log(this.state.selectedOptionSort);
-    // console.log(Object.values(e)[0]);
-    // console.log( (Object.values(e)[0]).getFullYear());
-    // created_date.getTime();
+
     const sortProperty = Object.values(e)[0];
     const sorted = this.state.Annonces;
     if (sortProperty === "prix" || sortProperty === "poids" || sortProperty === "age") {
@@ -306,22 +322,7 @@ class HomeSheepsParEleveur extends Component {
     this.setState({ currentPage: pageNumber });
   }
 
-  /* setElementsForCurrentPage() {
-    let elements = this.state.Annonces.slice(
-      this.state.offset,
-      this.state.offset + this.state.perPage
-    );
-    this.setState({ AnnoncesPage: elements });
-  }
 
-  handlePageClick = (data) => {
-    const selectedPage = data.selected;
-    const offset = selectedPage * this.state.perPage;
-    this.setState({ currentPage: selectedPage, offset: offset }, () => {
-      this.setElementsForCurrentPage();
-    });
-  };
-*/
   onChange(e) {
     const n = e.target.name,
       v = e.target.value;
@@ -339,12 +340,12 @@ class HomeSheepsParEleveur extends Component {
             // "x-access-token": token, // the token is a variable which holds the token
             "Content-Type": "application/json",
           },
-        
+
           params: this.state.conditions,
         })
         .then((res) => {
           this.setState({
-            Annonces: res.data.filter((data)=>data.id_eleveur===this.props.location.state.id.id),
+            Annonces: res.data.filter((data) => data.id_eleveur === this.props.location.state.id.id._id),
             loading: false,
           });
           const pageNumbers = [];
@@ -368,26 +369,6 @@ class HomeSheepsParEleveur extends Component {
   }
 
   render() {
-    var mois = new Array("Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre");
-
-    /* let paginationElement;
-    if (this.state.pageCount > 1) {
-      paginationElement = (
-        <ReactPaginate
-          previousLabel={"← Préc"}
-          nextLabel={"Suiv →"}
-          breakLabel={<span className="gap">...</span>}
-          pageCount={this.state.pageCount}
-          onPageChange={this.handlePageClick}
-          forcePage={this.state.currentPage}
-          containerClassName={"pagination"}
-          previousLinkClassName={"previous_page"}
-          nextLinkClassName={"next_page"}
-          disabledClassName={"disabled"}
-          activeClassName={"active"}
-        />
-      );
-    }*/
     const indexOfLastAnnonce =
       this.state.currentPage * this.state.annoncesPerPage;
     const indexOfFirstAnnonce = indexOfLastAnnonce - this.state.annoncesPerPage;
@@ -412,6 +393,9 @@ class HomeSheepsParEleveur extends Component {
     var vendu = this.state.Annonces.filter(
       (Annonces) => Annonces.statut == "vendu"
     );
+    var avarie = this.state.Annonces.filter(
+      (Annonces) => Annonces.statut == "produit avarié"
+    );
     return (
       <div>
         <section className="">
@@ -429,13 +413,7 @@ class HomeSheepsParEleveur extends Component {
                     </h6>
                     <div className="row">
                       <div className="col-lg-12 col-md-12">
-                        {/* <input
-                          type="text"
-                          className="latest-product__item"
-                          placeholder="Choisissez la race"
-                          onChange={this.onChange}
-                          name="race"
-                        /> */}
+
                         <Select
                           value={selectedOptionCategorie}
                           onChange={this.handleChangeCategorie}
@@ -453,14 +431,8 @@ class HomeSheepsParEleveur extends Component {
                     </h6>
                     <div className="row">
                       <div className="col-lg-12 col-md-12">
-                        {/* <input
-                          type="text"
-                          className="latest-product__item"
-                          placeholder="Choisissez la race"
-                          onChange={this.onChange}
-                          name="race"
-                        /> */}
-                       <Select
+
+                        <Select
                           id="recherchePlace"
                           isDisabled={this.state.Disabled}
                           value={selectedOptionRace}
@@ -489,7 +461,7 @@ class HomeSheepsParEleveur extends Component {
                         />
                       </div>
                     </div>
-                    <br/>
+                    <br />
                     <h6 id="gras" className="latest-product__item">
                       Prix
                     </h6>
@@ -521,7 +493,7 @@ class HomeSheepsParEleveur extends Component {
                     <br></br>
 
                     <h6 id="gras" className="latest-product__item">
-                      Poids Environ
+                      Poids
                     </h6>
                     <div className="row">
                       <div className="col-lg-12 col-md-12">
@@ -592,21 +564,13 @@ class HomeSheepsParEleveur extends Component {
                         <br></br>
                       </div>
                     </div>
-
-                    {/* <label className="latest-product__item">
-                      <input name="withImages" type="checkbox" /> Avec photos
-                    </label> */}
-
-                    {/* <label className="latest-product__item">
-                      <input name="withVideos" type="checkbox" /> Avec video
-                    </label> */}
                   </div>
                 </div>
               </div>
 
               <div className="col-lg-9 col-md-7">
                 <div className="filter__item">
-                <div>
+                  <div>
                     <div id="filterPlace" className="col-lg-5 col-md-5 fa ">
                       <Select
                         id="filterPlace"
@@ -626,26 +590,51 @@ class HomeSheepsParEleveur extends Component {
                   <div className="row">
                     <div className="col-lg-4 col-md-5"></div>
                     <div className="col-lg-12 col-md-12">
-                      <h3>
-                        Espace éleveur :{" "}
-                        {this.props.location.state.id.nom +
-                          " " +
-                          this.props.location.state.id.prenom}
-                      </h3>{" "}
+
                       <br />
-                      <div className="filter__found text-left">
-                        <h6>
-                          <span id="nbEspece">
+                      <div class="row mb-5">
+                        <div class="col-4"> <img
+                          src={this.props.location.state.id.id.photo_profil}
+                          class=" product__item__pic  set-bg" />
+                          {this.props.location.state.id.id.anoc ?
+                            <h1 style={{ borderRadius: "0% 0% 0% 40%", fontSize: "14px" }} class=" badge badge-success pt-2 w-100  ">
+                              <HiOutlineBadgeCheck className=" mr-1 fa-lg " />
+                              <span>Labélisé ANOC</span>  </h1>
+                            :
+                            <span className="badge pt-3 w-100 mt-1   ">{"  "}</span>}</div>
+                        <div class="col-8" style={{ position: "relative" }}>
+                          <h3 className="mt-1">
+                            <Box component="fieldset" mb={3} borderColor="transparent">
+
+                              Eleveur :{" "}
+                              {this.props.location.state.id.id.nom.toUpperCase() +
+                                " " +
+                                this.props.location.state.id.id.prenom}{" "}{" "}
+                              <Rating name="read-only" value={this.props.location.state.id.id.rating} readOnly />
+                            </Box>
+                          </h3>{" "}
+                          <h6 className="my-2">  <i class="fa fa-map"></i> <b>Region  : </b>{" " + this.props.location.state.id.id.region} </h6>
+                          <h6 className="mb-2"><i class="fa fa-home"></i>   <b>Ville : </b>{" " + this.props.location.state.id.id.ville}</h6>
+                          <h6 className="mb-2"><i class="fa fa-phone" aria-hidden="true"></i>   <b>Telephone : </b>{" " + this.props.location.state.id.id.tel}</h6>
+                          <h6 className=""><GiSheep className=" mr-1 fa-lg " />   <b> <span id="nbEspece">
                             {this.state.Annonces.length}
                           </span>{" "}
-                          Têtes de moutons au total
-                        </h6>
-                        <br />
+                             Têtes au total</b></h6>
+
+                          {this.props.location.state.id.id.anoc ?
+                            <span className=" text-success" style={{ position: "relative", top: "40px" }}>
+                              <HiOutlineBadgeCheck className=" mr-1 fa-lg " /> Le label de l'ANOC est un gage de la qualité du produit. <br></br></span>
+                            : null}
+                        </div>
+
                       </div>
-                      <h6 id="centrerT">
-                        <b id="nbEspece">{vendu.length}</b> Vendus{" "}
-                        <b id="nbEspece">{dispo.length}</b> Disponibles{" "}
-                        <b id="nbEspece">{reserv.length}</b> Réservés
+                      <div><br></br></div>
+                      <h6 id="centrerT" className="mt-3">
+                        <b id="nbEspece">{vendu.length}{" "}</b> Vendus{" "}
+                        <b className="ml-3" id="nbEspece">{dispo.length}{" "}</b> Disponibles{" "}
+                        <b className="ml-3" id="nbEspece">{reserv.length}{" "}</b> Réservés{" "}
+                        <b className="ml-3" id="nbEspece">{avarie.length}{" "}</b> Avarié{" "}
+
                       </h6>
                     </div>
                   </div>
@@ -675,25 +664,18 @@ class HomeSheepsParEleveur extends Component {
                       <div className="row">
                         {currentAnnonces.map((Annonces) => (
                           <div className="col-lg-4 col-md-6 col-sm-6">
-                            {/*console.log(Annonces.image_face)*/}
                             <div id="anonce" className="product__item">
                               <div
                                 className="product__item__pic set-bg"
                                 data-setbg={Annonces.images}
-                              // src="Images/sardi1.jpg"
                               >
                                 <img
                                   src={Annonces.image_face}
-                                  // src=Annonces.images
                                   className="product__item__pic set-bg"
                                 />
 
                                 <ul className="product__item__pic__hover">
-                                  {/* <li>
-                              <a href="">
-                                <i className="fa fa-heart"></i>
-                              </a>
-                            </li> */}
+
                                   <li>
                                     <Link to={`/DetailsMouton/${Annonces._id}`}>
                                       <a href="#">
@@ -704,29 +686,31 @@ class HomeSheepsParEleveur extends Component {
                                 </ul>
                               </div>
                               {Annonces.anoc ?
-                                <h1 style={{ borderRadius: "0% 0% 0% 40%",fontSize:"14px" }} class=" badge badge-success pt-2 w-100  ">
-                                   <HiOutlineBadgeCheck className=" mr-1 fa-lg " />
-                             <span>Labélisé ANOC</span>  </h1>
-                                :
-                                <span className="badge pt-3 w-100  mt-1  ">{"  "}</span>}
-                             <div className="product__item__text p-2 text-justify">
-                                <h6 ><GiSheep className=" mr-1 fa-lg " />{  Annonces.categorie}
+                                <h1 style={{ borderRadius: "0% 0% 0% 40%", fontSize: "14px" }} class=" badge badge-success pt-2 w-100  ">
+                                  <HiOutlineBadgeCheck className=" mr-1 fa-lg " />
+                                  <span>Labélisé ANOC</span>  </h1>
+                                : <h1 style={{ borderRadius: "0% 0% 0% 40%", fontSize: "14px" }} class=" badge  pt-4 w-100  ">
+
+                                  <span>{" "} </span>  </h1>}
+                              <div className="product__item__text p-2 text-justify">
+                                <h6 ><GiSheep className=" mr-1 fa-lg " />{Annonces.categorie}
 
                                   <span className="float-right">
-                                    <i   class="fa fa-dot-circle-o"></i> {this.annonceVision(Annonces)}
+                                    <i class="fa fa-dot-circle-o"></i> {this.annonceVision(Annonces)}
                                   </span> </h6>
 
                                 <h6><GiWeight className=" mr-1 fa-lg " />
                                   {Annonces.poids + " Kg"}
-                                  <img  style={{width:"10%",marginLeft:"38%",marginBottom:"10px"}} src="./Images/age.png"></img>
+                                  <img style={{ width: "8%", left: "97px", position: "relative" }} src="./Images/age.png"></img>
 
                                   <span className="float-right mt-1">
-                                    { Annonces.age + " mois"}</span></h6>
+                                    {Annonces.age + " mois"}</span>
+                                </h6>
 
-                                    <h5 id="mad">{"         " + Annonces.prix + " MAD"}
-                                <h5 className="text-danger float-right" >
+                                <h5 id="mad">{"         " + Annonces.prix + " MAD"}
+                                  <h5 className="text-danger float-right" >
                                     {"         " + Annonces.statut}</h5></h5>
-                               </div>
+                              </div>
                             </div>
                           </div>
                         ))}

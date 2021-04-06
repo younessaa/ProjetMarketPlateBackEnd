@@ -123,6 +123,10 @@ class Commander extends Component {
         reçu_montant_restant: null,
         feedback_reçu_montant_restant: null,
         msg_refus_reste: null,
+        
+        reçu_montant_complement: null,
+        feedback_reçu_montant_complement: null,
+        msg_refus_complement: null,
 
         date_creation: new Date(),
         date_de_livraison: this.state.date,

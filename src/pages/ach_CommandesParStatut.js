@@ -92,61 +92,46 @@ class CommandesParStatut extends Component {
 
   render() {
     const { loading } = this.state;
-    let k = [];
-    this.state.Commandes.map((c) => {
-      ;
-      var found = false;
-      for (var i = 0; i < c.espece.length; i++) {
-        if (c.espece[i].statut == 'produit avarié') {
-          found = true;
-          if (found) { k.push(c) }
-          break;
-        }
-      }
-    })
-
-    
-    // avarié
-    let avarié = (this.state.Commandes.filter(cmd => cmd.espece.filter(stat => (stat.statut == 'produit avarié')).length >= 1
-      && cmd.especes.filter((esp) => esp.motif_annulation != null && esp.choix_client == null).length >= 1))
     //commandes annulees
-    const cmdDeadlineDépassé = [...new Set(avarié.concat(this.state.Commandes.filter(
+    const cmdAnnulee = [...new Set(this.state.Commandes.filter(
       (Commandes) => Commandes.statut === "commande annulée (deadline dépassé)" ||
         Commandes.statut === "reçu avance refusé" ||
         Commandes.statut === "reçu reste refusé" ||
-        Commandes.statut === "annulée manuellement"|| Commandes.statut ==="rejetée"
-    )))];
+        Commandes.statut === "reçu complément refusé" ||
+        Commandes.statut === "annulée manuellement" ||
+        Commandes.statut === "avarié" ||
+        Commandes.statut === "remboursement" ||
+        Commandes.statut === "avarié_changement" ||
+        Commandes.statut === "avarié_remboursement" ||
+        Commandes.statut === "avarié_annulé"
+
+    ))];
 
     //Avances a payer
-    const cmdAvancesEnAttenteDePaiement = this.state.Commandes.filter(
-      (Commandes) => 
-         Commandes.statut === "en attente de paiement avance"
-        && (Commandes.espece.filter(stat => (stat.statut == 'produit avarié')).length < 1 || (Commandes.espece.filter(stat => (stat.statut == 'produit avarié')).length >= 1 && Commandes.especes.filter((esp) => (esp.motif_annulation != null && esp.choix_client != null) || (esp.motif_annulation == null && esp.choix_client == null)).length == Commandes.especes.length))
+    const cmdAvancePayer = this.state.Commandes.filter(
+      (Commandes) => Commandes.statut === "en attente de paiement avance"
     );
 
     //Produit réservé
-    const cmdAvancesEnAttenteDeValidationt = this.state.Commandes.filter(
-      (Commandes) => 
-        Commandes.statut === "en attente de validation avance"
-        && (Commandes.espece.filter(stat => (stat.statut == 'produit avarié')).length < 1 || (Commandes.espece.filter(stat => (stat.statut == 'produit avarié')).length >= 1 && Commandes.especes.filter((esp) => (esp.motif_annulation != null && esp.choix_client != null) || (esp.motif_annulation == null && esp.choix_client == null)).length == Commandes.especes.length))
-
+    const cmdReserve = this.state.Commandes.filter(
+      (Commandes) => Commandes.statut === "en attente de validation avance"
     );
     // Reste à payer
 
-    const cmdAvancesMontantinalEnAttenteP = this.state.Commandes.filter(
-      (Commandes) => 
-       Commandes.statut === "en attente de paiement du reste"
-        && (Commandes.espece.filter(stat => (stat.statut == 'produit avarié')).length < 1 || (Commandes.espece.filter(stat => (stat.statut == 'produit avarié')).length >= 1 && Commandes.especes.filter((esp) => (esp.motif_annulation != null && esp.choix_client != null) || (esp.motif_annulation == null && esp.choix_client == null)).length == Commandes.especes.length))
-
+    const cmdRestePayer = this.state.Commandes.filter(
+      (Commandes) => Commandes.statut === "en attente de paiement du reste"
     );
 
     //Produit à livrer
+    const cmdLivrer = this.state.Commandes.filter(
+      (Commandes) => Commandes.statut === "validé" ||
+        Commandes.statut === "en attente de validation reste" ||
+        Commandes.statut === "en attente de validation du complément"
+    );
 
-    const cmdPaiementFinalvalidé = this.state.Commandes.filter(
-      (Commandes) =>
-         Commandes.statut === "validé" || Commandes.statut === "en attente de validation reste"
-        && (Commandes.espece.filter(stat => (stat.statut == 'produit avarié')).length < 1 || (Commandes.espece.filter(stat => (stat.statut == 'produit avarié')).length >= 1 && Commandes.especes.filter((esp) => (esp.motif_annulation != null && esp.choix_client != null) || (esp.motif_annulation == null && esp.choix_client == null)).length == Commandes.especes.length))
-
+    //Produit Complement
+    const cmdComplement = this.state.Commandes.filter(
+      (Commandes) => Commandes.statut === "en attente de paiement du complément"
     );
 
     return (
@@ -198,18 +183,20 @@ class CommandesParStatut extends Component {
                             <center>
                               <a href="">
                                 <br></br>{" "}
-
-                                <br></br>{" "}
-                                <br></br>{" "}
+                                {cmdComplement.length == 0 ? <><br></br>{" "}<br></br>{" "}</> : null}
                                 <img
                                   src="Images/info.png"
                                   width="95px"
                                   height="95px"
                                 />
                                 <h4 style={{ color: "white" }}>
-                                  <br></br> Comment utiliser cette rubrique ?
-                              </h4>
+                                  <br></br>{cmdComplement.length == 0 ? "Comment utiliser cette rubrique ?" : "Compléments à payer "}
+                                </h4>
                                 <br></br>
+                                {cmdComplement.length != 0 ?
+                                  <h2 style={{ color: "white" }}>
+                                     <b>{cmdComplement.length}{" "}<GiSheep className=" mr-1  " /></b>
+                                  </h2> : null}
                               </a>
                             </center>
                           </div>
@@ -223,7 +210,7 @@ class CommandesParStatut extends Component {
                         to={{
                           pathname: "/Commandes",
 
-                          state: { id: "commande annulée (deadline dépassé)#reçu avance refusé#reçu reste refusé#rejetée#produit avarié#annulée manuellement" },
+                          state: { id: "commande annulée (deadline dépassé)#reçu avance refusé#reçu reste refusé#rejetée#avarié#annulée manuellement" },
                         }}
                       >
                         {" "}
@@ -253,10 +240,8 @@ class CommandesParStatut extends Component {
                                 </h4>
                                 <br></br>
                                 <h2 style={{ color: "white" }}>
-                                  {/**[...new Set( */}
-                                  <b>{[...new Set(cmdDeadlineDépassé)].length}{" "}<GiSheep className=" mr-1  " /></b>
+                                  <b>{[...new Set(cmdAnnulee)].length}{" "}<GiSheep className=" mr-1  " /></b>
                                 </h2>
-
                                 <br></br>
                               </a>
                             </center>
@@ -298,7 +283,7 @@ class CommandesParStatut extends Component {
                                 <br></br>
 
                                 <h2 style={{ color: "white" }}>
-                                  <b>{cmdAvancesEnAttenteDePaiement.length}{" "} <GiSheep className=" mr-1  " /></b>
+                                  <b>{cmdAvancePayer.length}{" "} <GiSheep className=" mr-1  " /></b>
                                 </h2>
                                 <br></br>
                               </a>
@@ -341,7 +326,7 @@ class CommandesParStatut extends Component {
                               </h4>
                                 <br></br>
                                 <h2 style={{ color: "white" }}>
-                                  <b>{cmdAvancesEnAttenteDeValidationt.length}{" "}<GiSheep className=" mr-1  " /></b>
+                                  <b>{cmdReserve.length}{" "}<GiSheep className=" mr-1  " /></b>
                                 </h2>
                               </a>
                             </center>
@@ -381,7 +366,7 @@ class CommandesParStatut extends Component {
                               </h4>
                                 <br></br>
                                 <h2 style={{ color: "white" }}>
-                                  <b>{cmdAvancesMontantinalEnAttenteP.length}{" "}<GiSheep className=" mr-1  " /></b>
+                                  <b>{cmdRestePayer.length}{" "}<GiSheep className=" mr-1  " /></b>
                                 </h2>
 
                               </a>
@@ -420,7 +405,7 @@ class CommandesParStatut extends Component {
                               </h4>
 
                                 <h2 style={{ color: "white" }}>
-                                  <b>{cmdPaiementFinalvalidé.length}{" "}<GiSheep className=" mr-1  " /></b>
+                                  <b>{cmdLivrer.length}{" "}<GiSheep className=" mr-1  " /></b>
                                 </h2>
                               </a>
                             </center>

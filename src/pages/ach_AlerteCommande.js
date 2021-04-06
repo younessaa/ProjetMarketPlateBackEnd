@@ -2,9 +2,10 @@ import React, { Component } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
 import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
-import { Carousel } from 'react-responsive-carousel';
+import Carousel from 'react-bootstrap/Carousel'
+
 import { Link } from "react-router-dom";
- 
+
 
 
 //import menu_eleveur from '/public/Images/eleveurs.png'; // with import
@@ -38,8 +39,8 @@ class AlerteCommande extends Component {
     return new Promise(resolve => setTimeout(resolve, milliseconds))
   }
 
-   
- 
+
+
   componentDidMount = async () => {
     const cmd = this.props.location.state.id;
     const myToken = `Bearer ` + localStorage.getItem("myToken");
@@ -134,8 +135,8 @@ class AlerteCommande extends Component {
     //control-arrow control-next
 
     return (
-      <div className="">  
-        <style>{` .carousel {    height:300px;}`}</style>
+      <div className="">
+        <style>{` .carousel-indicators li  {background-color:#009141; width: 35px;height: 5px;}`}</style>
         <section className="product spad">
           <div className="container">
             <div class="col-lg-12 col-md-6 mx-5 ">
@@ -151,39 +152,43 @@ class AlerteCommande extends Component {
                 Frais de reservation  à payer  : <span className="text-danger" >{this.state.avance} Dhs</span>
               </h5>
               <br></br>
-        
-              <div style={{ maxHeight:"600px",maxWidth: "50%", marginLeft: "20%" }}>
 
-                <Carousel  >
-                  {this.state.commande.mode_paiement_choisi == "transfert" ? <div>
-                    <img src="/Images/1p.jpg" />
-                   </div> : <div>
-                    <img src="/Images/11p.jpg" />
-                   </div>}
+              <div style={{ maxHeight: "600px", maxWidth: "50%", marginLeft: "20%" }}>
 
-                  <div>
-                    <img src="/Images/2p.jpg" />
-                     
-                  </div>
-                  <div>
-                    <img src="/Images/3p.png" />
-                   </div>
-                  <div>
-                    <img src="/Images/4p.png" />
-                  </div>
-                  <div>
-                    <img src="/Images/5p.png" />
-                  </div>
-                  <div>
-                    <img src="/Images/6p.png" />
+                <Carousel fade>
+                  {this.state.commande.mode_paiement_choisi == "transfert" ?
+                    <Carousel.Item>
+                      <img style={{ minHeight: "400px", maxHeight: "400px", minWidth: "100%" }} src="/Images/1p.jpg" />
+                    </Carousel.Item> : <Carousel.Item>
+                      <img style={{ minHeight: "400px", maxHeight: "400px", minWidth: "100%" }} src="/Images/11p.jpg" />
+                    </Carousel.Item>}
+                  <Carousel.Item>
+                    <img style={{ minHeight: "400px", maxHeight: "400px", minWidth: "100%" }} src="/Images/2p.jpg" />
+                  </Carousel.Item>
+                  <Carousel.Item>
+                    <img style={{ minHeight: "400px", maxHeight: "400px", minWidth: "100%" }} src="/Images/3p.png" />
+                  </Carousel.Item>
+                  <Carousel.Item>
+                    <img style={{ minHeight: "400px", maxHeight: "400px", minWidth: "100%" }} src="/Images/4p.png" />
+                  </Carousel.Item>
+                  <Carousel.Item>
+                    <img style={{ minHeight: "400px", maxHeight: "400px", minWidth: "100%" }} src="/Images/5p.png" />
+                  </Carousel.Item>
+                  <Carousel.Item>
+                    <img style={{ minHeight: "400px", maxHeight: "400px", minWidth: "100%" }} src="/Images/6p.png" />
+                  </Carousel.Item>
+                  <Carousel.Item>
+                    <img style={{ minHeight: "400px", maxHeight: "400px", minWidth: "100%" }} src="/Images/7p.jpg" />
 
-                  </div>
-                  <div>
-                    <img src="/Images/7p.jpg" />
-                   </div>
+                  </Carousel.Item>
+
                 </Carousel>
+
               </div>
-              <div class="checkout__input bg-ligh text-danger h6 center">
+              <br></br>
+              <br></br>
+
+              <div class="checkout__input bg-ligh text-danger h6 center mt-5">
                 Attention: Il vous reste jusqu'au{" "}{this.state.deadline}
                 <span>
                   <b> {/*this.state.date*/}</b>

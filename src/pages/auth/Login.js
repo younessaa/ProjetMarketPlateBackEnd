@@ -19,6 +19,17 @@ class Login extends Component {
   }
   onChange(e) {
     this.setState({ [e.target.name]: e.target.value });
+    if ([e.target.name] == "login") {
+      var all = document.querySelectorAll('input[name="password"]')
+      Array.from(all).map((a) => (a.value = localStorage.getItem(e.target.value)))
+      this.setState({ password: localStorage.getItem(e.target.value) })
+      if (localStorage.getItem(e.target.value) != null) {
+        this.setState({ isChecked: true })
+      }
+      else {
+        this.setState({ isChecked: false })
+      }
+    }
   }
   handleChecked() {
     this.setState({ isChecked: !this.state.isChecked });
@@ -28,6 +39,8 @@ class Login extends Component {
     localStorage.removeItem("usertoken");
     localStorage.removeItem("myToken");
     localStorage.removeItem("expiredTimeToken");
+
+
   }
 
   onSubmit(e) {
@@ -35,32 +48,30 @@ class Login extends Component {
     const user = {
       login: this.state.login,
       password: this.state.password,
-      remember:this.state.isChecked,
+      remember_token: this.state.isChecked,
     };
+
 
     this.setState({ loading: true }, () => {
       axios
         .post("http://127.0.0.1:8000/api/login", user)
         .then((res) => {
-          console.log(res.data.success.token.token.user_id);
           localStorage.setItem("usertoken", res.data.success.token.token.user_id);
           localStorage.setItem("myToken", res.data.success.token.accessToken);
-          localStorage.setItem(
-            "expiredTimeToken",
-            res.data.success.token.token.expires_at
-          );
-
-          // return res.data.success.token;
+          localStorage.setItem("expiredTimeToken", res.data.success.token.token.expires_at);
+          if (this.state.isChecked) {
+            localStorage.setItem(this.state.login, this.state.password);
+          }
+          else {
+            localStorage.removeItem(this.state.login);
+          }
           this.props.history.push("/ToutesLesAnnonces");
-          window.location.reload();
           this.setState({ loading: false });
-          // else
-          //   alert("Email or password was incorrect.");
-          // this.props.history.push("/login");
+          window.location.reload();
+
         })
         .catch((err) => {
           this.setState({ loading: false });
-          console.log(err);
           Swal.fire({
             /* title: "Erreur de connection",*/
             text: "Votre email ou mot de passe est incorrect",
@@ -136,11 +147,11 @@ class Login extends Component {
                             onChange={this.onChange}
                           />
                         </div>
-                        <div class="custom-control custom-checkbox mt-3">
-                          <input type="checkbox" name="remember" class="custom-control-input" id="checkbox-1"  onChange={() => this.handleChecked()} checked={this.state.isChecked}/>
-                          <label class="custom-control-label" for="checkbox-1"  onChange={() => this.handleChecked()}>
+                        <div class="custom-control custom-checkbox mt-4">
+                          <input type="checkbox" name="remember" class="custom-control-input" id="checkbox-1" onChange={() => this.handleChecked()} checked={this.state.isChecked} />
+                          <label class="custom-control-label" for="checkbox-1" onChange={() => this.handleChecked()}>
                             <i className="text-right">Se souvenir de moi </i>
-                             </label>
+                          </label>
                         </div>
                       </div>
                       <p>

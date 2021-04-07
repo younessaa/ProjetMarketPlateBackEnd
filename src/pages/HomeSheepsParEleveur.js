@@ -677,7 +677,7 @@ class HomeSheepsParEleveur extends Component {
                                 <ul className="product__item__pic__hover">
 
                                   <li>
-                                    <Link to={`/DetailsMouton/${Annonces._id}`}>
+                                    <Link to={`/DetailsMouton/${Annonces._id.$oid}`}>
                                       <a href="#">
                                         <i class="fa fa-eye"></i>
                                       </a>

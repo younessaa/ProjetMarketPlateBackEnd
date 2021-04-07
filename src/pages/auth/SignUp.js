@@ -15,6 +15,7 @@ class SignUp extends Component {
     this.state = {
       // first_name: "",
       // last_name: "",
+      isChecked: false,
       email: "",
       password: "",
       conpassword: "",
@@ -24,11 +25,16 @@ class SignUp extends Component {
       pays: "",
       ville: "",
       errors: {},
+
     };
     this.onChange = this.onChange.bind(this);
     this.handleValidation = this.handleValidation.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
     this.register = this.register.bind(this);
+  }
+
+  handleChecked() {
+    this.setState({ isChecked: !this.state.isChecked });
   }
 
   register = (newUser) => {
@@ -152,9 +158,21 @@ class SignUp extends Component {
       errors["password"] = "Ce champs est obligatoire ";
       valide = false;
     }
-    if (this.state.conpassword.length == 0) {
-      errors["conpassword"] = "Ce champs est obligatoire ";
+    if (this.state.isChecked == false) {
+      errors["check"] = " Vous devez accepter les Conditions Générales ";
       valide = false;
+    }
+
+    if (this.state.conpassword !== this.state.password||this.state.conpassword.length == 0) {
+      if (this.state.conpassword.length == 0) {
+        errors["conpassword"] = "Ce champs est obligatoire ";
+        valide = false;
+      }
+      else {
+        errors["conpassword"] = "Entrez exactement le même mot de passe";
+        valide = false;
+      }
+
     }
     this.setState({ errors: errors })
     return valide;
@@ -164,8 +182,6 @@ class SignUp extends Component {
     e.preventDefault();
     this.setState({ loading: true }, () => {
       const user = {
-        // first_name: this.state.first_name,
-        // last_name: this.state.last_name,
         email: this.state.email,
         password: this.state.password,
         telephone: this.state.telephone,
@@ -382,10 +398,12 @@ class SignUp extends Component {
                   </div>
 
                   <div className="custom-control custom-checkbox">
-                    <input type="checkbox" className="custom-control-input" id="checkbox-1" />
-                    <label className="custom-control-label" htmlFor="checkbox-1"  >
+                    <input type="checkbox" name="remember" className="custom-control-input" id="checkbox-1" onChange={() => this.handleChecked()} checked={this.state.isChecked} />
+                    <label className="custom-control-label" htmlFor="checkbox-1" onChange={() => this.handleChecked()} checked={this.state.isChecked}  >
                       J'accepte <a style={{ color: "#7fad39", textDecoration: "underline" }} href="" >les conditions generales d'utilisation </a>
                     </label>
+                    <br></br>
+                    <span className="text-danger ">{this.state.errors["check"]}</span>
                   </div>
                   <br></br>         <br></br>
                   <div className="col-lg-12 text-center">
@@ -408,7 +426,8 @@ class SignUp extends Component {
 
                       </div>
                     ) : (
-                      <button type="submit" className="site-btn">
+                       
+                      <button type="submit" className="site-btn mt-5">
                         S'inscrire
                       </button>
                     )}

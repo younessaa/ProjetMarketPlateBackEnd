@@ -3,7 +3,6 @@ import axios from "axios";
 import Select from "react-select";
 import { Link } from "react-router-dom";
 import Loader from "react-loader-spinner";
-import { GiSheep } from 'react-icons/gi';
 import { HiOutlineBadgeCheck } from 'react-icons/hi';
 import Rating from '@material-ui/lab/Rating';
 import Box from '@material-ui/core/Box';
@@ -14,8 +13,10 @@ class AllOffers extends Component {
     // let redirect = false;
     this.state = {
       loading: true,
-
+      AnnoncesN: [],
+      Annonces: [],
       Eleveurs: [],
+      EleveursN: [],
       activePage: 1,
       nombrePages: [],
       currentPage: 1,
@@ -24,28 +25,8 @@ class AllOffers extends Component {
       Disabled: true,
       selectedOptionRace: null,
       race: [],
-      optionsRace: [
-        { value: "Sardi", label: "Sardi" },
-        { value: "Bargui", label: "Bargui" },
-      ],
-      optionsRaceVache: [
-        { value: "brune de l’Atlas", label: "Brune de l’Atlas" },
-        { value: "oulmés-Zear", label: "Oulmés-Zear" },
-        { value: "noir-Pie de Meknés", label: "Noir-Pie de Meknés" },
-        { value: "tidili", label: "Tidili" },
-      ],
-      optionsRaceCaprine: [
-        { value: "benadir", label: "Benadir" },
-        { value: "boer", label: "Boer" },
-        { value: "drâa", label: "Drâa" },
-        { value: "rahali", label: "Rahali" },
-      ],
       selectedOptionCategorie: null,
-      optionsCategorie: [
-        { value: "mouton", label: "Mouton" },
-        { value: "vache", label: "Vache" },
-        { value: "chevre", label: "Chèvre" },
-      ],
+      optionsCategorie: [],
       selectedOptionRegions: null,
       optionsRegions: [],
       selectedOptionVille: null,
@@ -69,6 +50,16 @@ class AllOffers extends Component {
     this.handelReinitialiser = this.handelReinitialiser.bind(this);
     this.sortData = this.sortData.bind(this);
     this.paginate = this.paginate.bind(this);
+  }
+  groupBy(objectArray, property) {
+    return objectArray.reduce((acc, obj) => {
+      const key = obj[property];
+      if (!acc[key]) {
+        acc[key] = [];
+      }
+      acc[key].push(obj);
+      return acc;
+    }, {});
   }
 
   componentDidMount() {
@@ -101,110 +92,98 @@ class AllOffers extends Component {
     if (!token || expiredTimeToken < formatted_date) {
       this.props.history.push("/login");
     } else {
-    this.setState({ loading: true }, () => {
-      axios
-        .get("http://127.0.0.1:8000/api/eleveurs", {
-          headers: {
-            // "x-access-token": token, // the token is a variable which holds the token
+      this.setState({ loading: true }, () => {
+        axios
+          .get("http://127.0.0.1:8000/api/eleveurs", {
+            headers: {
+            },
+          })
+          .then((res) => {
 
-          },
-        })
-        .then((res) => {
-          this.setState({
-            Eleveurs: res.data,
-            loading: false,
+            this.setState({
+              EleveursN: res.data.filter(
+                (Eleveurs) => Eleveurs.Especes !== undefined
+              ),
 
-          });
+              Eleveurs: res.data,
+              loading: false,
 
-          const elv = this.state.Eleveurs.filter(
-            (Eleveurs) => Eleveurs.Especes !== undefined
-          );
-          /**ville et region  */
-          let allville = []; let allregion = [];
-          elv.map((e) => {
-            allville.splice(0, 0, {"value":e.ville,"label":e.ville}); allregion.splice(0, 0,  {"value":e.region,"label":e.region})
-          });
-        
-          allregion = Array.from(new Set(allregion.map(s => s.value))).map(value => {
-            return {
-              value: value,
-              label: allregion.find(s => s.value === value).label
+            });
+            const elv = this.state.Eleveurs.filter(
+              (Eleveurs) => Eleveurs.Especes !== undefined
+            );
+            //region
+            let regions = [];
+            Object.getOwnPropertyNames(this.groupBy(res.data, 'region')).map((e) => {
+              regions.splice(0, 0, { "value": e, "label": e });
+            });
+            /**ville */
+            let allville = [];
+            elv.map((e) => {
+              allville.splice(0, 0, { "value": e.ville, "label": e.ville });
+            });
+
+            allville = Array.from(new Set(allville.map(s => s.value))).map(value => {
+              return { value: value, label: allville.find(s => s.value === value).label }
+            });
+            this.setState({ optionsVille: allville, optionsRegions: regions})
+            const pageNumbers = [];
+            for (
+              let i = 1;
+              i <=
+              Math.ceil(elv.length / this.state.eleveursPerPage);
+              i++
+            ) {
+              pageNumbers.push(i);
             }
+            this.setState({ nombrePages: pageNumbers });
+
+            axios
+              .get("http://127.0.0.1:8000/api/Espece", {
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                params: {
+                  order_by: "categorie",
+                  order_mode: "asc",
+                },
+              })
+              .then((res) => {
+                //categorie
+                let categorie = [];
+                Object.getOwnPropertyNames(this.groupBy(res.data, 'categorie')).map((e) => {
+                  categorie.splice(0, 0, { "value": e, "label": e });
+                })
+                this.setState({
+                  optionsCategorie: categorie,
+                  AnnoncesN: res.data,
+                  Annonces: res.data,
+                  loading: false,
+                });
+              })
           });
-          allville = Array.from(new Set(allville.map(s => s.value))).map(value => {
-            return {
-              value: value,
-              label: allville.find(s => s.value === value).label
-            }
-          });
-          this.setState({ optionsVille: allville, optionsRegions: allregion })
-          /**ville et region  */
-          const pageNumbers = [];
-          for (
-            let i = 1;
-            i <=
-            Math.ceil(elv.length / this.state.eleveursPerPage);
-            i++
-          ) {
-            pageNumbers.push(i);
-          }
-          this.setState({ nombrePages: pageNumbers });
-        });
-    });}
+      });
+    }
   }
 
   handleChangeCategorie = (selectedOptionCategorie) => {
-    this.setState({ selectedOptionRace: null })
-    if (selectedOptionCategorie.value == "vache") {
-      this.setState({
-        race: this.state.optionsRaceVache,
-        Disabled: false,
-      });
-      this.setState({ selectedOptionCategorie }, () =>
-        this.setState({
-          conditions: Object.assign(this.state.conditions, {
-            categorie: this.state.selectedOptionCategorie.value,
-          }),
-        })
-      );
-    }
-    else if (selectedOptionCategorie.value == "mouton") {
-      this.setState({
-        race: this.state.optionsRace,
-        Disabled: false,
-      });
-      this.setState({ selectedOptionCategorie }, () =>
-        this.setState({
-          conditions: Object.assign(this.state.conditions, {
-            categorie: this.state.selectedOptionCategorie.value,
-          }),
-        })
-      );
-    }
-    else if (selectedOptionCategorie.value == "chevre") {
-      this.setState({
-        race: this.state.optionsRaceCaprine,
-        Disabled: false,
-      });
-      this.setState({ selectedOptionCategorie }, () =>
-        this.setState({
-          conditions: Object.assign(this.state.conditions, {
-            categorie: this.state.selectedOptionCategorie.value,
-
-          }),
-        })
-      );
-    } else
-      this.setState({
-        Disabled: true,
-      });
-    this.setState({ selectedOptionCategorie }, () =>
-      this.setState({
-        conditions: Object.assign(this.state.conditions, {
-          categorie: this.state.selectedOptionCategorie.value,
-        }),
+    this.setState({ selectedOptionRace: null, selectedOptionCategorie: selectedOptionCategorie })
+    let annonce = this.state.AnnoncesN;
+    let c = selectedOptionCategorie.value
+    let races = [];
+    let r = [];
+    (this.groupBy(annonce, 'categorie')[c]).map((m) => { races.push(m.race) })
+    races = [...new Set(races)];
+    races.map((e) => { r.splice(0, 0, { "value": e, "label": e }); });
+    this.setState({
+      race: r,
+      Disabled: false,
+      conditions: Object.assign(this.state.conditions, {
+        categorie: c,
+        race: null,
       })
-    );
+    });
+
   };
 
   handleChangeRace = (selectedOptionRace) => {
@@ -228,13 +207,21 @@ class AllOffers extends Component {
     );
   };
   handleChangeRegion = (selectedOptionRegions) => {
-    this.setState({ selectedOptionRegions }, () =>
-      this.setState({
-        conditions: Object.assign(this.state.conditions, {
-          region: this.state.selectedOptionRegions.value,
-        }),
-      })
-    );
+    this.setState({ selectedOptionVille: null, selectedOptionRegions: selectedOptionRegions });
+    let eleveurs = this.state.EleveursN;
+    let c = selectedOptionRegions.value
+    let villes = [];
+    let v = [];
+    (this.groupBy(eleveurs, 'region')[c]).map((m) => { villes.push(m.ville) })
+    villes = [...new Set(villes)];
+    villes.map((e) => { v.splice(0, 0, { "value": e, "label": e }) });
+    this.setState({
+      optionsVille: v,
+      conditions: Object.assign(this.state.conditions, {
+        region: c,
+        ville: null,
+      }),
+    })
   };
 
   sortData(e) {
@@ -278,6 +265,7 @@ class AllOffers extends Component {
           },
         })
         .then((res) => {
+
           this.setState({
             Eleveurs: res.data,
             loading: false,
@@ -285,6 +273,7 @@ class AllOffers extends Component {
               order_by: "categorie",
               order_mode: "asc",
             },
+
             selectedOptionCategorie: null,
             selectedOptionRace: null,
             Disabled: true,
@@ -292,6 +281,29 @@ class AllOffers extends Component {
             selectedOptionRegions: null,
           });
 
+          const elv = this.state.Eleveurs.filter(
+            (Eleveurs) => Eleveurs.Especes !== undefined
+          );
+          let regions = [];
+          Object.getOwnPropertyNames(this.groupBy(elv, 'region')).map((e) => {
+            regions.splice(0, 0, { "value": e, "label": e });
+          });
+
+          let allville = [];
+          elv.map((e) => {
+            allville.splice(0, 0, { "value": e.ville, "label": e.ville });
+          });
+
+          allville = Array.from(new Set(allville.map(s => s.value))).map(value => {
+            return {
+              value: value,
+              label: allville.find(s => s.value === value).label
+            }
+          });
+          this.setState({
+            optionsVille: allville,
+            optionsRegions: regions
+          })
           const pageNumbers = [];
           for (
             let i = 1;
@@ -317,6 +329,7 @@ class AllOffers extends Component {
           params: this.state.conditions,
         })
         .then((res) => {
+
           this.setState({
             Eleveurs: res.data,
             loading: false,
@@ -412,7 +425,7 @@ class AllOffers extends Component {
                           placeholder=" Race"
                           required
                         />
-                       
+
                       </div>
                     </div>
                     <br></br>
@@ -476,10 +489,11 @@ class AllOffers extends Component {
               </div>
 
               <div className="col-lg-9 col-md-7">
-                <div id="centrerT" className="container">
+                {/**Text Marketing
+                 * <div id="centrerT" className="container">
                   <p>Insert text here</p>
-                </div>
-
+                </div> 
+                Fin Text Marketing */}
                 <div className="filter__item">
                   <div>
                     <div id="filterPlace" className="col-lg-5 col-md-5 fa ">
@@ -497,10 +511,10 @@ class AllOffers extends Component {
                   <div className="row">
                     <div className="col-lg-12 col-md-12">
                       <div className="filter__found text-left">
-                    <h4>    Nos eleveurs{" : "}<span id="nbEspece">
-                            {" "}
-                            {currentEleveurs.length}
-                          </span>{" "} </h4>
+                        <h4>    Nos eleveurs{" : "}<span id="nbEspece">
+                          {" "}
+                          {elv.length}
+                        </span>{" "} </h4>
                       </div>
                     </div>
                   </div>
@@ -530,16 +544,16 @@ class AllOffers extends Component {
                         {currentEleveurs.map((Eleveurs) => (
                           <div className="col-lg-4  col-sm-6">
 
-                            <div id="anonce" class="product__item">
+                            <div id="anonce" className="product__item">
                               <div
-                                class="product__item__pic set-bg"
+                                className="product__item__pic set-bg"
                                 data-setbg={Eleveurs.photo_profil} >
 
                                 <img
                                   src={Eleveurs.photo_profil}
-                                  class="product__item__pic set-bg"  />
+                                  className="product__item__pic set-bg" />
 
-                                <ul class="product__item__pic__hover">
+                                <ul className="product__item__pic__hover">
                                   <Link
                                     key={Eleveurs._id}
                                     to={{
@@ -552,28 +566,32 @@ class AllOffers extends Component {
                                     }}
                                     id={Eleveurs._id}  >
                                     <li>
-                                      <a href="ToutesLesAnnoncesElveur"> {" "} <i class="fa fa-eye"></i>{" "} </a>
+                                      <a href="ToutesLesAnnoncesElveur"> {" "} <i className="fa fa-eye"></i>{" "} </a>
                                     </li>
                                   </Link>
                                 </ul>
                               </div>
                               {Eleveurs.anoc ?
-                                <h1 style={{ borderRadius: "0% 0% 0% 40%", fontSize: "14px" }} class=" badge badge-success pt-2 w-100  ">
+                                <h1 style={{ borderRadius: "0% 0% 0% 40%", fontSize: "14px" }} className=" badge badge-success pt-2 w-100  ">
                                   <HiOutlineBadgeCheck className=" mr-1 fa-lg " />
                                   <span>Labélisé ANOC</span>  </h1>
                                 :
                                 <span className="badge pt-3 w-100 mt-1   ">{"  "}</span>}
                               <div className="product__item__text p-2 text-justify">
                                 <h6 >
-                                  <i class="fa fa-user-circle-o"></i>{" " + Eleveurs.prenom + "         " + Eleveurs.nom}
+                                  <i className="fa fa-user-circle-o"></i>{" " + Eleveurs.prenom + "         " + Eleveurs.nom}
                                   <span className="float-right rounded  border-dark border pr-1">
-                                    <GiSheep className="  mr-1 fa-lg" />{" " + Eleveurs.Especes.length + " "}
+                                    {" "}<img style={{ width: "18px", height: "20px", marginBottom: "5px" }}
+                                      data-imgbigurl="Images/sheep-head.png"
+                                      src="Images/sheep-head.png"
+                                      alt=""
+                                    />{"  " + Eleveurs.Especes.length + " "}
                                   </span>
                                 </h6>
-                                <h6 >  <i class="fa fa-map"></i>{" " + Eleveurs.region} </h6>
-                                <h6><i class="fa fa-home"></i> {Eleveurs.ville}</h6>
+                                <h6 >  <i className="fa fa-map"></i>{" " + Eleveurs.region} </h6>
+                                <h6><i className="fa fa-home"></i> {Eleveurs.ville}</h6>
                                 <h5>
-                                  <Box style={{ textAlign: "center" }} component="fieldset" mb={3} borderColor="transparent">
+                                  <Box style={{ textAlign: "center", marginBottom: "0px" }} component="fieldset" mb={3} borderColor="transparent">
                                     <Rating name="read-only" value={Eleveurs.rating} readOnly />
                                   </Box>
                                 </h5>

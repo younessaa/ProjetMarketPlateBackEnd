@@ -4,9 +4,10 @@ import Select from "react-select";
 import { Link } from "react-router-dom";
 import Loader from "react-loader-spinner";
 import ReactPaginate from "react-paginate";
-import { GiWeight,GiSheep } from 'react-icons/gi';
-import{HiOutlineBadgeCheck} from  'react-icons/hi';
- class HomeSheeps extends Component {
+import { GiWeight, GiSheep } from 'react-icons/gi';
+import { AiOutlineDollar } from 'react-icons/ai'
+import { HiOutlineBadgeCheck } from 'react-icons/hi';
+class HomeSheeps extends Component {
   constructor() {
     super();
     // let redirect = false;
@@ -18,44 +19,13 @@ import{HiOutlineBadgeCheck} from  'react-icons/hi';
       annoncesPerPage: 6,
       Disabled: true,
       Annonces: [],
+      AnnoncesN: [],
       selectedOptionRace: null,
-      race:[],
-      optionsRace: [
-        { value: "Sardi", label: "Sardi" },
-        { value: "Bargui", label: "Bargui" },
-      ],
-      optionsRaceVache: [
-        { value: "brune de l’Atlas", label: "Brune de l’Atlas" },
-        { value: "oulmés-Zear", label: "Oulmés-Zear" },
-        { value: "noir-Pie de Meknés", label: "Noir-Pie de Meknés" },
-        { value: "tidili", label: "Tidili" },
-      ],
-      optionsRaceCaprine: [
-        { value: "benadir", label: "Benadir" },
-        { value: "boer", label: "Boer" },
-        { value: "drâa", label: "Drâa" },
-        { value: "rahali", label: "Rahali" },
-      ],
+      race: [],
       selectedOptionCategorie: null,
-      optionsCategorie: [
-        { value: "mouton", label: "Mouton" },
-        { value: "vache", label: "Vache" },
-        { value: "chevre", label: "Chèvre" },
-      ],
+      optionsCategorie: [],
       selectedOptionVille: null,
-      optionsVille: [
-        { value: "Berkane", label: "Berkane" },
-        { value: "Driouch", label: "Driouch" },
-        { value: "Figuig", label: "Figuig" },
-        { value: "Guercif", label: "Guercif" },
-        { value: "Jerada", label: "Jerada" },
-        { value: "Nador", label: "Nador" },
-        { value: "Oujda-Angad", label: "Oujda-Angad" },
-        { value: "Taourirt", label: "Taourirt" },
-        { value: "Ahfir", label: "Ahfir" },
-        { value: "Saida", label: "Saidia" },
-        { value: "Tafoughalt", label: "Tafoughalt" },
-      ],
+      optionsVille: [],
       conditions: {
         statut: "disponible",
         order_by: "categorie",
@@ -65,7 +35,7 @@ import{HiOutlineBadgeCheck} from  'react-icons/hi';
 
       selectedOptionSort: null,
       optionsSort: [
- 
+
         { value: "prix", label: "Moins cher au plus cher" },
         { value: "prix_dec", label: "Plus cher au moins cher" },
 
@@ -89,57 +59,23 @@ import{HiOutlineBadgeCheck} from  'react-icons/hi';
   }
 
   handleChangeCategorie = (selectedOptionCategorie) => {
-    this.setState({selectedOptionRace:null})
-    if (selectedOptionCategorie.value == "vache") {
-      this.setState({
-        
-        race:this.state.optionsRaceVache ,
-        Disabled: false,
-      });
-      this.setState({ selectedOptionCategorie }, () =>
-      this.setState({
-        conditions: Object.assign(this.state.conditions, {
-          categorie: this.state.selectedOptionCategorie.value,
-        }),
+    this.setState({ selectedOptionRace: null, selectedOptionCategorie: selectedOptionCategorie })
+    let annonce = this.state.AnnoncesN;
+    let c = selectedOptionCategorie.value
+    let races = [];
+    let r = [];
+    (this.groupBy(annonce, 'categorie')[c]).map((m) => { races.push(m.race) })
+    races = [...new Set(races)];
+    races.map((e) => { r.splice(0, 0, { "value": e, "label": e }); });
+    this.setState({
+      race: r,
+      Disabled: false,
+      conditions: Object.assign(this.state.conditions, {
+        categorie: c,
+        race: null,
       })
-    );
-    } 
-    else if (selectedOptionCategorie.value == "mouton") {
-      this.setState({
-        race:this.state.optionsRace ,
-        Disabled: false,
-      });
-      this.setState({ selectedOptionCategorie }, () =>
-      this.setState({
-        conditions: Object.assign(this.state.conditions, {
-          categorie: this.state.selectedOptionCategorie.value,
-        }),
-      })
-    );
-    } 
-    else if (selectedOptionCategorie.value == "chevre") {
-      this.setState({
-        race:this.state.optionsRaceCaprine ,
-        Disabled: false,
-      });
-      this.setState({ selectedOptionCategorie }, () =>
-      this.setState({
-        conditions: Object.assign(this.state.conditions, {
-          categorie: this.state.selectedOptionCategorie.value,
-        }),
-      })
-    );
-    } else
-      this.setState({
-        Disabled: false,
-      });
-    this.setState({ selectedOptionCategorie }, () =>
-      this.setState({
-        conditions: Object.assign(this.state.conditions, {
-          categorie: this.state.selectedOptionCategorie.value,
-        }),
-      })
-    );
+    });
+
   };
 
   handleChangeRace = (selectedOptionRace) => {
@@ -170,13 +106,19 @@ import{HiOutlineBadgeCheck} from  'react-icons/hi';
     );
   };
 
+  groupBy(objectArray, property) {
+    return objectArray.reduce((acc, obj) => {
+      const key = obj[property];
+      if (!acc[key]) {
+        acc[key] = [];
+      }
+      // Add object to list for given key's value
+      acc[key].push(obj);
+      return acc;
+    }, {});
+  }
   componentDidMount() {
-    // const myToken = `Bearer ` + localStorage.getItem("myToken");
     const token = localStorage.getItem("usertoken");
-    // if (!token) {
-    //   this.props.history.push("/login");
-    // } else {
-    //   console.log(token)
     this.setState({ loading: true }, () => {
       axios
         .get("http://127.0.0.1:8000/api/Espece", {
@@ -193,18 +135,27 @@ import{HiOutlineBadgeCheck} from  'react-icons/hi';
             order_mode: "asc",
           },
         })
-        .then((res) => {console.log(res.data)
+        .then((res) => {
+          //categorie
+          let categorie = [];
+          Object.getOwnPropertyNames(this.groupBy(res.data, 'categorie')).map((e) => {
+            categorie.splice(0, 0, { "value": e, "label": e });
+          });
+          //ville
+          let ville = [];
+          let villes = [];
+          res.data.map((e) => { villes.push(e.localisation) })
+          villes = [...new Set(villes)];
+          villes.map((e) => { ville.splice(0, 0, { "value": e, "label": e }); });
           this.setState({
+            optionsCategorie: categorie,
+            optionsVille: ville,
+            AnnoncesN: res.data,
             Annonces: res.data,
             loading: false,
           });
           const pageNumbers = [];
-          for (
-            let i = 1;
-            i <=
-            Math.ceil(this.state.Annonces.length / this.state.annoncesPerPage);
-            i++
-          ) {
+          for (let i = 1; i <= Math.ceil(this.state.Annonces.length / this.state.annoncesPerPage); i++) {
             pageNumbers.push(i);
           }
           this.setState({ nombrePages: pageNumbers });
@@ -335,14 +286,7 @@ import{HiOutlineBadgeCheck} from  'react-icons/hi';
             loading: false,
           });
           const pageNumbers = [];
-          for (
-            let i = 1;
-            i <=
-            Math.ceil(
-              this.state.Annonces.length / this.state.annoncesPerPage
-            );
-            i++
-          ) {
+          for (let i = 1; i <= Math.ceil(this.state.Annonces.length / this.state.annoncesPerPage); i++) {
             pageNumbers.push(i);
           }
           this.setState({ nombrePages: pageNumbers });
@@ -421,13 +365,6 @@ import{HiOutlineBadgeCheck} from  'react-icons/hi';
                     </h6>
                     <div className="row">
                       <div className="col-lg-12 col-md-12">
-                        {/* <input
-                          type="text"
-                          className="latest-product__item"
-                          placeholder="Choisissez la race"
-                          onChange={this.onChange}
-                          name="race"
-                        /> */}
                         <Select
                           value={selectedOptionCategorie}
                           onChange={this.handleChangeCategorie}
@@ -445,13 +382,6 @@ import{HiOutlineBadgeCheck} from  'react-icons/hi';
                     </h6>
                     <div className="row">
                       <div className="col-lg-12 col-md-12">
-                        {/* <input
-                          type="text"
-                          className="latest-product__item"
-                          placeholder="Choisissez la race"
-                          onChange={this.onChange}
-                          name="race"
-                        /> */}
                         <Select
                           id="recherchePlace"
                           isDisabled={this.state.Disabled}
@@ -597,9 +527,12 @@ import{HiOutlineBadgeCheck} from  'react-icons/hi';
               </div>
 
               <div className="col-lg-9 col-md-7">
-                <div id="centrerT" className="container">
+                {/**Text Marketing
+                 * <div id="centrerT" className="container">
                   <p>Insert text here</p>
-                </div>
+                </div> 
+                Fin Text Marketing */}
+
 
                 <div className="filter__item">
                   <div>
@@ -610,10 +543,7 @@ import{HiOutlineBadgeCheck} from  'react-icons/hi';
                         onChange={this.sortData}
                         options={optionsSort}
                         placeholder="&#xf161; Trier par"
-                      //
-                      //f0b0
 
-                      // className="Select"
                       />
                     </div>
                   </div>
@@ -683,7 +613,7 @@ import{HiOutlineBadgeCheck} from  'react-icons/hi';
                             </li> */}
                                   <li>
                                     <Link to={`/DetailsMouton/${Annonces._id.$oid}`}>
-                                       <a href="#">
+                                      <a href="#">
                                         <i class="fa fa-eye"></i>
                                       </a>
                                     </Link>
@@ -691,30 +621,39 @@ import{HiOutlineBadgeCheck} from  'react-icons/hi';
                                 </ul>
                               </div>
                               {Annonces.anoc ?
-                                <h1 style={{ borderRadius: "0% 0% 0% 40%",fontSize:"14px" }} class=" badge badge-success pt-2 w-100  ">
-                                   <HiOutlineBadgeCheck className=" mr-1 fa-lg " />
-                             <span>Labélisé ANOC</span>  </h1>
+                                <h1 style={{ borderRadius: "0% 0% 0% 40%", fontSize: "14px" }} class=" badge badge-success py-1 w-100  ">
+                                  <HiOutlineBadgeCheck className=" mr-1 fa-lg " />
+                                  <span>Labélisé ANOC</span>  </h1>
                                 :
                                 <span className="badge pt-3 w-100  mt-1  ">{"  "}</span>}
 
                               <div className="product__item__text p-2 text-justify">
-                                <h6 ><GiSheep className=" mr-1 fa-lg " />{  Annonces.categorie}
+
+                                <h6 className=" nbrm" style={{ color: "black", fontSize: "18px" }}>
+
+                                  <img style={{ width: "18px", height: "20px", marginBottom: "5px" }}
+                                    data-imgbigurl="Images/sheep-head.png"
+                                    src="Images/sheep-head.png"
+                                    alt=""
+                                  />{" " + Annonces.categorie}
 
                                   <span className="float-right">
-                                    <i   class="fa fa-dot-circle-o"></i> {this.annonceVision(Annonces)}
+                                    <i class="fa fa-dot-circle-o"></i> {this.annonceVision(Annonces)}
                                   </span> </h6>
 
                                 <h6><GiWeight className=" mr-1 fa-lg " />
                                   {Annonces.poids + " Kg"}
-                                  <img  style={{width:"10%",marginLeft:"38%",marginBottom:"10px"}} src="./Images/age.png"></img>
+                                  <img style={{ width: "18px", height: "18px", marginLeft: "99px", marginBottom: "5px" }} src="./Images/age.png"></img>
 
                                   <span className="float-right mt-1">
-                                    { Annonces.age + " mois"}</span></h6>
+                                    {Annonces.age + " mois"}</span></h6>
 
-                                <h5  className="ml-5 text-danger"> 
+                                <h5 className=" text-danger mt-4">
+                                  <i class="fa fa-usd" aria-hidden="true"></i>
+                                  {" "}
                                   {Annonces.prix + "  Dhs"}
                                 </h5>
-                               </div>
+                              </div>
                             </div>
 
                           </div>
@@ -745,14 +684,7 @@ import{HiOutlineBadgeCheck} from  'react-icons/hi';
                   )}
                   {/* <!-- Sheeps Grid Section End --> */}
                 </div>
-                {/* <div className="product__pagination">
-                  <a href="#">1</a>
-                  <a href="#">2</a>
-                  <a href="#">3</a>
-                  <a href="#">
-                    <i className="fa fa-long-arrow-right"></i>
-                  </a>
-                </div> */}
+
               </div>
             </div>
           </div>

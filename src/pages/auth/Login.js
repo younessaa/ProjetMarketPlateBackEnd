@@ -17,12 +17,39 @@ class Login extends Component {
     this.onChange = this.onChange.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
   }
+  decryp(sample) {
+    var alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz".split("");
+    var rot13Alphabet = "NOPQRSTUVWXYZABCDEFGHIJKLMnopqrstuvwxyzabcdefghijklm".split("");
+    var result = "";
+    for (var x = 0; x < sample.length; x++) {
+      for (var y = 0; y < alphabet.length; y++) {
+        if (sample[x] == alphabet[y]) {
+          result += rot13Alphabet[y];
+        }
+      }
+      if (sample[x] == " ") {
+        result += " ";
+      }
+    }
+    return result;
+  }
+  cryp(str) {
+    const input = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+    const output = 'NOPQRSTUVWXYZABCDEFGHIJKLMnopqrstuvwxyzabcdefghijklm';
+    let encoded = '';
+    for (let i = 0; i < str.length; i++) {
+      const index = input.indexOf(str[i]);
+      encoded += output[index];
+    }
+
+    return encoded;
+  }
   onChange(e) {
     this.setState({ [e.target.name]: e.target.value });
-    if ([e.target.name] == "login") {
+    if ([e.target.name] == "login"&&localStorage.getItem(e.target.value)!=null) {
       var all = document.querySelectorAll('input[name="password"]')
-      Array.from(all).map((a) => (a.value = localStorage.getItem(e.target.value)))
-      this.setState({ password: localStorage.getItem(e.target.value) })
+      Array.from(all).map((a) => (a.value = this.decryp(localStorage.getItem(e.target.value))))
+      this.setState({ password: this.decryp(localStorage.getItem(e.target.value)) })
       if (localStorage.getItem(e.target.value) != null) {
         this.setState({ isChecked: true })
       }
@@ -60,7 +87,7 @@ class Login extends Component {
           localStorage.setItem("myToken", res.data.success.token.accessToken);
           localStorage.setItem("expiredTimeToken", res.data.success.token.token.expires_at);
           if (this.state.isChecked) {
-            localStorage.setItem(this.state.login, this.state.password);
+            localStorage.setItem(this.state.login, this.cryp(this.state.password));
           }
           else {
             localStorage.removeItem(this.state.login);

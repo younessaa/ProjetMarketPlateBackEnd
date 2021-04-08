@@ -15,6 +15,7 @@ class HomeSheepsParEleveur extends Component {
     // let redirect = false;
     this.state = {
       Annonces: [],
+      AnnoncesN: [],
       loading: true,
       Disabled: true,
       longueur: 0,
@@ -23,32 +24,11 @@ class HomeSheepsParEleveur extends Component {
       currentPage: 1,
       annoncesPerPage: 6,
       selectedOptionRace: null,
-      optionsRace: [
-        { value: "Sardi", label: "Sardi" },
-        { value: "Bargui", label: "Bargui" },
-      ],
-      optionsRaceVache: [
-        { value: "brune de l’Atlas", label: "Brune de l’Atlas" },
-        { value: "oulmés-Zear", label: "Oulmés-Zear" },
-        { value: "noir-Pie de Meknés", label: "Noir-Pie de Meknés" },
-        { value: "tidili", label: "Tidili" },
-      ],
-      optionsRaceCaprine: [
-        { value: "benadir", label: "Benadir" },
-        { value: "boer", label: "Boer" },
-        { value: "drâa", label: "Drâa" },
-        { value: "rahali", label: "Rahali" },
-      ],
       selectedOptionCategorie: null,
-      optionsCategorie: [
-        { value: "mouton", label: "Mouton" },
-        { value: "vache", label: "Vache" },
-        { value: "chevre", label: "Chèvre" },
-      ],
+      optionsCategorie: [],
       selectedOptionVille: null,
       optionsVille: [],
       conditions: {
-        // statut: "disponible",
         order_by: "race",
         order_mode: "asc",
       },
@@ -77,57 +57,23 @@ class HomeSheepsParEleveur extends Component {
   }
 
   handleChangeCategorie = (selectedOptionCategorie) => {
-    this.setState({ selectedOptionRace: null })
-    if (selectedOptionCategorie.value == "vache") {
-      this.setState({
-
-        race: this.state.optionsRaceVache,
-        Disabled: false,
-      });
-      this.setState({ selectedOptionCategorie }, () =>
-        this.setState({
-          conditions: Object.assign(this.state.conditions, {
-            categorie: this.state.selectedOptionCategorie.value,
-          }),
-        })
-      );
-    }
-    else if (selectedOptionCategorie.value == "mouton") {
-      this.setState({
-        race: this.state.optionsRace,
-        Disabled: false,
-      });
-      this.setState({ selectedOptionCategorie }, () =>
-        this.setState({
-          conditions: Object.assign(this.state.conditions, {
-            categorie: this.state.selectedOptionCategorie.value,
-          }),
-        })
-      );
-    }
-    else if (selectedOptionCategorie.value == "chevre") {
-      this.setState({
-        race: this.state.optionsRaceCaprine,
-        Disabled: false,
-      });
-      this.setState({ selectedOptionCategorie }, () =>
-        this.setState({
-          conditions: Object.assign(this.state.conditions, {
-            categorie: this.state.selectedOptionCategorie.value,
-          }),
-        })
-      );
-    } else
-      this.setState({
-        Disabled: false,
-      });
-    this.setState({ selectedOptionCategorie }, () =>
-      this.setState({
-        conditions: Object.assign(this.state.conditions, {
-          categorie: this.state.selectedOptionCategorie.value,
-        }),
+    this.setState({ selectedOptionRace: null, selectedOptionCategorie: selectedOptionCategorie })
+    let annonce = this.state.AnnoncesN;
+    let c = selectedOptionCategorie.value
+    let races = [];
+    let r = [];
+    (this.groupBy(annonce, 'categorie')[c]).map((m) => { races.push(m.race) })
+    races = [...new Set(races)];
+    races.map((e) => { r.splice(0, 0, { "value": e, "label": e }); });
+    this.setState({
+      race: r,
+      Disabled: false,
+      conditions: Object.assign(this.state.conditions, {
+        categorie: c,
+        race: null,
       })
-    );
+    });
+
   };
   handleChangeRace = (selectedOptionRace) => {
     this.setState({ selectedOptionRace }, () =>
@@ -172,7 +118,7 @@ class HomeSheepsParEleveur extends Component {
         })
         .then((res) => {
           this.setState({
-            Annonces: res.data.filter((data) => data.id_eleveur === this.props.location.state.id.id._id),
+            Annonces: res.data.filter((data) => data.id_eleveur === this.props.location.state.id.id._id).filter((f) => f.statut != "produit avarié"),
             loading: false,
             conditions: {
               order_by: "categorie",
@@ -187,11 +133,7 @@ class HomeSheepsParEleveur extends Component {
           Array.from(all).map((a) => (a.value = null))
 
           const pageNumbers = [];
-          for (
-            let i = 1;
-            i <=
-            Math.ceil(this.state.Annonces.length / this.state.annoncesPerPage);
-            i++
+          for (let i = 1; i <= Math.ceil(this.state.Annonces.length / this.state.annoncesPerPage); i++
           ) {
             pageNumbers.push(i);
           }
@@ -201,6 +143,16 @@ class HomeSheepsParEleveur extends Component {
 
   }
 
+  groupBy(objectArray, property) {
+    return objectArray.reduce((acc, obj) => {
+      const key = obj[property];
+      if (!acc[key]) {
+        acc[key] = [];
+      }
+      acc[key].push(obj);
+      return acc;
+    }, {});
+  }
   componentDidMount() {
     function appendLeadingZeroes(n) {
       if (n <= 9) {
@@ -244,28 +196,28 @@ class HomeSheepsParEleveur extends Component {
             },
           })
           .then((res) => {
+            //categorie
+            let categorie = [];
+            Object.getOwnPropertyNames(this.groupBy(res.data.filter((f) => f.statut != "produit avarié"), 'categorie')).map((e) => {
+              categorie.splice(0, 0, { "value": e, "label": e });
+            });
             let ville = [];
             res.data.map((e) => {
               ville.splice(0, 0, { "value": e.localisation, "label": e.localisation });
             });
             ville = Array.from(new Set(ville.map(s => s.value))).map(value => {
-              return {
-                value: value,
-                label: ville.find(s => s.value === value).label
-              }
+              return { value: value, label: ville.find(s => s.value === value).label }
             });
             this.setState({
-              Annonces: res.data,
+              optionsCategorie: categorie,
+              AnnoncesN: res.data.filter((f) => f.statut != "produit avarié"),
+              Annonces: res.data.filter((f) => f.statut != "produit avarié"),
               loading: false,
               optionsVille: [...new Set(ville)]
 
             });
             const pageNumbers = [];
-            for (
-              let i = 1;
-              i <=
-              Math.ceil(this.state.Annonces.length / this.state.annoncesPerPage);
-              i++
+            for (let i = 1; i <= Math.ceil(this.state.Annonces.length / this.state.annoncesPerPage); i++
             ) {
               pageNumbers.push(i);
             }
@@ -345,15 +297,11 @@ class HomeSheepsParEleveur extends Component {
         })
         .then((res) => {
           this.setState({
-            Annonces: res.data.filter((data) => data.id_eleveur === this.props.location.state.id.id._id),
+            Annonces: res.data.filter((data) => data.id_eleveur === this.props.location.state.id.id._id).filter((f) => f.statut != "produit avarié"),
             loading: false,
           });
           const pageNumbers = [];
-          for (
-            let i = 1;
-            i <=
-            Math.ceil(this.state.Annonces.length / this.state.annoncesPerPage);
-            i++
+          for (let i = 1; i <= Math.ceil(this.state.Annonces.length / this.state.annoncesPerPage); i++
           ) {
             pageNumbers.push(i);
           }
@@ -372,10 +320,7 @@ class HomeSheepsParEleveur extends Component {
     const indexOfLastAnnonce =
       this.state.currentPage * this.state.annoncesPerPage;
     const indexOfFirstAnnonce = indexOfLastAnnonce - this.state.annoncesPerPage;
-    const currentAnnonces = this.state.Annonces.slice(
-      indexOfFirstAnnonce,
-      indexOfLastAnnonce
-    );
+    const currentAnnonces = this.state.Annonces.slice(indexOfFirstAnnonce, indexOfLastAnnonce);
     const { selectedOptionCategorie } = this.state;
     const { optionsCategorie } = this.state;
     const { selectedOptionRace } = this.state;
@@ -393,9 +338,7 @@ class HomeSheepsParEleveur extends Component {
     var vendu = this.state.Annonces.filter(
       (Annonces) => Annonces.statut == "vendu"
     );
-    var avarie = this.state.Annonces.filter(
-      (Annonces) => Annonces.statut == "produit avarié"
-    );
+
     return (
       <div>
         <section className="">
@@ -433,7 +376,6 @@ class HomeSheepsParEleveur extends Component {
                       <div className="col-lg-12 col-md-12">
 
                         <Select
-                          id="recherchePlace"
                           isDisabled={this.state.Disabled}
                           value={selectedOptionRace}
                           onChange={this.handleChangeRace}
@@ -451,8 +393,6 @@ class HomeSheepsParEleveur extends Component {
                     <div className="row">
                       <div className="col-lg-12 col-md-12">
                         <input
-                          id="recherchePlace"
-
                           type="text"
                           class="form-control"
                           placeholder=" Reference de l'annonce"
@@ -468,7 +408,6 @@ class HomeSheepsParEleveur extends Component {
                     <div className="row">
                       <div className="col-lg-12 col-md-12">
                         <input
-                          id="recherchePlace"
                           type="text"
                           class="form-control"
                           placeholder=" Budget min"
@@ -481,7 +420,6 @@ class HomeSheepsParEleveur extends Component {
                     <div className="row">
                       <div className="col-lg-12 col-md-12">
                         <input
-                          id="recherchePlace"
                           type="text"
                           class="form-control"
                           placeholder=" Budget max"
@@ -498,7 +436,6 @@ class HomeSheepsParEleveur extends Component {
                     <div className="row">
                       <div className="col-lg-12 col-md-12">
                         <input
-                          id="recherchePlace"
                           type="text"
                           class="form-control"
                           placeholder=" Poids min"
@@ -510,7 +447,6 @@ class HomeSheepsParEleveur extends Component {
                     <div className="row">
                       <div className="col-lg-12 col-md-12">
                         <input
-                          id="recherchePlace"
                           type="text"
                           class="form-control"
                           placeholder=" Poids max"
@@ -570,34 +506,16 @@ class HomeSheepsParEleveur extends Component {
 
               <div className="col-lg-9 col-md-7">
                 <div className="filter__item">
-                  <div>
-                    <div id="filterPlace" className="col-lg-5 col-md-5 fa ">
-                      <Select
-                        id="filterPlace"
-                        value={this.state.selectedOptionSort}
-                        onChange={this.sortData}
-                        options={optionsSort}
-                        placeholder="&#xf161; Trier par"
-                      //
-                      //f0b0
-
-                      // className="Select"
-                      />
-                    </div>
-                  </div>
-                  <br></br>
-
                   <div className="row">
                     <div className="col-lg-4 col-md-5"></div>
                     <div className="col-lg-12 col-md-12">
-
                       <br />
                       <div class="row mb-5">
                         <div class="col-4"> <img
                           src={this.props.location.state.id.id.photo_profil}
                           class=" product__item__pic  set-bg" />
                           {this.props.location.state.id.id.anoc ?
-                            <h1 style={{ borderRadius: "0% 0% 0% 40%", fontSize: "14px" }} class=" badge badge-success pt-2 w-100  ">
+                            <h1 style={{ borderRadius: "0% 0% 0% 40%", fontSize: "14px" }} class=" badge badge-success  pt-1 w-100  ">
                               <HiOutlineBadgeCheck className=" mr-1 fa-lg " />
                               <span>Labélisé ANOC</span>  </h1>
                             :
@@ -605,7 +523,6 @@ class HomeSheepsParEleveur extends Component {
                         <div class="col-8" style={{ position: "relative" }}>
                           <h3 className="mt-1">
                             <Box component="fieldset" mb={3} borderColor="transparent">
-
                               Eleveur :{" "}
                               {this.props.location.state.id.id.nom.toUpperCase() +
                                 " " +
@@ -616,26 +533,46 @@ class HomeSheepsParEleveur extends Component {
                           <h6 className="my-2">  <i class="fa fa-map"></i> <b>Region  : </b>{" " + this.props.location.state.id.id.region} </h6>
                           <h6 className="mb-2"><i class="fa fa-home"></i>   <b>Ville : </b>{" " + this.props.location.state.id.id.ville}</h6>
                           <h6 className="mb-2"><i class="fa fa-phone" aria-hidden="true"></i>   <b>Telephone : </b>{" " + this.props.location.state.id.id.tel}</h6>
-                          <h6 className=""><GiSheep className=" mr-1 fa-lg " />   <b> <span id="nbEspece">
+                          <h6 className="">  <img style={{ width: "18px", height: "20px", marginBottom: "5px" }}
+                            data-imgbigurl="Images/sheep-head.png"
+                            src="Images/sheep-head.png"
+                            alt=""
+                          />   <b> <span id="nbEspece">
                             {this.state.Annonces.length}
                           </span>{" "}
                              Têtes au total</b></h6>
-
                           {this.props.location.state.id.id.anoc ?
                             <span className=" text-success" style={{ position: "relative", top: "40px" }}>
                               <HiOutlineBadgeCheck className=" mr-1 fa-lg " /> Le label de l'ANOC est un gage de la qualité du produit. <br></br></span>
                             : null}
                         </div>
-
                       </div>
-                      <div><br></br></div>
+                      <div>
+                        <br></br></div>
                       <h6 id="centrerT" className="mt-3">
                         <b id="nbEspece">{vendu.length}{" "}</b> Vendus{" "}
                         <b className="ml-3" id="nbEspece">{dispo.length}{" "}</b> Disponibles{" "}
                         <b className="ml-3" id="nbEspece">{reserv.length}{" "}</b> Réservés{" "}
-                        <b className="ml-3" id="nbEspece">{avarie.length}{" "}</b> Avarié{" "}
 
                       </h6>
+                      <br></br>
+                      <div>
+                        <div id="filterPlace" className="col-lg-5 col-md-5 fa ">
+                          <Select
+                            id="filterPlace"
+                            value={this.state.selectedOptionSort}
+                            onChange={this.sortData}
+                            options={optionsSort}
+                            placeholder="&#xf161; Trier par"
+                          //
+                          //f0b0
+
+                          // className="Select"
+                          />
+                        </div>
+                      </div>
+                      <br></br>
+
                     </div>
                   </div>
                 </div>
@@ -686,7 +623,7 @@ class HomeSheepsParEleveur extends Component {
                                 </ul>
                               </div>
                               {Annonces.anoc ?
-                                <h1 style={{ borderRadius: "0% 0% 0% 40%", fontSize: "14px" }} class=" badge badge-success pt-2 w-100  ">
+                                <h1 style={{ borderRadius: "0% 0% 0% 40%", fontSize: "14px" }} class=" badge badge-success  pt-1 w-100  ">
                                   <HiOutlineBadgeCheck className=" mr-1 fa-lg " />
                                   <span>Labélisé ANOC</span>  </h1>
                                 : <h1 style={{ borderRadius: "0% 0% 0% 40%", fontSize: "14px" }} class=" badge  pt-4 w-100  ">
@@ -707,7 +644,9 @@ class HomeSheepsParEleveur extends Component {
                                     {Annonces.age + " mois"}</span>
                                 </h6>
 
-                                <h5 id="mad">{"         " + Annonces.prix + " MAD"}
+                                <h5 id="mad">
+                                  <i class="fa fa-usd" aria-hidden="true"></i>
+                                  {"         " + Annonces.prix + " Dhs"}
                                   <h5 className="text-danger float-right" >
                                     {"         " + Annonces.statut}</h5></h5>
                               </div>

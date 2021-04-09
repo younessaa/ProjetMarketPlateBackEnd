@@ -181,6 +181,24 @@ this.setState( { idp:p })
     if (!token) {
       this.props.history.push("/login");
     } else {
+       const swalWithBootstrapButtons = Swal.mixin({
+      customClass: {
+        confirmButton: "ml-2 btn btn-success",
+        cancelButton: " btn btn-danger",
+      },
+      buttonsStyling: false,
+    });
+
+    swalWithBootstrapButtons.fire({
+      title: "Etes-vous sûr?",
+      text: "Voulez-vous supprimer cette annonce !",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "  Oui !  ",
+      cancelButtonText: "  Non !  ",
+      reverseButtons: true,
+    }).then((result) => {
+      if (result.isConfirmed) {
 
 
       axios
@@ -212,9 +230,6 @@ this.setState( { idp:p })
         heightAuto: false,
         timer: 1500,
         showConfirmButton: false,
-        /* confirmButtonColor: "#7fad39",
- 
-        confirmButtonText: "Ok!",*/
       });
       const pageNumbers = [];
       for (
@@ -227,8 +242,23 @@ this.setState( { idp:p })
       }
       this.setState({ nombrePages: pageNumbers });
 
-
+ }
+ else if (
+  result.dismiss === Swal.DismissReason.cancel
+) {
+  Swal.fire({
+    title: "Annonce non supprimée ! ",
+    icon: "error",
+    width: 400,
+    heightAuto: false,
+    timer: 1500,
+    showConfirmButton: false,
+  });
+ 
+}
+})
     }
+ 
   }
 
   handlePageChange(pageNumber) {
@@ -254,13 +284,13 @@ this.setState( { idp:p })
     if (fav.length == 1 || fav.length == 0) {
       titre = (
         <h6>
-          <span>{fav.length}</span> Bête{" "}
+          <span>{fav.length}</span> Annonce {" "}
         </h6>
       );
     } else {
       titre = (
         <h6>
-          <span>{fav.length}</span> Bêtes{" "}
+          <span>{fav.length}</span> Annonces {" "}
         </h6>
       );
     }
@@ -352,7 +382,13 @@ this.setState( { idp:p })
                             }
 
                             <div className="product__item__text p-2 text-justify">
-                              <h6 ><GiSheep className=" mr-1 fa-lg " />{Annonces.categorie}
+                              <h6 >
+                                 <img style={{ width: "18px", height: "20px", marginBottom: "5px" }}
+                                    data-imgbigurl="Images/sheep-head.png"
+                                    src="Images/sheep-head.png"
+                                    alt=""
+                                  />
+                              {" "+Annonces.categorie}
 
                                 <span className="float-right">
                                   <i className="fa fa-dot-circle-o"></i> {this.annonceVision(Annonces)}
@@ -360,22 +396,23 @@ this.setState( { idp:p })
 
                               <h6><GiWeight className=" mr-1 fa-lg " />
                                 {Annonces.poids + " Kg"}
-                                <img style={{ width: "10%", marginLeft: "91px", marginBottom: "10px" }} src="./Images/age.png"></img>
+                                <img style={{ width: "18px", height: "18px", marginLeft: "99px", marginBottom: "5px" }} src="./Images/age.png"></img>
 
                                 <span className="float-right mt-1">
                                   {Annonces.age + " mois"}</span></h6>
 
                               <h5 id="mad">
+                              <i className="fa fa-usd" aria-hidden="true"></i>
+
                                 {"         " + Annonces.prix + "  Dhs"}
                               </h5>
-
 
                               {Annonces.statut == "disponible" ?
                                 (<div>
                                   {!this.ispanier(Annonces._id) ?
                                     <button
                                       id={Annonces._id}
-                                      className="float-right rounded text-white bg-success py-1 px-2  "
+                                      className="float-right rounded mt-2 text-white bg-success py-1 px-2  "
                                       style={{   fontSize: "16px",  border: "none" }}
                                       onClick={(e) => {
                                         this.handlePanier(e.currentTarget.id);
@@ -385,21 +422,21 @@ this.setState( { idp:p })
                                       <i className="fa fa-shopping-cart "> {""} ajouter au Panier</i>
                                     </button>
                                     : <button
-                                      id={Annonces._id}
+                                     
                                       disabled="disabled"
-                                      className="float-right rounded text-white   btn btn-default py-1 px-2  "
+                                      className="float-right rounded text-white mt-2    btn-default py-1 px-2  "
                                       style={{   fontSize: "16px",    border: "none" }}
                                     >
-                                      <i className="fa fa-shopping-cart "> {""} ajouter au Panier</i>
+                                      <i className="fa fa "> </i>
                                     </button>}
                                 </div>)
                                 : (<button
-                                  id={Annonces._id}
+                                 
                                   disabled="disabled"
-                                  className="float-right rounded text-white  btn btn-default py-1 px-2  "
+                                  className="float-right rounded text-white  mt-2  btn-default py-1 px-2  "
                                   style={{   fontSize: "16px",    border: "none" }}
                                 >
-                                  <i className="fa fa-shopping-cart "> {""} ajouter au Panier</i>
+                                  <i className="fa fa "> </i>
                                 </button>)}<div>
                               </div>
                             </div>

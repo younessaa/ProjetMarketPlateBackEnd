@@ -138,6 +138,24 @@ class Commandes extends Component {
      if (!token) {
       this.props.history.push("/login");
     } else {
+      const swalWithBootstrapButtons = Swal.mixin({
+        customClass: {
+          confirmButton: "ml-2 btn btn-success",
+          cancelButton: " btn btn-danger",
+        },
+        buttonsStyling: false,
+      });
+  
+      swalWithBootstrapButtons.fire({
+        title: "Etes-vous sûr?",
+        text: "Voulez-vous supprimer cette annonce !",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "  Oui !  ",
+        cancelButtonText: "  Non !  ",
+        reverseButtons: true,
+      }).then((result) => {
+        if (result.isConfirmed) {
 
       axios
         .put(
@@ -200,6 +218,19 @@ class Commandes extends Component {
   
 
     }
+    else if (
+      result.dismiss === Swal.DismissReason.cancel
+    ) {
+      Swal.fire({
+        title: "Annonce non supprimée ! ",
+        icon: "error",
+        width: 400,
+        heightAuto: false,
+        timer: 1500,
+        showConfirmButton: false,
+      });}
+  })
+}
   }
   annonceVision(a) {
     if (a.race === undefined) {
@@ -220,13 +251,13 @@ class Commandes extends Component {
     if (fav.length == 1 || fav.length == 0) {
       titre = (
         <h6>
-          <span>{fav.length}</span> Bêtes{" "}
+          <span>{fav.length}</span>  Annonce{" "}
         </h6>
       );
     } else {
       titre = (
         <h6>
-          <span>{fav.length}</span> Bêtes{" "}
+          <span>{fav.length}</span>  Annonces{" "}
         </h6>
       );
     }
@@ -287,7 +318,8 @@ class Commandes extends Component {
                                   },
                                 }}
                               >
-                                <b className="text-danger float-right">{p.prix} Dhs {" "} <button
+                                <b className="text-danger float-right">
+                                  {p.prix} Dhs {" "} <button
                                   id={p.id_espaces}
                                   className=" rounded text-white bg-success py-1 px-2 ml-3  "
                                   style={{ fontSize: "16px", border: "none" }}
@@ -352,7 +384,11 @@ class Commandes extends Component {
                                     {/* <h6 className="text-danger">{"         " + Annonces.statut}</h6> */}
                                     {/* <h6>{"   Livrer à :      " + Annonces.point_relais}</h6> */}
                                     {/* <h6> {"         " + Annonces.prix + "   Dhs"}</h6> */}
-                                    <h6 ><GiSheep className=" mr-1 fa-lg " />{Annonces.categorie}
+                                    <h6 > <img style={{ width: "18px", height: "20px", marginBottom: "5px" }}
+                                    data-imgbigurl="Images/sheep-head.png"
+                                    src="Images/sheep-head.png"
+                                    alt=""
+                                  />{" "+Annonces.categorie}
 
 
                                       <span className="float-right">
@@ -361,12 +397,14 @@ class Commandes extends Component {
 
                                     <h6><GiWeight className=" mr-1 fa-lg " />
                                       {Annonces.poids + " Kg"}
-                                      <img style={{ width: "10%", marginLeft: "91px", marginBottom: "10px" }} src="./Images/age.png"></img>
+                                      <img style={{ width: "18px", height: "18px", marginLeft: "99px", marginBottom: "5px" }} src="./Images/age.png"></img>
 
                                       <span className="float-right mt-1">
                                         {Annonces.age + " mois"}</span></h6>
 
                                     <h5 id="mad">
+                                    <i class="fa fa-usd" aria-hidden="true"></i>
+
                                       {"         " + Annonces.prix + "  Dhs"}
                                     </h5>
                                     {Annonces.statut == "disponible" ?

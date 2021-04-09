@@ -258,7 +258,7 @@ class DetailsMouton extends Component {
   render() {
     var mois = new Array("Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre");
     const { loading } = this.state;
-    const shareUrl = "http://localhost:3000/DetailsEspece";
+    const shareUrl = "http://localhost:3000/DetailsMouton";
     return (
       <div>
 
@@ -312,21 +312,21 @@ class DetailsMouton extends Component {
                       <div className="container">
                         <div id="lesImagesM" className="col-lg-12 col-md-12 mb-2">
                           <img
-                            className="col-lg-4 col-md-4"
+                            className="col-lg-4 col-md-4" style={{height:"100px"}}
                             // data-imgbigurl="Images/1.jpg"
                             src={this.state.Espece.image_boucle}
                             alt=""
                             onClick={this.onClickImageBoucle}
                           />
                           <img
-                            className="col-lg-4 col-md-4"
+                            className="col-lg-4 col-md-4" style={{height:"100px"}}
                             // data-imgbigurl="Images/1.jpg"
                             src={this.state.Espece.image_face}
                             alt=""
                             onClick={this.onClickImageFace}
                           />
                           <img
-                            className="col-lg-4 col-md-4"
+                            className="col-lg-4 col-md-4" style={{height:"100px"}}
                             // data-imgbigurl="Images/1.jpg"
                             src={this.state.Espece.image_profile}
                             alt=""
@@ -337,7 +337,8 @@ class DetailsMouton extends Component {
                           <span className=" text-success ">
                             <HiOutlineBadgeCheck className=" mr-1 fa-lg " /> Le label de l'ANOC est un gage de la qualité du produit. <br></br></span>
                           : null}
-                        <br></br>                           <div >
+                        <br></br>                     
+                              <div >
                           <br></br>
 
                           <div id="centrer2">
@@ -350,7 +351,7 @@ class DetailsMouton extends Component {
                               <EmailShareButton
                                 url={shareUrl + "/" + this.state.Espece._id}
                                 subject="Annonce intéressante à voir (Animal à vendre)"
-                                body="Voici une annonce d'un mouton/vache/chèvre à vendre qui peut vous interesser"
+                                body={"Annonce intéressante à voir ( " + this.state.Espece.categorie +" "+ this.state.Espece.race+ " )"}
                               >
                                 <EmailIcon size={36} round />
                               </EmailShareButton>{" "}
@@ -363,21 +364,21 @@ class DetailsMouton extends Component {
                               <FacebookShareButton
                                 // url= "https://youtube.com"
                                 url={shareUrl + "/" + this.state.Espece._id}
-                                quote="Annonce intéressante à voir (Mouton, Vache ou chèvre à vendre)"
+                                quote={"Annonce intéressante à voir ( " + this.state.Espece.categorie +" "+ this.state.Espece.race+ " )"}
                               >
                                 <FacebookIcon size={36} round />
                               </FacebookShareButton>{" "}
                               <WhatsappShareButton
                                 // url= "https://youtube.com"
                                 url={shareUrl + "/" + this.state.Espece._id}
-                                title="Annonce intéressante à voir (Mouton, Vache ou chèvre à vendre)"
-                                separator=":: "
+                                title={"Annonce intéressante à voir ( " + this.state.Espece.categorie +" "+ this.state.Espece.race+ " )"}
+                                separator=": "
                               >
                                 <WhatsappIcon size={36} round />
                               </WhatsappShareButton>{" "}
                               <TwitterShareButton
                                 url={shareUrl + "/" + this.state.Espece._id}
-                                title="Annonce intéressante à voir (Mouton, Vache ou chèvre à vendre)"
+                                title={"Annonce intéressante à voir ( " + this.state.Espece.categorie +" "+ this.state.Espece.race+ " )"}
                               >
                                 <TwitterIcon size={36} round />
                               </TwitterShareButton>

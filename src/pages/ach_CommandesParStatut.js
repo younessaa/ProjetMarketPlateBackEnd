@@ -166,7 +166,7 @@ class CommandesParStatut extends Component {
                       <Link
                         to={{
                           pathname: "/Commandes",
-                          state: { id: "Comment utiliser cette rubrique" },
+                          state: { id: "en attente de paiement du complément" },
                         }}
                       >
                         {" "}
@@ -195,7 +195,12 @@ class CommandesParStatut extends Component {
                                 <br></br>
                                 {cmdComplement.length != 0 ?
                                   <h2 style={{ color: "white" }}>
-                                     <b>{cmdComplement.length}{" "}<GiSheep className=" mr-1  " /></b>
+                                     <b>{cmdComplement.length}{" "}
+                                     <img style={{ width: "40px", height: "40px", marginBottom: "5px" }}
+                                      data-imgbigurl="Images/sheep-headB.png"
+                                      src="Images/sheep-headB.png"
+                                      alt=""
+                                    /></b>
                                   </h2> : null}
                               </a>
                             </center>
@@ -210,7 +215,7 @@ class CommandesParStatut extends Component {
                         to={{
                           pathname: "/Commandes",
 
-                          state: { id: "commande annulée (deadline dépassé)#reçu avance refusé#reçu reste refusé#rejetée#avarié#annulée manuellement" },
+                          state: { id: "commande annulée (deadline dépassé)#reçu avance refusé#reçu reste refusé#reçu complément refusé#avarié#rejetée#annulée manuellement#remboursement#avarié_changement#avarié_remboursement#avarié_annulé" },
                         }}
                       >
                         {" "}
@@ -240,7 +245,11 @@ class CommandesParStatut extends Component {
                                 </h4>
                                 <br></br>
                                 <h2 style={{ color: "white" }}>
-                                  <b>{[...new Set(cmdAnnulee)].length}{" "}<GiSheep className=" mr-1  " /></b>
+                                  <b>{[...new Set(cmdAnnulee)].length}{" "}<img style={{ width: "40px", height: "40px", marginBottom: "5px" }}
+                                      data-imgbigurl="Images/sheep-headB.png"
+                                      src="Images/sheep-headB.png"
+                                      alt=""
+                                    /></b>
                                 </h2>
                                 <br></br>
                               </a>
@@ -283,7 +292,11 @@ class CommandesParStatut extends Component {
                                 <br></br>
 
                                 <h2 style={{ color: "white" }}>
-                                  <b>{cmdAvancePayer.length}{" "} <GiSheep className=" mr-1  " /></b>
+                                  <b>{cmdAvancePayer.length}{" "} <img style={{ width: "40px", height: "40px", marginBottom: "5px" }}
+                                      data-imgbigurl="Images/sheep-headB.png"
+                                      src="Images/sheep-headB.png"
+                                      alt=""
+                                    /></b>
                                 </h2>
                                 <br></br>
                               </a>
@@ -326,7 +339,11 @@ class CommandesParStatut extends Component {
                               </h4>
                                 <br></br>
                                 <h2 style={{ color: "white" }}>
-                                  <b>{cmdReserve.length}{" "}<GiSheep className=" mr-1  " /></b>
+                                  <b>{cmdReserve.length}{" "}<img style={{ width: "40px", height: "40px", marginBottom: "5px" }}
+                                      data-imgbigurl="Images/sheep-headB.png"
+                                      src="Images/sheep-headB.png"
+                                      alt=""
+                                    /></b>
                                 </h2>
                               </a>
                             </center>
@@ -366,7 +383,11 @@ class CommandesParStatut extends Component {
                               </h4>
                                 <br></br>
                                 <h2 style={{ color: "white" }}>
-                                  <b>{cmdRestePayer.length}{" "}<GiSheep className=" mr-1  " /></b>
+                                  <b>{cmdRestePayer.length}{" "}<img style={{ width: "40px", height: "40px", marginBottom: "5px" }}
+                                      data-imgbigurl="Images/sheep-headB.png"
+                                      src="Images/sheep-headB.png"
+                                      alt=""
+                                    /></b>
                                 </h2>
 
                               </a>
@@ -378,7 +399,7 @@ class CommandesParStatut extends Component {
 
                     <div className="col-lg-6 col-md-6 col-sm-6">
                       <Link
-                        to={{ pathname: "/Commandes", state: { id: "validé#en attente de validation reste" } }}
+                        to={{ pathname: "/Commandes", state: { id: "validé#en attente de validation reste#en attente de validation du complément" } }}
                       >
                         <div id="cadre" className="featured__item">
                           <div
@@ -405,7 +426,11 @@ class CommandesParStatut extends Component {
                               </h4>
 
                                 <h2 style={{ color: "white" }}>
-                                  <b>{cmdLivrer.length}{" "}<GiSheep className=" mr-1  " /></b>
+                                  <b>{cmdLivrer.length}{" "}<img style={{ width: "40px", height: "40px", marginBottom: "5px" }}
+                                      data-imgbigurl="Images/sheep-headB.png"
+                                      src="Images/sheep-headB.png"
+                                      alt=""
+                                    /></b>
                                 </h2>
                               </a>
                             </center>

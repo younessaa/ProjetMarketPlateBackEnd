@@ -412,15 +412,52 @@ class Commandes extends Component {
   }
 
   render() {
+    let titre = "";
+    let message = "";
+    let CSS = ``;
+
+
+    switch (this.props.location.state.id) {
+      case 'commande annulée (deadline dépassé)#reçu avance refusé#reçu reste refusé#reçu complément refusé#avarié#rejetée#annulée manuellement#remboursement#avarié_changement#avarié_remboursement#avarié_annulé':
+        titre = "annulées";
+        message = "Liste des commandes annulées pour des raisons de non-conformité aux conditions générales de vente (délai de paiement dépassé, reçu non conforme, montant non reçu), ou bien suite à votre souhait d'annulation directe. Chacune de vos commandes sera conservée, à titre informatif, pendant 5 jours à la suite du processus d'annulation. Passé ce délai, elle sera définitivement supprimée de cette liste. Il vous est aussi possible de les supprimer avant.";
+        CSS = ` .height {  height:290px } `;
+        break;
+      case 'en attente de paiement avance':
+        titre = "Avance à payer ";
+        CSS = `.height { height:350px}`;
+        break;
+      case 'en attente de validation avance':
+        titre = "Produit(s) réservé(s) ";
+        message = "Liste des commandes dont les ordres de virement des avances sont en phase de validation. Elles seront affectées à la rubrique \"Reste à payer\" suite à leur validation. ";
+
+        CSS = `.height { height:290px}`;
+        break;
+      case 'en attente de paiement du reste':
+        titre = "Reste à payer ";
+        CSS = `.height { height:350px}`;
+        break;
+      case 'validé#en attente de validation reste#en attente de validation du complément':
+        titre = "Prêt à livrer";
+        message = "Liste des commandes dont les ordres de virement des restes à payer sont en phase de validation. Vous serez contactés pour la livraison suite à leur validation. ";
+        CSS = `.height { height:350px}`;
+        break;
+      case 'en attente de paiement du complément':
+        titre = "Complément à payer ";
+        CSS = `.height { height:350px}`;
+        break;
+
+    }
+
 
     const { loading } = this.state;
     const { optionsSort } = this.state;
     let AnnonceAll = [];
     let AnnonceA = [];
-    this.state.Commandes.map((m)=>{
- if(m.statut=="avarié") {AnnonceAll.push(m)}
- else {AnnonceA.push(m)}
-})
+    this.state.Commandes.map((m) => {
+      if (m.statut == "avarié") { AnnonceAll.push(m) }
+      else { AnnonceA.push(m) }
+    })
 
     const indexOfLastAnnonce =
       this.state.currentPage * this.state.annoncesPerPage;
@@ -428,9 +465,6 @@ class Commandes extends Component {
     const currentAnnonces = AnnonceAll.concat(AnnonceA).slice(indexOfFirstAnnonce, indexOfLastAnnonce);
     return (
       <div>
-        <style>{`.scrollbar{  height: 200px;overflow-y: scroll;  }
- #style-scroll::-webkit-scrollbar{	width: 8px;	background-color: #F5F5F5;} #style-scroll::-webkit-scrollbar-thumb
-{	border-radius: 10px; 	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);	background-color: #bbb;}`}</style>
         <section className="">
           {loading ? (
             <div
@@ -451,6 +485,24 @@ class Commandes extends Component {
             </div>
           ) : (
             <div className="container">
+              <style>{CSS}</style>
+              <style>{ `#gras{color :black} `}</style>
+              <br></br>
+              <br></br>
+
+              <br></br>
+
+              <h4 className="latest-product__item">  Mes commandes  </h4>
+              <br></br>
+              <br></br>
+              <div>
+                <h5 className="text-primary">{titre} : <span >
+                  {" "}
+                  {this.state.Commandes.length}
+
+                </span>{" "}</h5>
+                <p className="text-danger">{message}</p>
+              </div>
               <div>
                 <div id="filterPlace" className="col-lg-5 col-md-5 fa mt-4 ">
                   <Select
@@ -464,30 +516,27 @@ class Commandes extends Component {
                 </div>
               </div>
               <br></br>
-              <h4 class="latest-product__item">  Mes commandes : <span id="nbEspece">
-                {" "}
-                {this.state.Commandes.length}
-              </span>{" "}</h4>
+
               <div className="row">
                 <div className="col-lg-12 col-md-7">
 
-                  <div class="row">
+                  <div className="row">
                     {currentAnnonces.map((Annonces) => (
                       <div className="col-lg-3 col-md-3 col-sm-6">
 
                         <div id="anonce" className="product__item">
-                          <div className="product__item__pic set-bg" style={{height:"150px"}}
+                          <div className="product__item__pic set-bg" style={{ height: "170px" }}
                           >
                             <centre>
                               {" "}
                               <img
-                              style={{height:"150px"}}
+                                style={{ height: "170px" }}
                                 src={this.ImageEspece(Annonces)}
                                 className="product__item__pic set-bg"
                               />
                             </centre>
 
-                            <ul class="product__item__pic__hover">
+                            <ul className="product__item__pic__hover">
                               <li>
                                 <Link
                                   to={{
@@ -500,74 +549,126 @@ class Commandes extends Component {
                                   {" "}
                                   <a href="#">
                                     {(Annonces.statut == "en attente de paiement avance" || Annonces.statut == "en attente de paiement du reste" || Annonces.statut === "en attente de paiement du complément") ?
-                                      <CgFileAdd className="fa-lg" /> : <i class="fa fa-eye"></i>}
+                                      <CgFileAdd className="fa-lg" /> : <i className="fa fa-eye"></i>}
                                   </a>
                                 </Link>
-                              </li> 
-                               {Annonces.statut === "commande annulée (deadline dépassé)"
+                              </li>
+                              {Annonces.statut === "commande annulée (deadline dépassé)"
                                 || Annonces.statut === "reçu avance refusé"
                                 || Annonces.statut === "reçu reste refusé"
                                 || Annonces.statut === "en attente de paiement avance"
                                 || Annonces.statut === "en attente de validation avance"
                                 || Annonces.statut === "en attente de paiement du reste"
-                                || (Annonces.statut === "avarié" && (Annonces.ancien_statut === "en attente de paiement avance" || Annonces.ancien_statut === "en attente de paiement du reste")) ? <li>
+                                || Annonces.ancien_statut === "en attente de paiement avance"
+                                || Annonces.ancien_statut === "en attente de paiement du reste"
+                                || Annonces.ancien_statut === "en attente de validation avance" ? 
+                                <li>
                                 <a onClick={(e) => this.handelDelete(Annonces)} >
                                   <i className="fa fa-trash"></i>
                                 </a>
                               </li> : null}
                             </ul>
                           </div>
-                          <div id="style-scroll" className="scrollbar product__item__text p-2 text-justify" style={{ backgroundRepeat: "no-repeat", backgroundImage: Annonces.statut === "avarié" ? "linear-gradient(rgb(255,153,153), rgb(255,204,204))" : null, backgroundSize: "cover" }}>
-                            <h6 id="mad">
+                          <div className=" height product__item__text p-2 text-justify" style={{ backgroundRepeat: "no-repeat", backgroundImage: Annonces.statut === "avarié" ? "linear-gradient(rgb(255,153,153), rgb(255,204,204))" : null, backgroundSize: "cover" }}>
+                            {Annonces.statut === "en attente de validation reste" ?
+                              <div className="float-right text-warning"><i className="fa fa-hourglass-start" aria-hidden="true"></i>
+                                <b>{" "}En cours de validation</b></div> : null}
+                            {Annonces.statut === "validé" ?
+
+                              <div className="float-right text-success "><i className="fa fa-thumbs-o-up" aria-hidden="true"></i>
+                                <b>{" "}Validé</b></div> : null}
+                            <h5 id="mad">
                               {" "}
                               {"         " + Annonces.prix_total + "  Dhs"}
-                            </h6>
-                            <p   >
-                              <h6 id="gras"> <GiSheep className=" mr-1 fa-lg " />Categories :</h6>
-                              <h6>
-                                {this.NbrEspece(Annonces, "mouton") != 0 ? <span>Mouton(s) :{this.NbrEspece(Annonces, "mouton")} </span> : null}
-                              </h6>
 
-                              <h6> {this.NbrEspece(Annonces, "chevre") != 0 ? <span>Chevre(s) :{this.NbrEspece(Annonces, "chevre")} </span> : null}
-                              </h6><h6>{this.NbrEspece(Annonces, "vache") != 0 ? <span>Vache(s) :{this.NbrEspece(Annonces, "vache")} </span> : null}
-                              </h6>
-                            </p>
-
-                            {Annonces.especes.length == 1 ? <p   >
-                              <div class="d-inline-block  ">
-                                {/**Commande normale  */}
-                                <h6 id="gras">  <GiWeight className=" mr-1 fa-lg " />Poids :</h6>
-                              </div>
-                              <div class="d-sm-inline-block  ">
-                                <span>{this.Max(Annonces, "poids")} Kg </span></div>
-                            </p>
-                              : <p>
-                                {/**Commande multi espèces */}
-                                <h6 id="gras">    <GiWeight className=" mr-1 fa-lg " />Poids :</h6>
-                                <span>entre : {this.Max(Annonces, "poids")} Kg et {this.Min(Annonces, "poids")} Kg</span>
-                              </p>}
-                            {Annonces.especes.length == 1 ?
-                              <div >
-                                {/**Commande normale  */}
-                                <div style={{ display: "inline-block" }}>
-                                  <img style={{ width: "9%", marginRight: "3%", float: "left" }} src="./Images/age.png"></img>
-                                  <h6>Age :  <span style={{ color: "#6f6f6f" }}>{this.Max(Annonces, "age")} mois</span></h6>
+                            </h5>
+                            {Annonces.especes.length === 1 ?
+                              <p className=" mb-0"  >
+                                <div className="d-inline-block ">
+                                  <h6 id="gras">   № Boucle : </h6>
                                 </div>
+                                <div className="d-sm-inline-block  ">
+                                  <span style={{ color: "black" }}>{" " + Annonces.espece[0].boucle} </span></div>
+                              </p>
+                              : null}
+                            {Annonces.especes.length === 1 ?
+
+                              <div className="d-inline-block ">
+                                <img style={{ width: "9%", marginRight: "3%", float: "left" }}
+                                  data-imgbigurl="Images/sheep-head.png"
+                                  src="Images/sheep-head.png"
+                                  alt=""
+                                />
+                                <h6 id="gras">   {Annonces.espece[0].categorie + " : "}<span style={{ color: "black", fontWeight: "normal" }}>{" " + Annonces.espece[0].race} </span></h6>
                               </div>
                               :
                               <p>
-                                {/**Commande multi espèces */}
-                                <h6 id="gras">
-                                  <img style={{ width: "9%", marginRight: "3%" }} src="./Images/age.png"></img>Age :</h6>
-                                <span>entre : {this.Max(Annonces, "age")} mois et {this.Min(Annonces, "age")} mois</span>
-                              </p>}
-                            {Annonces.reste_transmis_le != null && (Annonces.statut === "en attente de validation reste" || Annonces.statut === "validé") ? <div  ><p className="text-danger">reste transmis le : </p><p className="text-danger"> <i className="fa fa-calendar-o" aria-hidden="true"></i>{" "}{Annonces.reste_transmis_le}</p></div> : (
-                              Annonces.avance_transmis_le != null && Annonces.statut === "en attente de validation avance" ? <div ><p className="text-danger">avance transmis le :</p> <p className="text-danger"> <i className="fa fa-calendar-o" aria-hidden="true"></i>{" "}{Annonces.avance_transmis_le}</p></div> : null
-                            )}
-                            {Annonces.avance_transmis_le == null && Annonces.statut === "en attente de paiement avance" ? <div  ><p className="text-danger">Dernier delai : </p><p className="text-danger"> <i className="fa fa-calendar-o" aria-hidden="true"></i>{" "}{Annonces.deadline.replace(",", " à ")}</p><p className="text-danger"><i className="fa fa-usd" aria-hidden="true"></i>{" "}Avance à payer  :  {Annonces.avance} Dhs</p></div> : (
-                              Annonces.reste_transmis_le == null && Annonces.statut === "en attente de paiement du reste" ? <div ><p className="text-danger">Dernier delai :</p> <p className="text-danger"> <i className="fa fa-calendar-o" aria-hidden="true"></i>{" "}{Annonces.deadline.replace(",", " à ")}</p><p className="text-danger"><i className="fa fa-usd" aria-hidden="true"></i>{" "}Reste à payer :  {Annonces.reste} Dhs</p></div> : null
-                            )}
+                                <h6 className="mb-0">
+                                  {this.NbrEspece(Annonces, "mouton") != 0 ? <span>{this.NbrEspece(Annonces, "mouton")} {" : "}Mouton(s) </span> : null}
+                                </h6>
 
+                                <h6 className="mb-0"> {this.NbrEspece(Annonces, "chevre") != 0 ? <span>{this.NbrEspece(Annonces, "chevre")}{" : "}Chevre(s)  </span> : null}
+                                </h6 ><h6 className="mb-0">{this.NbrEspece(Annonces, "vache") != 0 ? <span>{this.NbrEspece(Annonces, "vache")}{" : "}Vache(s)  </span> : null}
+                                </h6>
+
+                              </p>}
+
+
+                            {this.Max(Annonces, "poids") === this.Min(Annonces, "poids") ? <p className=" mb-0"  >
+                              <div className="d-inline-block ">
+                                <h6 id="gras">  <GiWeight className=" mr-1 fa-lg " />Poids :</h6>
+                              </div>
+                              <div className="d-sm-inline-block  ">
+                                <span style={{ color: "black" }}>{this.Max(Annonces, "poids")} Kg </span></div>
+                            </p>
+                              : <p>
+                                <h6 className="mb-0" id="gras">    <GiWeight className=" mr-1 fa-lg " />Poids :</h6>
+                                <span style={{ color: "black" }}>entre : {this.Max(Annonces, "poids")} Kg et {this.Min(Annonces, "poids")} Kg</span>
+                              </p>}
+                            {this.Max(Annonces, "age") === this.Min(Annonces, "age") ?
+
+                              <h6 id="gras">
+                                <div style={{ display: "inline-block" }}>
+                                  <img style={{ width: "9%", marginRight: "3%", float: "left" }} src="./Images/age.png"></img>
+                                  <h6 id="gras" >Age :  <span style={{ color: "black", fontWeight: "normal" }}>{this.Max(Annonces, "age")} mois</span></h6>
+                                </div>
+                              </h6>
+
+                              :
+                              <p>
+                                <h6 className="mb-0" id="gras">
+                                  <img style={{ width: "9%", marginRight: "3%" }} src="./Images/age.png"></img>Age :</h6>
+                                <span style={{ color: "black", fontWeight: "normal" }}>entre : {this.Max(Annonces, "age")} mois et {this.Min(Annonces, "age")} mois</span>
+                              </p>}
+
+                            {Annonces.statut === "en attente de paiement avance" ?
+                              <div  ><p  id="gras" className=" mb-0"><i className="fa fa-calendar-o" aria-hidden="true"></i>{" "}Dernier delai : </p><p className="text-danger mb-0 font-weight-bold">{Annonces.deadline.replace(",", " à ")}</p><p id="gras" className=""><i className="fa fa-usd" aria-hidden="true"></i>{" "}Avance à payer  :<span className="text-danger ">{" "}{Annonces.avance} Dhs</span>  </p></div>
+                              : null
+                            }
+                            {Annonces.statut === "en attente de paiement du reste" ?
+                              <div  ><p id="gras" className=" mb-0"><i className="fa fa-calendar-o" aria-hidden="true"></i>{" "}Dernier delai : </p><p className="text-danger mb-0 font-weight-bold">{Annonces.deadline.replace(",", " à ")}</p><p id="gras" className=""><i className="fa fa-usd" aria-hidden="true"></i>{" "}Reste à payer  :  <span className="text-danger ">{" "}{Annonces.reste} Dhs</span></p></div>
+                              : null
+                            }
+                            {Annonces.statut === "en attente de paiement du complément" ?
+                              <div  ><p id="gras"className="  mb-0"><i className="fa fa-calendar-o" aria-hidden="true"></i>{" "}Dernier delai : </p><p className="text-danger mb-0 font-weight-bold">{Annonces.deadline.replace(",", " à ")}</p><p id="gras" className=""><i className="fa fa-usd" aria-hidden="true"></i>{" "}Complement à payer  : <span className="text-danger ">{" "}{Annonces.complement} Dhs</span> </p></div>
+                              : null
+                            }
+                            {
+                              Annonces.statut === "en attente de validation avance" ? <div ><p id="gras" className=" mb-0"><i className="fa fa-calendar-o" aria-hidden="true"></i>{" "} avance transmis le :</p> <p className="text-danger font-weight-bold mt-0">  {Annonces.avance_transmis_le.substr(0, 10) + " à " + Annonces.avance_transmis_le.substr(11, 8)}</p></div> : null
+                            }
+                            {(Annonces.statut === "en attente de validation reste" || Annonces.statut === "validé") ? <div  ><p id="gras" className=" mb-0"><i className="fa fa-calendar-o" aria-hidden="true"></i>{" "}reste transmis le : </p><p className="text-danger font-weight-bold mt-0">{Annonces.reste_transmis_le.substr(0, 10) + " à " + Annonces.reste_transmis_le.substr(11, 8)}</p></div> : null}
+                            {(Annonces.statut === "validé") ? <div  ><p id="gras" className=" mb-0"><i className="fa fa-calendar-o" aria-hidden="true"></i>{" "}Date de livraison : </p><p className="text-danger font-weight-bold"> {Annonces.date_de_livraison.replace(/-/g, " / ")}</p></div> : null}
+
+                            {(Annonces.statut === "en attente de validation du complément") ?
+                              <div  ><p className="mb-0" id="gras"><i className="fa fa-calendar-o" aria-hidden="true"></i>{" "}Complément transmis le : </p><p className="text-danger font-weight-bold"> {" "}{Annonces.complement_transmis_le.substr(0, 10) + " à " + Annonces.complement_transmis_le.substr(11, 8)}</p></div> : null}
+
+
+                            {this.props.location.state.id === "commande annulée (deadline dépassé)#reçu avance refusé#reçu reste refusé#reçu complément refusé#avarié#rejetée#annulée manuellement#remboursement#avarié_changement#avarié_remboursement#avarié_annulé" ?
+                              <p className=" text-danger">
+                                <i className="fa fa-exclamation-circle" aria-hidden="true"></i>
+                                {" "} {Annonces.statut}
+                              </p>
+                              : null}
                           </div>
                         </div>
                       </div>
@@ -586,6 +687,9 @@ class Commandes extends Component {
                       </ul>
                     </nav>
                   </div>
+                  <br></br>
+                  <br></br>
+
                 </div>
               </div>
             </div>

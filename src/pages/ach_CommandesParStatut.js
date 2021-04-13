@@ -196,7 +196,7 @@ class CommandesParStatut extends Component {
                                 {cmdComplement.length != 0 ?
                                   <h2 style={{ color: "white" }}>
                                      <b>{cmdComplement.length}{" "}
-                                     <img style={{ width: "40px", height: "40px", marginBottom: "5px" }}
+                                     <img style={{ width: "40px", height: "40px", marginBottom: "8px" }}
                                       data-imgbigurl="Images/sheep-headB.png"
                                       src="Images/sheep-headB.png"
                                       alt=""
@@ -245,7 +245,7 @@ class CommandesParStatut extends Component {
                                 </h4>
                                 <br></br>
                                 <h2 style={{ color: "white" }}>
-                                  <b>{[...new Set(cmdAnnulee)].length}{" "}<img style={{ width: "40px", height: "40px", marginBottom: "5px" }}
+                                  <b>{[...new Set(cmdAnnulee)].length}{" "}<img style={{ width: "40px", height: "40px", marginBottom: "8px" }}
                                       data-imgbigurl="Images/sheep-headB.png"
                                       src="Images/sheep-headB.png"
                                       alt=""
@@ -292,7 +292,7 @@ class CommandesParStatut extends Component {
                                 <br></br>
 
                                 <h2 style={{ color: "white" }}>
-                                  <b>{cmdAvancePayer.length}{" "} <img style={{ width: "40px", height: "40px", marginBottom: "5px" }}
+                                  <b>{cmdAvancePayer.length}{" "} <img style={{ width: "40px", height: "40px", marginBottom: "8px" }}
                                       data-imgbigurl="Images/sheep-headB.png"
                                       src="Images/sheep-headB.png"
                                       alt=""
@@ -339,7 +339,7 @@ class CommandesParStatut extends Component {
                               </h4>
                                 <br></br>
                                 <h2 style={{ color: "white" }}>
-                                  <b>{cmdReserve.length}{" "}<img style={{ width: "40px", height: "40px", marginBottom: "5px" }}
+                                  <b>{cmdReserve.length}{" "}<img style={{ width: "40px", height: "40px", marginBottom: "8px" }}
                                       data-imgbigurl="Images/sheep-headB.png"
                                       src="Images/sheep-headB.png"
                                       alt=""
@@ -383,7 +383,7 @@ class CommandesParStatut extends Component {
                               </h4>
                                 <br></br>
                                 <h2 style={{ color: "white" }}>
-                                  <b>{cmdRestePayer.length}{" "}<img style={{ width: "40px", height: "40px", marginBottom: "5px" }}
+                                  <b>{cmdRestePayer.length}{" "}<img style={{ width: "40px", height: "40px", marginBottom: "8px" }}
                                       data-imgbigurl="Images/sheep-headB.png"
                                       src="Images/sheep-headB.png"
                                       alt=""
@@ -424,9 +424,10 @@ class CommandesParStatut extends Component {
                                 <h4 style={{ color: "white" }}>
                                   Produit à livrer
                               </h4>
+                              <br></br>
 
                                 <h2 style={{ color: "white" }}>
-                                  <b>{cmdLivrer.length}{" "}<img style={{ width: "40px", height: "40px", marginBottom: "5px" }}
+                                  <b>{cmdLivrer.length}{" "}<img style={{ width: "40px", height: "40px", marginBottom: "8px" }}
                                       data-imgbigurl="Images/sheep-headB.png"
                                       src="Images/sheep-headB.png"
                                       alt=""

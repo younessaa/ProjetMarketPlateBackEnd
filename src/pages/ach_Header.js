@@ -88,9 +88,10 @@ class Header extends Component {
               deadline.substr(12, 2),deadline.substr(15, 2),
               deadline.substr(18, 2));
             if (
-              now.getTime() >= dd.getTime() &&
+              now.getTime() >= dd.getTime() &&(
               res.data[i].statut == "en attente de paiement avance" ||
-              res.data[i].statut == "en attente de paiement du reste"
+              res.data[i].statut == "en attente de paiement du reste"||
+              res.data[i].statut == "en attente de paiement du complément")
             ) {
               axios
                 .put(

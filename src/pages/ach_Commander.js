@@ -123,7 +123,7 @@ class Commander extends Component {
         reçu_montant_restant: null,
         feedback_reçu_montant_restant: null,
         msg_refus_reste: null,
-        
+
         reçu_montant_complement: null,
         feedback_reçu_montant_complement: null,
         msg_refus_complement: null,
@@ -169,7 +169,7 @@ class Commander extends Component {
   }
 
 
-  componentDidMount = async () => {
+  componentDidMount() {
     const idm = this.props.location.state.id;
     function appendLeadingZeroes(n) {
       if (n <= 9) {
@@ -200,86 +200,15 @@ class Commander extends Component {
 
     if (!token || expiredTimeToken < formatted_date) {
       this.props.history.push("/login");
-    } else { 
+    } else {
       let p = [];
-      if (!Array.isArray(idm)) {
-        axios
-          .get("http://127.0.0.1:8000/api/Espece/" + idm, {
-            headers: {
-              // "x-access-token": token, // the token is a variable which holds the token
-              Authorization: myToken,
-            },
-          })
-          .then((res) => {
-            this.setState({
-              Espece: res.data.objet,
-              eleveur: res.data.Eleveur,
-              id_cooperative: res.data.objet.id_cooperative,
-              prix: res.data.objet.prix,
-              avance: res.data.objet.avance,
-
-              // image: res.data.objet.image_profile,
-            }, () => {
-              p.splice(0, 0, {
-                "id_espece": res.data.objet._id,
-                "id_eleveur": res.data.Eleveur[0]._id,
-                "motif_annulation": null,
-                "produits_changement": [],
-                "choix_client": "",
-                "details_remboursement": {
-                  "rib_client": null,
-                  "nom_prenom_client": null,
-                  "montant_de_remboursement": null,
-                  "isPaid": null
-                },
-              })
-              this.setState({ especes: p })
-
-
-            });
-          });
-      }
-      else if (Array.isArray(idm)) {
-
-        idm.map((i) => (axios
-          .get("http://127.0.0.1:8000/api/Espece/" + i, {
-            headers: {
-              // "x-access-token": token, // the token is a variable which holds the token
-              Authorization: myToken,
-            },
-          })
-          .then((res) => {
-            this.setState({
-              Espece: res.data.objet,
-              eleveur: res.data.Eleveur,
-              id_cooperative: res.data.objet.id_cooperative,
-              prix: this.state.prix - (-res.data.objet.prix),
-              avance: this.state.avance - (-res.data.objet.avance),
-
-              // image: res.data.objet.image_profile,
-            }, () => {
-              p.splice(0, 0, {
-                "id_espece": res.data.objet._id,
-                "id_eleveur": res.data.Eleveur[0]._id,
-                "motif_annulation": null,
-                "produits_changement": [],
-                "choix_client": "",
-                "details_remboursement": {
-                  "rib_client": null,
-                  "nom_prenom_client": null,
-                  "montant_de_remboursement": null,
-                  "isPaid": null
-                },
-              })
-              this.setState({ especes: p })
-            });
-          }
-
-          )))
-      }
-      await this.sleep(2000)
+      let ids = [];
+      if (!Array.isArray(idm)) { ids.push(idm) }
+      else { ids = idm }
+      console.log(this.props.location.state.id_cooperative)
       axios
-        .get("http://127.0.0.1:8000/api/cooperative/" + this.state.id_cooperative, {
+
+        .get("http://127.0.0.1:8000/api/cooperative/" + this.props.location.state.id_cooperative, {
           headers: {
             // "x-access-token": token, // the token is a variable which holds the token
             Authorization: myToken,
@@ -292,21 +221,69 @@ class Commander extends Component {
               new Date().getTime()
               - (-3600 * (res.data.Parametres.delais_paiement.delai_reste - (-res.data.Parametres.delais_paiement.delai_avance) - (-res.data.Parametres.delais_paiement.bonus)) * 1000)
               - ((new Date()).getTimezoneOffset() * 60 * 1000)).toISOString()
-            this.setState({ date_min: d.substr(0, 10) })
+            this.setState({ date_min: d.substr(0, 10) }, () => { })
           }
-
           this.setState({
+            livraison: res.data.Parametres.livraison,
+            occasion: res.data.Parametres.occasion,
+            avant_aid: res.data.Parametres.jourLivraisonAvant,
+
             deadline: new Date(new Date().getTime()
               - (-3600 * (res.data.Parametres.delais_paiement.delai_avance - 1) * 1000)
               - ((new Date()).getTimezoneOffset() * 60 * 1000)).toLocaleString(),
-            livraison: res.data.Parametres.livraison,
-            occasion: res.data.Parametres.occasion,
-            avant_aid: res.data.Parametres.Jourlivraisonavant,
+
+          }, () => {
+            res.data.Parametres.livraison.map((l) => (
+              this.state.optionsVille.splice(0, 0, { "value": l.Ville_livraison, "label": l.Ville_livraison })
+            ))
+
+
+
+            ids.map((i) => (
+              axios
+                .get("http://127.0.0.1:8000/api/Espece/" + i, {
+                  headers: {
+                    // "x-access-token": token, // the token is a variable which holds the token
+                    Authorization: myToken,
+                  },
+                })
+                .then((res) => {
+                  this.setState({
+                    Espece: res.data.objet,
+                    eleveur: res.data.Eleveur,
+                    id_cooperative: res.data.objet.id_cooperative,
+                    prix: this.state.prix - (-res.data.objet.prix),
+                    avance: this.state.avance - (-res.data.objet.avance),
+
+                    // image: res.data.objet.image_profile,
+                  }, () => {
+                    p.splice(0, 0, {
+                      "id_espece": res.data.objet._id,
+                      "id_eleveur": res.data.Eleveur[0]._id,
+                      "motif_annulation": null,
+                      "produits_changement": [],
+                      "choix_client": "",
+                      "details_remboursement": {
+                        "rib_client": null,
+                        "nom_prenom_client": null,
+                        "montant_de_remboursement": null,
+                        "isPaid": null
+                      },
+                    })
+                    this.setState({ especes: p }, () => { })
+                  });
+                }
+
+                )))
+
+
           })
-          res.data.Parametres.livraison.map((l) => (
-            this.state.optionsVille.splice(0, 0, { "value": l.Ville_livraison, "label": l.Ville_livraison })
-          ))
-        });
+        })
+
+
+
+
+
 
     }
   }

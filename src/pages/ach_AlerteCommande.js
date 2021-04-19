@@ -1,18 +1,15 @@
 import React, { Component } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
-import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
 import Carousel from 'react-bootstrap/Carousel'
+import "react-responsive-carousel/lib/styles/carousel.min.css";
 
 import { Link } from "react-router-dom";
 
 
-
-//import menu_eleveur from '/public/Images/eleveurs.png'; // with import
-
 class AlerteCommande extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     // let redirect = false;
     this.state = {
       commande: {},
@@ -25,6 +22,8 @@ class AlerteCommande extends Component {
       redirect: false,
     };
     this.handlPost = this.handlPost.bind(this);
+    this.annulerCommande = this.annulerCommande.bind(this);
+
   }
   // componentDidMount() {
   //   const cmd = this.props.location.state.id;
@@ -35,14 +34,11 @@ class AlerteCommande extends Component {
   //   this.setState({ commande: cmd, date: D });
   // }
 
-  sleep = (milliseconds) => {
-    return new Promise(resolve => setTimeout(resolve, milliseconds))
-  }
 
 
-
-  componentDidMount = async () => {
-    const cmd = this.props.location.state.id;
+  componentDidMount() {
+    var cmd = this.props.location.state.id;
+    
     const myToken = `Bearer ` + localStorage.getItem("myToken");
     this.setState({
       commande: this.props.location.state.id,
@@ -50,9 +46,6 @@ class AlerteCommande extends Component {
       avance: this.props.location.state.id.avance,
       //date: datetime,
     });
-
-
-
 
 
     axios
@@ -65,9 +58,9 @@ class AlerteCommande extends Component {
       })
 
       .then((res) => {
-        this.setState({ cooperative: res.data, tech: res.data.tech[0].prenom + " " + res.data.tech[0].nom, rib: res.data.rib });
+        this.setState({ cooperative: res.data, tech: res.data.tech[0].prenom + " " + res.data.tech[0].nom, rib: res.data.rib }
+          , () => { });
       });
-    await this.sleep(1000)
 
 
 
@@ -84,7 +77,6 @@ class AlerteCommande extends Component {
         },
       })
       .then((res) => {
-        console.log(this.state.commande.especes)
         this.state.commande.especes.map((e) =>
         (
           axios
@@ -92,7 +84,6 @@ class AlerteCommande extends Component {
               "http://127.0.0.1:8000/api/Espece/" + e.id_espece,
               {
                 statut: "réservé",
-                //   msg_refus_avance: this.state.dataUrl,
               },
               {
                 headers: {
@@ -102,33 +93,70 @@ class AlerteCommande extends Component {
               }
             )
             .then((res) => {
+
+              Swal.fire({
+                title: "Commande validée",
+                text: "Finalisez votre commande dans Mes Commandes",
+                icon: "success",
+                showConfirmButton: false,
+                timer: 1500,
+
+                heightAuto: false,
+              });
+
               this.props.history.push("./commandesParStatut");
+              window.location.reload();
+
             })
         ))
 
-        Swal.fire({
-          title: "Commande validée",
-          text: "Finalisez votre commande dans Mes Commandes",
-          icon: "success",
-
-          heightAuto: false,
-          confirmButtonColor: "#7fad39",
-
-          confirmButtonText: "Ok!",
-        });
       })
       .catch((err) => {
         console.log(err);
       });
 
-    // login(user).then(
 
-    //   // console.log('loged')
-    // );
   }
 
   annulerCommande() {
-    Swal.fire("commande annulée");
+    const swalWithBootstrapButtons = Swal.mixin({
+      customClass: {
+        confirmButton: "mx-3 btn btn-success",
+        cancelButton: "btn btn-danger",
+      },
+      buttonsStyling: false,
+    });
+    swalWithBootstrapButtons.fire({
+      title: "Etes-vous sûr?",
+      text: "Voulez-vous annuler votre commande!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "  Oui!  ",
+      cancelButtonText: "  Non!  ",
+      reverseButtons: true,
+    }).then((result) => {
+
+
+      if (result.isConfirmed) {
+        swalWithBootstrapButtons.fire(
+          'Annulation !',
+          'Votre commande a bien été annulée',
+          'success'
+        )
+
+        this.props.history.push("./");
+
+      }
+      else if (
+        result.dismiss === Swal.DismissReason.cancel
+      ) {
+        swalWithBootstrapButtons.fire(
+          'Annulation',
+          'Commande non annulée !',
+          'error'
+        )
+      }
+    })
   }
 
   render() {
@@ -139,65 +167,65 @@ class AlerteCommande extends Component {
         <style>{` .carousel-indicators li  {background-color:#009141; width: 35px;height: 5px;}`}</style>
         <section className="product spad">
           <div className="container">
-            <div class="col-lg-12 col-md-6 mx-5 ">
-              <h3>Votre commande s'est déroulé avec succès</h3> <br></br>
+            <div className="col-lg-12 col-md-6 mx-5 ">
+              <h3>Votre commande s'est déroulée avec succès</h3> <br></br>
               <h5 className="mw-75 " style={{ marginLeft: "2%", marginRight: "10%" }} >
                 Pour valider votre commande , il vous suffit de payer les frais de reservation en effectuant
-               {this.state.commande.mode_paiement_choisi == "transfert" ? <span>
-                  {" un transfert d'argent au  technicien : "}<span className="text-danger">{this.state.tech.toUpperCase()}</span> </span> :
+               {this.state.commande.mode_paiement_choisi === "transfert" ? <span>
+                  {" un transfert d'argent au  technicien : "}<span className="text-danger font-weight-bold text-uppercase">{this.state.tech}</span> </span> :
                   <span>
-                    {"  un virement sur le rib suivant : "}<span className="text-danger">{this.state.rib}</span></span>}
+                    {"  un virement sur le rib suivant : "}<span className="text-danger font-weight-bold">{this.state.rib}</span></span>}
                 <br></br>
                 <br></br>
-                Frais de reservation  à payer  : <span className="text-danger" >{this.state.avance} Dhs</span>
+                Frais de reservation  à payer  : <span className="text-danger font-weight-bold" >{this.state.avance} Dhs</span>
               </h5>
               <br></br>
 
               <div style={{ maxHeight: "600px", maxWidth: "50%", marginLeft: "20%" }}>
-
-                <Carousel fade>
-                  {this.state.commande.mode_paiement_choisi == "transfert" ?
+                {
+                  <Carousel fade>
+                    {this.state.commande.mode_paiement_choisi === "transfert" ?
+                      <Carousel.Item>
+                        <img  alt="image_carousel" style={{ minHeight: "400px", maxHeight: "400px", minWidth: "100%" }} src="/Images/1p.jpg" />
+                      </Carousel.Item> : <Carousel.Item>
+                        <img alt="image_carousel" style={{ minHeight: "400px", maxHeight: "400px", minWidth: "100%" }} src="/Images/11p.jpg" />
+                      </Carousel.Item>}
                     <Carousel.Item>
-                      <img style={{ minHeight: "400px", maxHeight: "400px", minWidth: "100%" }} src="/Images/1p.jpg" />
-                    </Carousel.Item> : <Carousel.Item>
-                      <img style={{ minHeight: "400px", maxHeight: "400px", minWidth: "100%" }} src="/Images/11p.jpg" />
-                    </Carousel.Item>}
-                  <Carousel.Item>
-                    <img style={{ minHeight: "400px", maxHeight: "400px", minWidth: "100%" }} src="/Images/2p.jpg" />
-                  </Carousel.Item>
-                  <Carousel.Item>
-                    <img style={{ minHeight: "400px", maxHeight: "400px", minWidth: "100%" }} src="/Images/3p.png" />
-                  </Carousel.Item>
-                  <Carousel.Item>
-                    <img style={{ minHeight: "400px", maxHeight: "400px", minWidth: "100%" }} src="/Images/4p.png" />
-                  </Carousel.Item>
-                  <Carousel.Item>
-                    <img style={{ minHeight: "400px", maxHeight: "400px", minWidth: "100%" }} src="/Images/5p.png" />
-                  </Carousel.Item>
-                  <Carousel.Item>
-                    <img style={{ minHeight: "400px", maxHeight: "400px", minWidth: "100%" }} src="/Images/6p.png" />
-                  </Carousel.Item>
-                  <Carousel.Item>
-                    <img style={{ minHeight: "400px", maxHeight: "400px", minWidth: "100%" }} src="/Images/7p.jpg" />
+                      <img style={{ minHeight: "400px", maxHeight: "400px", minWidth: "100%" }} src="/Images/2p.jpg" />
+                    </Carousel.Item>
+                    <Carousel.Item>
+                      <img alt="image_carousel" style={{ minHeight: "400px", maxHeight: "400px", minWidth: "100%" }} src="/Images/3p.png" />
+                    </Carousel.Item>
+                    <Carousel.Item>
+                      <img alt="image_carousel" style={{ minHeight: "400px", maxHeight: "400px", minWidth: "100%" }} src="/Images/4p.png" />
+                    </Carousel.Item>
+                    <Carousel.Item>
+                      <img alt="image_carousel" style={{ minHeight: "400px", maxHeight: "400px", minWidth: "100%" }} src="/Images/5p.png" />
+                    </Carousel.Item>
+                    <Carousel.Item>
+                      <img alt="image_carousel" style={{ minHeight: "400px", maxHeight: "400px", minWidth: "100%" }} src="/Images/6p.png" />
+                    </Carousel.Item>
+                    <Carousel.Item>
+                      <img alt="image_carousel" style={{ minHeight: "400px", maxHeight: "400px", minWidth: "100%" }} src="/Images/7p.jpg" />
 
-                  </Carousel.Item>
+                    </Carousel.Item>
 
-                </Carousel>
+                  </Carousel>
+                }
 
               </div>
               <br></br>
               <br></br>
 
-              <div class="checkout__input bg-ligh text-danger h6 center mt-5">
-                Attention: Il vous reste jusqu'au{" "}{this.state.deadline}
+              <div className="checkout__input bg-ligh text-danger h6 center mt-5">
+                <span className="font-weight-bold  text-danger h5">Attention : </span> Il vous reste jusqu'au{" "}{this.state.deadline}
                 <span>
                   <b> {/*this.state.date*/}</b>
                 </span>{" "}
                 pour payer et importer votre reçu de paiement.
               </div>
-              <div class="checkout__input bg-ligh text-danger h6 center  " style={{ marginBottom: "90px" }}>
-                Au delà de ce délai, votre commande sera annulée automatiquement
-                !
+              <div className="checkout__input bg-ligh text-danger h6 center  " style={{ marginBottom: "90px" }}>
+                Au delà de ce délai, votre commande sera annulée automatiquement !
               </div>
               <div className="mw-75 " style={{ marginRight: "45%" }} >
                 <Link
@@ -211,10 +239,6 @@ class AlerteCommande extends Component {
                       className=" rounded text-white bg-success py-1 px-3 "
                       onClick={this.handlPost}
                       style={{ fontSize: "19px", border: "none" }}
-                    //  onClick={(e) => {
-                    //   this.handlePanier(e.currentTarget.id);
-                    //  }
-                    // }
                     > Valider la commande</button>
                   </b></Link>
               </div>
@@ -223,12 +247,7 @@ class AlerteCommande extends Component {
 
 
               <div className="mw-75  " style={{ marginRight: "45%" }} >
-                <Link
-                  to={{
-                    pathname: "./",
-                  }}
-                >
-                  <b className="text-danger float-right ">
+                   <b className="text-danger float-right ">
                     <button
 
                       className=" rounded text-white bg-danger py-1 px-2 "
@@ -239,7 +258,7 @@ class AlerteCommande extends Component {
                     //  }
                     // }
                     >{""} Annuler la commande{" "} </button>
-                  </b></Link>
+                  </b> 
               </div>
 
 

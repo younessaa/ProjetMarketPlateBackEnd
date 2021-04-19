@@ -20,7 +20,7 @@ class Commandes extends Component {
       activePage: 1,
       nombrePages: [],
       currentPage: 1,
-      annoncesPerPage: 8,
+      annoncesPerPage: 12,
       loading: true,
       redirect: false,
       selectedOptionSort: null,
@@ -85,7 +85,7 @@ class Commandes extends Component {
     if (sortProperty === "Reçu de l’avance non conforme" || sortProperty === "Reçu du reste non conforme"
       || sortProperty === "Montant de l’avance non reçu" || sortProperty === "Montant du reste non reçu") {
       this.setState({ loading: true }, () => {
-        sortCmd = sorted.filter((c) => c.msg_refus_avance == sortProperty || c.msg_refus_reste == sortProperty)
+        sortCmd = sorted.filter((c) => c.msg_refus_avance === sortProperty || c.msg_refus_reste === sortProperty)
         this.setState({
           Commandes: sortCmd,
           loading: false
@@ -94,7 +94,7 @@ class Commandes extends Component {
     }
     else if (sortProperty === "validé" || sortProperty === "en attente de validation reste") {
       this.setState({ loading: true }, () => {
-        sortCmd = sorted.filter((c) => c.statut == sortProperty)
+        sortCmd = sorted.filter((c) => c.statut === sortProperty)
         this.setState({
           Commandes: sortCmd,
           loading: false
@@ -173,7 +173,7 @@ class Commandes extends Component {
 
     else if (sortProperty === "Annulation") {
       this.setState({ loading: true }, () => {
-        sortCmd = sorted.filter((c) => c.statut == "annulée manuellement")
+        sortCmd = sorted.filter((c) => c.statut === "annulée manuellement")
         this.setState({
           Commandes: sortCmd,
           loading: false
@@ -182,8 +182,8 @@ class Commandes extends Component {
     }
     else if (sortProperty === "delai_reste") {
       this.setState({ loading: true }, () => {
-        sortCmd = sorted.filter((c) => c.reçu_montant_restant == null && c.reçu_avance != null &&
-          c.statut == "commande annulée (deadline dépassé)")
+        sortCmd = sorted.filter((c) => c.reçu_montant_restant === null && c.reçu_avance !== null &&
+          c.statut === "commande annulée (deadline dépassé)")
         this.setState({
           Commandes: sortCmd,
           loading: false
@@ -192,7 +192,7 @@ class Commandes extends Component {
     }
     else if (sortProperty === "delai_avance") {
       this.setState({ loading: true }, () => {
-        sortCmd = sorted.filter((c) => c.reçu_avance == null && c.statut == "commande annulée (deadline dépassé)")
+        sortCmd = sorted.filter((c) => c.reçu_avance === null && c.statut === "commande annulée (deadline dépassé)")
         this.setState({
           Commandes: sortCmd,
           loading: false
@@ -251,23 +251,107 @@ class Commandes extends Component {
             },
           })
           .then((res) => {
+            console.log(res.data)
 
             this.setState(
               { CommandesT: res.data, },
               () => {
 
-                this.setState((prevState, props) => ({
 
-                  Commandes: [...new Set(this.state.CommandesT.filter(
-                    (Commandes) => statuts.includes(Commandes.statut) == true))]
-                }), () => {
-                  for (let i = 1; i <= Math.ceil(this.state.Commandes.length / this.state.annoncesPerPage); i++) {
-                    pageNumbers.push(i);
-                  }
-                  this.setState((prevState, props) => ({
-                    nombrePages: pageNumbers, CommandesN: this.state.Commandes, loading: false
-                  }), () => { });
-                });
+
+                switch (this.props.location.state.id) {
+                  case 'en attente de paiement avance':
+                    this.setState({
+
+                      Commandes: [...new Set(this.state.CommandesT.filter(
+                        (Commandes) => Commandes.statut === "en attente de paiement avance"
+                          || (Commandes.statut === "avarié_changement" && Commandes.ancien_statut === "en attente de paiement avance")))]
+                    }, () => {
+                      for (let i = 1; i <= Math.ceil(this.state.Commandes.length / this.state.annoncesPerPage); i++) {
+                        pageNumbers.push(i);
+                      }
+                      this.setState({
+                        nombrePages: pageNumbers, CommandesN: this.state.Commandes, loading: false
+                      }, () => { });
+                    });
+
+                    break;
+                  case 'en attente de validation avance':
+                    this.setState({
+
+                      Commandes: [...new Set(this.state.CommandesT.filter(
+                        (Commandes) => statuts.includes(Commandes.statut) === true))]
+                    }, () => {
+                      for (let i = 1; i <= Math.ceil(this.state.Commandes.length / this.state.annoncesPerPage); i++) {
+                        pageNumbers.push(i);
+                      }
+                      this.setState({
+                        nombrePages: pageNumbers, CommandesN: this.state.Commandes, loading: false
+                      }, () => { });
+                    });
+
+                    break;
+                  case 'en attente de paiement du reste':
+                    this.setState({
+                      Commandes: [...new Set(this.state.CommandesT.filter(
+                        (Commandes) => Commandes.statut === "en attente de paiement du reste"
+                          || (Commandes.statut === "avarié_changement" && Commandes.ancien_statut === "en attente de paiement du reste")))]
+                    }, () => {
+                      for (let i = 1; i <= Math.ceil(this.state.Commandes.length / this.state.annoncesPerPage); i++) {
+                        pageNumbers.push(i);
+                      }
+                      this.setState({
+                        nombrePages: pageNumbers, CommandesN: this.state.Commandes, loading: false
+                      }, () => { });
+                    });
+
+                    break;
+                  case 'validé#en attente de validation reste#en attente de validation du complément':
+                    this.setState({
+
+                      Commandes: [...new Set(this.state.CommandesT.filter(
+                        (Commandes) => (statuts.includes(Commandes.statut) === true) || (Commandes.statut === "avarié_changement" && Commandes.ancien_statut === "validé")))]
+                    }, () => {
+                      for (let i = 1; i <= Math.ceil(this.state.Commandes.length / this.state.annoncesPerPage); i++) {
+                        pageNumbers.push(i);
+                      }
+                      this.setState({
+                        nombrePages: pageNumbers, CommandesN: this.state.Commandes, loading: false
+                      }, () => { });
+                    });
+
+                    break;
+                  case 'en attente de paiement du complément':
+                    this.setState({
+
+                      Commandes: [...new Set(this.state.CommandesT.filter(
+                        (Commandes) => statuts.includes(Commandes.statut) === true))]
+                    }, () => {
+                      for (let i = 1; i <= Math.ceil(this.state.Commandes.length / this.state.annoncesPerPage); i++) {
+                        pageNumbers.push(i);
+                      }
+                      this.setState({
+                        nombrePages: pageNumbers, CommandesN: this.state.Commandes, loading: false
+                      }, () => { });
+                    });
+
+                    break;
+                  case 'commande annulée (deadline dépassé)#reçu avance refusé#reçu reste refusé#reçu complément refusé#avarié#rejetée#annulée manuellement#remboursement#avarié_changement#avarié_remboursement#avarié_annulé':
+                    this.setState({
+
+                      Commandes: [...new Set(this.state.CommandesT.filter(
+                        (Commandes) => statuts.includes(Commandes.statut) === true))]
+                    }, () => {
+                      for (let i = 1; i <= Math.ceil(this.state.Commandes.length / this.state.annoncesPerPage); i++) {
+                        pageNumbers.push(i);
+                      }
+                      this.setState({
+                        nombrePages: pageNumbers, CommandesN: this.state.Commandes, loading: false
+                      }, () => { });
+                    });
+                    break;
+
+                }
 
 
               }
@@ -329,9 +413,9 @@ class Commandes extends Component {
                 )
             ))
 
-            if (!this.props.location.state.id.split("#").includes("annulée manuellement")) { this.setState({ Commandes: this.state.Commandes.filter((cmd) => cmd != c) }); }
+            if (!this.props.location.state.id.split("#").includes("annulée manuellement")) { this.setState({ Commandes: this.state.Commandes.filter((cmd) => cmd !== c) }); }
             else {
-              this.state.Commandes.filter((cmd) => cmd == c)[0].statut = "annulée manuellement"
+              this.state.Commandes.filter((cmd) => cmd === c)[0].statut = "annulée manuellement"
               this.setState({ redirect: true, Commandes: this.state.Commandes });
             }
 
@@ -355,7 +439,7 @@ class Commandes extends Component {
   //nombre espece pour chaque categorie pour chaque commande
   NbrEspece(e, c) {
     let nombre = 0;
-    nombre = e.espece.filter((e) => e.categorie == c).length
+    nombre = e.espece.filter((e) => e.categorie === c).length
     return nombre;
   }
   //image selon les catégories des especes dans chaque commande 
@@ -363,19 +447,19 @@ class Commandes extends Component {
     //une seule catégorie
     let image = e.espece[0].image_face;
     //mouton+vache+chevre
-    if (this.NbrEspece(e, "mouton") != 0 && this.NbrEspece(e, "vache") != 0 && this.NbrEspece(e, "chevre") != 0) {
+    if (this.NbrEspece(e, "mouton") !== 0 && this.NbrEspece(e, "vache") !== 0 && this.NbrEspece(e, "chevre") !== 0) {
       image = "/Images/vachemoutonchevre.jpg"
     }
     //mouton+vache
-    else if (this.NbrEspece(e, "mouton") != 0 && this.NbrEspece(e, "vache") != 0 && this.NbrEspece(e, "chevre") == 0) {
+    else if (this.NbrEspece(e, "mouton") !== 0 && this.NbrEspece(e, "vache") !== 0 && this.NbrEspece(e, "chevre") === 0) {
       image = "/Images/vachemouton.jpg"
     }
     //vache+chevre
-    else if (this.NbrEspece(e, "mouton") == 0 && this.NbrEspece(e, "vache") != 0 && this.NbrEspece(e, "chevre") != 0) {
+    else if (this.NbrEspece(e, "mouton") === 0 && this.NbrEspece(e, "vache") !== 0 && this.NbrEspece(e, "chevre") !== 0) {
       image = "/Images/vachechevre.jpg"
     }
     //mouton+chevre
-    else if (this.NbrEspece(e, "mouton") != 0 && this.NbrEspece(e, "vache") == 0 && this.NbrEspece(e, "chevre") != 0) {
+    else if (this.NbrEspece(e, "mouton") !== 0 && this.NbrEspece(e, "vache") === 0 && this.NbrEspece(e, "chevre") !== 0) {
       image = "/Images/moutonchevre.jpg"
     }
     return image;
@@ -383,7 +467,7 @@ class Commandes extends Component {
   //max poids max age
   Max(c, p) {
     let max = 0; let m = 0;
-    p == "poids" ?
+    p === "poids" ?
       c.espece.map((e) => {
         m = e.poids;
         max = max < m ? m : max;
@@ -398,7 +482,7 @@ class Commandes extends Component {
   //min poids max age
   Min(c, p) {
     let min = Number.MAX_VALUE; let m = 0;
-    p == "poids" ? c.espece.map((e) => {
+    p === "poids" ? c.espece.map((e) => {
       m = e.poids;
       min = min > m ? m : min;
     })
@@ -455,7 +539,7 @@ class Commandes extends Component {
     let AnnonceAll = [];
     let AnnonceA = [];
     this.state.Commandes.map((m) => {
-      if (m.statut == "avarié") { AnnonceAll.push(m) }
+      if (m.statut === "avarié") { AnnonceAll.push(m) }
       else { AnnonceA.push(m) }
     })
 
@@ -486,7 +570,7 @@ class Commandes extends Component {
           ) : (
             <div className="container">
               <style>{CSS}</style>
-              <style>{ `#gras{color :black} `}</style>
+              <style>{`#gras{color :black} `}</style>
               <br></br>
               <br></br>
 
@@ -529,7 +613,7 @@ class Commandes extends Component {
                           >
                             <centre>
                               {" "}
-                              <img
+                              <img alt="ImageEspece"
                                 style={{ height: "170px" }}
                                 src={this.ImageEspece(Annonces)}
                                 className="product__item__pic set-bg"
@@ -548,7 +632,7 @@ class Commandes extends Component {
                                   type="submit" >
                                   {" "}
                                   <a href="#">
-                                    {(Annonces.statut == "en attente de paiement avance" || Annonces.statut == "en attente de paiement du reste" || Annonces.statut === "en attente de paiement du complément") ?
+                                    {(Annonces.statut === "en attente de paiement avance" || Annonces.statut === "en attente de paiement du reste" || Annonces.statut === "en attente de paiement du complément") ?
                                       <CgFileAdd className="fa-lg" /> : <i className="fa fa-eye"></i>}
                                   </a>
                                 </Link>
@@ -561,18 +645,18 @@ class Commandes extends Component {
                                 || Annonces.statut === "en attente de paiement du reste"
                                 || Annonces.ancien_statut === "en attente de paiement avance"
                                 || Annonces.ancien_statut === "en attente de paiement du reste"
-                                || Annonces.ancien_statut === "en attente de validation avance" ? 
+                                || Annonces.ancien_statut === "en attente de validation avance" ?
                                 <li>
-                                <a onClick={(e) => this.handelDelete(Annonces)} >
-                                  <i className="fa fa-trash"></i>
-                                </a>
-                              </li> : null}
+                                  <a onClick={(e) => this.handelDelete(Annonces)} >
+                                    <i className="fa fa-trash"></i>
+                                  </a>
+                                </li> : null}
                             </ul>
                           </div>
                           <div className=" height product__item__text p-2 text-justify" style={{ backgroundRepeat: "no-repeat", backgroundImage: Annonces.statut === "avarié" ? "linear-gradient(rgb(255,153,153), rgb(255,204,204))" : null, backgroundSize: "cover" }}>
                             {Annonces.statut === "en attente de validation reste" ?
-                              <div className="float-right text-warning"><i className="fa fa-hourglass-start" aria-hidden="true"></i>
-                                <b>{" "}En cours de validation</b></div> : null}
+                              <div className="float-right text-warning"><i className="fa fa-hourglass-start fa-xs" aria-hidden="true"></i>
+                                 <b>Validation en cours</b></div> : null}
                             {Annonces.statut === "validé" ?
 
                               <div className="float-right text-success "><i className="fa fa-thumbs-o-up" aria-hidden="true"></i>
@@ -585,7 +669,7 @@ class Commandes extends Component {
                             {Annonces.especes.length === 1 ?
                               <p className=" mb-0"  >
                                 <div className="d-inline-block ">
-                                  <h6 id="gras">   № Boucle : </h6>
+                                  <span className="h6 " id="gras">   № Boucle : </span>
                                 </div>
                                 <div className="d-sm-inline-block  ">
                                   <span style={{ color: "black" }}>{" " + Annonces.espece[0].boucle} </span></div>
@@ -595,6 +679,7 @@ class Commandes extends Component {
 
                               <div className="d-inline-block ">
                                 <img style={{ width: "9%", marginRight: "3%", float: "left" }}
+                                  alt="sheep-head"
                                   data-imgbigurl="Images/sheep-head.png"
                                   src="Images/sheep-head.png"
                                   alt=""
@@ -604,13 +689,14 @@ class Commandes extends Component {
                               :
                               <p>
                                 <h6 className="mb-0">
-                                  {this.NbrEspece(Annonces, "mouton") != 0 ? <span>{this.NbrEspece(Annonces, "mouton")} {" : "}Mouton(s) </span> : null}
+                                  {this.NbrEspece(Annonces, "mouton") !== 0 ? <span className="w-100">{this.NbrEspece(Annonces, "mouton")} {" : "}Mouton(s) </span> : null}
                                 </h6>
 
-                                <h6 className="mb-0"> {this.NbrEspece(Annonces, "chevre") != 0 ? <span>{this.NbrEspece(Annonces, "chevre")}{" : "}Chevre(s)  </span> : null}
-                                </h6 ><h6 className="mb-0">{this.NbrEspece(Annonces, "vache") != 0 ? <span>{this.NbrEspece(Annonces, "vache")}{" : "}Vache(s)  </span> : null}
+                                <h6 className="mb-0">{this.NbrEspece(Annonces, "vache") !== 0 ? <span className="w-100">{this.NbrEspece(Annonces, "vache")}{" : "}Vache(s)  </span> : null}
                                 </h6>
 
+                                <h6 className="mb-0"> {this.NbrEspece(Annonces, "chevre") !== 0 ? <span className="w-100">{this.NbrEspece(Annonces, "chevre")}{" : "}Chevre(s)</span> : null}
+                                </h6 >
                               </p>}
 
 
@@ -629,20 +715,21 @@ class Commandes extends Component {
 
                               <h6 id="gras">
                                 <div style={{ display: "inline-block" }}>
-                                  <img style={{ width: "9%", marginRight: "3%", float: "left" }} src="./Images/age.png"></img>
+                                  <img style={{ width: "9%", marginRight: "3%", float: "left" }} src="./Images/age.png" alt="age"></img>
                                   <h6 id="gras" >Age :  <span style={{ color: "black", fontWeight: "normal" }}>{this.Max(Annonces, "age")} mois</span></h6>
                                 </div>
                               </h6>
 
                               :
                               <p>
-                                <h6 className="mb-0" id="gras">
-                                  <img style={{ width: "9%", marginRight: "3%" }} src="./Images/age.png"></img>Age :</h6>
+                                <span className="mb-0 h6" id="gras">
+                                  <img style={{ width: "9%", marginRight: "3%" }} src="./Images/age.png" alt="age"></img>Age :</span>
+                                <br></br>
                                 <span style={{ color: "black", fontWeight: "normal" }}>entre : {this.Max(Annonces, "age")} mois et {this.Min(Annonces, "age")} mois</span>
                               </p>}
 
                             {Annonces.statut === "en attente de paiement avance" ?
-                              <div  ><p  id="gras" className=" mb-0"><i className="fa fa-calendar-o" aria-hidden="true"></i>{" "}Dernier delai : </p><p className="text-danger mb-0 font-weight-bold">{Annonces.deadline.replace(",", " à ")}</p><p id="gras" className=""><i className="fa fa-usd" aria-hidden="true"></i>{" "}Avance à payer  :<span className="text-danger ">{" "}{Annonces.avance} Dhs</span>  </p></div>
+                              <div  ><p id="gras" className=" mb-0"><i className="fa fa-calendar-o" aria-hidden="true"></i>{" "}Dernier delai : </p><p className="text-danger mb-0 font-weight-bold">{Annonces.deadline.replace(",", " à ")}</p><p id="gras" className=""><i className="fa fa-usd" aria-hidden="true"></i>{" "}Avance à payer  :<span className="text-danger ">{" "}{Annonces.avance} Dhs</span>  </p></div>
                               : null
                             }
                             {Annonces.statut === "en attente de paiement du reste" ?
@@ -650,7 +737,7 @@ class Commandes extends Component {
                               : null
                             }
                             {Annonces.statut === "en attente de paiement du complément" ?
-                              <div  ><p id="gras"className="  mb-0"><i className="fa fa-calendar-o" aria-hidden="true"></i>{" "}Dernier delai : </p><p className="text-danger mb-0 font-weight-bold">{Annonces.deadline.replace(",", " à ")}</p><p id="gras" className=""><i className="fa fa-usd" aria-hidden="true"></i>{" "}Complement à payer  : <span className="text-danger ">{" "}{Annonces.complement} Dhs</span> </p></div>
+                              <div  ><p id="gras" className="  mb-0"><i className="fa fa-calendar-o" aria-hidden="true"></i>{" "}Dernier delai : </p><p className="text-danger mb-0 font-weight-bold">{Annonces.deadline.replace(",", " à ")}</p><p id="gras" className=""><i className="fa fa-usd" aria-hidden="true"></i>{" "}Complement à payer  : <span className="text-danger ">{" "}{Annonces.complement} Dhs</span> </p></div>
                               : null
                             }
                             {
@@ -664,10 +751,16 @@ class Commandes extends Component {
 
 
                             {this.props.location.state.id === "commande annulée (deadline dépassé)#reçu avance refusé#reçu reste refusé#reçu complément refusé#avarié#rejetée#annulée manuellement#remboursement#avarié_changement#avarié_remboursement#avarié_annulé" ?
-                              <p className=" text-danger">
-                                <i className="fa fa-exclamation-circle" aria-hidden="true"></i>
-                                {" "} {Annonces.statut}
-                              </p>
+                              (Annonces.statut === "avarié") ? <p className=" text-danger">
+                                <i className="fa fa-exclamation-triangle" aria-hidden="true"></i>
+                                {" "} Produit avarié
+                          </p>
+                                :
+                                <p className=" text-danger">
+                                  <i className="fa fa-exclamation-triangle" aria-hidden="true"></i>
+                                  {" "} {Annonces.statut}
+                                </p>
+
                               : null}
                           </div>
                         </div>

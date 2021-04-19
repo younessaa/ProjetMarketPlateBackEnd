@@ -16,6 +16,9 @@ class DetailsCommande extends Component {
     super(props);
     // let redirect = false;
     this.state = {
+      connectedUserEmail: "",
+      espece_changement: '',
+      etat: '',
       nom_prenom: '',
       rib: '',
       cooperative: null,
@@ -41,6 +44,8 @@ class DetailsCommande extends Component {
     this.Modal = this.Modal.bind(this);
     this.ModalS = this.ModalS.bind(this);
     this.RefuseTSoutions = this.RefuseTSoutions.bind(this);
+    this.AccepteSoution = this.AccepteSoution.bind(this);
+
     this.handleValidation = this.handleValidation.bind(this);
 
     this.handelDelete = this.handelDelete.bind(this);
@@ -74,21 +79,44 @@ class DetailsCommande extends Component {
     e.preventDefault();
     const myToken = `Bearer ` + localStorage.getItem("myToken");
     if (this.handleValidation()) {
-      axios
-      .put(
-        "http://127.0.0.1:8000/api/commande/" + this.props.location.state.id._id+"/"+this.state.especeAv._id,
-        {
-          nom: this.state.nom_prenom,
-         rib: this.state.rib,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": myToken,
-          },
-        }
-      )
-      .then((res) => {})
+      //rembourssement
+      if (this.state.etat == "refuser") {
+        /**    axios
+             .put(
+               "http://127.0.0.1:8000/api/commande/" + this.props.location.state.id._id + "/" + this.state.especeAv._id,
+               {
+                 nom: this.state.nom_prenom,
+                 rib: this.state.rib,
+               },
+               {
+                 headers: {
+                   "Content-Type": "application/json",
+                   "Authorization": myToken,
+                 },
+               }
+             )
+             .then((res) => { })*/
+      }
+      //rembourssement pour changement (old.prix>new.prix)
+      if (this.state.etat == "accepter") {
+        /*    axios
+              .put(
+                "http://127.0.0.1:8000/api/commande/" + this.props.location.state.id._id
+                + "/" + this.state.especeAv._id
+                + "/" + this.state.espece_changement._id,
+                {
+                  nom: this.state.nom_prenom,
+                  rib: this.state.rib,
+                },
+                {
+                  headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": myToken,
+                  },
+                }
+              )
+              .then((res) => { })*/
+      }
 
     }
 
@@ -194,6 +222,7 @@ class DetailsCommande extends Component {
           }
         )
         .then((res) => {
+
           Swal.fire({
             text:
               "Vous allez recevoir un email de validation de votre reçu sur votre email : " + this.props.location.state.id.consommateur.email,
@@ -268,6 +297,27 @@ class DetailsCommande extends Component {
           this.props.history.push("/commandesParStatut");
         });
     }
+    const to = this.state.connectedUserEmail;
+    const content =
+      "Votre reçu a bien ete receptionne";
+    const subject =
+      "Reçu de paiement ( " + this.state.payer + " )";
+    axios.post(
+      "http://127.0.0.1:8000/api/sendmail/" +
+      to +
+      "/" +
+      content +
+      "/" +
+      subject,
+      {
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+
+          // "Access-Control-Allow-Origin": "*",
+        },
+      }
+    );
 
   };
 
@@ -290,41 +340,187 @@ class DetailsCommande extends Component {
     this.setState({ showAvance: !this.state.showAvance, payer: payer, mode_paiement_choisi: this.state.mode_paiement_choisi }, () => { });
 
   }
+  AccepteSoution(espece) {
+    const myToken = `Bearer ` + localStorage.getItem("myToken");
+    const swalWithBootstrapButtons = Swal.mixin({
+      customClass: {
+        confirmButton: "ml-2 btn btn-success",
+        cancelButton: " btn btn-danger",
+      },
+      buttonsStyling: false,
+    });
+
+    swalWithBootstrapButtons.fire({
+      title: "Etes-vous sûr?",
+      text: "Voulez-vous changer cette annonce !",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "  Oui !  ",
+      cancelButtonText: "  Non !  ",
+      reverseButtons: true,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.setState({ etat: "accepter", espece_changement: espece }, () => { });
+
+        //ancien_statut validé =>Montant du produit avarié a remboursé par l'ANOC
+        if (this.props.location.state.id.ancien_statut === "validé" && espece.prix < this.state.especeAv.prix) {
+          this.setState({ prixRemb: this.state.especeAv.prix - espece.prix, showRemb: !this.state.showRemb }, () => { });
+        }
+        else {
+            /**  axios
+               .put(
+                 "http://127.0.0.1:8000/api/commande/" + this.props.location.state.id._id
+                 + "/" + this.state.especeAv._id
+                 + "/" + espece._id,
+                 {
+                   nom: this.state.nom_prenom,
+                   rib: this.state.rib,
+                 },
+                 {
+                   headers: {
+                     "Content-Type": "application/json",
+                     "Authorization": myToken,
+                   },
+                 }
+               )
+               .then((res) => { })
+       
+           }*/}
+        Swal.fire({
+          title: "change avec succès ",
+          icon: "success",
+          width: 400,
+          heightAuto: false,
+          timer: 1500,
+          showConfirmButton: false,
+
+        });
+      }
+      else if (
+        result.dismiss === Swal.DismissReason.cancel
+      ) {
+        Swal.fire({
+          title: "Annonce non changee ! ",
+          icon: "error",
+          width: 400,
+          heightAuto: false,
+          timer: 1500,
+          showConfirmButton: false,
+        });
+      }
+    })
+
+
+
+
+
+
+  }
   RefuseTSoutions() {
-    //ancien_statut en attente de paiement avance=>soustraire le montant du produit initial
+    const swalWithBootstrapButtons = Swal.mixin({
+      customClass: {
+        confirmButton: "ml-2 btn btn-success",
+        cancelButton: " btn btn-danger",
+      },
+      buttonsStyling: false,
+    });
 
-    if (this.props.location.state.id.ancien_statut === "en attente de paiement avance") {
-      this.setState({ showRemb: false, showSolution: false }, () => { });
-    }
+    swalWithBootstrapButtons.fire({
+      title: "Etes-vous sûr?",
+      text: "Voulez-vous refuser les produits de changements  !",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "  Oui !  ",
+      cancelButtonText: "  Non !  ",
+      reverseButtons: true,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.setState({ etat: "refuser" }, () => {
+          //ancien_statut en attente de paiement avance=>soustraire le montant du produit initial
 
-    //ancien_statut en attente de paiement du reste =>
-    //Montant reste à payer = Montant reste initial - prix total produit avarié  | avance a remboursé par l'ANOC
-    if (this.props.location.state.id.ancien_statut === "en attente de paiement du reste") {
-      this.setState({ prixRemb: this.state.especeAv.avance, showRemb: !this.state.showRemb }, () => { });
-    }
+          if (this.props.location.state.id.ancien_statut === "en attente de paiement avance") {
+            this.setState({ showRemb: !this.state.showRemb }, () => { });
+          }
 
-    //ancien_statut validé =>Montant du produit avarié a remboursé par l'ANOC
-    if (this.props.location.state.id.ancien_statut === "validé") {
-      this.setState({ prixRemb: this.state.especeAv.prix, showRemb: !this.state.showRemb }, () => { });
-    }
+          //ancien_statut en attente de paiement du reste =>
+          //Montant reste à payer = Montant reste initial - prix total produit avarié  | avance a remboursé par l'ANOC
+          if (this.props.location.state.id.ancien_statut === "en attente de paiement du reste") {
+            this.setState({ prixRemb: this.state.especeAv.avance, showRemb: !this.state.showRemb }, () => { });
+          }
+
+          //ancien_statut validé =>Montant du produit avarié a remboursé par l'ANOC
+          if (this.props.location.state.id.ancien_statut === "validé") {
+            this.setState({ prixRemb: this.state.especeAv.prix, showRemb: !this.state.showRemb }, () => { });
+          }
+        });
+        Swal.fire({
+          title: "Annule avec succès ",
+          icon: "success",
+          width: 400,
+          heightAuto: false,
+          timer: 1500,
+          showConfirmButton: false,
+
+        });
+      } else if (
+        result.dismiss === Swal.DismissReason.cancel
+      ) {
+        Swal.fire({
+          title: "Non refuser ! ",
+          icon: "error",
+          width: 400,
+          heightAuto: false,
+          timer: 1500,
+          showConfirmButton: false,
+        });
+      }
+    })
+
+
+
 
 
 
   }
   ModalS(espece) {
-    let tab = [];
+    console.log(this.props.location.state.id.especes.filter((f) => f.id_espece == espece._id))
+    console.log(this.props.location.state.id.especes.filter((f) => f.id_espece == espece._id)[0].produits_changement.length)
 
-    this.setState({ showRemb: false, showSolution: !this.state.showSolution, especeAv: espece }, () => {
-      if (espece != undefined && espece != {} && espece != null && Object.keys(espece).length > 0) {
-        tab[0] = espece;
-        tab[1] = this.props.location.state.id.especes.filter((e) => (e.id_espece == espece._id))[0];
-        tab[2] = [];
-        tab[1].produits_changement.map((e) => {
-          tab[2].push(this.props.location.state.id.espece_avariee.filter((esp) => (esp._id == e.id_espece))[0]);
-        })
-      }
-      this.setState({ Especes: tab }, () => { })
-    });
+    if (this.props.location.state.id.especes.filter((f) => f.id_espece == espece._id)[0].produits_changement.length == 0) {
+      this.setState({ etat: "refuser", especeAv: espece }, () => {
+        //ancien_statut en attente de paiement avance=>soustraire le montant du produit initial
+
+        if (this.props.location.state.id.ancien_statut === "en attente de paiement avance") {
+          this.setState({ showRemb: !this.state.showRemb, showSolution: !this.state.showSolution }, () => {
+          });
+        }
+
+        //ancien_statut en attente de paiement du reste =>
+        //Montant reste à payer = Montant reste initial - prix total produit avarié  | avance a remboursé par l'ANOC
+        if (this.props.location.state.id.ancien_statut === "en attente de paiement du reste") {
+          this.setState({ prixRemb: this.state.especeAv.avance, showRemb: !this.state.showRemb }, () => { });
+        }
+
+        //ancien_statut validé =>Montant du produit avarié a remboursé par l'ANOC
+        if (this.props.location.state.id.ancien_statut === "validé") {
+          this.setState({ prixRemb: this.state.especeAv.prix, showRemb: !this.state.showRemb }, () => { });
+        }
+      })
+    }
+    else {
+      let tab = [];
+
+      this.setState({ showRemb: false, showSolution: !this.state.showSolution, especeAv: espece }, () => {
+        if (espece != undefined && espece != {} && espece != null && Object.keys(espece).length > 0) {
+          tab[0] = espece;
+          tab[1] = this.props.location.state.id.especes.filter((e) => (e.id_espece == espece._id))[0];
+          tab[2] = [];
+          tab[1].produits_changement.map((e) => {
+            tab[2].push(this.props.location.state.id.espece_avariee.filter((esp) => (esp._id == e.id_espece))[0]);
+          })
+        } this.setState({ Especes: tab }, () => { })
+      });
+    }
 
   }
   onChange(e) {
@@ -337,7 +533,27 @@ class DetailsCommande extends Component {
 
   componentDidMount() {
     const myToken = `Bearer ` + localStorage.getItem("myToken");
-
+    const token = localStorage.getItem("usertoken");
+    const expiredTimeToken = localStorage.getItem("expiredTimeToken");
+    function appendLeadingZeroes(n) {
+      if (n <= 9) {
+        return "0" + n;
+      }
+      return n;
+    }
+    let current_datetime = new Date();
+    let formatted_date =
+      current_datetime.getFullYear() +
+      "-" +
+      appendLeadingZeroes(current_datetime.getMonth() + 1) +
+      "-" +
+      appendLeadingZeroes(current_datetime.getDate()) +
+      " " +
+      appendLeadingZeroes(current_datetime.getHours()) +
+      ":" +
+      appendLeadingZeroes(current_datetime.getMinutes()) +
+      ":" +
+      appendLeadingZeroes(current_datetime.getSeconds());
     const cmd = this.props.location.state.id;
     var currentdate = new Date(cmd.date_creation);
     //  currentdate = Date.parse(cmd.date_creation);
@@ -374,21 +590,38 @@ class DetailsCommande extends Component {
       date: datetime,
     });
 
+    if (!token || expiredTimeToken < formatted_date) {
+      this.props.history.push("/login");
+    } else {
+      axios
+        .get("http://127.0.0.1:8000/api/cooperative/" + this.props.location.state.id.id_cooperative, {
+          headers: {
+            // "x-access-token": token, // the token is a variable which holds the token
+            "Content-Type": "application/json",
+            "Authorization": myToken,
+          },
+        })
+
+        .then((res) => {
+          this.setState({ cooperative: res.data }
+            , () => {
+              this.setState({ cooperative_rib: this.state.cooperative.rib, tech: this.state.cooperative.tech[0].prenom + " " + this.state.cooperative.tech[0].nom });
+              axios
+                .get("http://127.0.0.1:8000/api/consommateur/" + token, {
+                  headers: {
+                    "Content-Type": "application/json",
+                    // "Authorization": Mytoken,
+                  },
+                })
+
+                .then((res) => {
+                  this.setState({ connectedUserEmail: res.data.email });
+                })
+            })
+        });
+    }
 
 
-    axios
-      .get("http://127.0.0.1:8000/api/cooperative/" + this.props.location.state.id.id_cooperative, {
-        headers: {
-          // "x-access-token": token, // the token is a variable which holds the token
-          "Content-Type": "application/json",
-          "Authorization": myToken,
-        },
-      })
-
-      .then((res) => {
-        this.setState({ cooperative: res.data }
-          , () => { this.setState({ cooperative_rib: this.state.cooperative.rib, tech: this.state.cooperative.tech[0].prenom + " " + this.state.cooperative.tech[0].nom }) })
-      });
   }
 
   handelDelete() {
@@ -482,7 +715,7 @@ class DetailsCommande extends Component {
         <style>{`.btn-link {  color:white} .btn-link:hover {color:white;} .card { background-color: #fafafa !important } .container {max-width: 90%;}  `}</style>
         <div className="container">
 
-          <h3>Détails commande ({this.props.location.state.id.ancien_statut})</h3>
+          <h3>Détails commande  {this.props.location.state.id._id}</h3>
           <br></br>
           <div>
             <div id="accordion">
@@ -1084,13 +1317,13 @@ class DetailsCommande extends Component {
 
                         {this.state.Especes[2].length > 1 ? <div className="row mt-3">
                           <div className="col-3">{" "}</div>
-                          <button type="button" className="col-6 py-1 btn btn-success">Accepter</button>
+                          <button type="button" onClick={this.AccepteSoution.bind(this, Annonces)} className="col-6 py-1 btn btn-success">Accepter</button>
                           <div className="col-3">{" "}</div>
                         </div> : null}
                         {this.state.Especes[2].length == 1 ?
                           <div className="row mt-3">
                             <div className="col-1">{" "}</div>
-                            <button type="button" className="col-4 py-1 btn btn-success">Accepter</button>
+                            <button type="button" onClick={this.AccepteSoution.bind(this, Annonces)} className="col-4 py-1 btn btn-success">Accepter</button>
                             <div className="col-1">{" "}</div>
                             <button onClick={this.RefuseTSoutions} type="button" className="col-4 py-1 btn btn-danger">Refuser</button>
                             <div className="col-2">{" "}</div>
@@ -1110,30 +1343,42 @@ class DetailsCommande extends Component {
                     <div className="col-4">{" "}</div>
                   </div> : null}
               </> : (this.state.showRemb == true ? <div>
-                <h4 className="text-danger mb-5 mt-2"> Vous avez refuse tous les produits de changements proposés.</h4>
-                <h5>Dans ce cas là, nous procederons à  votre remboursement : <span className="text-danger">{this.state.prixRemb} Dhs</span></h5>
-                <form className="my-5 ">
-                  <div className="form-group">
-                    <label htmlFor="nom_prenom">Votre nom et prenom</label>
-                    <input onChange={this.onChange} type="text" className="form-control" id="nom_prenom" name="nom_prenom" placeholder="Nom et prenom" />
-                    <span className="text-danger">{this.state.errors["nom_prenom"]}</span>
-                  </div>
-                  <div className="form-group">
-                    <label htmlFor="rib">Votre numero de RIB</label>
-                    <input onChange={this.onChange} type="text" className="form-control" id="rib" name="rib" placeholder="RIB" />
-                    <span className="text-danger">{this.state.errors["rib"]}</span>
-                  </div>
-                </form>
-                <br></br>
-                <br></br>
-                <div className="row mt-4">
-                  <div className="col-3">{" "}</div>
-                  <button type="button" onClick={this.Modal} className="btn btn-danger col-2">Annuler </button>
-                  <div className="col-2">{" "}</div>
-                  <button type="button" onClick={this.handlPost} className="btn btn-success col-2">Valider</button>
-                  <div className="col-3">{" "}</div>
-                </div>
-              </div> : null)}
+
+                {this.props.location.state.id.especes.filter((f) => f.id_espece == this.state.especeAv._id)[0].produits_changement.length == 0 ?
+                  <h4 className="text-danger mb-5 mt-2"> Pas de produits de changements proposés.</h4>
+                  :
+                  <h4 className="text-danger mb-5 mt-2"> Vous avez refuse tous les produits de changements proposés.</h4>
+                }
+                {this.props.location.state.id.ancien_statut !== "en attente de paiement avance" ?
+                  <>
+                    <h5>Dans ce cas là, nous procederons à  votre remboursement : <span className="text-danger">{this.state.prixRemb} Dhs</span></h5>
+                    <form className="my-5 ">
+                      <div className="form-group">
+                        <label htmlFor="nom_prenom">Votre nom et prenom</label>
+                        <input onChange={this.onChange} type="text" className="form-control" id="nom_prenom" name="nom_prenom" placeholder="Nom et prenom" />
+                        <span className="text-danger">{this.state.errors["nom_prenom"]}</span>
+                      </div>
+                      <div className="form-group">
+                        <label htmlFor="rib">Votre numero de RIB</label>
+                        <input onChange={this.onChange} type="text" className="form-control" id="rib" name="rib" placeholder="RIB" />
+                        <span className="text-danger">{this.state.errors["rib"]}</span>
+                      </div>
+                    </form>
+                    <br></br>
+                    <br></br>
+                    <div className="row mt-4">
+                      <div className="col-3">{" "}</div>
+                      <button type="button" onClick={this.ModalS.bind(this, this.state.especeAv)} className="btn btn-danger col-2">Annuler </button>
+                      <div className="col-2">{" "}</div>
+                      <button type="button" onClick={this.handlPost} className="btn btn-success col-2">Valider</button>
+                      <div className="col-3">{" "}</div>
+                    </div>
+
+                  </> : <h5>Dans ce cas là, l'ennonce sera annulee </h5>
+                }
+              </div> :
+                null
+              )}
           </Modal.Body>
 
 

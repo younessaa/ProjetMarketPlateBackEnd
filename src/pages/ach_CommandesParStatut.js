@@ -49,7 +49,7 @@ class CommandesParStatut extends Component {
     } else {
       this.setState({ loading: true }, () => {
         axios
-          .get("http://127.0.0.1:8000/api/commande", {
+          .get("http://127.0.0.1:8000/api/commandes/dashboard", {
             headers: {
               // "x-access-token": token, // the token is a variable which holds the token
               "Content-Type": "application/json",
@@ -64,27 +64,10 @@ class CommandesParStatut extends Component {
 
           .then((res) => {
             this.setState({
-              Commandes: res.data,
+              Commandes:res.data.count,
               loading: false,
             });
-            axios
-              .get("http://127.0.0.1:8000/api/livraisons", {
-                headers: {
-                  // "x-access-token": token, // the token is a variable which holds the token
-                  "Content-Type": "application/json",
-                  Authorization: myToken,
-                }
-              })
-
-              .then((res) => {
-                let liv = [];
-                Object.values(res.data).map((m) => m.map((k) => liv.push(k)));
-                this.setState({
-                  Livraison: liv,
-
-                });
-
-              });
+        
           });
       });
     }
@@ -93,46 +76,22 @@ class CommandesParStatut extends Component {
   render() {
     const { loading } = this.state;
     //commandes annulees
-    const cmdAnnulee = [...new Set(this.state.Commandes.filter(
-      (Commandes) => Commandes.statut === "commande annulée (deadline dépassé)" ||
-        Commandes.statut === "reçu avance refusé" ||
-        Commandes.statut === "reçu reste refusé" ||
-        Commandes.statut === "reçu complément refusé" ||
-        Commandes.statut === "annulée manuellement" ||
-        Commandes.statut === "avarié" ||
-        Commandes.statut === "remboursement" ||
-        Commandes.statut === "avarié_changement" ||
-        Commandes.statut === "avarié_remboursement" ||
-        Commandes.statut === "avarié_annulé"
-
-    ))];
+    const cmdAnnulee =this.state.Commandes[0];
 
     //Avances a payer
-    const cmdAvancePayer = this.state.Commandes.filter(
-      (Commandes) => Commandes.statut === "en attente de paiement avance"
-    );
+    const cmdAvancePayer = this.state.Commandes[1]
 
     //Produit réservé
-    const cmdReserve = this.state.Commandes.filter(
-      (Commandes) => Commandes.statut === "en attente de validation avance"
-    );
+    const cmdReserve = this.state.Commandes[2]
     // Reste à payer
 
-    const cmdRestePayer = this.state.Commandes.filter(
-      (Commandes) => Commandes.statut === "en attente de paiement du reste"
-    );
+    const cmdRestePayer = this.state.Commandes[3]
 
     //Produit à livrer
-    const cmdLivrer = this.state.Commandes.filter(
-      (Commandes) => Commandes.statut === "validé" ||
-        Commandes.statut === "en attente de validation reste" ||
-        Commandes.statut === "en attente de validation du complément"
-    );
+    const cmdLivrer = this.state.Commandes[4]
 
     //Produit Complement
-    const cmdComplement = this.state.Commandes.filter(
-      (Commandes) => Commandes.statut === "en attente de paiement du complément"
-    );
+    const cmdComplement = this.state.Commandes[5]
 
     return (
       <div>
@@ -183,24 +142,24 @@ class CommandesParStatut extends Component {
                             <center>
                               <a href="">
                                 <br></br>{" "}
-                                {cmdComplement.length == 0 ? <><br></br>{" "}<br></br>{" "}</> : null}
+                                {cmdComplement == 0 ? <><br></br>{" "}<br></br>{" "}</> : null}
                                 <img
                                   src="Images/info.png"
                                   width="95px"
                                   height="95px"
                                 />
                                 <h4 style={{ color: "white" }}>
-                                  <br></br>{cmdComplement.length == 0 ? "Comment utiliser cette rubrique ?" : "Compléments à payer "}
+                                  <br></br>{cmdComplement == 0 ? "Comment utiliser cette rubrique ?" : "Compléments à payer "}
                                 </h4>
                                 <br></br>
-                                {cmdComplement.length != 0 ?
+                                {cmdComplement != 0 ?
                                   <h2 style={{ color: "white" }}>
-                                     <b>{cmdComplement.length}{" "}
-                                     <img style={{ width: "40px", height: "40px", marginBottom: "8px" }}
-                                      data-imgbigurl="Images/sheep-headB.png"
-                                      src="Images/sheep-headB.png"
-                                      alt=""
-                                    /></b>
+                                    <b>{cmdComplement}{" "}
+                                      <img style={{ width: "40px", height: "40px", marginBottom: "8px" }}
+                                        data-imgbigurl="Images/sheep-headB.png"
+                                        src="Images/sheep-headB.png"
+                                        alt=""
+                                      /></b>
                                   </h2> : null}
                               </a>
                             </center>
@@ -245,11 +204,11 @@ class CommandesParStatut extends Component {
                                 </h4>
                                 <br></br>
                                 <h2 style={{ color: "white" }}>
-                                  <b>{[...new Set(cmdAnnulee)].length}{" "}<img style={{ width: "40px", height: "40px", marginBottom: "8px" }}
-                                      data-imgbigurl="Images/sheep-headB.png"
-                                      src="Images/sheep-headB.png"
-                                      alt=""
-                                    /></b>
+                                  <b>{cmdAnnulee}{" "}<img style={{ width: "40px", height: "40px", marginBottom: "8px" }}
+                                    data-imgbigurl="Images/sheep-headB.png"
+                                    src="Images/sheep-headB.png"
+                                    alt=""
+                                  /></b>
                                 </h2>
                                 <br></br>
                               </a>
@@ -292,11 +251,11 @@ class CommandesParStatut extends Component {
                                 <br></br>
 
                                 <h2 style={{ color: "white" }}>
-                                  <b>{cmdAvancePayer.length}{" "} <img style={{ width: "40px", height: "40px", marginBottom: "8px" }}
-                                      data-imgbigurl="Images/sheep-headB.png"
-                                      src="Images/sheep-headB.png"
-                                      alt=""
-                                    /></b>
+                                  <b>{cmdAvancePayer}{" "} <img style={{ width: "40px", height: "40px", marginBottom: "8px" }}
+                                    data-imgbigurl="Images/sheep-headB.png"
+                                    src="Images/sheep-headB.png"
+                                    alt=""
+                                  /></b>
                                 </h2>
                                 <br></br>
                               </a>
@@ -339,11 +298,11 @@ class CommandesParStatut extends Component {
                               </h4>
                                 <br></br>
                                 <h2 style={{ color: "white" }}>
-                                  <b>{cmdReserve.length}{" "}<img style={{ width: "40px", height: "40px", marginBottom: "8px" }}
-                                      data-imgbigurl="Images/sheep-headB.png"
-                                      src="Images/sheep-headB.png"
-                                      alt=""
-                                    /></b>
+                                  <b>{cmdReserve}{" "}<img style={{ width: "40px", height: "40px", marginBottom: "8px" }}
+                                    data-imgbigurl="Images/sheep-headB.png"
+                                    src="Images/sheep-headB.png"
+                                    alt=""
+                                  /></b>
                                 </h2>
                               </a>
                             </center>
@@ -383,11 +342,11 @@ class CommandesParStatut extends Component {
                               </h4>
                                 <br></br>
                                 <h2 style={{ color: "white" }}>
-                                  <b>{cmdRestePayer.length}{" "}<img style={{ width: "40px", height: "40px", marginBottom: "8px" }}
-                                      data-imgbigurl="Images/sheep-headB.png"
-                                      src="Images/sheep-headB.png"
-                                      alt=""
-                                    /></b>
+                                  <b>{cmdRestePayer}{" "}<img style={{ width: "40px", height: "40px", marginBottom: "8px" }}
+                                    data-imgbigurl="Images/sheep-headB.png"
+                                    src="Images/sheep-headB.png"
+                                    alt=""
+                                  /></b>
                                 </h2>
 
                               </a>
@@ -424,14 +383,14 @@ class CommandesParStatut extends Component {
                                 <h4 style={{ color: "white" }}>
                                   Produit à livrer
                               </h4>
-                              <br></br>
+                                <br></br>
 
                                 <h2 style={{ color: "white" }}>
-                                  <b>{cmdLivrer.length}{" "}<img style={{ width: "40px", height: "40px", marginBottom: "8px" }}
-                                      data-imgbigurl="Images/sheep-headB.png"
-                                      src="Images/sheep-headB.png"
-                                      alt=""
-                                    /></b>
+                                  <b>{cmdLivrer}{" "}<img style={{ width: "40px", height: "40px", marginBottom: "8px" }}
+                                    data-imgbigurl="Images/sheep-headB.png"
+                                    src="Images/sheep-headB.png"
+                                    alt=""
+                                  /></b>
                                 </h2>
                               </a>
                             </center>

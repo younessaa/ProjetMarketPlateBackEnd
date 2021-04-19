@@ -82,16 +82,22 @@ class Header extends Component {
         .then((res) => {
           var resultat = res;
           for (let i = 0; i < res.data.length; i++) {
+            var statutCmd= res.data[i].statut;
             var deadline = res.data[i].deadline;
-             var dd = new Date(deadline.substr(6, 4),
-              deadline.substr(3, 2), deadline.substr(0, 2),
-              deadline.substr(12, 2),deadline.substr(15, 2),
+            var dd = new Date(deadline.substr(6, 4),
+              (deadline.substr(3, 2) - 1), deadline.substr(0, 2),
+              deadline.substr(12, 2), deadline.substr(15, 2),
               deadline.substr(18, 2));
             if (
-              now.getTime() >= dd.getTime() &&(
-              res.data[i].statut == "en attente de paiement avance" ||
-              res.data[i].statut == "en attente de paiement du reste"||
-              res.data[i].statut == "en attente de paiement du complément")
+              now.getTime() >= dd.getTime() && (
+                statutCmd == "en attente de paiement avance" ||
+                statutCmd == "en attente de paiement du reste" ||
+                statutCmd == "en attente de paiement du complément"
+                || (
+                  res.data[i].ancien_statut == " avarié_changement" && (
+                    statutCmd == "en attente de paiement avance" ||
+                    statutCmd == "en attente de paiement du reste" )
+                ))
             ) {
               axios
                 .put(
@@ -289,8 +295,7 @@ class Header extends Component {
 
                     </li>
                     <li>
-                      {/**<a onclick={this.activateMenuEleveurs} id="eleveur" className="Header" href="./AnnoncesParEleveurs">
-*/}
+
                       <a style={{ color: colors[1] }} href="./AnnoncesParEleveurs" className="Header"  >
 
                         <FaUserAlt className="  mb-1 " />  Nos éleveurs</a>

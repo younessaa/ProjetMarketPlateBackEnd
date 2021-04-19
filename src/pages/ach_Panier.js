@@ -315,6 +315,7 @@ class Commandes extends Component {
                                   pathname: "/Commander",
                                   state: {
                                     id: p.id_espaces,
+                                    id_cooperative:p.id_coop
                                   },
                                 }}
                               >
@@ -335,7 +336,7 @@ class Commandes extends Component {
                             {p.especes.map((Annonces) => (
                               //  {if(Annonces){}}
                               <div className="col-lg-3 col-md-3 col-sm-6">
-                                <br></br>
+                                 <br></br>
                                 <div id="anonce" className="product__item">
                                   <div
                                     className="product__item__pic set-bg"
@@ -413,6 +414,7 @@ class Commandes extends Component {
                                           pathname: "/Commander",
                                           state: {
                                             id: Annonces._id,
+                                            id_cooperative:p.id_coop
                                           },
                                         }}
                                       > <button

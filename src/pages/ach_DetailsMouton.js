@@ -135,12 +135,14 @@ class DetailsMouton extends Component {
           this.setState(
             {
               Panier: favoris,
-            },
-            () => console.log("fav" + favoris.length)
+            }, () => {
+              if (this.state.Panier.length != 0) {
+                this.setState({ isInpanier: true });
+              }
+            }
+
           );
-          if (this.state.Panier.length != 0) {
-            this.setState({ isInpanier: true });
-          }
+
         });
     }
   }
@@ -261,8 +263,8 @@ class DetailsMouton extends Component {
     const shareUrl = "http://localhost:3000/DetailsMouton";
     return (
       <div>
-
-        <style>{` .product__details__text ul{ margin-top:35px;} `}</style>
+ 
+         <style>{` .product__details__text ul{ margin-top:35px;} `}</style>
         {loading ? (
           <div
             style={{
@@ -312,21 +314,21 @@ class DetailsMouton extends Component {
                       <div className="container">
                         <div id="lesImagesM" className="col-lg-12 col-md-12 mb-2">
                           <img
-                            className="col-lg-4 col-md-4" style={{height:"100px"}}
+                            className="col-lg-4 col-md-4" style={{ height: "100px" }}
                             // data-imgbigurl="Images/1.jpg"
                             src={this.state.Espece.image_boucle}
                             alt=""
                             onClick={this.onClickImageBoucle}
                           />
                           <img
-                            className="col-lg-4 col-md-4" style={{height:"100px"}}
+                            className="col-lg-4 col-md-4" style={{ height: "100px" }}
                             // data-imgbigurl="Images/1.jpg"
                             src={this.state.Espece.image_face}
                             alt=""
                             onClick={this.onClickImageFace}
                           />
                           <img
-                            className="col-lg-4 col-md-4" style={{height:"100px"}}
+                            className="col-lg-4 col-md-4" style={{ height: "100px" }}
                             // data-imgbigurl="Images/1.jpg"
                             src={this.state.Espece.image_profile}
                             alt=""
@@ -337,8 +339,8 @@ class DetailsMouton extends Component {
                           <span className=" text-success ">
                             <HiOutlineBadgeCheck className=" mr-1 fa-lg " /> Le label de l'ANOC est un gage de la qualité du produit. <br></br></span>
                           : null}
-                        <br></br>                     
-                              <div >
+                        <br></br>
+                        <div >
                           <br></br>
 
                           <div id="centrer2">
@@ -351,7 +353,7 @@ class DetailsMouton extends Component {
                               <EmailShareButton
                                 url={shareUrl + "/" + this.state.Espece._id}
                                 subject="Annonce intéressante à voir (Animal à vendre)"
-                                body={"Annonce intéressante à voir ( " + this.state.Espece.categorie +" "+ this.state.Espece.race+ " )"}
+                                body={"Annonce intéressante à voir ( " + this.state.Espece.categorie + " " + this.state.Espece.race + " )"}
                               >
                                 <EmailIcon size={36} round />
                               </EmailShareButton>{" "}
@@ -364,21 +366,21 @@ class DetailsMouton extends Component {
                               <FacebookShareButton
                                 // url= "https://youtube.com"
                                 url={shareUrl + "/" + this.state.Espece._id}
-                                quote={"Annonce intéressante à voir ( " + this.state.Espece.categorie +" "+ this.state.Espece.race+ " )"}
+                                quote={"Annonce intéressante à voir ( " + this.state.Espece.categorie + " " + this.state.Espece.race + " )"}
                               >
                                 <FacebookIcon size={36} round />
                               </FacebookShareButton>{" "}
                               <WhatsappShareButton
                                 // url= "https://youtube.com"
                                 url={shareUrl + "/" + this.state.Espece._id}
-                                title={"Annonce intéressante à voir ( " + this.state.Espece.categorie +" "+ this.state.Espece.race+ " )"}
+                                title={"Annonce intéressante à voir ( " + this.state.Espece.categorie + " " + this.state.Espece.race + " )"}
                                 separator=": "
                               >
                                 <WhatsappIcon size={36} round />
                               </WhatsappShareButton>{" "}
                               <TwitterShareButton
                                 url={shareUrl + "/" + this.state.Espece._id}
-                                title={"Annonce intéressante à voir ( " + this.state.Espece.categorie +" "+ this.state.Espece.race+ " )"}
+                                title={"Annonce intéressante à voir ( " + this.state.Espece.categorie + " " + this.state.Espece.race + " )"}
                               >
                                 <TwitterIcon size={36} round />
                               </TwitterShareButton>
@@ -508,6 +510,8 @@ class DetailsMouton extends Component {
                             pathname: "/Commander",
                             state: {
                               id: this.state.Espece._id,
+                              id_cooperative:this.state.Espece.id_cooperative
+
                             },
                           }}
                         >
@@ -540,6 +544,8 @@ class DetailsMouton extends Component {
                             pathname: "/Commander",
                             state: {
                               id: this.state.Espece._id,
+                              id_cooperative:this.state.Espece.id_cooperative
+
                             },
                           }}
                         >

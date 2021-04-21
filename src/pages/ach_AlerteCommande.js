@@ -17,7 +17,9 @@ class AlerteCommande extends Component {
       rib: '',
       tech: '',
       deadline: '',
+      reference: '',
       avance: '',
+      show: true,
       date: Date,
       redirect: false,
     };
@@ -38,7 +40,7 @@ class AlerteCommande extends Component {
 
   componentDidMount() {
     var cmd = this.props.location.state.id;
-    
+
     const myToken = `Bearer ` + localStorage.getItem("myToken");
     this.setState({
       commande: this.props.location.state.id,
@@ -58,18 +60,40 @@ class AlerteCommande extends Component {
       })
 
       .then((res) => {
+
         this.setState({ cooperative: res.data, tech: res.data.tech[0].prenom + " " + res.data.tech[0].nom, rib: res.data.rib }
-          , () => { });
-      });
+          , () => {
+            axios
 
-
-
+              .get("http://127.0.0.1:8000/api/reference/" + this.props.location.state.id.especes[0].id_espece, {
+                headers: {
+                  // "x-access-token": token, // the token is a variable which holds the token
+                  Authorization: myToken,
+                },
+              })
+              .then((res) => {
+                this.setState({ reference: res.data }, () => {
+                  this.state.commande.reference = this.state.reference;
+                });
+              })
+          })
+      })
   }
 
   handlPost(e) {
     e.preventDefault();
+    this.setState({ show: false }, () => { })
+    const swalWithBootstrapButtons = Swal.mixin({
+      customClass: {
+        confirmButton: "ml-2 btn btn-success",
+        cancelButton: " btn btn-danger",
+      },
+      buttonsStyling: false,
+    });
     const myToken = `Bearer ` + localStorage.getItem("myToken");
+
     axios
+
       .post("http://127.0.0.1:8000/api/commande", this.state.commande, {
         headers: {
           Accept: "application/json",
@@ -94,18 +118,15 @@ class AlerteCommande extends Component {
             )
             .then((res) => {
 
-              Swal.fire({
-                title: "Commande validée",
-                text: "Finalisez votre commande dans Mes Commandes",
-                icon: "success",
-                showConfirmButton: false,
-                timer: 1500,
-
-                heightAuto: false,
-              });
+              swalWithBootstrapButtons.fire(
+                "Commande validée",
+                "Finalisez votre commande dans Mes Commandes",
+                'success'
+              )
 
               this.props.history.push("./commandesParStatut");
-              window.location.reload();
+
+
 
             })
         ))
@@ -113,9 +134,9 @@ class AlerteCommande extends Component {
       })
       .catch((err) => {
         console.log(err);
+        this.setState({ show: true }, () => { })
+
       });
-
-
   }
 
   annulerCommande() {
@@ -186,7 +207,7 @@ class AlerteCommande extends Component {
                   <Carousel fade>
                     {this.state.commande.mode_paiement_choisi === "transfert" ?
                       <Carousel.Item>
-                        <img  alt="image_carousel" style={{ minHeight: "400px", maxHeight: "400px", minWidth: "100%" }} src="/Images/1p.jpg" />
+                        <img alt="image_carousel" style={{ minHeight: "400px", maxHeight: "400px", minWidth: "100%" }} src="/Images/1p.jpg" />
                       </Carousel.Item> : <Carousel.Item>
                         <img alt="image_carousel" style={{ minHeight: "400px", maxHeight: "400px", minWidth: "100%" }} src="/Images/11p.jpg" />
                       </Carousel.Item>}
@@ -227,40 +248,76 @@ class AlerteCommande extends Component {
               <div className="checkout__input bg-ligh text-danger h6 center  " style={{ marginBottom: "90px" }}>
                 Au delà de ce délai, votre commande sera annulée automatiquement !
               </div>
-              <div className="mw-75 " style={{ marginRight: "45%" }} >
-                <Link
-                  to={{
-                    pathname: "./commandesParStatut",
-                  }}
-                >
-                  <b className="text-danger float-right">
-                    <button
+              {this.state.show ?
+                <>
+                  <div className="mw-75 " style={{ marginRight: "45%" }} >
+                    <Link
+                      to={{
+                        pathname: "./commandesParStatut",
+                      }}
+                    >
+                      <b className="text-danger float-right">
+                        <button
 
-                      className=" rounded text-white bg-success py-1 px-3 "
-                      onClick={this.handlPost}
-                      style={{ fontSize: "19px", border: "none" }}
-                    > Valider la commande</button>
-                  </b></Link>
-              </div>
-              <br></br>
-              <br></br>
+                          className=" rounded text-white bg-success py-1 px-3 "
+                          onClick={this.handlPost}
+                          style={{ fontSize: "19px", border: "none" }}
+                        > Valider la commande</button>
+                      </b></Link>
+                  </div>
+                  <br></br>
+                  <br></br>
 
 
-              <div className="mw-75  " style={{ marginRight: "45%" }} >
-                   <b className="text-danger float-right ">
-                    <button
+                  <div className="mw-75  " style={{ marginRight: "45%" }} >
+                    <b className="text-danger float-right ">
+                      <button
 
-                      className=" rounded text-white bg-danger py-1 px-2 "
-                      onClick={this.annulerCommande}
-                      style={{ fontSize: "20px", border: "none" }}
-                    //  onClick={(e) => {
-                    //   this.handlePanier(e.currentTarget.id);
-                    //  }
-                    // }
-                    >{""} Annuler la commande{" "} </button>
-                  </b> 
-              </div>
+                        className=" rounded text-white bg-danger py-1 px-2 "
+                        onClick={this.annulerCommande}
+                        style={{ fontSize: "20px", border: "none" }}
+                      //  onClick={(e) => {
+                      //   this.handlePanier(e.currentTarget.id);
+                      //  }
+                      // }
+                      >{""} Annuler la commande{" "} </button>
+                    </b>
+                  </div>
+                </> : <>
+                  <div className="mw-75 " style={{ marginRight: "45%" }} >
+                    <Link
+                      to={{
+                        pathname: "./commandesParStatut",
+                      }}
+                    >
+                      <b className="text-danger float-right">
+                        <button
+                          disabled
+                          className=" rounded text-white bg-success py-1 px-3 "
+                          onClick={this.handlPost}
+                          style={{ fontSize: "19px", border: "none" }}
+                        > Valider la commande</button>
+                      </b></Link>
+                  </div>
+                  <br></br>
+                  <br></br>
 
+
+                  <div className="mw-75  " style={{ marginRight: "45%" }} >
+                    <b className="text-danger float-right ">
+                      <button
+                        disabled
+                        className=" rounded text-white bg-danger py-1 px-2 "
+                        onClick={this.annulerCommande}
+                        style={{ fontSize: "20px", border: "none" }}
+                      //  onClick={(e) => {
+                      //   this.handlePanier(e.currentTarget.id);
+                      //  }
+                      // }
+                      >{""} Annuler la commande{" "} </button>
+                    </b>
+                  </div>
+                </>}
 
             </div>
           </div>

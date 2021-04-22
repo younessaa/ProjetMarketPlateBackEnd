@@ -74,8 +74,13 @@ class Commandes extends Component {
       ],
     };
     this.paginate = this.paginate.bind(this);
+    this.local = this.local.bind(this);
+
     this.sortData = this.sortData.bind(this);
   }
+  local(annonce) {
+     localStorage.setItem("annonce", JSON.stringify(annonce ));
+   }
 
   sortData(e) {
     const sortProperty = Object.values(e)[0];
@@ -251,8 +256,6 @@ class Commandes extends Component {
             },
           })
           .then((res) => {
-            console.log(res.data)
-
             this.setState(
               { CommandesT: res.data, },
               () => {
@@ -631,7 +634,7 @@ class Commandes extends Component {
                                   }}
                                   type="submit" >
                                   {" "}
-                                  <a href="#">
+                                  <a onClick={this.local.bind(this, Annonces)}>
                                     {(Annonces.statut === "en attente de paiement avance" || Annonces.statut === "en attente de paiement du reste" || Annonces.statut === "en attente de paiement du complément") ?
                                       <CgFileAdd className="fa-lg" /> : <i className="fa fa-eye"></i>}
                                   </a>
@@ -643,9 +646,10 @@ class Commandes extends Component {
                                 || Annonces.statut === "en attente de paiement avance"
                                 || Annonces.statut === "en attente de validation avance"
                                 || Annonces.statut === "en attente de paiement du reste"
-                                || Annonces.ancien_statut === "en attente de paiement avance"
-                                || Annonces.ancien_statut === "en attente de paiement du reste"
-                                || Annonces.ancien_statut === "en attente de validation avance" ?
+                                || (Annonces.ancien_statut === "avarié_changement" &&
+                                  (Annonces.ancien_statut === "en attente de paiement avance"
+                                    || Annonces.ancien_statut === "en attente de paiement du reste"
+                                    || Annonces.ancien_statut === "en attente de validation avance")) ?
                                 <li>
                                   <a onClick={(e) => this.handelDelete(Annonces)} >
                                     <i className="fa fa-trash"></i>
@@ -656,7 +660,7 @@ class Commandes extends Component {
                           <div className=" height product__item__text p-2 text-justify" style={{ backgroundRepeat: "no-repeat", backgroundImage: Annonces.statut === "avarié" ? "linear-gradient(rgb(255,153,153), rgb(255,204,204))" : null, backgroundSize: "cover" }}>
                             {Annonces.statut === "en attente de validation reste" ?
                               <div className="float-right text-warning"><i className="fa fa-hourglass-start fa-xs" aria-hidden="true"></i>
-                                 <b>Validation en cours</b></div> : null}
+                                <b>Validation en cours</b></div> : null}
                             {Annonces.statut === "validé" ?
 
                               <div className="float-right text-success "><i className="fa fa-thumbs-o-up" aria-hidden="true"></i>

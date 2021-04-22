@@ -20,23 +20,24 @@ class DetailsCommande extends Component {
       espece_changement: '',
       etat: '',
       nom_prenom: '',
+      commandes: JSON.parse(localStorage.getItem("annonce")),
       rib: '',
       cooperative: null,
       cooperative_rib: '',
       tech: '',
       payer: '',
-      Commandes: {},
       Especes: [],
       showAvance: false,
       showSolution: false,
       showRemb: false,
       prixRemb: 0,
+      prix_transport: 0,
       especeAv: {},
       redirect: false,
       image: "",
       errors: {},
       date: Date,
-      mode_paiement_choisi: this.props.location.state.id.mode_paiement_choisi,
+      mode_paiement_choisi: JSON.parse(localStorage.getItem("annonce")).mode_paiement_choisi,
       dataUrl: "",
 
     };
@@ -47,6 +48,7 @@ class DetailsCommande extends Component {
     this.AccepteSoution = this.AccepteSoution.bind(this);
 
     this.handleValidation = this.handleValidation.bind(this);
+    this.handelDeleteEspece = this.handelDeleteEspece.bind(this);
 
     this.handelDelete = this.handelDelete.bind(this);
     this.handleChangeImage = this.handleChangeImage.bind(this);
@@ -83,7 +85,7 @@ class DetailsCommande extends Component {
       if (this.state.etat == "refuser") {
         /**    axios
              .put(
-               "http://127.0.0.1:8000/api/commande/" + this.props.location.state.id._id + "/" + this.state.especeAv._id,
+               "http://127.0.0.1:8000/api/commande/" + this.state.commandes._id + "/" + this.state.especeAv._id,
                {
                  nom: this.state.nom_prenom,
                  rib: this.state.rib,
@@ -101,7 +103,7 @@ class DetailsCommande extends Component {
       if (this.state.etat == "accepter") {
         /*    axios
               .put(
-                "http://127.0.0.1:8000/api/commande/" + this.props.location.state.id._id
+                "http://127.0.0.1:8000/api/commande/" + this.state.commandes._id
                 + "/" + this.state.especeAv._id
                 + "/" + this.state.espece_changement._id,
                 {
@@ -123,14 +125,135 @@ class DetailsCommande extends Component {
 
   }
   getEspece(espece) {
-    let esp = this.props.location.state.id.especes.filter((e) => (e.id_espece === espece._id))[0];
+    let esp = this.state.commandes.especes.filter((e) => (e.id_espece === espece._id))[0];
     return esp;
+  }
+  handelDeleteEspece(espece) {
+    const myToken = `Bearer ` + localStorage.getItem("myToken");
+    const swalWithBootstrapButtons = Swal.mixin({
+      customClass: {
+        confirmButton: "mx-3 btn btn-success",
+        cancelButton: "btn btn-danger",
+      },
+      buttonsStyling: false,
+    });
+
+    swalWithBootstrapButtons.fire({
+      title: "Etes-vous sûr?",
+      text: "Voulez-vous annuler cette espece!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "  Oui!  ",
+      cancelButtonText: "  Non!  ",
+      reverseButtons: true,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        if (this.state.commandes.especes.length === 1) {
+          axios
+            .delete(
+              "http://127.0.0.1:8000/api/commande/" + this.state.commandes._id,
+              {
+                headers: {
+                  "Authorization": myToken,
+                },
+              }
+            )
+            .then((res) => {
+              axios
+                .put(
+                  "http://127.0.0.1:8000/api/Espece/" + espece._id,
+                  {
+                    statut: "disponible",
+                  },
+                  {
+                    headers: {
+                      "Content-Type": "application/json",
+                      "Authorization": myToken,
+                    },
+                  }
+                )
+                .then((res) => {
+                  localStorage.removeItem('annonce');
+                  this.props.history.push("./commandesParStatut");
+                  swalWithBootstrapButtons.fire(
+                    'Annulation !',
+                    'Votre espece a bien été annulée',
+                    'success'
+                  )
+                  window.location.reload();
+
+
+                });
+            })
+
+
+
+        }
+        else if (this.state.commandes.especes.length > 1) {
+          axios
+            .put(
+              "http://127.0.0.1:8000/api/commande/" + this.state.commandes._id
+              + "/espece/" + espece._id,
+              {
+                headers: {
+                  "Content-Type": "application/json",
+                  "Authorization": myToken,
+                },
+              }
+            )
+            .then((res) => {
+              let all = this.state.commandes;
+              all.espece = this.state.commandes.espece.filter((f) => f._id != espece._id);
+              all.especes = this.state.commandes.especes.filter((f) => f.id_espece != espece._id);
+
+              if (all.reçu_avance == null) {
+                all.avance = (all.avance - espece.avance);
+                all.prix_total = (all.prix_total - espece.prix);
+                all.reste = (all.prix_total - all.avance);
+
+              }
+
+              if (all.reçu_avance != null) {
+                all.prix_total = (all.prix_total - espece.prix) - (- espece.avance);
+                all.reste = (all.prix_total - all.avance);
+              }
+              localStorage.setItem("annonce", JSON.stringify(all));
+
+              this.setState({
+                commandes: JSON.parse(localStorage.getItem("annonce")),
+
+              }, () => {
+
+                swalWithBootstrapButtons.fire(
+                  'Annulation !',
+                  'Votre espece a bien été annulée',
+                  'success'
+                )
+              })
+            })
+
+
+
+        }
+
+
+
+      } else if (
+        result.dismiss === Swal.DismissReason.cancel
+      ) {
+        swalWithBootstrapButtons.fire(
+          'Annulation',
+          'Espece non annulée !',
+          'error'
+        )
+      }
+    })
   }
   handelDelete = (e) => {
     e.preventDefault();
     // const token = localStorage.getItem("usertoken");
     const myToken = `Bearer ` + localStorage.getItem("myToken");
-    let espece = this.props.location.state.id.espece;
+    let espece = this.state.commandes.espece;
     const swalWithBootstrapButtons = Swal.mixin({
       customClass: {
         confirmButton: "mx-3 btn btn-success",
@@ -152,7 +275,7 @@ class DetailsCommande extends Component {
         //debut
         axios
           .delete(
-            "http://127.0.0.1:8000/api/commande/" + this.props.location.state.id._id,
+            "http://127.0.0.1:8000/api/commande/" + this.state.commandes._id,
             {
               headers: {
                 "Authorization": myToken,
@@ -206,7 +329,7 @@ class DetailsCommande extends Component {
       //paiement
       axios
         .put(
-          "http://127.0.0.1:8000/api/commande/" + this.props.location.state.id._id,
+          "http://127.0.0.1:8000/api/commande/" + this.state.commandes._id,
           {
             statut: "en attente de validation avance",
             reçu_avance: this.state.dataUrl,
@@ -225,7 +348,7 @@ class DetailsCommande extends Component {
 
           Swal.fire({
             text:
-              "Vous allez recevoir un email de validation de votre reçu sur votre email : " + this.props.location.state.id.consommateur.email,
+              "Vous allez recevoir un email de validation de votre reçu sur votre email : " + this.state.commandes.consommateur.email,
             icon: "success",
             width: 400,
             heightAuto: false,
@@ -234,12 +357,13 @@ class DetailsCommande extends Component {
             confirmButtonText: "Ok!",
           });
           this.props.history.push("/commandesParStatut");
+
         });
     }
     else if (this.state.payer === "reste") {
       axios
         .put(
-          "http://127.0.0.1:8000/api/commande/" + this.props.location.state.id._id,
+          "http://127.0.0.1:8000/api/commande/" + this.state.commandes._id,
           {
             statut: "en attente de validation reste",
             reçu_montant_restant: this.state.dataUrl,
@@ -255,7 +379,7 @@ class DetailsCommande extends Component {
         .then((res) => {
           Swal.fire({
             text:
-              "Vous allez recevoir un email de validation de votre reçu sur votre email : " + this.props.location.state.id.consommateur.email,
+              "Vous allez recevoir un email de validation de votre reçu sur votre email : " + this.state.commandes.consommateur.email,
             icon: "success",
             width: 400,
             heightAuto: false,
@@ -269,7 +393,7 @@ class DetailsCommande extends Component {
     else if (this.state.payer === "complement") {
       axios
         .put(
-          "http://127.0.0.1:8000/api/commande/" + this.props.location.state.id._id,
+          "http://127.0.0.1:8000/api/commande/" + this.state.commandes._id,
           {
             statut: "en attente de validation du complément",
             reçu_montant_complement: this.state.dataUrl,
@@ -286,7 +410,7 @@ class DetailsCommande extends Component {
         .then((res) => {
           Swal.fire({
             text:
-              "Vous allez recevoir un email de validation de votre reçu sur votre email : " + this.props.location.state.id.consommateur.email,
+              "Vous allez recevoir un email de validation de votre reçu sur votre email : " + this.state.commandes.consommateur.email,
             icon: "success",
             width: 400,
             heightAuto: false,
@@ -363,13 +487,13 @@ class DetailsCommande extends Component {
         this.setState({ etat: "accepter", espece_changement: espece }, () => { });
 
         //ancien_statut validé =>Montant du produit avarié a remboursé par l'ANOC
-        if (this.props.location.state.id.ancien_statut === "validé" && espece.prix < this.state.especeAv.prix) {
+        if (this.state.commandes.ancien_statut === "validé" && espece.prix < this.state.especeAv.prix) {
           this.setState({ prixRemb: this.state.especeAv.prix - espece.prix, showRemb: !this.state.showRemb }, () => { });
         }
         else {
             /**  axios
                .put(
-                 "http://127.0.0.1:8000/api/commande/" + this.props.location.state.id._id
+                 "http://127.0.0.1:8000/api/commande/" + this.state.commandes._id
                  + "/" + this.state.especeAv._id
                  + "/" + espece._id,
                  {
@@ -438,18 +562,18 @@ class DetailsCommande extends Component {
         this.setState({ etat: "refuser" }, () => {
           //ancien_statut en attente de paiement avance=>soustraire le montant du produit initial
 
-          if (this.props.location.state.id.ancien_statut === "en attente de paiement avance") {
+          if (this.state.commandes.ancien_statut === "en attente de paiement avance") {
             this.setState({ showRemb: !this.state.showRemb }, () => { });
           }
 
           //ancien_statut en attente de paiement du reste =>
           //Montant reste à payer = Montant reste initial - prix total produit avarié  | avance a remboursé par l'ANOC
-          if (this.props.location.state.id.ancien_statut === "en attente de paiement du reste") {
+          if (this.state.commandes.ancien_statut === "en attente de paiement du reste") {
             this.setState({ prixRemb: this.state.especeAv.avance, showRemb: !this.state.showRemb }, () => { });
           }
 
           //ancien_statut validé =>Montant du produit avarié a remboursé par l'ANOC
-          if (this.props.location.state.id.ancien_statut === "validé") {
+          if (this.state.commandes.ancien_statut === "validé") {
             this.setState({ prixRemb: this.state.especeAv.prix, showRemb: !this.state.showRemb }, () => { });
           }
         });
@@ -483,26 +607,24 @@ class DetailsCommande extends Component {
 
   }
   ModalS(espece) {
-    console.log(this.props.location.state.id.especes.filter((f) => f.id_espece == espece._id))
-    console.log(this.props.location.state.id.especes.filter((f) => f.id_espece == espece._id)[0].produits_changement.length)
 
-    if (this.props.location.state.id.especes.filter((f) => f.id_espece == espece._id)[0].produits_changement.length == 0) {
+    if (this.state.commandes.especes.filter((f) => f.id_espece == espece._id)[0].produits_changement.length == 0) {
       this.setState({ etat: "refuser", especeAv: espece }, () => {
         //ancien_statut en attente de paiement avance=>soustraire le montant du produit initial
 
-        if (this.props.location.state.id.ancien_statut === "en attente de paiement avance") {
+        if (this.state.commandes.ancien_statut === "en attente de paiement avance") {
           this.setState({ showRemb: !this.state.showRemb, showSolution: !this.state.showSolution }, () => {
           });
         }
 
         //ancien_statut en attente de paiement du reste =>
         //Montant reste à payer = Montant reste initial - prix total produit avarié  | avance a remboursé par l'ANOC
-        if (this.props.location.state.id.ancien_statut === "en attente de paiement du reste") {
+        if (this.state.commandes.ancien_statut === "en attente de paiement du reste") {
           this.setState({ prixRemb: this.state.especeAv.avance, showRemb: !this.state.showRemb }, () => { });
         }
 
         //ancien_statut validé =>Montant du produit avarié a remboursé par l'ANOC
-        if (this.props.location.state.id.ancien_statut === "validé") {
+        if (this.state.commandes.ancien_statut === "validé") {
           this.setState({ prixRemb: this.state.especeAv.prix, showRemb: !this.state.showRemb }, () => { });
         }
       })
@@ -513,10 +635,10 @@ class DetailsCommande extends Component {
       this.setState({ showRemb: false, showSolution: !this.state.showSolution, especeAv: espece }, () => {
         if (espece != undefined && espece != {} && espece != null && Object.keys(espece).length > 0) {
           tab[0] = espece;
-          tab[1] = this.props.location.state.id.especes.filter((e) => (e.id_espece == espece._id))[0];
+          tab[1] = this.state.commandes.especes.filter((e) => (e.id_espece == espece._id))[0];
           tab[2] = [];
           tab[1].produits_changement.map((e) => {
-            tab[2].push(this.props.location.state.id.espece_avariee.filter((esp) => (esp._id == e.id_espece))[0]);
+            tab[2].push(this.state.commandes.espece_avariee.filter((esp) => (esp._id == e.id_espece))[0]);
           })
         } this.setState({ Especes: tab }, () => { })
       });
@@ -554,7 +676,7 @@ class DetailsCommande extends Component {
       appendLeadingZeroes(current_datetime.getMinutes()) +
       ":" +
       appendLeadingZeroes(current_datetime.getSeconds());
-    const cmd = this.props.location.state.id;
+    const cmd = JSON.parse(localStorage.getItem("annonce"));
     var currentdate = new Date(cmd.date_creation);
     //  currentdate = Date.parse(cmd.date_creation);
     var day = currentdate.getDate();
@@ -584,17 +706,12 @@ class DetailsCommande extends Component {
     var datetime = day + "/" + month + "/" + year + " à " + hours + ":00:00";
     // this.setState({ date: datetime });
 
-    this.setState({
-      commandes: cmd,
-      image: cmd.espece.image_face,
-      date: datetime,
-    });
 
     if (!token || expiredTimeToken < formatted_date) {
       this.props.history.push("/login");
     } else {
       axios
-        .get("http://127.0.0.1:8000/api/cooperative/" + this.props.location.state.id.id_cooperative, {
+        .get("http://127.0.0.1:8000/api/cooperative/" + JSON.parse(localStorage.getItem("annonce")).id_cooperative, {
           headers: {
             // "x-access-token": token, // the token is a variable which holds the token
             "Content-Type": "application/json",
@@ -603,7 +720,11 @@ class DetailsCommande extends Component {
         })
 
         .then((res) => {
-          this.setState({ cooperative: res.data }
+
+          this.setState({
+            cooperative: res.data,
+            prix_transport: JSON.parse(localStorage.getItem("annonce")).ville_livraison === "Récupérer à la coopérative" ? 0 : res.data.Parametres.livraison.filter((v) => v.Ville_livraison === JSON.parse(localStorage.getItem("annonce")).ville_livraison)[0].prix_transport
+          }
             , () => {
               this.setState({ cooperative_rib: this.state.cooperative.rib, tech: this.state.cooperative.tech[0].prenom + " " + this.state.cooperative.tech[0].nom });
               axios
@@ -700,22 +821,19 @@ class DetailsCommande extends Component {
   }
 
   render() {
-    //.card
-
-    let prix = this.props.location.state.id.espece.reduce(function (prev, cur) { return prev - (- cur.prix); }, 0)
-
     if (this.state.redirect) {
       return <Redirect to="./commandesParStatut" />;
     }
 
-    const commandes = this.props.location.state.id;
+    const commandes = this.state.commandes;
+     let prix = this.state.commandes.espece.reduce(function (prev, cur) { return prev - (- cur.prix); }, 0)
+    let prix_transport = this.state.prix_transport;
 
     return (
       <div>
         <style>{`.btn-link {  color:white} .btn-link:hover {color:white;} .card { background-color: #fafafa !important } .container {max-width: 90%;}  `}</style>
         <div className="container">
-
-          <h3>Détails commande  {this.props.location.state.id._id}</h3>
+          <h3>Détails commande  {this.state.commandes._id}</h3>
           <br></br>
           <div>
             <div id="accordion">
@@ -841,13 +959,13 @@ class DetailsCommande extends Component {
                                         </a>
                                       </Link>
                                     </li>
-                                    <li>
-                                      <Link to={`/DetailsMouton/${esp._id}`}>
-                                        <a href="#">
+                                    {commandes.statut === "en attente de paiement avance" || commandes.statut === "en attente de validation avance" || commandes.statut === "en attente de paiement du reste" ?
+                                      <li>
+                                        <a type="button" onClick={this.handelDeleteEspece.bind(this, esp)}>
                                           <i className="fa fa-trash"></i>
                                         </a>
-                                      </Link>
-                                    </li>
+                                      </li>
+                                      : null}
                                   </ul>
                                 </div>
                                 {esp.anoc ?
@@ -938,14 +1056,13 @@ class DetailsCommande extends Component {
                     <div id="centrer" className="col-lg-12 col-md-6">
                       <div className="shoping__checkout mt-2 pb-0">
                         <br></br>
-
                         <div className="shoping__checkout mt-2 pb-0">
                           <ul>
                             <li>
                               Prix Net <span> {prix} Dhs</span>
                             </li>
                             <li style={{ borderBottomStyle: "dashed", borderColor: "black" }}>
-                              Prix Transport <span> {commandes.prix_total - prix}  Dhs    </span>
+                              Prix Transport <span> {prix_transport}  Dhs    </span>
                             </li>
 
                             <li>
@@ -1344,12 +1461,12 @@ class DetailsCommande extends Component {
                   </div> : null}
               </> : (this.state.showRemb == true ? <div>
 
-                {this.props.location.state.id.especes.filter((f) => f.id_espece == this.state.especeAv._id)[0].produits_changement.length == 0 ?
+                {this.state.commandes.especes.filter((f) => f.id_espece == this.state.especeAv._id)[0].produits_changement.length == 0 ?
                   <h4 className="text-danger mb-5 mt-2"> Pas de produits de changements proposés.</h4>
                   :
                   <h4 className="text-danger mb-5 mt-2"> Vous avez refuse tous les produits de changements proposés.</h4>
                 }
-                {this.props.location.state.id.ancien_statut !== "en attente de paiement avance" ?
+                {this.state.commandes.ancien_statut !== "en attente de paiement avance" ?
                   <>
                     <h5>Dans ce cas là, nous procederons à  votre remboursement : <span className="text-danger">{this.state.prixRemb} Dhs</span></h5>
                     <form className="my-5 ">

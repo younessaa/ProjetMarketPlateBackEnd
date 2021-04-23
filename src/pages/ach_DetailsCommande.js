@@ -5,6 +5,7 @@ import { FaClipboardCheck } from 'react-icons/fa';
 import { GiWeight, GiSheep, GiNautilusShell } from 'react-icons/gi';
 import { BsFileEarmarkPlus, BsTrash } from 'react-icons/bs'
 import { BiTrash } from 'react-icons/bi'
+import { Prompt } from 'react-router'
 
 import { HiOutlineBadgeCheck } from 'react-icons/hi';
 import { Modal, Button } from 'react-bootstrap';
@@ -16,6 +17,9 @@ class DetailsCommande extends Component {
     super(props);
     // let redirect = false;
     this.state = {
+      ids: localStorage.getItem("ids") ? (Array.isArray(localStorage.getItem("ids"))?localStorage.getItem("ids"):
+      localStorage.getItem("ids").split(",")) : [],
+      reponses: localStorage.getItem("reponses") ?  JSON.parse(localStorage.getItem("reponses")) : [],
       connectedUserEmail: "",
       espece_changement: '',
       etat: '',
@@ -39,6 +43,7 @@ class DetailsCommande extends Component {
       date: Date,
       mode_paiement_choisi: JSON.parse(localStorage.getItem("annonce")).mode_paiement_choisi,
       dataUrl: "",
+      shouldBlockNavigation: true,
 
     };
     this.onChange = this.onChange.bind(this);
@@ -55,6 +60,19 @@ class DetailsCommande extends Component {
     this.handlePut = this.handlePut.bind(this);
     this.handlPost = this.handlPost.bind(this);
 
+  }
+  componentDidUpdate = () => {
+   
+  
+    if (this.state.ids.length == 0 ||
+      this.state.ids.length == this.state.commandes.espece.filter((e) => e.statut == "produit avarié").length
+      || this.state.commandes.espece.filter((e) => e.statut == "produit avarié").length == 0) {
+      window.onbeforeunload = undefined 
+   
+    } else {
+      window.onbeforeunload = () => true
+
+    }
   }
   handleValidation() {
     let errors = {};
@@ -82,8 +100,9 @@ class DetailsCommande extends Component {
     const myToken = `Bearer ` + localStorage.getItem("myToken");
     if (this.handleValidation()) {
       //rembourssement
+    
       if (this.state.etat == "refuser") {
-        /**    axios
+            axios
              .put(
                "http://127.0.0.1:8000/api/commande/" + this.state.commandes._id + "/" + this.state.especeAv._id,
                {
@@ -97,11 +116,24 @@ class DetailsCommande extends Component {
                  },
                }
              )
-             .then((res) => { })*/
+             .then((res) => {  this.state.ids.push(this.state.especeAv._id)
+              this.state.reponses.push(res.data)
+              localStorage.setItem("ids", this.state.ids)
+              localStorage.setItem("reponses", JSON.stringify(this.state.reponses))
+              this.setState({ showSolution: !this.state.showSolution }, () => {
+                Swal.fire({
+                  title: "Changer avec succès ",
+                  icon: "success",
+                  width: 400,
+                  heightAuto: false,
+                  timer: 1500,
+                  showConfirmButton: false,
+    
+                })} )})
       }
       //rembourssement pour changement (old.prix>new.prix)
       if (this.state.etat == "accepter") {
-        /*    axios
+           axios
               .put(
                 "http://127.0.0.1:8000/api/commande/" + this.state.commandes._id
                 + "/" + this.state.especeAv._id
@@ -117,7 +149,22 @@ class DetailsCommande extends Component {
                   },
                 }
               )
-              .then((res) => { })*/
+              .then((res) => { 
+                 this.state.ids.push(this.state.especeAv._id)
+              this.state.reponses.push(res.data)
+              localStorage.setItem("ids", this.state.ids)
+              localStorage.setItem("reponses", JSON.stringify(this.state.reponses))
+              this.setState({ showSolution: !this.state.showSolution }, () => {
+                Swal.fire({
+                  title: "Changer avec succès ",
+                  icon: "success",
+                  width: 400,
+                  heightAuto: false,
+                  timer: 1500,
+                  showConfirmButton: false,
+    
+                })} )})
+              
       }
 
     }
@@ -483,6 +530,7 @@ class DetailsCommande extends Component {
       cancelButtonText: "  Non !  ",
       reverseButtons: true,
     }).then((result) => {
+
       if (result.isConfirmed) {
         this.setState({ etat: "accepter", espece_changement: espece }, () => { });
 
@@ -491,35 +539,46 @@ class DetailsCommande extends Component {
           this.setState({ prixRemb: this.state.especeAv.prix - espece.prix, showRemb: !this.state.showRemb }, () => { });
         }
         else {
-            /**  axios
-               .put(
-                 "http://127.0.0.1:8000/api/commande/" + this.state.commandes._id
-                 + "/" + this.state.especeAv._id
-                 + "/" + espece._id,
-                 {
-                   nom: this.state.nom_prenom,
-                   rib: this.state.rib,
-                 },
-                 {
-                   headers: {
-                     "Content-Type": "application/json",
-                     "Authorization": myToken,
-                   },
-                 }
-               )
-               .then((res) => { })
-       
-           }*/}
-        Swal.fire({
-          title: "change avec succès ",
-          icon: "success",
-          width: 400,
-          heightAuto: false,
-          timer: 1500,
-          showConfirmButton: false,
+          axios
+            .put(
+              "http://127.0.0.1:8000/api/commande/" + this.state.commandes._id
+              + "/" + this.state.especeAv._id
+              + "/" + espece._id,
+              {
+                nom: this.state.nom_prenom,
+                rib: this.state.rib,
+              },
+              {
+                headers: {
+                  "Content-Type": "application/json",
+                  "Authorization": myToken,
+                },
+              }
+            )
+            .then((res) => {
 
-        });
+              this.state.ids.push(this.state.especeAv._id)
+              this.state.reponses.push(res.data)
+              localStorage.setItem("ids", this.state.ids)
+              localStorage.setItem("reponses", JSON.stringify(this.state.reponses))
+
+
+              this.setState({ showSolution: !this.state.showSolution }, () => {
+              });
+            })
+          Swal.fire({
+            title: "change avec succès ",
+            icon: "success",
+            width: 400,
+            heightAuto: false,
+            timer: 1500,
+            showConfirmButton: false,
+
+          });
+        }
       }
+
+
       else if (
         result.dismiss === Swal.DismissReason.cancel
       ) {
@@ -559,11 +618,45 @@ class DetailsCommande extends Component {
       reverseButtons: true,
     }).then((result) => {
       if (result.isConfirmed) {
+        //code 
+        //fin code
         this.setState({ etat: "refuser" }, () => {
           //ancien_statut en attente de paiement avance=>soustraire le montant du produit initial
+          const myToken = `Bearer ` + localStorage.getItem("myToken");
 
           if (this.state.commandes.ancien_statut === "en attente de paiement avance") {
-            this.setState({ showRemb: !this.state.showRemb }, () => { });
+            this.setState({ showRemb: !this.state.showRemb }, () => {
+              axios
+                .put(
+                  "http://127.0.0.1:8000/api/commande/" +
+                  this.state.commandes._id + "/" + this.state.especeAv._id,
+                  {
+                    nom: this.state.nom_prenom,
+                    rib: this.state.rib,
+                  },
+                  {
+                    headers: {
+                      "Content-Type": "application/json",
+                      "Authorization": myToken,
+                    },
+                  }
+                )
+                .then((res) => {
+                  this.state.ids.push(this.state.especeAv._id)
+                  this.state.reponses.push(res.data)
+                  localStorage.setItem("ids", this.state.ids)
+                  localStorage.setItem("reponses", JSON.stringify(this.state.reponses))
+                  Swal.fire({
+                    title: "Annule avec succès ",
+                    icon: "success",
+                    width: 400,
+                    heightAuto: false,
+                    timer: 1500,
+                    showConfirmButton: false,
+
+                  });
+                })
+            });
           }
 
           //ancien_statut en attente de paiement du reste =>
@@ -577,15 +670,7 @@ class DetailsCommande extends Component {
             this.setState({ prixRemb: this.state.especeAv.prix, showRemb: !this.state.showRemb }, () => { });
           }
         });
-        Swal.fire({
-          title: "Annule avec succès ",
-          icon: "success",
-          width: 400,
-          heightAuto: false,
-          timer: 1500,
-          showConfirmButton: false,
 
-        });
       } else if (
         result.dismiss === Swal.DismissReason.cancel
       ) {
@@ -631,7 +716,6 @@ class DetailsCommande extends Component {
     }
     else {
       let tab = [];
-
       this.setState({ showRemb: false, showSolution: !this.state.showSolution, especeAv: espece }, () => {
         if (espece != undefined && espece != {} && espece != null && Object.keys(espece).length > 0) {
           tab[0] = espece;
@@ -642,6 +726,7 @@ class DetailsCommande extends Component {
           })
         } this.setState({ Especes: tab }, () => { })
       });
+
     }
 
   }
@@ -826,749 +911,758 @@ class DetailsCommande extends Component {
     }
 
     const commandes = this.state.commandes;
-     let prix = this.state.commandes.espece.reduce(function (prev, cur) { return prev - (- cur.prix); }, 0)
+    let prix = this.state.commandes.espece.reduce(function (prev, cur) { return prev - (- cur.prix); }, 0)
     let prix_transport = this.state.prix_transport;
 
     return (
-      <div>
-        <style>{`.btn-link {  color:white} .btn-link:hover {color:white;} .card { background-color: #fafafa !important } .container {max-width: 90%;}  `}</style>
-        <div className="container">
-          <h3>Détails commande  {this.state.commandes._id}</h3>
-          <br></br>
-          <div>
-            <div id="accordion">
+      <React.Fragment>
+        <Prompt
+          when={this.state.shouldBlockNavigation}
+          message='You have unsaved changes, are you sure you want to leave?'
+        />
+        <div>
+          <style>{`.btn-link {  color:white} .btn-link:hover {color:white;} .card { background-color: #fafafa !important } .container {max-width: 90%;}  `}</style>
+          <div className="container">
+            <h3>Détails commande  {this.state.commandes._id}{" " + this.state.commandes.ancien_statut}</h3>
+            <br></br>
+            <div>
+              <div id="accordion">
 
-              {commandes.statut === "avarié" ?
-                <div className="card">
-                  <div className="card-header p-0" style={{ backgroundColor: "#009141" }} id="headingfour">
-                    <h5 className="mb-0">
-                      <button className="btn btn-link collapsed" data-toggle="collapse" data-target="#collapsefour" aria-expanded="true" aria-controls="collapsefour">
-                        <h5 style={{ color: "white" }}><FaClipboardCheck className="mb-2" /> {" "}Motif de l'annulation
+                {commandes.statut === "avarié" && this.state.ids.length <
+                  commandes.espece.filter((e) => e.statut == "produit avarié").length
+                  ?
+                  <div className="card">
+                    <div className="card-header p-0" style={{ backgroundColor: "#009141" }} id="headingfour">
+                      <h5 className="mb-0">
+                        <button className="btn btn-link collapsed" data-toggle="collapse" data-target="#collapsefour" aria-expanded="true" aria-controls="collapsefour">
+                          <h5 style={{ color: "white" }}><FaClipboardCheck className="mb-2" /> {" "}Motif de l'annulation
                       </h5>  </button>
-                    </h5>
-                  </div>
-                  <div id="collapsefour" className="collapse show" aria-labelledby="headingfour" data-parent="#accordion">
-                    <div className="card-body">
-
-                      <br></br>
-
-                      <ul>
-                        <div className="row">
-                          {commandes.espece.filter((e) => e.statut == "produit avarié").map((Annonces) =>
-                          (<div className="col-lg-3  col-sm-6">
-                            <span className="text-danger">
-                              <i className="fa fa-long-arrow-right" aria-hidden="true"> </i>
-                              <b>{this.getEspece(Annonces).motif_annulation}</b> </span>
-                            <div id="anonce" className="product__item"
-                              style={{ backgroundRepeat: "no-repeat", backgroundImage: "linear-gradient(rgb(255,153,153), rgb(255,204,204))", backgroundSize: "cover" }}
-                            >
-                              <div
-                                className="product__item__pic set-bg"
-                                data-setbg={Annonces.images}
-                              >
-                                <img
-                                  src={Annonces.image_face}
-                                  className="product__item__pic set-bg"
-                                />
-
-                                <ul className="product__item__pic__hover">
-                                  <li>
-                                    <Link to={`/DetailsMouton/${Annonces._id}`}>
-                                      <a href="#">
-                                        <i className="fa fa-eye"></i>
-                                      </a>
-                                    </Link>
-                                  </li>
-                                </ul>
-                              </div>
-                              {Annonces.anoc ?
-                                <h1 style={{ borderRadius: "0% 0% 0% 40%", fontSize: "14px" }} className=" badge badge-success py-1 w-100  ">
-                                  <HiOutlineBadgeCheck className=" mr-1 fa-lg " />
-                                  <span>Labélisé ANOC</span>  </h1>
-                                :
-                                <span className="badge pt-3 w-100  mt-1  " >{"  "}</span>
-                              }
-                              <div className="product__item__text p-2 text-justify"
-                              >
-                                <h6 className=""><b>№ Boucle</b> : {Annonces.boucle}</h6>
-                                <h6 className=""><b>Categorie</b> : {Annonces.categorie}</h6>
-                                <h6 className=""><b>Race :</b> {Annonces.race}</h6>
-                                <h6 className=""><b>Poids : </b>{Annonces.poids} Kg</h6>
-                                <h6 className=""><b>Age :</b> {Annonces.age} mois</h6>
-                                <h6 className=""><b>Localisation :</b> {Annonces.localisation}</h6>
-                                <h5 className=" text-danger  ">
-                                  <i className="fa fa-usd" aria-hidden="true"></i>
-                                  {" "}
-                                  {Annonces.prix + "  Dhs"}
-                                </h5>
-                                <div className="row mt-3">
-                                  <div className="col-2">{" "}</div>
-                                  <button type="button" onClick={this.ModalS.bind(this, Annonces)} className="col-8 py-1 btn btn-danger">Solutions proposées</button>
-                                  <div className="col-2">{" "}</div>
-                                </div>
-                              </div> </div>
-
-                          </div>
-
-                          ))}
-
-                        </div>
-
-                      </ul>
+                      </h5>
                     </div>
-                  </div>
-                </div>
-                : null}
-              <div className="card">
-                <div className="card-header p-0" style={{ backgroundColor: "#009141" }} id="headingOne">
-                  <h5 className="mb-0">
-                    <button className="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
-                      <h5 style={{ color: "white" }}><FaClipboardCheck className="mb-2" /> {" "}  Détails produit </h5>  </button>
+                    <div id="collapsefour" className="collapse show" aria-labelledby="headingfour" data-parent="#accordion">
+                      <div className="card-body">
 
-                  </h5>
-                </div>
+                        <br></br>
 
-                <div id="collapseOne" className="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
-                  <div className="card-body">
-                    <div className="row">
-                      {commandes.espece.map((esp) =>
-                        <div className="col-lg-6  col-sm-6 mb-4">
-
+                        <ul>
                           <div className="row">
-                            <div className="col-lg-6  col-sm-6 pr-0 border-0" style={{ height: "220px" }}>
-
-                              <div className="product__item">
+                            {commandes.espece.filter((e) => e.statut == "produit avarié" && !this.state.ids.includes(e._id)).map((Annonces) =>
+                            (<div className="col-lg-3  col-sm-6">
+                              <span className="text-danger">
+                                <i className="fa fa-long-arrow-right" aria-hidden="true"> </i>
+                                <b>{this.getEspece(Annonces).motif_annulation}</b> </span>
+                              <div id="anonce" className="product__item"
+                                style={{ backgroundRepeat: "no-repeat", backgroundImage: "linear-gradient(rgb(255,153,153), rgb(255,204,204))", backgroundSize: "cover" }}
+                              >
                                 <div
                                   className="product__item__pic set-bg"
-                                  style={esp.anoc !== null ? { height: "193px" } : { height: 220 }}
-                                  data-setbg={esp.images}
+                                  data-setbg={Annonces.images}
                                 >
-
                                   <img
-                                    src={esp.image_face}
-                                    style={esp.anoc !== null ? { height: "193px" } : { height: "220px" }}
+                                    src={Annonces.image_face}
                                     className="product__item__pic set-bg"
                                   />
 
                                   <ul className="product__item__pic__hover">
-
                                     <li>
-                                      <Link to={`/DetailsMouton/${esp._id}`}>
+                                      <Link to={`/DetailsMouton/${Annonces._id}`}>
                                         <a href="#">
                                           <i className="fa fa-eye"></i>
                                         </a>
                                       </Link>
                                     </li>
-                                    {commandes.statut === "en attente de paiement avance" || commandes.statut === "en attente de validation avance" || commandes.statut === "en attente de paiement du reste" ?
-                                      <li>
-                                        <a type="button" onClick={this.handelDeleteEspece.bind(this, esp)}>
-                                          <i className="fa fa-trash"></i>
-                                        </a>
-                                      </li>
-                                      : null}
                                   </ul>
                                 </div>
-                                {esp.anoc ?
+                                {Annonces.anoc ?
                                   <h1 style={{ borderRadius: "0% 0% 0% 40%", fontSize: "14px" }} className=" badge badge-success py-1 w-100  ">
                                     <HiOutlineBadgeCheck className=" mr-1 fa-lg " />
                                     <span>Labélisé ANOC</span>  </h1>
                                   :
-                                  <span className="badge pt-3 w-100  mt-1  ">{"  "}</span>}
-
-                              </div>
+                                  <span className="badge pt-3 w-100  mt-1  " >{"  "}</span>
+                                }
+                                <div className="product__item__text p-2 text-justify"
+                                >
+                                  <h6 className=""><b>№ Boucle</b> : {Annonces.boucle}</h6>
+                                  <h6 className=""><b>Categorie</b> : {Annonces.categorie}</h6>
+                                  <h6 className=""><b>Race :</b> {Annonces.race}</h6>
+                                  <h6 className=""><b>Poids : </b>{Annonces.poids} Kg</h6>
+                                  <h6 className=""><b>Age :</b> {Annonces.age} mois</h6>
+                                  <h6 className=""><b>Localisation :</b> {Annonces.localisation}</h6>
+                                  <h5 className=" text-danger  ">
+                                    <i className="fa fa-usd" aria-hidden="true"></i>
+                                    {" "}
+                                    {Annonces.prix + "  Dhs"}
+                                  </h5>
+                                  <div className="row mt-3">
+                                    <div className="col-2">{" "}</div>
+                                    <button type="button" onClick={this.ModalS.bind(this, Annonces)} className="col-8 py-1 btn btn-danger">Solutions proposées</button>
+                                    <div className="col-2">{" "}</div>
+                                  </div>
+                                </div> </div>
 
                             </div>
-                            <div className="col-lg-6  col-sm-6 border" style={{ height: "220px", backgroundRepeat: "no-repeat", backgroundImage: esp.statut === "produit avarié" ? "linear-gradient(rgb(255,153,153), rgb(255,204,204))" : null, backgroundSize: "cover" }}>
-                              <div className="product__item__text p-2 text-justify">
-                                <h6 className=""><b>№ Boucle</b> : {esp.boucle}</h6>
-                                <h6 className=""><b>Categorie</b> : {esp.categorie}</h6>
-                                <h6 className=""><b>Race :</b> {esp.race}</h6>
-                                <h6 className=""><b>Poids : </b>{esp.poids} Kg</h6>
-                                <h6 className=""><b>Age :</b> {esp.age} mois</h6>
-                                <h6 className=""><b>Localisation :</b> {esp.localisation}</h6>
 
+                            ))}
 
-                                <h5 className=" text-danger mt-4">
-                                  <i className="fa fa-usd" aria-hidden="true"></i>
-                                  {" "}
-                                  {esp.prix + "  Dhs"}
-                                </h5>
-                              </div>
-                            </div>
                           </div>
 
-                        </div>
-                      )}
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                  : null}
+                <div className="card">
+                  <div className="card-header p-0" style={{ backgroundColor: "#009141" }} id="headingOne">
+                    <h5 className="mb-0">
+                      <button className="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                        <h5 style={{ color: "white" }}><FaClipboardCheck className="mb-2" /> {" "}  Détails produit </h5>  </button>
+
+                    </h5>
+                  </div>
+
+                  <div id="collapseOne" className="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
+                    <div className="card-body">
+                      <div className="row">
+                        {commandes.espece.map((esp) =>
+                          <div className="col-lg-6  col-sm-6 mb-4">
+
+                            <div className="row">
+                              <div className="col-lg-6  col-sm-6 pr-0 border-0" style={{ height: "220px" }}>
+
+                                <div className="product__item">
+                                  <div
+                                    className="product__item__pic set-bg"
+                                    style={esp.anoc !== null ? { height: "193px" } : { height: 220 }}
+                                    data-setbg={esp.images}
+                                  >
+
+                                    <img
+                                      src={esp.image_face}
+                                      style={esp.anoc !== null ? { height: "193px" } : { height: "220px" }}
+                                      className="product__item__pic set-bg"
+                                    />
+
+                                    <ul className="product__item__pic__hover">
+
+                                      <li>
+                                        <Link to={`/DetailsMouton/${esp._id}`}>
+                                          <a href="#">
+                                            <i className="fa fa-eye"></i>
+                                          </a>
+                                        </Link>
+                                      </li>
+                                      {commandes.statut === "en attente de paiement avance" || commandes.statut === "en attente de validation avance" || commandes.statut === "en attente de paiement du reste" ?
+                                        <li>
+                                          <a type="button" onClick={this.handelDeleteEspece.bind(this, esp)}>
+                                            <i className="fa fa-trash"></i>
+                                          </a>
+                                        </li>
+                                        : null}
+                                    </ul>
+                                  </div>
+                                  {esp.anoc ?
+                                    <h1 style={{ borderRadius: "0% 0% 0% 40%", fontSize: "14px" }} className=" badge badge-success py-1 w-100  ">
+                                      <HiOutlineBadgeCheck className=" mr-1 fa-lg " />
+                                      <span>Labélisé ANOC</span>  </h1>
+                                    :
+                                    <span className="badge pt-3 w-100  mt-1  ">{"  "}</span>}
+
+                                </div>
+
+                              </div>
+                              <div className="col-lg-6  col-sm-6 border" style={{ height: "220px", backgroundRepeat: "no-repeat", backgroundImage: esp.statut === "produit avarié" ? "linear-gradient(rgb(255,153,153), rgb(255,204,204))" : null, backgroundSize: "cover" }}>
+                                <div className="product__item__text p-2 text-justify">
+                                  <h6 className=""><b>№ Boucle</b> : {esp.boucle}</h6>
+                                  <h6 className=""><b>Categorie</b> : {esp.categorie}</h6>
+                                  <h6 className=""><b>Race :</b> {esp.race}</h6>
+                                  <h6 className=""><b>Poids : </b>{esp.poids} Kg</h6>
+                                  <h6 className=""><b>Age :</b> {esp.age} mois</h6>
+                                  <h6 className=""><b>Localisation :</b> {esp.localisation}</h6>
+
+
+                                  <h5 className=" text-danger mt-4">
+                                    <i className="fa fa-usd" aria-hidden="true"></i>
+                                    {" "}
+                                    {esp.prix + "  Dhs"}
+                                  </h5>
+                                </div>
+                              </div>
+                            </div>
+
+                          </div>
+                        )}
+
+                      </div>
+
+
+
 
                     </div>
-
-
-
-
                   </div>
                 </div>
-              </div>
-              <div className="card">
-                <div className="card-header p-0" style={{ backgroundColor: "#009141" }} id="headingTwo">
-                  <h5 className="mb-0">
-                    <button className="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                      <h5 style={{ color: "white" }}><FaClipboardCheck className="mb-2" /> {" "}  Détails livraison </h5>  </button>
-                  </h5>
+                <div className="card">
+                  <div className="card-header p-0" style={{ backgroundColor: "#009141" }} id="headingTwo">
+                    <h5 className="mb-0">
+                      <button className="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                        <h5 style={{ color: "white" }}><FaClipboardCheck className="mb-2" /> {" "}  Détails livraison </h5>  </button>
+                    </h5>
+                  </div>
+                  <div className="">
+                    <div id="collapseTwo" className="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
+                      <div className="card-body">
+                        <div id="centrer" className="col-lg-12 col-md-6">
+                          <div className="shoping__checkout mt-2 pb-0">
+                            <ul>
+                              <li>
+                                <i className="fa fa-calendar-o" aria-hidden="true"></i>
+                                {" "}Date de livraison :<b style={{ fontWeight: "normal" }}>{" "}{commandes.date_de_livraison.replace(/-/g, " / ")} </b>
+                              </li>
+                              <li>
+                                <i className="fa fa-map-o" aria-hidden="true"></i>
+                                {" "}Ville de livraison : <b style={{ fontWeight: "normal" }}>{" " + commandes.ville_livraison}</b>  </li>
+                              <li>
+                                <i className="fa fa-map-marker" aria-hidden="true"></i>
+                                {" "}Adresse de livraison : <b style={{ fontWeight: "normal" }}>{commandes.adresse_domicile ? commandes.adresse_domicile : commandes.point_relais}</b>  </li>
+                            </ul>
+                          </div>
+                          <br></br>
+
+
+
+
+
+                        </div>
+                      </div></div></div>
                 </div>
-                <div className="">
-                  <div id="collapseTwo" className="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
+                <div className="card">
+                  <div className="card-header p-0" style={{ backgroundColor: "#009141" }} id="headingThree">
+                    <h5 className="mb-0">
+                      <button className="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+
+                        <h5 style={{ color: "white" }}><FaClipboardCheck className="mb-2" /> {" "}  Détails prix</h5>  </button>
+
+                    </h5>
+                  </div>
+                  <div id="collapseThree" className="collapse" aria-labelledby="headingThree" data-parent="#accordion">
                     <div className="card-body">
                       <div id="centrer" className="col-lg-12 col-md-6">
                         <div className="shoping__checkout mt-2 pb-0">
-                          <ul>
-                            <li>
-                              <i className="fa fa-calendar-o" aria-hidden="true"></i>
-                              {" "}Date de livraison :<b style={{ fontWeight: "normal" }}>{" "}{commandes.date_de_livraison.replace(/-/g, " / ")} </b>
-                            </li>
-                            <li>
-                              <i className="fa fa-map-o" aria-hidden="true"></i>
-                              {" "}Ville de livraison : <b style={{ fontWeight: "normal" }}>{" " + commandes.ville_livraison}</b>  </li>
-                            <li>
-                              <i className="fa fa-map-marker" aria-hidden="true"></i>
-                              {" "}Adresse de livraison : <b style={{ fontWeight: "normal" }}>{commandes.adresse_domicile ? commandes.adresse_domicile : commandes.point_relais}</b>  </li>
-                          </ul>
-                        </div>
-                        <br></br>
-
-
-
-
-
-                      </div>
-                    </div></div></div>
-              </div>
-              <div className="card">
-                <div className="card-header p-0" style={{ backgroundColor: "#009141" }} id="headingThree">
-                  <h5 className="mb-0">
-                    <button className="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-
-                      <h5 style={{ color: "white" }}><FaClipboardCheck className="mb-2" /> {" "}  Détails prix</h5>  </button>
-
-                  </h5>
-                </div>
-                <div id="collapseThree" className="collapse" aria-labelledby="headingThree" data-parent="#accordion">
-                  <div className="card-body">
-                    <div id="centrer" className="col-lg-12 col-md-6">
-                      <div className="shoping__checkout mt-2 pb-0">
-                        <br></br>
-                        <div className="shoping__checkout mt-2 pb-0">
-                          <ul>
-                            <li>
-                              Prix Net <span> {prix} Dhs</span>
-                            </li>
-                            <li style={{ borderBottomStyle: "dashed", borderColor: "black" }}>
-                              Prix Transport <span> {prix_transport}  Dhs    </span>
-                            </li>
-
-                            <li>
-                              Prix Total{" "}
-                              <span>   {commandes.prix_total}Dhs</span>
-                            </li>
-                            {commandes.statut === "en attente de paiement avance" ?
-                              <li className="text-danger">
-                                Avance a payer{" "}
-                                <span>   {commandes.avance}Dhs</span>
-                              </li> : null}
-                            {commandes.statut === "en attente de validation avance" ?
+                          <br></br>
+                          <div className="shoping__checkout mt-2 pb-0">
+                            <ul>
                               <li>
-                                Avance deja payee{" "}
-                                <span>   {commandes.avance}Dhs</span>
-                              </li> : null}
-                            {commandes.statut === "en attente de paiement du reste" ?
-                              <>
-                                <li>
-                                  Avance deja payee{" "}
-                                  <span>   {commandes.avance}Dhs</span>
-                                </li>
-                                <li className="text-danger">
-                                  Reste a payer{" "}
-                                  <span>   {commandes.avance}Dhs</span>
-                                </li></> : null}
+                                Prix Net <span> {prix} Dhs</span>
+                              </li>
+                              <li style={{ borderBottomStyle: "dashed", borderColor: "black" }}>
+                                Prix Transport <span> {prix_transport}  Dhs    </span>
+                              </li>
 
-                            {commandes.statut === "en attente de validation reste" || commandes.statut === "validé" ?
-                              <>
-                                <li>
-                                  Avance deja payee{" "}
-                                  <span>   {commandes.avance}Dhs</span>
-                                </li>
-                                <li>
-                                  Reste deja payee{" "}
-                                  <span>   {commandes.avance}Dhs</span>
-                                </li></> : null}
-                            {commandes.statut === "en attente de paiement du complément" ?
-                              <>
-                                <li>
-                                  Avance deja payee{" "}
-                                  <span>   {commandes.avance}Dhs</span>
-                                </li>
-                                <li>
-                                  Reste deja payee{" "}
-                                  <span>   {commandes.avance}Dhs</span>
-                                </li>
+                              <li>
+                                Prix Total{" "}
+                                <span>   {commandes.prix_total}Dhs</span>
+                              </li>
+                              {commandes.statut === "en attente de paiement avance" ?
                                 <li className="text-danger">
-                                  Complement a payer{" "}
+                                  Avance a payer{" "}
                                   <span>   {commandes.avance}Dhs</span>
-                                </li></> : null}
-                            {commandes.statut === "en attente de validation du complément" ?
-                              <>
+                                </li> : null}
+                              {commandes.statut === "en attente de validation avance" ?
                                 <li>
                                   Avance deja payee{" "}
                                   <span>   {commandes.avance}Dhs</span>
-                                </li>
-                                <li>
-                                  Reste deja payee{" "}
-                                  <span>   {commandes.avance}Dhs</span>
-                                </li>
-                                <li>
-                                  Complement deja payee{" "}
-                                  <span>   {commandes.avance}Dhs</span>
-                                </li></> : null}
-                            {commandes.statut === "validé" ?
-                              <li className=" text-success">
-                                <i className="fa fa-exclamation-circle" aria-hidden="true"></i>
-                                {" "}  Commande validee
+                                </li> : null}
+                              {commandes.statut === "en attente de paiement du reste" ?
+                                <>
+                                  <li>
+                                    Avance deja payee{" "}
+                                    <span>   {commandes.avance}Dhs</span>
+                                  </li>
+                                  <li className="text-danger">
+                                    Reste a payer{" "}
+                                    <span>   {commandes.avance}Dhs</span>
+                                  </li></> : null}
+
+                              {commandes.statut === "en attente de validation reste" || commandes.statut === "validé" ?
+                                <>
+                                  <li>
+                                    Avance deja payee{" "}
+                                    <span>   {commandes.avance}Dhs</span>
+                                  </li>
+                                  <li>
+                                    Reste deja payee{" "}
+                                    <span>   {commandes.avance}Dhs</span>
+                                  </li></> : null}
+                              {commandes.statut === "en attente de paiement du complément" ?
+                                <>
+                                  <li>
+                                    Avance deja payee{" "}
+                                    <span>   {commandes.avance}Dhs</span>
+                                  </li>
+                                  <li>
+                                    Reste deja payee{" "}
+                                    <span>   {commandes.avance}Dhs</span>
+                                  </li>
+                                  <li className="text-danger">
+                                    Complement a payer{" "}
+                                    <span>   {commandes.avance}Dhs</span>
+                                  </li></> : null}
+                              {commandes.statut === "en attente de validation du complément" ?
+                                <>
+                                  <li>
+                                    Avance deja payee{" "}
+                                    <span>   {commandes.avance}Dhs</span>
+                                  </li>
+                                  <li>
+                                    Reste deja payee{" "}
+                                    <span>   {commandes.avance}Dhs</span>
+                                  </li>
+                                  <li>
+                                    Complement deja payee{" "}
+                                    <span>   {commandes.avance}Dhs</span>
+                                  </li></> : null}
+                              {commandes.statut === "validé" ?
+                                <li className=" text-success">
+                                  <i className="fa fa-exclamation-circle" aria-hidden="true"></i>
+                                  {" "}  Commande validee
                          </li>
-                              : null}
+                                : null}
 
 
-                          </ul>
+                            </ul>
+                          </div>
+
                         </div>
-
-                      </div>
-                    </div></div>
-                </div>
-
-              </div>{commandes.statut === "en attente de paiement avance" || commandes.statut === "en attente de validation avance" ||
-                commandes.statut === "en attente de paiement du reste" || commandes.statut === "en attente de validation reste" || commandes.statut === "validé"
-                || commandes.statut === "en attente de paiement du complément" || commandes.statut === "en attente de validation du complément" ?
-                <div className="card">
-                  <div className="card-header p-0" style={{ backgroundColor: "#009141" }} id="headingfive">
-                    <h5 className="mb-0">
-                      <button className="btn btn-link collapsed" data-toggle="collapse" data-target="#collapsefive" aria-expanded="false" aria-controls="collapsefive">
-                        <h5 style={{ color: "white" }}><FaClipboardCheck className="mb-2" /> {" "}
-                          {commandes.statut === "en attente de paiement avance" || commandes.statut === "en attente de validation avance" ? "Paiement des frais de resevation" : null}
-                          {commandes.statut === "en attente de paiement du reste" || commandes.statut === "en attente de validation reste" || commandes.statut === "validé" ? "Paiement du reste du montant" : null}
-                          {commandes.statut === "en attente de paiement du complément" || commandes.statut === "en attente de validation du complément" ? "Paiement du complément du montant" : null}
-                        </h5>  </button>
-                    </h5>
+                      </div></div>
                   </div>
-                  <div id="collapsefive" className="collapse" aria-labelledby="headingfive" data-parent="#accordion">
-                    <div className="card-body">
 
-                      <br></br>
+                </div>{commandes.statut === "en attente de paiement avance" || commandes.statut === "en attente de validation avance" ||
+                  commandes.statut === "en attente de paiement du reste" || commandes.statut === "en attente de validation reste" || commandes.statut === "validé"
+                  || commandes.statut === "en attente de paiement du complément" || commandes.statut === "en attente de validation du complément" ?
+                  <div className="card">
+                    <div className="card-header p-0" style={{ backgroundColor: "#009141" }} id="headingfive">
+                      <h5 className="mb-0">
+                        <button className="btn btn-link collapsed" data-toggle="collapse" data-target="#collapsefive" aria-expanded="false" aria-controls="collapsefive">
+                          <h5 style={{ color: "white" }}><FaClipboardCheck className="mb-2" /> {" "}
+                            {commandes.statut === "en attente de paiement avance" || commandes.statut === "en attente de validation avance" ? "Paiement des frais de resevation" : null}
+                            {commandes.statut === "en attente de paiement du reste" || commandes.statut === "en attente de validation reste" || commandes.statut === "validé" ? "Paiement du reste du montant" : null}
+                            {commandes.statut === "en attente de paiement du complément" || commandes.statut === "en attente de validation du complément" ? "Paiement du complément du montant" : null}
+                          </h5>  </button>
+                      </h5>
+                    </div>
+                    <div id="collapsefive" className="collapse" aria-labelledby="headingfive" data-parent="#accordion">
+                      <div className="card-body">
 
-                      <ul>
+                        <br></br>
+
+                        <ul>
 
 
-                        {commandes.statut === "en attente de paiement avance" ?
-                          <div>
+                          {commandes.statut === "en attente de paiement avance" ?
+                            <div>
 
-                            <h5>  <b>Frais de reservation (non remboursable) </b><small>{commandes.avance} {" Dhs"}</small></h5>
-                            <br></br>
-                            <div className="form-check">
-                              <input checked={this.state.mode_paiement_choisi == "virement"} onChange={this.onChange} className="form-check-input" type="radio" name="mode_paiement_choisi" id="virement" value="virement" />
-                              <label className="form-check-label" htmlFor="virement">
-                                <b> Virement bancaire</b>
-                              </label>
-                            </div>
-                            <p>pour payer les frais de reservation, il vous suffit d'effectuer un virement sur le RIB suivant
+                              <h5>  <b>Frais de reservation (non remboursable) </b><small>{commandes.avance} {" Dhs"}</small></h5>
+                              <br></br>
+                              <div className="form-check">
+                                <input checked={this.state.mode_paiement_choisi == "virement"} onChange={this.onChange} className="form-check-input" type="radio" name="mode_paiement_choisi" id="virement" value="virement" />
+                                <label className="form-check-label" htmlFor="virement">
+                                  <b> Virement bancaire</b>
+                                </label>
+                              </div>
+                              <p>pour payer les frais de reservation, il vous suffit d'effectuer un virement sur le RIB suivant
                           <span className="text-danger">{" " + this.state.cooperative_rib}</span></p>
-                            <div className="form-check mt-2">
-                              <input checked={this.state.mode_paiement_choisi == "transfert"} onChange={this.onChange} className="form-check-input" type="radio" name="mode_paiement_choisi" id="transfert" value="transfert" />
-                              <label className="form-check-label" htmlFor="transfert">
-                                <b>Par agence de transfert d'argent (*)</b>
-                              </label>
-                            </div>
+                              <div className="form-check mt-2">
+                                <input checked={this.state.mode_paiement_choisi == "transfert"} onChange={this.onChange} className="form-check-input" type="radio" name="mode_paiement_choisi" id="transfert" value="transfert" />
+                                <label className="form-check-label" htmlFor="transfert">
+                                  <b>Par agence de transfert d'argent (*)</b>
+                                </label>
+                              </div>
 
-                            <span><small>* les frais de transfert sont a la charge de l'achteur</small></span>
-                            <p>
-                              pour payer les frais de reservation, il vous suffit d'effectuer un transfert d'argent à l'eleveur suivant
+                              <span><small>* les frais de transfert sont a la charge de l'achteur</small></span>
+                              <p>
+                                pour payer les frais de reservation, il vous suffit d'effectuer un transfert d'argent à l'eleveur suivant
                        {<span className="text-danger">{" " + this.state.tech}</span>}
-                            </p>
-                            <br></br>
-                            <p className="text-danger"><b>Attention :</b><br></br>
+                              </p>
+                              <br></br>
+                              <p className="text-danger"><b>Attention :</b><br></br>
                         Vous avez jusqu'au {" " + commandes.deadline + " "} pour nous transmettre la copie (scan / photo) de l'ordre de virement ou de transfert .Au-delà de ce delai, votre commande sera annulee.</p>
 
-                          </div> : null}
-                        {commandes.statut === "en attente de validation avance" ?
-                          <div>
-                            <b>Validation en cours</b> {commandes.avance + " Dhs"}
-                            <p className="text-danger">Votre reçu a bien ete receptionne. Il sera verifie dans les plus brefs delais. Des reception du virement, votre produit sera reserve</p>
-                            <br></br>
-                            <br></br>
-                            <br></br>
-                            <div className="row ">
-                              <div className="col">{" "}</div>
-                              <div className="col">   <div className="product__details__pic">
-                                <div className="product__details__pic__item">
-                                  <img
-                                    className="product__details__pic__item--large"
-                                    src={commandes.reçu_avance}
-                                    alt=""
-                                  />
-                                </div>
-                              </div></div>
-                              <div className="col">{" "}</div>
-                            </div>
-                          </div> : null}
-                        {commandes.statut === "en attente de paiement du reste" ?
-                          <div>
-                            <b>Reste du montant : {commandes.reste + "Dhs"}</b>
-                          </div> : null}
+                            </div> : null}
+                          {commandes.statut === "en attente de validation avance" ?
+                            <div>
+                              <b>Validation en cours</b> {commandes.avance + " Dhs"}
+                              <p className="text-danger">Votre reçu a bien ete receptionne. Il sera verifie dans les plus brefs delais. Des reception du virement, votre produit sera reserve</p>
+                              <br></br>
+                              <br></br>
+                              <br></br>
+                              <div className="row ">
+                                <div className="col">{" "}</div>
+                                <div className="col">   <div className="product__details__pic">
+                                  <div className="product__details__pic__item">
+                                    <img
+                                      className="product__details__pic__item--large"
+                                      src={commandes.reçu_avance}
+                                      alt=""
+                                    />
+                                  </div>
+                                </div></div>
+                                <div className="col">{" "}</div>
+                              </div>
+                            </div> : null}
+                          {commandes.statut === "en attente de paiement du reste" ?
+                            <div>
+                              <b>Reste du montant : {commandes.reste + "Dhs"}</b>
+                            </div> : null}
 
-                        {commandes.statut === "en attente de validation reste" ?
-                          <div>
-                            <b>Validation en cours</b> {commandes.reste + " Dhs"}
-                            <p className="text-danger">Votre reçu a bien ete receptionne. Il sera verifie dans les plus brefs delais. Des reception du virement, nous vous contacterons pour la livraison</p>
-                            <br></br>
-                            <br></br>
-                            <br></br>
-                            <div className="row ">
-                              <div className="col">{" "}</div>
-                              <div className="col">   <div className="product__details__pic">
-                                <div className="product__details__pic__item">
-                                  <img
-                                    className="product__details__pic__item--large"
-                                    src={commandes.reçu_montant_restant}
-                                    alt=""
-                                  />
-                                </div>
-                              </div></div>
-                              <div className="col">{" "}</div>
-                            </div>
-                          </div> : null}
-                        {commandes.statut === "en attente de paiement du complément" ?
-                          <div>
-                            <b>Complément du montant : {commandes.complement + "Dhs"}</b>
-                          </div> : null}
-                        {commandes.statut === "en attente de validation du complément" ?
-                          <div>
-                            <b>Validation en cours</b> {commandes.complement + " Dhs"}
-                            <p className="text-danger">Votre reçu a bien ete receptionne. Il sera verifie dans les plus brefs delais. Des reception du virement, nous vous contacterons pour la livraison</p>
-                            <br></br>
-                            <br></br>
-                            <br></br>
-                            <div className="row ">
-                              <div className="col">{" "}</div>
-                              <div className="col">   <div className="product__details__pic">
-                                <div className="product__details__pic__item">
-                                  <img
-                                    className="product__details__pic__item--large"
-                                    src={commandes.reçu_montant_complement}
-                                    alt=""
-                                  />
-                                </div>
-                              </div></div>
-                              <div className="col">{" "}</div>
-                            </div>
-                          </div> : null}
-                        {commandes.statut === "validé" ?
-                          <div>
-                            <p className="text-danger">Votre virement est valide. la livraison est prevu le {commandes.date_de_livraison} . Nous vous contacterons par telephone  pour preciser l'heure exacte</p>
-                            <br></br>
-                            <br></br>
-                            <br></br>
-                            <div className="row ">
-                              <div className="col">{" "}</div>
-                              <div className="col">   <div className="product__details__pic">
-                                <div className="product__details__pic__item">
-                                  {commandes.reçu_montant_complement == null || commandes.reçu_montant_complement == undefined ?
+                          {commandes.statut === "en attente de validation reste" ?
+                            <div>
+                              <b>Validation en cours</b> {commandes.reste + " Dhs"}
+                              <p className="text-danger">Votre reçu a bien ete receptionne. Il sera verifie dans les plus brefs delais. Des reception du virement, nous vous contacterons pour la livraison</p>
+                              <br></br>
+                              <br></br>
+                              <br></br>
+                              <div className="row ">
+                                <div className="col">{" "}</div>
+                                <div className="col">   <div className="product__details__pic">
+                                  <div className="product__details__pic__item">
                                     <img
                                       className="product__details__pic__item--large"
                                       src={commandes.reçu_montant_restant}
                                       alt=""
-                                    /> :
+                                    />
+                                  </div>
+                                </div></div>
+                                <div className="col">{" "}</div>
+                              </div>
+                            </div> : null}
+                          {commandes.statut === "en attente de paiement du complément" ?
+                            <div>
+                              <b>Complément du montant : {commandes.complement + "Dhs"}</b>
+                            </div> : null}
+                          {commandes.statut === "en attente de validation du complément" ?
+                            <div>
+                              <b>Validation en cours</b> {commandes.complement + " Dhs"}
+                              <p className="text-danger">Votre reçu a bien ete receptionne. Il sera verifie dans les plus brefs delais. Des reception du virement, nous vous contacterons pour la livraison</p>
+                              <br></br>
+                              <br></br>
+                              <br></br>
+                              <div className="row ">
+                                <div className="col">{" "}</div>
+                                <div className="col">   <div className="product__details__pic">
+                                  <div className="product__details__pic__item">
                                     <img
                                       className="product__details__pic__item--large"
                                       src={commandes.reçu_montant_complement}
                                       alt=""
-                                    />}
+                                    />
+                                  </div>
+                                </div></div>
+                                <div className="col">{" "}</div>
+                              </div>
+                            </div> : null}
+                          {commandes.statut === "validé" ?
+                            <div>
+                              <p className="text-danger">Votre virement est valide. la livraison est prevu le {commandes.date_de_livraison} . Nous vous contacterons par telephone  pour preciser l'heure exacte</p>
+                              <br></br>
+                              <br></br>
+                              <br></br>
+                              <div className="row ">
+                                <div className="col">{" "}</div>
+                                <div className="col">   <div className="product__details__pic">
+                                  <div className="product__details__pic__item">
+                                    {commandes.reçu_montant_complement == null || commandes.reçu_montant_complement == undefined ?
+                                      <img
+                                        className="product__details__pic__item--large"
+                                        src={commandes.reçu_montant_restant}
+                                        alt=""
+                                      /> :
+                                      <img
+                                        className="product__details__pic__item--large"
+                                        src={commandes.reçu_montant_complement}
+                                        alt=""
+                                      />}
 
-                                </div>
-                              </div></div>
-                              <div className="col">{" "}</div>
+                                  </div>
+                                </div></div>
+                                <div className="col">{" "}</div>
+                              </div>
                             </div>
-                          </div>
-                          : null}
+                            : null}
 
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-
-                : null}
-              {commandes.statut !== "avarié" && commandes.statut !== "en attente de paiement avance" && commandes.statut !== "en attente de validation avance" &&
-                commandes.statut !== "en attente de paiement du reste" && commandes.statut !== "en attente de validation reste" && commandes.statut !== "validé" &&
-                commandes.statut !== "en attente de paiement du complément" && commandes.statut !== "en attente de validation du complément" ?
-                <div className="card">
-                  <div className="card-header p-0" style={{ backgroundColor: "#009141" }} id="headingfour">
-                    <h5 className="mb-0">
-                      <button className="btn btn-link collapsed" data-toggle="collapse" data-target="#collapsefour" aria-expanded="true" aria-controls="collapsefour">
-                        <h5 style={{ color: "white" }}><FaClipboardCheck className="mb-2" /> {" "}Motif de l'annulation
-                      </h5>  </button>
-                    </h5>
-                  </div>
-                  <div id="collapsefour" className="collapse" aria-labelledby="headingfour" data-parent="#accordion">
-                    <div className="card-body">
-
-                      <br></br>
-
-                      <ul>   <div>
-                        <p className="text-danger">{commandes.statut}</p>
-                        <p><b>Pour toute reclamation, contactez le service client au 0601120156. Disponible de 9h à  19h sauf Samedi et Dimanche </b></p>
-                      </div>
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-                : null}
-            </div>
-          </div>
-          <br></br><br></br>
-          <div className="my-5">
-            <div className="row">
-              <div className="col-md-4 offset-md-4">
-
-                {commandes.statut === "en attente de paiement avance" ?
-                  <button style={{ fontSize: "19px" }} id="centre" onClick={this.Modal.bind(this, "avance")}
-                    className="btn-success py-1 px-4 mb-3 w-75" ><BsFileEarmarkPlus className="fa-lg" /> {" "}
-                        Payer l'avance{" "}
-                  </button> : null}
-                {commandes.statut === "en attente de paiement du reste" ?
-                  <button style={{ fontSize: "19px" }} id="centre" onClick={this.Modal.bind(this, "reste")}
-                    className="btn-success py-1 px-4 mb-3 w-75" ><BsFileEarmarkPlus className="fa-lg" /> {" "}
-                        Payer le reste{" "}
-                  </button> : null}
-                {commandes.statut === "en attente de paiement du complément" ?
-                  <button style={{ fontSize: "19px" }} id="centre" onClick={this.Modal.bind(this, "complement")}
-                    className="btn-success py-1 px-4 mb-3 w-75" > <BsFileEarmarkPlus className="fa-lg" />{" "}
-                        Payer le complement{" "}
-                  </button> : null}
-
-
-              </div>
-              <div className="col-md-3 offset-md-3">{" "}</div>
-            </div>
-            <div className="row mb-5">
-              <div className="col-md-4 offset-md-4 ">
-                <button style={{ fontSize: "19px" }}
-                  id="centre"
-                  className="btn-danger py-1 px-4 mb-3 w-75"
-                  onClick={this.handelDelete}
-                >  <BiTrash className="fa-lg" />{" "}Annuler la commande{" "}
-                </button></div>
-              <div className="col-md-3 offset-md-3">{" "}</div>
-              <div className="col-md-3 offset-md-3">{" "}</div>
-            </div>
-          </div>
-        </div>
-        {/**modal de changement*/}
-        <Modal
-          size="xl"
-          show={this.state.showSolution}
-          onHide={this.ModalS.bind(this, this.state.especeAv)}
-          backdrop="static"
-          keyboard={false}>
-          <Modal.Header closeButton>
-            <Modal.Title>
-              <h4>Solutions proposées</h4>
-            </Modal.Title>
-          </Modal.Header>
-          <Modal.Body className="overflow-auto" style={{ height: "620px" }}>
-
-            {this.state.Especes[2] !== undefined && this.state.showRemb == false ?
-              <>  <div className="row">
-                {this.state.Especes[2].map((Annonces) =>
-                (
-                  <div className="col-lg-3  col-sm-6">
-
-                    <div id="anonce" className="product__item">
-                      <div
-                        className="product__item__pic set-bg"
-                        data-setbg={Annonces.images} >
-                        <img
-                          src={Annonces.image_face}
-                          className="product__item__pic set-bg"
-                        />
-
-                        <ul className="product__item__pic__hover">
-                          <li>
-                            <Link to={`/DetailsMouton/${Annonces._id}`}>
-                              <a href="#">
-                                <i className="fa fa-eye"></i>
-                              </a>
-                            </Link>
-                          </li>
                         </ul>
                       </div>
-                      {Annonces.anoc ?
-                        <h1 style={{ borderRadius: "0% 0% 0% 40%", fontSize: "14px" }} className=" badge badge-success py-1 w-100  ">
-                          <HiOutlineBadgeCheck className=" mr-1 fa-lg " />
-                          <span>Labélisé ANOC</span>  </h1>
-                        :
-                        <span className="badge pt-3 w-100  mt-1  ">{"  "}</span>
-                      }
-                      <div className="product__item__text p-2 text-justify">
-                        <h6 className=""><b>Categorie</b> : {Annonces.categorie}</h6>
-                        <h6 className=""><b>Race :</b> {Annonces.race}</h6>
-                        <h6 className=""><b>Poids : </b>{Annonces.poids} Kg</h6>
-                        <h6 className=""><b>Age :</b> {Annonces.age} mois</h6>
-                        {this.state.Especes[0].prix - Annonces.prix > 0 ?
-                          <h5 className=" text-success text-center mt-4  ">
-
-                            - {" "}
-
-                            {this.state.Especes[0].prix - Annonces.prix + "  Dhs"}
-                          </h5> :
-                          <h5 className=" text-danger text-center mt-4 ">
-
-                            + {" "}
-
-                            {Annonces.prix - this.state.Especes[0].prix + "  Dhs"}
-                          </h5>}
-
-                        {this.state.Especes[2].length > 1 ? <div className="row mt-3">
-                          <div className="col-3">{" "}</div>
-                          <button type="button" onClick={this.AccepteSoution.bind(this, Annonces)} className="col-6 py-1 btn btn-success">Accepter</button>
-                          <div className="col-3">{" "}</div>
-                        </div> : null}
-                        {this.state.Especes[2].length == 1 ?
-                          <div className="row mt-3">
-                            <div className="col-1">{" "}</div>
-                            <button type="button" onClick={this.AccepteSoution.bind(this, Annonces)} className="col-4 py-1 btn btn-success">Accepter</button>
-                            <div className="col-1">{" "}</div>
-                            <button onClick={this.RefuseTSoutions} type="button" className="col-4 py-1 btn btn-danger">Refuser</button>
-                            <div className="col-2">{" "}</div>
-                          </div> : null}
-
-
-                      </div> </div>
-
+                    </div>
                   </div>
 
-                ))}
-              </div>
-                {this.state.Especes[2].length > 1 ?
-                  <div className="row mt-1">
-                    <div className="col-4">{" "}</div>
-                    <button type="button" onClick={this.RefuseTSoutions} className="col-4 py-1 btn btn-danger">Refuser les solutions proposées</button>
-                    <div className="col-4">{" "}</div>
-                  </div> : null}
-              </> : (this.state.showRemb == true ? <div>
+                  : null}
+                {commandes.statut !== "avarié" && commandes.statut !== "en attente de paiement avance" && commandes.statut !== "en attente de validation avance" &&
+                  commandes.statut !== "en attente de paiement du reste" && commandes.statut !== "en attente de validation reste" && commandes.statut !== "validé" &&
+                  commandes.statut !== "en attente de paiement du complément" && commandes.statut !== "en attente de validation du complément" ?
+                  <div className="card">
+                    <div className="card-header p-0" style={{ backgroundColor: "#009141" }} id="headingfour">
+                      <h5 className="mb-0">
+                        <button className="btn btn-link collapsed" data-toggle="collapse" data-target="#collapsefour" aria-expanded="true" aria-controls="collapsefour">
+                          <h5 style={{ color: "white" }}><FaClipboardCheck className="mb-2" /> {" "}Motif de l'annulation
+                      </h5>  </button>
+                      </h5>
+                    </div>
+                    <div id="collapsefour" className="collapse" aria-labelledby="headingfour" data-parent="#accordion">
+                      <div className="card-body">
 
-                {this.state.commandes.especes.filter((f) => f.id_espece == this.state.especeAv._id)[0].produits_changement.length == 0 ?
-                  <h4 className="text-danger mb-5 mt-2"> Pas de produits de changements proposés.</h4>
-                  :
-                  <h4 className="text-danger mb-5 mt-2"> Vous avez refuse tous les produits de changements proposés.</h4>
-                }
-                {this.state.commandes.ancien_statut !== "en attente de paiement avance" ?
-                  <>
-                    <h5>Dans ce cas là, nous procederons à  votre remboursement : <span className="text-danger">{this.state.prixRemb} Dhs</span></h5>
-                    <form className="my-5 ">
-                      <div className="form-group">
-                        <label htmlFor="nom_prenom">Votre nom et prenom</label>
-                        <input onChange={this.onChange} type="text" className="form-control" id="nom_prenom" name="nom_prenom" placeholder="Nom et prenom" />
-                        <span className="text-danger">{this.state.errors["nom_prenom"]}</span>
+                        <br></br>
+
+                        <ul>   <div>
+                          <p className="text-danger">{commandes.statut}</p>
+                          <p><b>Pour toute reclamation, contactez le service client au 0601120156. Disponible de 9h à  19h sauf Samedi et Dimanche </b></p>
+                        </div>
+                        </ul>
                       </div>
-                      <div className="form-group">
-                        <label htmlFor="rib">Votre numero de RIB</label>
-                        <input onChange={this.onChange} type="text" className="form-control" id="rib" name="rib" placeholder="RIB" />
-                        <span className="text-danger">{this.state.errors["rib"]}</span>
-                      </div>
-                    </form>
-                    <br></br>
-                    <br></br>
-                    <div className="row mt-4">
-                      <div className="col-3">{" "}</div>
-                      <button type="button" onClick={this.ModalS.bind(this, this.state.especeAv)} className="btn btn-danger col-2">Annuler </button>
-                      <div className="col-2">{" "}</div>
-                      <button type="button" onClick={this.handlPost} className="btn btn-success col-2">Valider</button>
-                      <div className="col-3">{" "}</div>
+                    </div>
+                  </div>
+                  : null}
+              </div>
+            </div>
+            <br></br><br></br>
+            <div className="my-5">
+              <div className="row">
+                <div className="col-md-4 offset-md-4">
+
+                  {commandes.statut === "en attente de paiement avance" ?
+                    <button style={{ fontSize: "19px" }} id="centre" onClick={this.Modal.bind(this, "avance")}
+                      className="btn-success py-1 px-4 mb-3 w-75" ><BsFileEarmarkPlus className="fa-lg" /> {" "}
+                        Payer l'avance{" "}
+                    </button> : null}
+                  {commandes.statut === "en attente de paiement du reste" ?
+                    <button style={{ fontSize: "19px" }} id="centre" onClick={this.Modal.bind(this, "reste")}
+                      className="btn-success py-1 px-4 mb-3 w-75" ><BsFileEarmarkPlus className="fa-lg" /> {" "}
+                        Payer le reste{" "}
+                    </button> : null}
+                  {commandes.statut === "en attente de paiement du complément" ?
+                    <button style={{ fontSize: "19px" }} id="centre" onClick={this.Modal.bind(this, "complement")}
+                      className="btn-success py-1 px-4 mb-3 w-75" > <BsFileEarmarkPlus className="fa-lg" />{" "}
+                        Payer le complement{" "}
+                    </button> : null}
+
+
+                </div>
+                <div className="col-md-3 offset-md-3">{" "}</div>
+              </div>
+              <div className="row mb-5">
+                <div className="col-md-4 offset-md-4 ">
+                  <button style={{ fontSize: "19px" }}
+                    id="centre"
+                    className="btn-danger py-1 px-4 mb-3 w-75"
+                    onClick={this.handelDelete}
+                  >  <BiTrash className="fa-lg" />{" "}Annuler la commande{" "}
+                  </button></div>
+                <div className="col-md-3 offset-md-3">{" "}</div>
+                <div className="col-md-3 offset-md-3">{" "}</div>
+              </div>
+            </div>
+          </div>
+          {/**modal de changement*/}
+          <Modal
+            size="xl"
+            show={this.state.showSolution}
+            onHide={this.ModalS.bind(this, this.state.especeAv)}
+            backdrop="static"
+            keyboard={false}>
+            <Modal.Header closeButton>
+              <Modal.Title>
+                <h4>Solutions proposées</h4>
+              </Modal.Title>
+            </Modal.Header>
+            <Modal.Body className="overflow-auto" style={{ height: "620px" }}>
+
+              {this.state.Especes[2] !== undefined && this.state.showRemb == false ?
+                <>  <div className="row">
+                  {this.state.Especes[2].map((Annonces) =>
+                  (
+                    <div className="col-lg-3  col-sm-6">
+
+                      <div id="anonce" className="product__item">
+                        <div
+                          className="product__item__pic set-bg"
+                          data-setbg={Annonces.images} >
+                          <img
+                            src={Annonces.image_face}
+                            className="product__item__pic set-bg"
+                          />
+
+                          <ul className="product__item__pic__hover">
+                            <li>
+                              <Link to={`/DetailsMouton/${Annonces._id}`}>
+                                <a href="#">
+                                  <i className="fa fa-eye"></i>
+                                </a>
+                              </Link>
+                            </li>
+                          </ul>
+                        </div>
+                        {Annonces.anoc ?
+                          <h1 style={{ borderRadius: "0% 0% 0% 40%", fontSize: "14px" }} className=" badge badge-success py-1 w-100  ">
+                            <HiOutlineBadgeCheck className=" mr-1 fa-lg " />
+                            <span>Labélisé ANOC</span>  </h1>
+                          :
+                          <span className="badge pt-3 w-100  mt-1  ">{"  "}</span>
+                        }
+                        <div className="product__item__text p-2 text-justify">
+                          <h6 className=""><b>Categorie</b> : {Annonces.categorie}</h6>
+                          <h6 className=""><b>Race :</b> {Annonces.race}</h6>
+                          <h6 className=""><b>Poids : </b>{Annonces.poids} Kg</h6>
+                          <h6 className=""><b>Age :</b> {Annonces.age} mois</h6>
+                          {this.state.Especes[0].prix - Annonces.prix > 0 ?
+                            <h5 className=" text-success text-center mt-4  ">
+
+                              - {" "}
+
+                              {this.state.Especes[0].prix - Annonces.prix + "  Dhs"}
+                            </h5> :
+                            <h5 className=" text-danger text-center mt-4 ">
+
+                              + {" "}
+
+                              {Annonces.prix - this.state.Especes[0].prix + "  Dhs"}
+                            </h5>}
+
+                          {this.state.Especes[2].length > 1 ? <div className="row mt-3">
+                            <div className="col-3">{" "}</div>
+                            <button type="button" onClick={this.AccepteSoution.bind(this, Annonces)} className="col-6 py-1 btn btn-success">Accepter</button>
+                            <div className="col-3">{" "}</div>
+                          </div> : null}
+                          {this.state.Especes[2].length == 1 ?
+                            <div className="row mt-3">
+                              <div className="col-1">{" "}</div>
+                              <button type="button" onClick={this.AccepteSoution.bind(this, Annonces)} className="col-4 py-1 btn btn-success">Accepter</button>
+                              <div className="col-1">{" "}</div>
+                              <button onClick={this.RefuseTSoutions} type="button" className="col-4 py-1 btn btn-danger">Refuser</button>
+                              <div className="col-2">{" "}</div>
+                            </div> : null}
+
+
+                        </div> </div>
+
                     </div>
 
-                  </> : <h5>Dans ce cas là, l'ennonce sera annulee </h5>
-                }
-              </div> :
-                null
-              )}
-          </Modal.Body>
+                  ))}
+                </div>
+                  {this.state.Especes[2].length > 1 ?
+                    <div className="row mt-1">
+                      <div className="col-4">{" "}</div>
+                      <button type="button" onClick={this.RefuseTSoutions} className="col-4 py-1 btn btn-danger">Refuser les solutions proposées</button>
+                      <div className="col-4">{" "}</div>
+                    </div> : null}
+                </> : (this.state.showRemb == true ? <div>
+
+                  {this.state.commandes.especes.filter((f) => f.id_espece == this.state.especeAv._id)[0].produits_changement.length == 0 ?
+                    <h4 className="text-danger mb-5 mt-2"> Pas de produits de changements proposés.</h4>
+                    :
+                    <h4 className="text-danger mb-5 mt-2"> Vous avez refuse tous les produits de changements proposés.</h4>
+                  }
+                  {this.state.commandes.ancien_statut !== "en attente de paiement avance" ?
+                    <>
+                      <h5>Dans ce cas là, nous procederons à  votre remboursement : <span className="text-danger">{this.state.prixRemb} Dhs</span></h5>
+                      <form className="my-5 ">
+                        <div className="form-group">
+                          <label htmlFor="nom_prenom">Votre nom et prenom</label>
+                          <input onChange={this.onChange} type="text" className="form-control" id="nom_prenom" name="nom_prenom" placeholder="Nom et prenom" />
+                          <span className="text-danger">{this.state.errors["nom_prenom"]}</span>
+                        </div>
+                        <div className="form-group">
+                          <label htmlFor="rib">Votre numero de RIB</label>
+                          <input onChange={this.onChange} type="text" className="form-control" id="rib" name="rib" placeholder="RIB" />
+                          <span className="text-danger">{this.state.errors["rib"]}</span>
+                        </div>
+                      </form>
+                      <br></br>
+                      <br></br>
+                      <div className="row mt-4">
+                        <div className="col-3">{" "}</div>
+                        <button type="button" onClick={this.ModalS.bind(this, this.state.especeAv)} className="btn btn-danger col-2">Annuler </button>
+                        <div className="col-2">{" "}</div>
+                        <button type="button" onClick={this.handlPost} className="btn btn-success col-2">Valider</button>
+                        <div className="col-3">{" "}</div>
+                      </div>
+
+                    </> : <h5>Dans ce cas là, l'ennonce sera annulee </h5>
+                  }
+                </div> :
+                  null
+                )}
+            </Modal.Body>
 
 
-        </Modal>
+          </Modal>
 
 
-        {/**modal de changement*/}
-        {/**modal de paiement*/}
-        <Modal
-          size="lg"
-          show={this.state.showAvance}
-          onHide={this.Modal}
-          backdrop="static"
-          keyboard={false}
-        >
-          <Modal.Header closeButton>
-            <Modal.Title>
-              {this.state.payer === "avance" ? <h4>Importer le reçu : paiement d'avance</h4> : null}
-              {this.state.payer === "reste" ? <h4>Importer le reçu : paiement du reste</h4> : null}
-              {this.state.payer === "complement" ? <h4>Importer le reçu : paiement du complement</h4> : null} </Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
+          {/**modal de changement*/}
+          {/**modal de paiement*/}
+          <Modal
+            size="lg"
+            show={this.state.showAvance}
+            onHide={this.Modal}
+            backdrop="static"
+            keyboard={false}
+          >
+            <Modal.Header closeButton>
+              <Modal.Title>
+                {this.state.payer === "avance" ? <h4>Importer le reçu : paiement d'avance</h4> : null}
+                {this.state.payer === "reste" ? <h4>Importer le reçu : paiement du reste</h4> : null}
+                {this.state.payer === "complement" ? <h4>Importer le reçu : paiement du complement</h4> : null} </Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
 
-            <div className="col-lg-12 col-md-12">
+              <div className="col-lg-12 col-md-12">
 
 
-              <br></br>
+                <br></br>
 
-              <div id="centreT">
-                <input
-                  id="selectedFile"
-                  style={{ display: "none" }}
-                  type="file"
-                  name="recuAvance"
-                  onChange={this.handleChangeImage}
-                  encType="multipart/form-data"
-                  required
-                />
+                <div id="centreT">
+                  <input
+                    id="selectedFile"
+                    style={{ display: "none" }}
+                    type="file"
+                    name="recuAvance"
+                    onChange={this.handleChangeImage}
+                    encType="multipart/form-data"
+                    required
+                  />
+                  <br />
+                </div>
+                <br />
+
+                <label htmlFor="selectedFile" className="product__details__pic__item w-100">
+                  {this.state.dataUrl ?
+                    <img
+                      id="img-background"
+
+                      className="product__details__pic__item--large"
+                      src={this.state.dataUrl}
+                    /> : <img
+                      id="img-background"
+
+                      className="product__details__pic__item--large"
+
+                    />}
+                </label>
+
+                <br />
                 <br />
               </div>
-              <br />
+            </Modal.Body>
+            <Modal.Footer>
 
-              <label htmlFor="selectedFile" className="product__details__pic__item w-100">
-                {this.state.dataUrl ?
-                  <img
-                    id="img-background"
-
-                    className="product__details__pic__item--large"
-                    src={this.state.dataUrl}
-                  /> : <img
-                    id="img-background"
-
-                    className="product__details__pic__item--large"
-
-                  />}
-              </label>
-
-              <br />
-              <br />
-            </div>
-          </Modal.Body>
-          <Modal.Footer>
-
-            <button type="button" onClick={this.Modal} className="btn btn-danger">Annuler </button>
-            <button type="button" onClick={this.handlePut} className="btn btn-success">Valider</button>
-          </Modal.Footer>
-        </Modal>
+              <button type="button" onClick={this.Modal} className="btn btn-danger">Annuler </button>
+              <button type="button" onClick={this.handlePut} className="btn btn-success">Valider</button>
+            </Modal.Footer>
+          </Modal>
 
 
 
 
-        {/**modal  de paiement*/}
-      </div>
+          {/**modal  de paiement*/}
+        </div>
+      </React.Fragment>
+
     );
   }
 }

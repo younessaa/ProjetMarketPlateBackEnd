@@ -79,7 +79,11 @@ class Commandes extends Component {
     this.sortData = this.sortData.bind(this);
   }
   local(annonce) {
+    localStorage.setItem('ids',[]);
+    localStorage.setItem('reponses',[]);
+
      localStorage.setItem("annonce", JSON.stringify(annonce ));
+
    }
 
   sortData(e) {

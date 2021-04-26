@@ -17,9 +17,6 @@ class DetailsCommande extends Component {
     super(props);
     // let redirect = false;
     this.state = {
-      ids: localStorage.getItem("ids") ? (Array.isArray(localStorage.getItem("ids"))?localStorage.getItem("ids"):
-      localStorage.getItem("ids").split(",")) : [],
-      reponses: localStorage.getItem("reponses") ?  JSON.parse(localStorage.getItem("reponses")) : [],
       connectedUserEmail: "",
       espece_changement: '',
       etat: '',
@@ -43,9 +40,14 @@ class DetailsCommande extends Component {
       date: Date,
       mode_paiement_choisi: JSON.parse(localStorage.getItem("annonce")).mode_paiement_choisi,
       dataUrl: "",
+      ids: localStorage.getItem("ids") ? (Array.isArray(localStorage.getItem("ids")) ? localStorage.getItem("ids") :
+        localStorage.getItem("ids").split(",")) : [],
+      reponses: localStorage.getItem("reponses") ? JSON.parse(localStorage.getItem("reponses")) : [],
+
       shouldBlockNavigation: true,
 
     };
+
     this.onChange = this.onChange.bind(this);
     this.Modal = this.Modal.bind(this);
     this.ModalS = this.ModalS.bind(this);
@@ -62,16 +64,47 @@ class DetailsCommande extends Component {
 
   }
   componentDidUpdate = () => {
-   
-  
+
     if (this.state.ids.length == 0 ||
       this.state.ids.length == this.state.commandes.espece.filter((e) => e.statut == "produit avarié").length
       || this.state.commandes.espece.filter((e) => e.statut == "produit avarié").length == 0) {
-      window.onbeforeunload = undefined 
-   
-    } else {
-      window.onbeforeunload = () => true
+      window.onbeforeunload = undefined
 
+    } else {
+      window.onbeforeunload = () => true;
+
+    }
+    if (this.state.ids.length != 0 &&
+      this.state.ids.length == this.state.commandes.espece.filter((e) => e.statut == "produit avarié").length
+      && this.state.commandes.espece.filter((e) => e.statut == "produit avarié").length != 0) {
+      const myToken = `Bearer ` + localStorage.getItem("myToken");
+
+      axios
+        .put(
+          "http://127.0.0.1:8000/api/commandeStatut/" + this.state.commandes._id,
+          {
+            all: this.state.reponses,
+          },
+          {
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": myToken,
+            },
+          }
+        )
+        .then((res) => {
+          console.log(res.data)
+          Swal.fire({
+            title: "Changer avec succès ",
+            icon: "success",
+            width: 400,
+            heightAuto: false,
+            timer: 1500,
+            showConfirmButton: false,
+
+          })
+
+        })
     }
   }
   handleValidation() {
@@ -100,71 +133,76 @@ class DetailsCommande extends Component {
     const myToken = `Bearer ` + localStorage.getItem("myToken");
     if (this.handleValidation()) {
       //rembourssement
-    
+
       if (this.state.etat == "refuser") {
-            axios
-             .put(
-               "http://127.0.0.1:8000/api/commande/" + this.state.commandes._id + "/" + this.state.especeAv._id,
-               {
-                 nom: this.state.nom_prenom,
-                 rib: this.state.rib,
-               },
-               {
-                 headers: {
-                   "Content-Type": "application/json",
-                   "Authorization": myToken,
-                 },
-               }
-             )
-             .then((res) => {  this.state.ids.push(this.state.especeAv._id)
-              this.state.reponses.push(res.data)
-              localStorage.setItem("ids", this.state.ids)
-              localStorage.setItem("reponses", JSON.stringify(this.state.reponses))
-              this.setState({ showSolution: !this.state.showSolution }, () => {
-                Swal.fire({
-                  title: "Changer avec succès ",
-                  icon: "success",
-                  width: 400,
-                  heightAuto: false,
-                  timer: 1500,
-                  showConfirmButton: false,
-    
-                })} )})
+        axios
+          .put(
+            "http://127.0.0.1:8000/api/commande/" + this.state.commandes._id + "/" + this.state.especeAv._id,
+            {
+              nom: this.state.nom_prenom,
+              rib: this.state.rib,
+            },
+            {
+              headers: {
+                "Content-Type": "application/json",
+                "Authorization": myToken,
+              },
+            }
+          )
+          .then((res) => {
+            this.state.ids.push(this.state.especeAv._id)
+            this.state.reponses.push(res.data)
+            localStorage.setItem("ids", this.state.ids)
+            localStorage.setItem("reponses", JSON.stringify(this.state.reponses))
+            this.setState({ showSolution: !this.state.showSolution }, () => {
+              Swal.fire({
+                title: "Changer avec succès ",
+                icon: "success",
+                width: 400,
+                heightAuto: false,
+                timer: 1500,
+                showConfirmButton: false,
+
+              })
+            })
+          })
       }
       //rembourssement pour changement (old.prix>new.prix)
       if (this.state.etat == "accepter") {
-           axios
-              .put(
-                "http://127.0.0.1:8000/api/commande/" + this.state.commandes._id
-                + "/" + this.state.especeAv._id
-                + "/" + this.state.espece_changement._id,
-                {
-                  nom: this.state.nom_prenom,
-                  rib: this.state.rib,
-                },
-                {
-                  headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": myToken,
-                  },
-                }
-              )
-              .then((res) => { 
-                 this.state.ids.push(this.state.especeAv._id)
-              this.state.reponses.push(res.data)
-              localStorage.setItem("ids", this.state.ids)
-              localStorage.setItem("reponses", JSON.stringify(this.state.reponses))
-              this.setState({ showSolution: !this.state.showSolution }, () => {
-                Swal.fire({
-                  title: "Changer avec succès ",
-                  icon: "success",
-                  width: 400,
-                  heightAuto: false,
-                  timer: 1500,
-                  showConfirmButton: false,
-    
-                })} )})
-              
+        axios
+          .put(
+            "http://127.0.0.1:8000/api/commande/" + this.state.commandes._id
+            + "/" + this.state.especeAv._id
+            + "/" + this.state.espece_changement._id,
+            {
+              nom: this.state.nom_prenom,
+              rib: this.state.rib,
+            },
+            {
+              headers: {
+                "Content-Type": "application/json",
+                "Authorization": myToken,
+              },
+            }
+          )
+          .then((res) => {
+            this.state.ids.push(this.state.especeAv._id)
+            this.state.reponses.push(res.data)
+            localStorage.setItem("ids", this.state.ids)
+            localStorage.setItem("reponses", JSON.stringify(this.state.reponses))
+            this.setState({ showSolution: !this.state.showSolution }, () => {
+              Swal.fire({
+                title: "Changer avec succès ",
+                icon: "success",
+                width: 400,
+                heightAuto: false,
+                timer: 1500,
+                showConfirmButton: false,
+
+              })
+            })
+          })
+
       }
 
     }
@@ -173,6 +211,31 @@ class DetailsCommande extends Component {
   }
   getEspece(espece) {
     let esp = this.state.commandes.especes.filter((e) => (e.id_espece === espece._id))[0];
+    let motif = "";
+    switch (esp.motif_annulation) {
+      case 'Apparition d\'un abcès':
+        motif = "Apparition d\'un abcès";
+        break;
+      case 'Jetage du nez':
+        motif = "Ecoulement nasales";
+        break;
+      case 'Conjonctivite':
+        motif = "Une inflammation de la conjonctive de l'œil";
+        break;
+      case 'Ictère':
+        motif = "Une coloration jaune de la peau, des conjonctives et d'autres tissus";
+        break;
+      case 'Fracture':
+        motif = "Fracture";
+        break;
+      case 'Boitréé':
+        motif = "Boitréé";
+        break;
+      default:
+        motif = esp.motif_annulation;
+    }
+
+    esp.motif_annulation = motif;
     return esp;
   }
   handelDeleteEspece(espece) {
@@ -735,10 +798,74 @@ class DetailsCommande extends Component {
 
     });
   }
+  reinitialiserCmd() {
+    const myToken = `Bearer ` + localStorage.getItem("myToken");
+    let cmdreplace = JSON.parse(localStorage.getItem("annonceInch"));
+    delete cmdreplace.id;
+    axios
+      .put(
+        "http://127.0.0.1:8000/api/commandeReplace/" + this.state.commandes._id,
+        {
+          replace: cmdreplace,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": myToken,
+          },
+        }
+      )
+      .then((res) => {
+        console.log("réinitialiser")
 
+        console.log(res.data)
+        Swal.fire({
+          title: "Changeement annuler ",
+          icon: "warning",
+          width: 400,
+          heightAuto: false,
+          timer: 1500,
+          showConfirmButton: false,
+
+        })
+
+      })
+  }
+
+  componentWillUnmount() {
+    if (this.state.ids.length == 0 ||
+      this.state.ids.length == this.state.commandes.espece.filter((e) => e.statut == "produit avarié").length
+      || this.state.commandes.espece.filter((e) => e.statut == "produit avarié").length == 0) {
+
+    } else {
+      localStorage.setItem('ids', []);
+      localStorage.setItem('reponses', []);
+      this.reinitialiserCmd();
+    }
+
+  }
 
 
   componentDidMount() {
+    window.addEventListener("load", (ev) => {
+      ev.preventDefault();
+      if (!(this.state.ids.length == 0 ||
+        this.state.ids.length == this.state.commandes.espece.filter((e) => e.statut == "produit avarié").length
+        || this.state.commandes.espece.filter((e) => e.statut == "produit avarié").length == 0)) {
+        localStorage.setItem('annonce', localStorage.getItem("annonceInch"));
+        localStorage.setItem('ids', []);
+        localStorage.setItem('reponses', []);
+        this.setState({
+          commandes: JSON.parse(localStorage.getItem("annonceInch")),
+          ids: [], reponses: []
+        })
+        this.reinitialiserCmd();
+
+
+      }
+
+    });
+
     const myToken = `Bearer ` + localStorage.getItem("myToken");
     const token = localStorage.getItem("usertoken");
     const expiredTimeToken = localStorage.getItem("expiredTimeToken");
@@ -909,15 +1036,22 @@ class DetailsCommande extends Component {
     if (this.state.redirect) {
       return <Redirect to="./commandesParStatut" />;
     }
+    let ids = localStorage.getItem("ids") ? (Array.isArray(localStorage.getItem("ids")) ? localStorage.getItem("ids") :
+      localStorage.getItem("ids").split(",")) : [];
 
     const commandes = this.state.commandes;
     let prix = this.state.commandes.espece.reduce(function (prev, cur) { return prev - (- cur.prix); }, 0)
     let prix_transport = this.state.prix_transport;
-
     return (
       <React.Fragment>
         <Prompt
-          when={this.state.shouldBlockNavigation}
+
+          when={
+            !(ids.length == 0 ||
+              ids.length == this.state.commandes.espece.filter((e) => e.statut == "produit avarié").length
+              || this.state.commandes.espece.filter((e) => e.statut == "produit avarié").length == 0)
+
+          }
           message='You have unsaved changes, are you sure you want to leave?'
         />
         <div>
@@ -928,7 +1062,7 @@ class DetailsCommande extends Component {
             <div>
               <div id="accordion">
 
-                {commandes.statut === "avarié" && this.state.ids.length <
+                {commandes.statut === "avarié" && ids.length <
                   commandes.espece.filter((e) => e.statut == "produit avarié").length
                   ?
                   <div className="card">
@@ -946,7 +1080,7 @@ class DetailsCommande extends Component {
 
                         <ul>
                           <div className="row">
-                            {commandes.espece.filter((e) => e.statut == "produit avarié" && !this.state.ids.includes(e._id)).map((Annonces) =>
+                            {commandes.espece.filter((e) => e.statut == "produit avarié" && !ids.includes(e._id)).map((Annonces) =>
                             (<div className="col-lg-3  col-sm-6">
                               <span className="text-danger">
                                 <i className="fa fa-long-arrow-right" aria-hidden="true"> </i>
@@ -963,15 +1097,7 @@ class DetailsCommande extends Component {
                                     className="product__item__pic set-bg"
                                   />
 
-                                  <ul className="product__item__pic__hover">
-                                    <li>
-                                      <Link to={`/DetailsMouton/${Annonces._id}`}>
-                                        <a href="#">
-                                          <i className="fa fa-eye"></i>
-                                        </a>
-                                      </Link>
-                                    </li>
-                                  </ul>
+
                                 </div>
                                 {Annonces.anoc ?
                                   <h1 style={{ borderRadius: "0% 0% 0% 40%", fontSize: "14px" }} className=" badge badge-success py-1 w-100  ">
@@ -995,7 +1121,7 @@ class DetailsCommande extends Component {
                                   </h5>
                                   <div className="row mt-3">
                                     <div className="col-2">{" "}</div>
-                                    <button type="button" onClick={this.ModalS.bind(this, Annonces)} className="col-8 py-1 btn btn-danger">Solutions proposées</button>
+                                    <button type="button" onClick={this.ModalS.bind(this, Annonces)} className="col-8 py-1 btn btn-success">Solutions proposées</button>
                                     <div className="col-2">{" "}</div>
                                   </div>
                                 </div> </div>

@@ -2,11 +2,9 @@ import React, { Component, useState } from "react";
 import { Link } from "react-router-dom";
 import { withRouter } from "react-router-dom";
 import { FaClipboardCheck } from 'react-icons/fa';
-import { GiWeight, GiSheep, GiNautilusShell } from 'react-icons/gi';
-import { BsFileEarmarkPlus, BsTrash } from 'react-icons/bs'
+import { BsFileEarmarkPlus } from 'react-icons/bs'
 import { BiTrash } from 'react-icons/bi'
 import { Prompt } from 'react-router'
-
 import { HiOutlineBadgeCheck } from 'react-icons/hi';
 import { Modal, Button } from 'react-bootstrap';
 import { Redirect } from "react-router";
@@ -44,8 +42,6 @@ class DetailsCommande extends Component {
         localStorage.getItem("ids").split(",")) : [],
       reponses: localStorage.getItem("reponses") ? JSON.parse(localStorage.getItem("reponses")) : [],
 
-      shouldBlockNavigation: true,
-
     };
 
     this.onChange = this.onChange.bind(this);
@@ -53,27 +49,36 @@ class DetailsCommande extends Component {
     this.ModalS = this.ModalS.bind(this);
     this.RefuseTSoutions = this.RefuseTSoutions.bind(this);
     this.AccepteSoution = this.AccepteSoution.bind(this);
-
     this.handleValidation = this.handleValidation.bind(this);
     this.handelDeleteEspece = this.handelDeleteEspece.bind(this);
-
     this.handelDelete = this.handelDelete.bind(this);
     this.handleChangeImage = this.handleChangeImage.bind(this);
     this.handlePut = this.handlePut.bind(this);
     this.handlPost = this.handlPost.bind(this);
+    this.reinitialiserCmd = this.reinitialiserCmd.bind(this);
+
 
   }
-  componentDidUpdate = () => {
-
+  componentDidUpdate = () => { 
     if (this.state.ids.length == 0 ||
       this.state.ids.length == this.state.commandes.espece.filter((e) => e.statut == "produit avarié").length
       || this.state.commandes.espece.filter((e) => e.statut == "produit avarié").length == 0) {
       window.onbeforeunload = undefined
-
     } else {
-      window.onbeforeunload = () => true;
-
+     
+         window.onbeforeunload = function (e) {
+          e.preventDefault();
+          e.returnValue = '';
+          return "stop";
+      
     }
+
+}
+
+
+  
+
+
     if (this.state.ids.length != 0 &&
       this.state.ids.length == this.state.commandes.espece.filter((e) => e.statut == "produit avarié").length
       && this.state.commandes.espece.filter((e) => e.statut == "produit avarié").length != 0) {
@@ -798,15 +803,28 @@ class DetailsCommande extends Component {
 
     });
   }
-  reinitialiserCmd() {
+  reinitialiserCmd = () => {
     const myToken = `Bearer ` + localStorage.getItem("myToken");
     let cmdreplace = JSON.parse(localStorage.getItem("annonceInch"));
-    delete cmdreplace.id;
+    Swal.fire({
+      title: "Changement annuler ",
+      icon: "error",
+      width: 400,
+      heightAuto: false,
+      timer: 1500,
+      showConfirmButton: false,
+
+    })
     axios
       .put(
-        "http://127.0.0.1:8000/api/commandeReplace/" + this.state.commandes._id,
+        "http://127.0.0.1:8000/api/commande/" + this.state.commandes._id,
         {
-          replace: cmdreplace,
+          statut: cmdreplace.statut,
+          ancien_statut: cmdreplace.ancien_statut,
+          especes: cmdreplace.especes,
+          reste: cmdreplace.reste,
+          avance: cmdreplace.avance,
+          prix_total: cmdreplace.prix_total,
         },
         {
           headers: {
@@ -816,23 +834,11 @@ class DetailsCommande extends Component {
         }
       )
       .then((res) => {
-        console.log("réinitialiser")
-
-        console.log(res.data)
-        Swal.fire({
-          title: "Changeement annuler ",
-          icon: "warning",
-          width: 400,
-          heightAuto: false,
-          timer: 1500,
-          showConfirmButton: false,
-
-        })
-
       })
   }
 
   componentWillUnmount() {
+
     if (this.state.ids.length == 0 ||
       this.state.ids.length == this.state.commandes.espece.filter((e) => e.statut == "produit avarié").length
       || this.state.commandes.espece.filter((e) => e.statut == "produit avarié").length == 0) {
@@ -841,6 +847,7 @@ class DetailsCommande extends Component {
       localStorage.setItem('ids', []);
       localStorage.setItem('reponses', []);
       this.reinitialiserCmd();
+
     }
 
   }
@@ -1052,7 +1059,7 @@ class DetailsCommande extends Component {
               || this.state.commandes.espece.filter((e) => e.statut == "produit avarié").length == 0)
 
           }
-          message='You have unsaved changes, are you sure you want to leave?'
+          message='Voulez-vous vraiment quitter cette page ? Les modifications que vous avez apportées ne seront pas enregistrées'
         />
         <div>
           <style>{`.btn-link {  color:white} .btn-link:hover {color:white;} .card { background-color: #fafafa !important } .container {max-width: 90%;}  `}</style>

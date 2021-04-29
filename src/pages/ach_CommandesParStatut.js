@@ -12,6 +12,8 @@ class CommandesParStatut extends Component {
     this.state = {
       loading: true,
       Commandes: [],
+      deadline: [],
+      delivery: "",
       redirect: false,
       Livraison: [],
     };
@@ -64,10 +66,12 @@ class CommandesParStatut extends Component {
 
           .then((res) => {
             this.setState({
-              Commandes:res.data.count,
+              Commandes: res.data.count,
+              deadline: res.data.deadline,
+              delivery: res.data.delivery,
               loading: false,
             });
-        
+
           });
       });
     }
@@ -76,7 +80,7 @@ class CommandesParStatut extends Component {
   render() {
     const { loading } = this.state;
     //commandes annulees
-    const cmdAnnulee =this.state.Commandes[0];
+    const cmdAnnulee = this.state.Commandes[0];
 
     //Avances a payer
     const cmdAvancePayer = this.state.Commandes[1]
@@ -139,6 +143,10 @@ class CommandesParStatut extends Component {
                             padding-left="10px"
                             padding-right="10px"
                           >
+                             {cmdComplement > 0 ?
+                              <span  style={{color:"#bb2124",position:"relative",right:"31%"}}
+                               className="  text-left ">Dernier delai : {this.state.deadline[2].substr(6, 4)+"/"+this.state.deadline[2].substr(3, 2)+"/"+this.state.deadline[2].substr(0, 2)}</span>
+                              : null}
                             <center>
                               <a href="">
                                 <br></br>{" "}
@@ -220,6 +228,7 @@ class CommandesParStatut extends Component {
 
                     {/* à ajouter */}
                     <div className="col-lg-6 col-md-6 col-sm-6">
+
                       <Link
                         to={{
                           pathname: "/Commandes",
@@ -236,6 +245,12 @@ class CommandesParStatut extends Component {
                             padding-left="10px"
                             padding-right="10px"
                           >
+                            {cmdAvancePayer > 0 ?
+                              <span
+                              style={{color:"#bb2124",position:"relative",right:"31%"}}
+                               className="  text-left">Dernier delai : {this.state.deadline[0].substr(6, 4)+"/"+this.state.deadline[0].substr(3, 2)+"/"+this.state.deadline[0].substr(0, 2)}</span>
+                              : null}
+
                             <center>
                               <a href="">
                                 <br></br>{" "}
@@ -328,6 +343,13 @@ class CommandesParStatut extends Component {
                             padding-left="10px"
                             padding-right="10px"
                           >
+                           {cmdRestePayer > 0 ?
+                              <span
+                              style={{color:"#bb2124",position:"relative",right:"31%"}}
+                               className="  text-left  ">Dernier delai : {this.state.deadline[1].substr(6, 4)+"/"+this.state.deadline[1].substr(3, 2)+"/"+this.state.deadline[1].substr(0, 2)}</span>
+
+                              : null}
+
                             <center>
                               <a href="">
                                 <br></br>{" "}
@@ -351,6 +373,7 @@ class CommandesParStatut extends Component {
 
                               </a>
                             </center>
+                           
                           </div>
                         </div>
                       </Link>
@@ -370,6 +393,12 @@ class CommandesParStatut extends Component {
                             padding-left="10px"
                             padding-right="10px"
                           >
+                            {cmdLivrer > 0 ?
+                              <span
+                              style={{color:"#bb2124",position:"relative",right:"28%"}}
+                               className="   text-left  ">Date de livraison : {this.state.delivery.replace(/-/g,"/")}</span>
+                              : null}
+
                             <center>
                               <a href="">
                                 <br></br>{" "}

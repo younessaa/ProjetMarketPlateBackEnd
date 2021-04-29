@@ -15,6 +15,7 @@ class DetailsCommande extends Component {
     super(props);
     // let redirect = false;
     this.state = {
+      cloture:false,
       connectedUserEmail: "",
       espece_changement: '',
       etat: '',
@@ -29,9 +30,11 @@ class DetailsCommande extends Component {
       showAvance: false,
       showSolution: false,
       showRemb: false,
+      showChoix: false,
       prixRemb: 0,
       prix_transport: 0,
       especeAv: {},
+      especesAv: [],
       redirect: false,
       image: "",
       errors: {},
@@ -47,6 +50,8 @@ class DetailsCommande extends Component {
     this.onChange = this.onChange.bind(this);
     this.Modal = this.Modal.bind(this);
     this.ModalS = this.ModalS.bind(this);
+    this.Hide = this.Hide.bind(this);
+
     this.RefuseTSoutions = this.RefuseTSoutions.bind(this);
     this.AccepteSoution = this.AccepteSoution.bind(this);
     this.handleValidation = this.handleValidation.bind(this);
@@ -59,25 +64,24 @@ class DetailsCommande extends Component {
 
 
   }
-  componentDidUpdate = () => { 
-    if (this.state.ids.length == 0 ||
+  Hide(){
+    this.setState({showChoix:false,showRemb:false,showSolution:false},()=>{})
+  }
+  componentDidUpdate = () => {
+    if(this.state.cloture===false){  if (this.state.ids.length == 0 ||
       this.state.ids.length == this.state.commandes.espece.filter((e) => e.statut == "produit avarié").length
       || this.state.commandes.espece.filter((e) => e.statut == "produit avarié").length == 0) {
       window.onbeforeunload = undefined
     } else {
-     
-         window.onbeforeunload = function (e) {
-          e.preventDefault();
-          e.returnValue = '';
-          return "stop";
-      
+
+      window.onbeforeunload = function (e) {
+        e.preventDefault();
+        e.returnValue = '';
+        return "stop";
+
+      }
+
     }
-
-}
-
-
-  
-
 
     if (this.state.ids.length != 0 &&
       this.state.ids.length == this.state.commandes.espece.filter((e) => e.statut == "produit avarié").length
@@ -98,8 +102,7 @@ class DetailsCommande extends Component {
           }
         )
         .then((res) => {
-          console.log(res.data)
-          Swal.fire({
+          this.setState({cloture:true},()=>{ Swal.fire({
             title: "Changer avec succès ",
             icon: "success",
             width: 400,
@@ -107,10 +110,12 @@ class DetailsCommande extends Component {
             timer: 1500,
             showConfirmButton: false,
 
-          })
+          })})
+         
 
         })
-    }
+    }}
+  
   }
   handleValidation() {
     let errors = {};
@@ -142,7 +147,8 @@ class DetailsCommande extends Component {
       if (this.state.etat == "refuser") {
         axios
           .put(
-            "http://127.0.0.1:8000/api/commande/" + this.state.commandes._id + "/" + this.state.especeAv._id,
+            "http://127.0.0.1:8000/api/commande/" + this.state.commandes._id + 
+            "/" + this.state.especeAv._id,
             {
               nom: this.state.nom_prenom,
               rib: this.state.rib,
@@ -154,12 +160,18 @@ class DetailsCommande extends Component {
               },
             }
           )
-          .then((res) => {
+          .then((res) => { 
+             console.log(res.data)
             this.state.ids.push(this.state.especeAv._id)
             this.state.reponses.push(res.data)
             localStorage.setItem("ids", this.state.ids)
             localStorage.setItem("reponses", JSON.stringify(this.state.reponses))
-            this.setState({ showSolution: !this.state.showSolution }, () => {
+            let espsAv = this.state.especesAv;
+
+            espsAv[(espsAv.indexOf(this.state.especesAv.filter((e) => e.id == this.state.especeAv._id)[0]))].etat = res.data;
+
+
+            this.setState({ showChoix:true,showRemb:false,especesAv: espsAv, showSolution: !this.state.showSolution }, () => {
               Swal.fire({
                 title: "Changer avec succès ",
                 icon: "success",
@@ -191,11 +203,16 @@ class DetailsCommande extends Component {
             }
           )
           .then((res) => {
+           
             this.state.ids.push(this.state.especeAv._id)
             this.state.reponses.push(res.data)
             localStorage.setItem("ids", this.state.ids)
             localStorage.setItem("reponses", JSON.stringify(this.state.reponses))
-            this.setState({ showSolution: !this.state.showSolution }, () => {
+            let espsAv = this.state.especesAv;
+
+            espsAv[(espsAv.indexOf(this.state.especesAv.filter((e) => e.id == this.state.especeAv._id)[0]))].etat = res.data;
+           espsAv[(espsAv.indexOf(this.state.especesAv.filter((e) => e.id == this.state.especeAv._id)[0]))].choix =  this.state.espece_changement;
+            this.setState({ showChoix:true,showRemb:false,especesAv: espsAv, showSolution: !this.state.showSolution }, () => {
               Swal.fire({
                 title: "Changer avec succès ",
                 icon: "success",
@@ -624,14 +641,18 @@ class DetailsCommande extends Component {
               }
             )
             .then((res) => {
-
               this.state.ids.push(this.state.especeAv._id)
               this.state.reponses.push(res.data)
               localStorage.setItem("ids", this.state.ids)
               localStorage.setItem("reponses", JSON.stringify(this.state.reponses))
 
+              let espsAv = this.state.especesAv;
+ 
+              espsAv[(espsAv.indexOf(this.state.especesAv.filter((e) => e.id == this.state.especeAv._id)[0]))].etat = res.data;
+              espsAv[(espsAv.indexOf(this.state.especesAv.filter((e) => e.id == this.state.especeAv._id)[0]))].choix = espece;
 
-              this.setState({ showSolution: !this.state.showSolution }, () => {
+              this.setState({ especesAv: espsAv, showSolution: !this.state.showSolution }, () => {
+                
               });
             })
           Swal.fire({
@@ -693,7 +714,7 @@ class DetailsCommande extends Component {
           const myToken = `Bearer ` + localStorage.getItem("myToken");
 
           if (this.state.commandes.ancien_statut === "en attente de paiement avance") {
-            this.setState({ showRemb: !this.state.showRemb }, () => {
+            this.setState({ showRemb: !this.state.showRemb,showChoix:true }, () => {
               axios
                 .put(
                   "http://127.0.0.1:8000/api/commande/" +
@@ -712,9 +733,14 @@ class DetailsCommande extends Component {
                 .then((res) => {
                   this.state.ids.push(this.state.especeAv._id)
                   this.state.reponses.push(res.data)
-                  localStorage.setItem("ids", this.state.ids)
+                   localStorage.setItem("ids", this.state.ids)
                   localStorage.setItem("reponses", JSON.stringify(this.state.reponses))
-                  Swal.fire({
+                  let espsAv = this.state.especesAv;
+
+                  espsAv[(espsAv.indexOf(this.state.especesAv.filter((e) => e.id == this.state.especeAv._id)[0]))].etat = res.data;
+ 
+                  this.setState({ especesAv: espsAv},()=>{
+                       Swal.fire({
                     title: "Annule avec succès ",
                     icon: "success",
                     width: 400,
@@ -722,7 +748,8 @@ class DetailsCommande extends Component {
                     timer: 1500,
                     showConfirmButton: false,
 
-                  });
+                  });})
+               
                 })
             });
           }
@@ -760,13 +787,18 @@ class DetailsCommande extends Component {
 
   }
   ModalS(espece) {
-
-    if (this.state.commandes.especes.filter((f) => f.id_espece == espece._id)[0].produits_changement.length == 0) {
+    if( this.state.especesAv.filter((e) => e.id == espece._id)[0].etat !==null){
+      this.setState({ showChoix: true, showSolution: false,especeAv: espece  }, () => {
+      });
+    }
+    else {
+      this.setState({showChoix:false},()=>{ 
+            if (this.state.commandes.especes.filter((f) => f.id_espece == espece._id)[0].produits_changement.length == 0) {
       this.setState({ etat: "refuser", especeAv: espece }, () => {
         //ancien_statut en attente de paiement avance=>soustraire le montant du produit initial
 
         if (this.state.commandes.ancien_statut === "en attente de paiement avance") {
-          this.setState({ showRemb: !this.state.showRemb, showSolution: !this.state.showSolution }, () => {
+          this.setState({  showRemb: !this.state.showRemb, showSolution: !this.state.showSolution }, () => {
           });
         }
 
@@ -795,7 +827,10 @@ class DetailsCommande extends Component {
         } this.setState({ Especes: tab }, () => { })
       });
 
+    }})
+   
     }
+  
 
   }
   onChange(e) {
@@ -924,6 +959,14 @@ class DetailsCommande extends Component {
 
     var datetime = day + "/" + month + "/" + year + " à " + hours + ":00:00";
     // this.setState({ date: datetime });
+    let espsAv = [];
+    JSON.parse(localStorage.getItem("annonceInch")).espece.filter((e) => e.statut == "produit avarié").map(
+      (esp) => {
+        espsAv.push({ "id": esp._id, "etat":null,"choix":null })
+      }
+    )
+    this.setState({ especesAv: espsAv }, () => {
+     })
 
 
     if (!token || expiredTimeToken < formatted_date) {
@@ -941,6 +984,7 @@ class DetailsCommande extends Component {
         .then((res) => {
 
           this.setState({
+            especesAv: espsAv,
             cooperative: res.data,
             prix_transport: JSON.parse(localStorage.getItem("annonce")).ville_livraison === "Récupérer à la coopérative" ? 0 : res.data.Parametres.livraison.filter((v) => v.Ville_livraison === JSON.parse(localStorage.getItem("annonce")).ville_livraison)[0].prix_transport
           }
@@ -1045,6 +1089,10 @@ class DetailsCommande extends Component {
     }
     let ids = localStorage.getItem("ids") ? (Array.isArray(localStorage.getItem("ids")) ? localStorage.getItem("ids") :
       localStorage.getItem("ids").split(",")) : [];
+    let especesAv = this.state.especesAv;
+
+
+
 
     const commandes = this.state.commandes;
     let prix = this.state.commandes.espece.reduce(function (prev, cur) { return prev - (- cur.prix); }, 0)
@@ -1064,13 +1112,12 @@ class DetailsCommande extends Component {
         <div>
           <style>{`.btn-link {  color:white} .btn-link:hover {color:white;} .card { background-color: #fafafa !important } .container {max-width: 90%;}  `}</style>
           <div className="container">
-            <h3>Détails commande  {this.state.commandes._id}{" " + this.state.commandes.ancien_statut}</h3>
+            <h3>Détails commande  </h3>
             <br></br>
             <div>
               <div id="accordion">
 
-                {commandes.statut === "avarié" && ids.length <
-                  commandes.espece.filter((e) => e.statut == "produit avarié").length
+                {commandes.espece.filter((e) => e.statut == "produit avarié").length>0
                   ?
                   <div className="card">
                     <div className="card-header p-0" style={{ backgroundColor: "#009141" }} id="headingfour">
@@ -1087,7 +1134,7 @@ class DetailsCommande extends Component {
 
                         <ul>
                           <div className="row">
-                            {commandes.espece.filter((e) => e.statut == "produit avarié" && !ids.includes(e._id)).map((Annonces) =>
+                            {commandes.espece.filter((e) => e.statut == "produit avarié").map((Annonces) =>
                             (<div className="col-lg-3  col-sm-6">
                               <span className="text-danger">
                                 <i className="fa fa-long-arrow-right" aria-hidden="true"> </i>
@@ -1128,7 +1175,14 @@ class DetailsCommande extends Component {
                                   </h5>
                                   <div className="row mt-3">
                                     <div className="col-2">{" "}</div>
-                                    <button type="button" onClick={this.ModalS.bind(this, Annonces)} className="col-8 py-1 btn btn-success">Solutions proposées</button>
+                                    <button type="button" onClick={this.ModalS.bind(this, Annonces)} className="col-8 py-1 btn btn-success">
+                                    
+                                       {especesAv.length>0? 
+                                      ( especesAv.filter((e) => e.id == Annonces._id)[0].etat ==null?
+                                     " Solutions proposées" :"Solution choisi"):
+                                      " Solutions choisi" }
+                                    
+                                    </button>
                                     <div className="col-2">{" "}</div>
                                   </div>
                                 </div> </div>
@@ -1594,19 +1648,23 @@ class DetailsCommande extends Component {
           </div>
           {/**modal de changement*/}
           <Modal
-            size="xl"
+            size= "xl" 
             show={this.state.showSolution}
-            onHide={this.ModalS.bind(this, this.state.especeAv)}
+            onHide={this.Hide}
             backdrop="static"
             keyboard={false}>
             <Modal.Header closeButton>
               <Modal.Title>
                 <h4>Solutions proposées</h4>
+               
               </Modal.Title>
             </Modal.Header>
-            <Modal.Body className="overflow-auto" style={{ height: "620px" }}>
+             <Modal.Body className="overflow-auto" style={this.state.showRemb == false ?
+              { height: "620px" }:{ maxHeight: "max-content",minWidth:"600px"}
+              }>
 
-              {this.state.Especes[2] !== undefined && this.state.showRemb == false ?
+              {this.state.Especes[2] !== undefined 
+              &&this.state.showRemb == false ?
                 <>  <div className="row">
                   {this.state.Especes[2].map((Annonces) =>
                   (
@@ -1708,7 +1766,7 @@ class DetailsCommande extends Component {
                       </form>
                       <br></br>
                       <br></br>
-                      <div className="row mt-4">
+                      <div className="row mt-2">
                         <div className="col-3">{" "}</div>
                         <button type="button" onClick={this.ModalS.bind(this, this.state.especeAv)} className="btn btn-danger col-2">Annuler </button>
                         <div className="col-2">{" "}</div>
@@ -1716,7 +1774,7 @@ class DetailsCommande extends Component {
                         <div className="col-3">{" "}</div>
                       </div>
 
-                    </> : <h5>Dans ce cas là, l'ennonce sera annulee </h5>
+                    </> :( <h5>Dans ce cas là, l'ennonce sera annulee </h5>)
                   }
                 </div> :
                   null
@@ -1728,6 +1786,108 @@ class DetailsCommande extends Component {
 
 
           {/**modal de changement*/}
+               {/**modal choix*/}
+               <Modal
+            size="lg"
+            show={this.state.showChoix}
+            onHide={this.Hide}
+            backdrop="static"
+            keyboard={false}>
+            <Modal.Header closeButton>
+              <Modal.Title>
+                <h4>Solution choisi</h4>
+               
+              </Modal.Title>
+            </Modal.Header>
+            <Modal.Body className="overflow-auto" style={{  maxHeight: "max-content"}}>
+
+            {this.state.Especes[2] !== undefined && 
+    this.state.showChoix== true  ?<div>
+ {(this.state.especesAv.filter((e) => e.id == this.state.especeAv._id)[0]).etat.statut==="avarié_changement"
+||(this.state.especesAv.filter((e) => e.id == this.state.especeAv._id)[0]).etat.statut==="en attente de paiement du complement"
+?
+<div>
+<h4 className="text-danger mb-5 mt-2"> Vous avez choisi l'espece suivante :</h4>
+<div class="row">
+ 
+<div class="col">
+<div
+                                  className="product__item__pic set-bg"
+                                  data-setbg={(this.state.especesAv.filter((e) => e.id == this.state.especeAv._id)[0]).choix.images}
+                                >
+                                  <img
+                                    src={(this.state.especesAv.filter((e) => e.id == this.state.especeAv._id)[0]).choix.image_face}
+                                    className="product__item__pic set-bg"
+                                  />
+
+
+                                </div>
+                                {(this.state.especesAv.filter((e) => e.id == this.state.especeAv._id)[0]).choix.anoc ?
+                                  <h1 style={{ borderRadius: "0% 0% 0% 40%", fontSize: "14px" }} className=" badge badge-success py-1 w-100  ">
+                                    <HiOutlineBadgeCheck className=" mr-1 fa-lg " />
+                                    <span>Labélisé ANOC</span>  </h1>
+                                  :
+                                  <span className="badge pt-3 w-100  mt-1  " >{"  "}</span>
+                                }
+</div>
+
+<div class="col">
+
+                                <div className="product__item__text p-2 text-justify"
+                                >
+                                  <h6 className=""><b>№ Boucle</b> : {(this.state.especesAv.filter((e) => e.id == this.state.especeAv._id)[0]).choix.boucle}</h6>
+                                  <h6 className=""><b>Categorie</b> : {(this.state.especesAv.filter((e) => e.id == this.state.especeAv._id)[0]).choix.categorie}</h6>
+                                  <h6 className=""><b>Race :</b> {(this.state.especesAv.filter((e) => e.id == this.state.especeAv._id)[0]).choix.race}</h6>
+                                  <h6 className=""><b>Poids : </b>{(this.state.especesAv.filter((e) => e.id == this.state.especeAv._id)[0]).choix.poids} Kg</h6>
+                                  <h6 className=""><b>Age :</b> {(this.state.especesAv.filter((e) => e.id == this.state.especeAv._id)[0]).choix.age} mois</h6>
+                                  <h6 className=""><b>Localisation :</b> {(this.state.especesAv.filter((e) => e.id == this.state.especeAv._id)[0]).choix.localisation}</h6>
+                                  <h5 className=" text-danger  ">
+                                    <i className="fa fa-usd" aria-hidden="true"></i>
+                                    {" "}
+                                    {(this.state.especesAv.filter((e) => e.id == this.state.especeAv._id)[0]).choix.prix + "  Dhs"}
+                                  </h5>
+                                  
+                                </div>
+</div>
+
+</div>
+ 
+ {this.state.especesAv.filter((e) => e.id == this.state.especeAv._id)[0].etat.complement!=0?
+ <>
+<h4 className="text-danger mb-5 mt-2"> Complement : {(this.state.especesAv.filter((e) => e.id == this.state.especeAv._id)[0]).etat.complement +" Dhs"}</h4>
+</>:null}
+{this.state.especesAv.filter((e) => e.id == this.state.especeAv._id)[0].etat.montant_de_remboursement!=0?
+<><h4 className="text-danger mb-5 mt-2"> remboursement : {(this.state.especesAv.filter((e) => e.id == this.state.especeAv._id)[0]).etat.montant_de_remboursement +" Dhs"}</h4>
+  </>:null}
+  </div>
+:
+null}
+{(this.state.especesAv.filter((e) => e.id == this.state.especeAv._id)[0]).etat.statut==="avarié_remboursement"?
+
+<div>
+<h4 className="text-danger mb-5 mt-2"> remboursement :{(this.state.especesAv.filter((e) => e.id == this.state.especeAv._id)[0]).etat.montant_de_remboursement +" Dhs"}</h4>
+
+</div>
+:
+null}
+{(this.state.especesAv.filter((e) => e.id == this.state.especeAv._id)[0]).etat.statut==="avarié_annulée"?
+<>
+<h4 className="text-danger mb-5 mt-2"> Vous avez refuse tous les produits de changements proposés.</h4>
+<h5>Dans ce cas là, l'ennonce sera annulee </h5>
+</>
+:
+null}
+ 
+    </div>
+      :null
+}
+       </Modal.Body>
+
+
+          </Modal>
+
+
+          {/**modal choix*/}
           {/**modal de paiement*/}
           <Modal
             size="lg"

@@ -347,7 +347,18 @@ class Commandes extends Component {
                     this.setState({
 
                       Commandes: [...new Set(this.state.CommandesT.filter(
-                        (Commandes) => statuts.includes(Commandes.statut) === true))]
+
+                        (Commandes) => (
+                          Commandes.statut === "commande annulée (deadline dépassé)" ||
+                          Commandes.statut === "reçu avance refusé" ||
+                          Commandes.statut === "reçu reste refusé" ||
+                          Commandes.statut === "annulée manuellement" ||
+                          Commandes.statut === "avarié" ||
+                          Commandes.statut === "avarié_remboursement" ||
+                          Commandes.statut === "avarié_annulée" ||
+                          Commandes.statut === "rejetée")
+
+                      ))]
                     }, () => {
                       for (let i = 1; i <= Math.ceil(this.state.Commandes.length / this.state.annoncesPerPage); i++) {
                         pageNumbers.push(i);
@@ -449,6 +460,14 @@ class Commandes extends Component {
     nombre = e.espece.filter((e) => e.categorie === c).length
     return nombre;
   }
+  NbrEspeceMax() {
+    let nbr = [];
+    this.state.Commandes.map((e) => {
+      e.espece.map((c) => { nbr.push(this.NbrEspece(e, c.categorie)) })
+
+    })
+    return Math.max(...nbr);
+  }
   //image selon les catégories des especes dans chaque commande 
   ImageEspece(e) {
     //une seule catégorie
@@ -505,37 +524,30 @@ class Commandes extends Component {
   render() {
     let titre = "";
     let message = "";
-    let CSS = ``;
 
 
     switch (this.props.location.state.id) {
       case 'commande annulée (deadline dépassé)#reçu avance refusé#reçu reste refusé#reçu complément refusé#avarié#rejetée#annulée manuellement#remboursement#avarié_changement#avarié_remboursement#avarié_annulé':
         titre = "annulées";
         message = "Liste des commandes annulées pour des raisons de non-conformité aux conditions générales de vente (délai de paiement dépassé, reçu non conforme, montant non reçu), ou bien suite à votre souhait d'annulation directe. Chacune de vos commandes sera conservée, à titre informatif, pendant 5 jours à la suite du processus d'annulation. Passé ce délai, elle sera définitivement supprimée de cette liste. Il vous est aussi possible de les supprimer avant.";
-        CSS = ` .height {  height:290px } `;
         break;
       case 'en attente de paiement avance':
         titre = "Avance à payer ";
-        CSS = `.height { height:350px}`;
         break;
       case 'en attente de validation avance':
         titre = "Produit(s) réservé(s) ";
         message = "Liste des commandes dont les ordres de virement des avances sont en phase de validation. Elles seront affectées à la rubrique \"Reste à payer\" suite à leur validation. ";
 
-        CSS = `.height { height:290px}`;
         break;
       case 'en attente de paiement du reste':
         titre = "Reste à payer ";
-        CSS = `.height { height:350px}`;
         break;
       case 'validé#en attente de validation reste#en attente de validation du complément':
         titre = "Prêt à livrer";
         message = "Liste des commandes dont les ordres de virement des restes à payer sont en phase de validation. Vous serez contactés pour la livraison suite à leur validation. ";
-        CSS = `.height { height:350px}`;
         break;
       case 'en attente de paiement du complément':
         titre = "Complément à payer ";
-        CSS = `.height { height:350px}`;
         break;
 
     }
@@ -576,7 +588,8 @@ class Commandes extends Component {
             </div>
           ) : (
             <div className="container">
-              <style>{CSS}</style>
+              <style>{`.message   {display: none } .ico:hover ~.message   {display: block;color:#bb2124 } `}</style>
+
               <style>{`#gras{color :black} `}</style>
               <br></br>
               <br></br>
@@ -587,12 +600,15 @@ class Commandes extends Component {
               <br></br>
               <br></br>
               <div>
-                <h5 className="text-primary">{titre} : <span >
-                  {" "}
-                  {this.state.Commandes.length}
+                <h5  style={{ cursor: "pointer" }} className="text-primary ico">
+                  <i class="fa fa-exclamation-circle fa-sm " aria-hidden="true" ></i>
+                  {" " + titre} : <span >
+                    {" "}
+                    {this.state.Commandes.length}
 
-                </span>{" "}</h5>
-                <p className="text-danger">{message}</p>
+                  </span>{" "}</h5>
+                 <p className="message  ">{message}</p>
+                
               </div>
               <div>
                 <div id="filterPlace" className="col-lg-5 col-md-5 fa mt-4 ">
@@ -661,7 +677,12 @@ class Commandes extends Component {
                                 </li> : null}
                             </ul>
                           </div>
-                          <div className=" height product__item__text p-2 text-justify" style={{ backgroundRepeat: "no-repeat", backgroundImage: Annonces.statut === "avarié" ? "linear-gradient(rgb(255,153,153), rgb(255,204,204))" : null, backgroundSize: "cover" }}>
+                          <div className="  product__item__text p-2 text-justify" style={
+                            titre == "annulées" ?
+                              { height: 170 - (-this.NbrEspeceMax() * 40), backgroundRepeat: "no-repeat", backgroundImage: Annonces.statut === "avarié" ? "linear-gradient(rgb(255,153,153), rgb(255,204,204))" : null, backgroundSize: "cover" }
+                              :
+                              { height: 250 - (-this.NbrEspeceMax() * 40), backgroundRepeat: "no-repeat", backgroundImage: Annonces.statut === "avarié" ? "linear-gradient(rgb(255,153,153), rgb(255,204,204))" : null, backgroundSize: "cover" }
+                          }>
                             {Annonces.statut === "en attente de validation reste" ?
                               <div className="float-right text-warning"><i className="fa fa-hourglass-start fa-xs" aria-hidden="true"></i>
                                 <b>Validation en cours</b></div> : null}
@@ -761,14 +782,13 @@ class Commandes extends Component {
                             {this.props.location.state.id === "commande annulée (deadline dépassé)#reçu avance refusé#reçu reste refusé#reçu complément refusé#avarié#rejetée#annulée manuellement#remboursement#avarié_changement#avarié_remboursement#avarié_annulé" ?
                               (Annonces.statut === "avarié") ? <p className=" text-danger">
                                 <i className="fa fa-exclamation-triangle" aria-hidden="true"></i>
-                                {" "} Produit avarié
-                          </p>
+                                {" "} Produit avarié  </p>
                                 :
                                 <p className=" text-danger">
                                   <i className="fa fa-exclamation-triangle" aria-hidden="true"></i>
                                   {" "} {Annonces.statut}
-                                </p>
 
+                                </p>
                               : null}
                           </div>
                         </div>

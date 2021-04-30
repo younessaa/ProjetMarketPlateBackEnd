@@ -20,7 +20,7 @@ class DetailsCommande extends Component {
       espece_changement: '',
       etat: '',
       nom_prenom: '',
-      commandes: JSON.parse(localStorage.getItem("annonce")),
+      commandes: this.props.location.state.id,
       rib: '',
       cooperative: null,
       cooperative_rib: '',
@@ -39,7 +39,7 @@ class DetailsCommande extends Component {
       image: "",
       errors: {},
       date: Date,
-      mode_paiement_choisi: JSON.parse(localStorage.getItem("annonce")).mode_paiement_choisi,
+      mode_paiement_choisi: this.props.location.state.id.mode_paiement_choisi,
       dataUrl: "",
       ids: localStorage.getItem("ids") ? (Array.isArray(localStorage.getItem("ids")) ? localStorage.getItem("ids") :
         localStorage.getItem("ids").split(",")) : [],
@@ -349,10 +349,9 @@ class DetailsCommande extends Component {
                 all.prix_total = (all.prix_total - espece.prix) - (- espece.avance);
                 all.reste = (all.prix_total - all.avance);
               }
-              localStorage.setItem("annonce", JSON.stringify(all));
-
+ 
               this.setState({
-                commandes: JSON.parse(localStorage.getItem("annonce")),
+                commandes: all,
 
               }, () => {
 
@@ -930,7 +929,7 @@ class DetailsCommande extends Component {
       appendLeadingZeroes(current_datetime.getMinutes()) +
       ":" +
       appendLeadingZeroes(current_datetime.getSeconds());
-    const cmd = JSON.parse(localStorage.getItem("annonce"));
+    const cmd = this.props.location.state.id;
     var currentdate = new Date(cmd.date_creation);
     //  currentdate = Date.parse(cmd.date_creation);
     var day = currentdate.getDate();
@@ -973,7 +972,7 @@ class DetailsCommande extends Component {
       this.props.history.push("/login");
     } else {
       axios
-        .get("http://127.0.0.1:8000/api/cooperative/" + JSON.parse(localStorage.getItem("annonce")).id_cooperative, {
+        .get("http://127.0.0.1:8000/api/cooperative/" + this.props.location.state.id.id_cooperative, {
           headers: {
             // "x-access-token": token, // the token is a variable which holds the token
             "Content-Type": "application/json",
@@ -986,7 +985,7 @@ class DetailsCommande extends Component {
           this.setState({
             especesAv: espsAv,
             cooperative: res.data,
-            prix_transport: JSON.parse(localStorage.getItem("annonce")).ville_livraison === "Récupérer à la coopérative" ? 0 : res.data.Parametres.livraison.filter((v) => v.Ville_livraison === JSON.parse(localStorage.getItem("annonce")).ville_livraison)[0].prix_transport
+            prix_transport: this.props.location.state.id.ville_livraison === "Récupérer à la coopérative" ? 0 : res.data.Parametres.livraison.filter((v) => v.Ville_livraison === this.props.location.state.id.ville_livraison)[0].prix_transport
           }
             , () => {
               this.setState({ cooperative_rib: this.state.cooperative.rib, tech: this.state.cooperative.tech[0].prenom + " " + this.state.cooperative.tech[0].nom });

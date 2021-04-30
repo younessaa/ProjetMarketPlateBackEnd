@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import axios from "axios";
-import { GiWeight, GiSheep } from 'react-icons/gi';
+import { GiWeight, GiSheep, GiConsoleController } from 'react-icons/gi';
 import Swal from "sweetalert2";
 import { CgFileAdd } from 'react-icons/cg'
 import Loader from "react-loader-spinner";
@@ -82,7 +82,6 @@ class Commandes extends Component {
     localStorage.setItem('ids', []);
     localStorage.setItem('reponses', []);
     localStorage.setItem("annonceInch", JSON.stringify(annonce));
-    localStorage.setItem("annonce", JSON.stringify(annonce));
 
   }
 
@@ -223,6 +222,8 @@ class Commandes extends Component {
   }
 
   componentDidMount() {
+
+    localStorage.setItem("annonceInch", []);
     const token = localStorage.getItem("usertoken");
     const statut = this.props.location.state.id;
     let statuts = statut.split('#')
@@ -461,12 +462,27 @@ class Commandes extends Component {
     return nombre;
   }
   NbrEspeceMax() {
+    function uniq(arr) {
+      return arr.reduce(function (p, c) {
+        var id = [c.categorie, c.nbr].join('|');
+        if (p.temp.indexOf(id) === -1) {
+          p.out.push(c);
+          p.temp.push(id);
+        }
+        return p;
+      }, { temp: [], out: [] }).out;
+    }
     let nbr = [];
-    this.state.Commandes.map((e) => {
-      e.espece.map((c) => { nbr.push(this.NbrEspece(e, c.categorie)) })
-
+    let max = 0;
+    this.state.Commandes.map((e, i) => {
+      nbr[i] = [];
+      e.espece.map((c) => {
+        nbr[i].push({ "categorie": c.categorie, "nbr": this.NbrEspece(e, c.categorie) })
+      })
+      max = max > uniq(nbr[i]).length ? max : uniq(nbr[i]).length
     })
-    return Math.max(...nbr);
+    console.log(max)
+    return max;
   }
   //image selon les catégories des especes dans chaque commande 
   ImageEspece(e) {
@@ -523,7 +539,7 @@ class Commandes extends Component {
 
   render() {
     let titre = "";
-    let message = "";
+    let message = null;
 
 
     switch (this.props.location.state.id) {
@@ -600,15 +616,17 @@ class Commandes extends Component {
               <br></br>
               <br></br>
               <div>
-                <h5  style={{ cursor: "pointer" }} className="text-primary ico">
-                  <i class="fa fa-exclamation-circle fa-sm " aria-hidden="true" ></i>
+                <h5 style={message !== null ? { cursor: "pointer", maxWidth: "max-content" } : { maxWidth: "max-content" }} className="text-primary ico">
+
+                  {message !== null ? <i class="fa fa-exclamation-circle fa-sm " aria-hidden="true" ></i> : null}
                   {" " + titre} : <span >
                     {" "}
                     {this.state.Commandes.length}
 
                   </span>{" "}</h5>
-                 <p className="message  ">{message}</p>
-                
+                {message !== null ? <p className="message  ">{message}</p> : null}
+
+
               </div>
               <div>
                 <div id="filterPlace" className="col-lg-5 col-md-5 fa mt-4 ">
@@ -680,8 +698,12 @@ class Commandes extends Component {
                           <div className="  product__item__text p-2 text-justify" style={
                             titre == "annulées" ?
                               { height: 170 - (-this.NbrEspeceMax() * 40), backgroundRepeat: "no-repeat", backgroundImage: Annonces.statut === "avarié" ? "linear-gradient(rgb(255,153,153), rgb(255,204,204))" : null, backgroundSize: "cover" }
-                              :
-                              { height: 250 - (-this.NbrEspeceMax() * 40), backgroundRepeat: "no-repeat", backgroundImage: Annonces.statut === "avarié" ? "linear-gradient(rgb(255,153,153), rgb(255,204,204))" : null, backgroundSize: "cover" }
+                              : (titre == "Prêt à livrer" ?
+                                { height: 250 - (-this.NbrEspeceMax() * 40), backgroundRepeat: "no-repeat", backgroundImage: Annonces.statut === "avarié" ? "linear-gradient(rgb(255,153,153), rgb(255,204,204))" : null, backgroundSize: "cover" }
+                                :
+                                { height: 200 - (-this.NbrEspeceMax() * 40), backgroundRepeat: "no-repeat", backgroundImage: Annonces.statut === "avarié" ? "linear-gradient(rgb(255,153,153), rgb(255,204,204))" : null, backgroundSize: "cover" }
+                              )
+
                           }>
                             {Annonces.statut === "en attente de validation reste" ?
                               <div className="float-right text-warning"><i className="fa fa-hourglass-start fa-xs" aria-hidden="true"></i>

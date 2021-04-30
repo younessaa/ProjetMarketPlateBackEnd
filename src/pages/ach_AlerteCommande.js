@@ -118,18 +118,19 @@ class AlerteCommande extends Component {
             )
             .then((res) => {
 
-              swalWithBootstrapButtons.fire(
-                "Commande validée",
-                "Finalisez votre commande dans Mes Commandes",
-                'success'
-              )
-
-              this.props.history.push("./commandesParStatut");
-
+            
 
 
             })
         ))
+        swalWithBootstrapButtons.fire(
+          "Commande validée",
+          "Finalisez votre commande dans Mes Commandes",
+          'success'
+        )
+
+        this.props.history.push("./commandesParStatut");
+
 
       })
       .catch((err) => {

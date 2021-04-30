@@ -162,7 +162,7 @@ class Commander extends Component {
 
   onPaiementChanged(e) {
     this.setState({ [e.target.name]: e.target.value }, () => {
-      this.setState({ loading: false });
+      this.setState({ loading: false, checked: false });
     });
 
 

@@ -19,6 +19,7 @@ class Commander extends Component {
       check1: false,
       check2: false,
       check3: false,
+      entrée_ville: false,
       adresse: "",
       date: null,
       id_cooperative: null,
@@ -55,23 +56,50 @@ class Commander extends Component {
     this.handleChange2 = this.handleChange2.bind(this);
     this.handleChange3 = this.handleChange3.bind(this);
   }
-  handleChange1(e) { this.setState({ checked: false, check1: !this.state.check1, check2: false, check3: false, selectedOptionPoint: "", selectedOptionVille: "" }); }
+  handleChange1(e) { 
+    if(!this.state.check1){
+      this.setState({prix_transport:0},()=>{ })
+    }
+    this.setState({ checked: false, check1: !this.state.check1, check2: false, check3: false, selectedOptionPoint: "", selectedOptionVille: "" }); }
 
-  handleChange2(e) { this.setState({ checked: false, check2: !this.state.check2, check1: false, check3: false, adresse: "" }) }
+  handleChange2(e) { this.setState({ checked: false, check2: !this.state.check2, check1: false, check3: false, adresse: "", selectedOptionVille: "" }) }
 
-  handleChange3(e) { this.setState({ checked: false, check3: !this.state.check3, check1: false, check2: false, selectedOptionPoint: "" }) }
+  handleChange3(e) { this.setState({ checked: false, check3: !this.state.check3, check1: false, check2: false, selectedOptionPoint: "", selectedOptionVille: "" }) }
 
   handleChangeVille = (selectedOptionVille) => {
 
     this.setState({ selectedOptionVille }, () =>
       this.setState({
         checked: false,
-        prix_transport: this.state.livraison.find((f) => f.Ville_livraison == selectedOptionVille.value).prix_transport,
         vide: false,
       })
 
     );
+     if(this.state.check2||this.state.check3){
+      let transport=0;
+      if (this.state.check2) {
+        transport=this.state.livraison.find((f) => f.Ville_livraison == selectedOptionVille.value).prix_transport_relais
+       
+      }
+      else if (this.state.check3) {
+        transport=this.state.livraison.find((f) => f.Ville_livraison == selectedOptionVille.value).prix_transport_domicile
+        
+      }
+      if(this.props.location.state.id.length>6){
+        this.setState({
+          prix_transport: transport*this.props.location.state.id.length
+        })
+      }
+      else if (this.props.location.state.id.length>=1&&this.props.location.state.id.length<=6)
+      {
+        this.setState({
+          prix_transport: 500
+        })
+      }
+    }
+  
     this.setState({
+      entrée_ville: this.state.livraison.find((f) => f.Ville_livraison == selectedOptionVille.value).entrée_ville,
 
       optionsPoint:
         [{
@@ -79,6 +107,15 @@ class Commander extends Component {
           "label": this.state.livraison.find((f) => f.Ville_livraison == selectedOptionVille.value).point_relais
         }],
     })
+    if(!this.state.livraison.find((f) => f.Ville_livraison == selectedOptionVille.value).entrée_ville)
+    {
+      this.setState({selectedOptionPoint:{"value":"L'entrée de la ville","label":"L'entrée de la ville"}},()=>{
+       })
+    }
+    else {
+      this.setState({selectedOptionPoint:""},()=>{})
+
+    }
   };
 
   handleChangePoint = (selectedOptionPoint) => {
@@ -113,8 +150,8 @@ class Commander extends Component {
         ancien_statut: "",
         deadline: this.state.deadline,
         avance: this.state.avance,
-        prix_total: this.state.prix - (-this.state.prix_transport),
-        reste: this.state.prix - (-this.state.prix_transport) - this.state.avance,
+        prix_total: this.state.prix,
+        reste: this.state.prix - this.state.avance,
 
         reçu_avance: "",
         feedback_avance: "",
@@ -205,8 +242,7 @@ class Commander extends Component {
       let ids = [];
       if (!Array.isArray(idm)) { ids.push(idm) }
       else { ids = idm }
-      console.log(this.props.location.state.id_cooperative)
-      axios
+       axios
 
         .get("http://127.0.0.1:8000/api/cooperative/" + this.props.location.state.id_cooperative, {
           headers: {
@@ -216,24 +252,24 @@ class Commander extends Component {
         })
         .then((res) => {
           let d = "";
-          if (res.data.Parametres.occasion != "aid") {
+          if (res.data.parametres.occasion != "aid") {
             d = new Date(
               new Date().getTime()
-              - (-3600 * (res.data.Parametres.delais_paiement.delai_reste - (-res.data.Parametres.delais_paiement.delai_avance) - (-res.data.Parametres.delais_paiement.bonus)) * 1000)
+              - (-3600 * (res.data.parametres.delais_paiement.delai_reste - (-res.data.parametres.delais_paiement.delai_avance) - (-res.data.parametres.delais_paiement.bonus)) * 1000)
               - ((new Date()).getTimezoneOffset() * 60 * 1000)).toISOString()
             this.setState({ date_min: d.substr(0, 10) }, () => { })
           }
           this.setState({
-            livraison: res.data.Parametres.livraison,
-            occasion: res.data.Parametres.occasion,
-            avant_aid: res.data.Parametres.jourLivraisonAvant,
+            livraison: res.data.parametres.livraison,
+            occasion: res.data.parametres.occasion,
+            avant_aid: res.data.parametres.jourLivraisonAvant,
 
             deadline: new Date(new Date().getTime()
-              - (-3600 * (res.data.Parametres.delais_paiement.delai_avance - 1) * 1000)
+              - (-3600 * (res.data.parametres.delais_paiement.delai_avance) * 1000)
               - ((new Date()).getTimezoneOffset() * 60 * 1000)).toLocaleString(),
 
           }, () => {
-            res.data.Parametres.livraison.map((l) => (
+            res.data.parametres.livraison.map((l) => (
               this.state.optionsVille.splice(0, 0, { "value": l.Ville_livraison, "label": l.Ville_livraison })
             ))
 

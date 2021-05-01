@@ -72,7 +72,7 @@ class AlerteCommande extends Component {
                 },
               })
               .then((res) => {
-                this.setState({ reference: res.data }, () => {
+                 this.setState({ reference: res.data.reference }, () => {
                   this.state.commande.reference = this.state.reference;
                 });
               })

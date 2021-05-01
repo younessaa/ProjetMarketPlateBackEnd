@@ -13,27 +13,27 @@ class Commander1 extends Component {
 
 
   }
-
   render() {
-    // const { iamge, image_boucle, image_face, image_profile } = this.props;
-
     return (
       <div>
+        <div className="container">
+          <div className="product-details spad">
+               <div id="centrer" className="col-lg-12 col-md-6">
+                <br></br>
 
-        <div id="coul" className="container ">
-          <br></br>
-          <h3>Livraison :</h3>
-          <br></br>
-          <div className="row">
+                <h3>Livraison :</h3>
+                <div className="shoping__checkout mt-2 pb-0">
+               
+                <div className="row">
             <div className="col-lg-6 col-md-6">
               <div className="product__details__pic">
                 <div className="product__details__pic__item">
-                  <h5  > Recuperer a la cooperative {" "}
-                    <Switch onChange={this.props.handleChange1} checked={this.props.data.check1} height={20} width={48} /></h5><br></br>
-                  <h5> Me faire livrer en point relais {" "}
-                    <Switch onChange={this.props.handleChange2} checked={this.props.data.check2} height={20} width={48} /></h5><br></br>
-                  <h5> Me faire livrer a domicille {" "}
-                    <Switch onChange={this.props.handleChange3} checked={this.props.data.check3} height={20} width={48} /></h5><br></br>
+                  <h6  > Recuperer a la cooperative {" "}
+                    <Switch onChange={this.props.handleChange1} checked={this.props.data.check1} height={20} width={48} /></h6><br></br>
+                  <h6> Me faire livrer en point relais {" "}
+                    <Switch onChange={this.props.handleChange2} checked={this.props.data.check2} height={20} width={48} /></h6><br></br>
+                  <h6> Me faire livrer a domicille {" "}
+                    <Switch onChange={this.props.handleChange3} checked={this.props.data.check3} height={20} width={48} /></h6><br></br>
                 </div>
               </div>
             </div>
@@ -51,7 +51,7 @@ class Commander1 extends Component {
                           const options = [];
 
                           for (let i = 1; i <= this.props.data.avant_aid; i++) {
-                            options.push(<option value={i+"jours avant"}>{i} jours avant </option>);
+                            options.push(<option value={i+" jours avant"}>{i} jours avant </option>);
                           }
 
                           return options;
@@ -73,31 +73,38 @@ class Commander1 extends Component {
                           placeholder="Ville"
                           name="selectedOptionVille" />
                       </div> : null}
-                    {this.props.data.check2 ? <div className="col-lg-6 col-md-6 mt-2">
+                    {this.props.data.check2 ?( this.props.data.entrée_ville?<div className="col-lg-6 col-md-6 mt-2">
                       <i className="fa fa-map-marker" aria-hidden="true">{" "}Point relais de Livraison {" "}</i>
                       <Select
                         value={this.props.data.selectedOptionPoint}
                         onChange={this.props.handleChangePoint}
                         options={this.props.data.optionsPoint}
                         placeholder="point de relais" />
-                    </div> : null}
+                    </div>:null ): null}
+                    {this.props.data.check2 && this.props.data.entrée_ville===false &&this.props.data.selectedOptionVille!=""?
+                    <h6 style={{color :"#bb2124",marginTop:"4px"}}>Un technicien ANOC va vous contacter le jour de livraison que vous avez choisi pour vous informer de l'adresse exacte de la livraison.</h6>
+                    :null}
                     {this.props.data.check3 ? <div className="col-lg-6  col-md-6 mt-2">
                       <i className="fa fa-map-marker " aria-hidden="true">{" "} Adresse {" "}</i>
                       <br></br>
-                      <textarea onChange={this.props.onPaiementChanged} className="w-100 h-100" name="adresse" placeholder="adresse" /></div>
+                      <textarea onChange={this.props.onPaiementChanged} className="w-100 h-75" name="adresse" placeholder="adresse" /></div>
                       : null}
                   </div>
                 </form>
               </div>
             </div>
           </div>
-          <br></br>
+       
+                
+
+
+
+                </div>
+              </div>  
+          </div>
         </div>
-        <br></br>
-        <br></br>
       </div>
     );
-
   }
 }
 

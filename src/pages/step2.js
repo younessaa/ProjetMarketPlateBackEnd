@@ -58,26 +58,25 @@ class Commander2 extends Component {
 
                 <h3>Montant a payer : </h3>
                 <div className="shoping__checkout mt-2 pb-0">
-                  <ul>
-                    <li>
-                      Prix Net <span>{this.props.data.prix} Dhs</span>
-                    </li>
+                  <ul className="mb-0">
                     <li style={{ borderBottomStyle: "dashed", borderColor: "black" }}>
-                      Prix Transport <span>{this.props.data.prix_transport} Dhs </span>
+                      Prix Total <span>{this.props.data.prix} Dhs</span>
                     </li>
-
-                    <li>
-                      Prix Total{" "}
-                      <span>{resultat - (-this.props.data.prix)}  Dhs</span>
+                    <li >
+                      Prix Transport (*) <span>{this.props.data.prix_transport} Dhs </span>
                     </li>
+                    </ul>   </div>
+                    <span ><small style={{color:"#bb2124"}}>* Le paiement du montant de transport se fera à la livraison</small></span>
+                    <div className="shoping__checkout mt-2 pb-0">
+                  <ul className="mb-0">
                     <li>
-                      Frais de reservation(*){" "}
+                      Frais de reservation (*){" "}
                       <span>{this.props.data.avance}Dhs</span>
                     </li>
 
 
                   </ul>   </div>
-                <span><small>* Avance non rembourssable</small></span>
+                <span><small style={{color:"#bb2124"}}>* Avance non rembourssable</small></span>
               </div> : null}
           </div>
         </div>

@@ -82,7 +82,7 @@ class Header extends Component {
         .then((res) => {
           var resultat = res;
           for (let i = 0; i < res.data.length; i++) {
-            var statutCmd= res.data[i].statut;
+            var statutCmd = res.data[i].statut;
             var deadline = res.data[i].deadline;
             var dd = new Date(deadline.substr(6, 4),
               (deadline.substr(3, 2) - 1), deadline.substr(0, 2),
@@ -92,16 +92,18 @@ class Header extends Component {
               now.getTime() >= dd.getTime() && (
                 statutCmd == "en attente de paiement avance" ||
                 statutCmd == "en attente de paiement du reste" ||
-                statutCmd == "en attente de paiement du complément"
-                || (
+                statutCmd == "en attente de paiement du complément" ||
+                statutCmd === "reçu avance refusé"|| 
+                statutCmd === "reçu reste refusé" ||
+                 (
                   res.data[i].ancien_statut == " avarié_changement" && (
                     statutCmd == "en attente de paiement avance" ||
-                    statutCmd == "en attente de paiement du reste" )
+                    statutCmd == "en attente de paiement du reste")
                 ))
             ) {
               axios
                 .put(
-                  "http://127.0.0.1:8000/api/commande/" + res.data[i]._id.$oid,
+                  "http://127.0.0.1:8000/api/commande/" + res.data[i]._id,
                   {
                     //   msg_refus_avance: this.state.dataUrl,
                     statut: "commande annulée (deadline dépassé)",

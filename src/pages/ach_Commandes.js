@@ -81,8 +81,6 @@ class Commandes extends Component {
   local(annonce) {
     localStorage.setItem('ids', []);
     localStorage.setItem('reponses', []);
-    localStorage.setItem("annonceInch", JSON.stringify(annonce));
-
   }
 
   sortData(e) {
@@ -223,7 +221,6 @@ class Commandes extends Component {
 
   componentDidMount() {
 
-    localStorage.setItem("annonceInch", []);
     const token = localStorage.getItem("usertoken");
     const statut = this.props.location.state.id;
     let statuts = statut.split('#')
@@ -391,8 +388,7 @@ class Commandes extends Component {
     });
 
     swalWithBootstrapButtons.fire({
-      title: "Etes-vous sûr?",
-      text: "Voulez-vous annuler votre commande!",
+      title: "Etes-vous sûr?", text: "Voulez-vous annuler votre commande!",
       icon: "warning",
       showCancelButton: true,
       confirmButtonText: "  Oui!  ",
@@ -415,22 +411,41 @@ class Commandes extends Component {
             }
           )
           .then((res) => {
-            c.especes.map((e) =>
-            (
-              axios
-                .put(
-                  "http://127.0.0.1:8000/api/Espece/" + e.id_espece,
-                  {
-                    statut: "disponible",
-                  },
-                  {
-                    headers: {
-                      "Content-Type": "application/json",
-                      "Authorization": myToken,
+            c.espece.map((e) => {
+              if (e.statut == "réservé") {
+                axios
+                  .put(
+                    "http://127.0.0.1:8000/api/Espece/" + e._id,
+                    {
+                      statut: "disponible",
                     },
-                  }
-                )
-            ))
+                    {
+                      headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": myToken,
+                      },
+                    }
+                  )
+              }
+              else if (e.statut == "produit avarié") {
+                c.especes.filter((esp) => esp.id_espece == e._id)[0].produits_changement.map((chang) => {
+                  axios
+                    .put(
+                      "http://127.0.0.1:8000/api/Espece/" + chang.id_espece,
+                      {
+                        statut: "disponible",
+                      },
+                      {
+                        headers: {
+                          "Content-Type": "application/json",
+                          "Authorization": myToken,
+                        },
+                      }
+                    )
+                })
+              }
+
+            })
 
             if (!this.props.location.state.id.split("#").includes("annulée manuellement")) { this.setState({ Commandes: this.state.Commandes.filter((cmd) => cmd !== c) }); }
             else {
@@ -481,7 +496,6 @@ class Commandes extends Component {
       })
       max = max > uniq(nbr[i]).length ? max : uniq(nbr[i]).length
     })
-    console.log(max)
     return max;
   }
   //image selon les catégories des especes dans chaque commande 
@@ -673,7 +687,8 @@ class Commandes extends Component {
                                   type="submit" >
                                   {" "}
                                   <a onClick={this.local.bind(this, Annonces)}>
-                                    {(Annonces.statut === "en attente de paiement avance" || Annonces.statut === "en attente de paiement du reste" || Annonces.statut === "en attente de paiement du complément") ?
+                                    {(Annonces.statut === "en attente de paiement avance" || Annonces.statut === "en attente de paiement du reste" || Annonces.statut === "en attente de paiement du complément")
+                                    ||Annonces.statut ==="reçu avance refusé"|| Annonces.statut ==="reçu reste refusé" ?
                                       <CgFileAdd className="fa-lg" /> : <i className="fa fa-eye"></i>}
                                   </a>
                                 </Link>
@@ -701,7 +716,7 @@ class Commandes extends Component {
                               : (titre == "Prêt à livrer" ?
                                 { height: 250 - (-this.NbrEspeceMax() * 40), backgroundRepeat: "no-repeat", backgroundImage: Annonces.statut === "avarié" ? "linear-gradient(rgb(255,153,153), rgb(255,204,204))" : null, backgroundSize: "cover" }
                                 :
-                                { height: 200 - (-this.NbrEspeceMax() * 40), backgroundRepeat: "no-repeat", backgroundImage: Annonces.statut === "avarié" ? "linear-gradient(rgb(255,153,153), rgb(255,204,204))" : null, backgroundSize: "cover" }
+                                { height: 220 - (-this.NbrEspeceMax() * 40), backgroundRepeat: "no-repeat", backgroundImage: Annonces.statut === "avarié" ? "linear-gradient(rgb(255,153,153), rgb(255,204,204))" : null, backgroundSize: "cover" }
                               )
 
                           }>

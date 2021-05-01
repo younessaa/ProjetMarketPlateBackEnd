@@ -305,8 +305,7 @@ class DetailsCommande extends Component {
                   }
                 )
                 .then((res) => {
-                  localStorage.removeItem('annonce');
-                  this.props.history.push("./commandesParStatut");
+                   this.props.history.push("./commandesParStatut");
                   swalWithBootstrapButtons.fire(
                     'Annulation !',
                     'Votre espece a bien été annulée',
@@ -786,9 +785,9 @@ class DetailsCommande extends Component {
 
   }
   ModalS(espece) {
-    if( this.state.especesAv.filter((e) => e.id == espece._id)[0].etat !==null){
-      this.setState({ showChoix: true, showSolution: false,especeAv: espece  }, () => {
-      });
+    if( this.state.especesAv.filter((e) => e.id == espece._id)[0].etat !==null)
+    {
+      this.setState({ showChoix: true, showSolution: false,especeAv: espece  }, () => { });  
     }
     else {
       this.setState({showChoix:false},()=>{ 
@@ -839,7 +838,7 @@ class DetailsCommande extends Component {
   }
   reinitialiserCmd = () => {
     const myToken = `Bearer ` + localStorage.getItem("myToken");
-    let cmdreplace = JSON.parse(localStorage.getItem("annonceInch"));
+    let cmdreplace = this.props.location.state.id;
     Swal.fire({
       title: "Changement annuler ",
       icon: "error",
@@ -849,9 +848,10 @@ class DetailsCommande extends Component {
       showConfirmButton: false,
 
     })
+     console.log(this.props.location.state.id._id)
     axios
       .put(
-        "http://127.0.0.1:8000/api/commande/" + this.state.commandes._id,
+        "http://127.0.0.1:8000/api/commande/" + this.props.location.state.id._id,
         {
           statut: cmdreplace.statut,
           ancien_statut: cmdreplace.ancien_statut,
@@ -868,6 +868,8 @@ class DetailsCommande extends Component {
         }
       )
       .then((res) => {
+            localStorage.setItem('ids', []);
+      localStorage.setItem('reponses', []);
       })
   }
 
@@ -878,8 +880,7 @@ class DetailsCommande extends Component {
       || this.state.commandes.espece.filter((e) => e.statut == "produit avarié").length == 0) {
 
     } else {
-      localStorage.setItem('ids', []);
-      localStorage.setItem('reponses', []);
+   
       this.reinitialiserCmd();
 
     }
@@ -893,11 +894,10 @@ class DetailsCommande extends Component {
       if (!(this.state.ids.length == 0 ||
         this.state.ids.length == this.state.commandes.espece.filter((e) => e.statut == "produit avarié").length
         || this.state.commandes.espece.filter((e) => e.statut == "produit avarié").length == 0)) {
-        localStorage.setItem('annonce', localStorage.getItem("annonceInch"));
-        localStorage.setItem('ids', []);
+         localStorage.setItem('ids', []);
         localStorage.setItem('reponses', []);
         this.setState({
-          commandes: JSON.parse(localStorage.getItem("annonceInch")),
+          commandes: this.props.location.state.id,
           ids: [], reponses: []
         })
         this.reinitialiserCmd();
@@ -959,7 +959,7 @@ class DetailsCommande extends Component {
     var datetime = day + "/" + month + "/" + year + " à " + hours + ":00:00";
     // this.setState({ date: datetime });
     let espsAv = [];
-    JSON.parse(localStorage.getItem("annonceInch")).espece.filter((e) => e.statut == "produit avarié").map(
+    this.props.location.state.id.espece.filter((e) => e.statut == "produit avarié").map(
       (esp) => {
         espsAv.push({ "id": esp._id, "etat":null,"choix":null })
       }
@@ -985,7 +985,7 @@ class DetailsCommande extends Component {
           this.setState({
             especesAv: espsAv,
             cooperative: res.data,
-            prix_transport: this.props.location.state.id.ville_livraison === "Récupérer à la coopérative" ? 0 : res.data.Parametres.livraison.filter((v) => v.Ville_livraison === this.props.location.state.id.ville_livraison)[0].prix_transport
+            prix_transport: this.props.location.state.id.ville_livraison === "Récupérer à la coopérative" ? 0 : res.data.parametres.livraison.filter((v) => v.Ville_livraison === this.props.location.state.id.ville_livraison)[0].prix_transport
           }
             , () => {
               this.setState({ cooperative_rib: this.state.cooperative.rib, tech: this.state.cooperative.tech[0].prenom + " " + this.state.cooperative.tech[0].nom });
@@ -1443,7 +1443,8 @@ class DetailsCommande extends Component {
                         <ul>
 
 
-                          {commandes.statut === "en attente de paiement avance" ?
+                          {commandes.statut === "en attente de paiement avance"
+                          ||commandes.statut==="reçu avance refusé" ?
                             <div>
 
                               <h5>  <b>Frais de reservation (non remboursable) </b><small>{commandes.avance} {" Dhs"}</small></h5>
@@ -1494,7 +1495,8 @@ class DetailsCommande extends Component {
                                 <div className="col">{" "}</div>
                               </div>
                             </div> : null}
-                          {commandes.statut === "en attente de paiement du reste" ?
+                          {commandes.statut === "en attente de paiement du reste"
+                           ||commandes.statut==="reçu reste refusé" ?
                             <div>
                               <b>Reste du montant : {commandes.reste + "Dhs"}</b>
                             </div> : null}
@@ -1538,7 +1540,7 @@ class DetailsCommande extends Component {
                                     <img
                                       className="product__details__pic__item--large"
                                       src={commandes.reçu_montant_complement}
-                                      alt=""
+                                      alt="reçu_montant_complement"
                                     />
                                   </div>
                                 </div></div>
@@ -1559,12 +1561,12 @@ class DetailsCommande extends Component {
                                       <img
                                         className="product__details__pic__item--large"
                                         src={commandes.reçu_montant_restant}
-                                        alt=""
+                                        alt="reçu_montant_restant"
                                       /> :
                                       <img
                                         className="product__details__pic__item--large"
                                         src={commandes.reçu_montant_complement}
-                                        alt=""
+                                        alt="reçu_montant_complement"
                                       />}
 
                                   </div>
@@ -1612,12 +1614,12 @@ class DetailsCommande extends Component {
               <div className="row">
                 <div className="col-md-4 offset-md-4">
 
-                  {commandes.statut === "en attente de paiement avance" ?
+                  {commandes.statut === "en attente de paiement avance"||commandes.statut==="reçu avance refusé" ?
                     <button style={{ fontSize: "19px" }} id="centre" onClick={this.Modal.bind(this, "avance")}
                       className="btn-success py-1 px-4 mb-3 w-75" ><BsFileEarmarkPlus className="fa-lg" /> {" "}
                         Payer l'avance{" "}
                     </button> : null}
-                  {commandes.statut === "en attente de paiement du reste" ?
+                  {commandes.statut === "en attente de paiement du reste" ||commandes.statut==="reçu reste refusé"?
                     <button style={{ fontSize: "19px" }} id="centre" onClick={this.Modal.bind(this, "reste")}
                       className="btn-success py-1 px-4 mb-3 w-75" ><BsFileEarmarkPlus className="fa-lg" /> {" "}
                         Payer le reste{" "}
@@ -1647,7 +1649,7 @@ class DetailsCommande extends Component {
           </div>
           {/**modal de changement*/}
           <Modal
-            size= "xl" 
+            size= {this.state.Especes[2] !== undefined&& this.state.Especes[2].length==1?null:"xl"} 
             show={this.state.showSolution}
             onHide={this.Hide}
             backdrop="static"
@@ -1659,15 +1661,19 @@ class DetailsCommande extends Component {
               </Modal.Title>
             </Modal.Header>
              <Modal.Body className="overflow-auto" style={this.state.showRemb == false ?
-              { height: "620px" }:{ maxHeight: "max-content",minWidth:"600px"}
+             this.state.Especes[2] !== undefined&& this.state.Especes[2].length==1?
+              { maxHeight: "max-content",margin:"auto" }
+              :{height: "620px" }
+              :{ maxHeight: "max-content",minWidth:"600px"}
               }>
 
               {this.state.Especes[2] !== undefined 
               &&this.state.showRemb == false ?
-                <>  <div className="row">
+                <>  <div className={ this.state.Especes[2].length==1?null:"row"}>
                   {this.state.Especes[2].map((Annonces) =>
                   (
-                    <div className="col-lg-3  col-sm-6">
+                    
+                    <div style={ this.state.Especes[2].length==1?{maxWidth:"max-content"}:null}className={ this.state.Especes[2].length==1?null:"col-lg-3  col-sm-6"}>
 
                       <div id="anonce" className="product__item">
                         <div

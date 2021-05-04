@@ -75,7 +75,11 @@ class Commander extends Component {
       })
 
     );
-     if(this.state.check2||this.state.check3){
+    let ids = [];
+    if (!Array.isArray(this.props.location.state.id)) { ids.push(this.props.location.state.id) }
+    else {ids=this.props.location.state.id}
+     if(this.state.check2||this.state.check3){ 
+
       let transport=0;
       if (this.state.check2) {
         transport=this.state.livraison.find((f) => f.Ville_livraison == selectedOptionVille.value).prix_transport_relais
@@ -85,12 +89,12 @@ class Commander extends Component {
         transport=this.state.livraison.find((f) => f.Ville_livraison == selectedOptionVille.value).prix_transport_domicile
         
       }
-      if(this.props.location.state.id.length>6){
+      if(ids.length>6){
         this.setState({
-          prix_transport: transport*this.props.location.state.id.length
+          prix_transport: transport*ids.length
         })
       }
-      else if (this.props.location.state.id.length>=1&&this.props.location.state.id.length<=6)
+      else if (ids.length>=1&&ids.length<=6)
       {
         this.setState({
           prix_transport: 500

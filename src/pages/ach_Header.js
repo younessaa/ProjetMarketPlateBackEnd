@@ -4,6 +4,7 @@ import { GiSheep } from 'react-icons/gi';
 import { MdAssignment } from 'react-icons/md'
 import { AiFillHeart, AiOutlineSearch } from 'react-icons/ai'
 import { FaShoppingCart, FaUserAlt, FaUniversity } from 'react-icons/fa'
+import Swal from "sweetalert2";
 
 class Header extends Component {
   constructor() {
@@ -51,6 +52,22 @@ class Header extends Component {
     const myToken = `Bearer ` + localStorage.getItem("myToken");
 
     if (token && expiredTimeToken > formatted_date) {
+      console.log(localStorage.getItem("ids"))
+      if(window.location.pathname!=="/DetailsCommande" &&localStorage.getItem("ids") &&localStorage.getItem("ids").length>0
+      
+      ){ 
+       
+        Swal.fire({
+          title: "Changement annuler ",
+          icon: "error",
+          width: 400,
+          heightAuto: false,
+          timer: 1500,
+          showConfirmButton: false,
+    
+        })
+        localStorage.setItem("ids",[])
+      }
       this.setState({ isLoged: true });
       axios
         .get("http://127.0.0.1:8000/api/consommateur/" + token, {
@@ -92,7 +109,7 @@ class Header extends Component {
               now.getTime() >= dd.getTime() && (
                 statutCmd == "en attente de paiement avance" ||
                 statutCmd == "en attente de paiement du reste" ||
-                statutCmd == "en attente de paiement du complément" ||
+                statutCmd == "en attente de validation complément" ||
                 statutCmd === "reçu avance refusé"|| 
                 statutCmd === "reçu reste refusé" ||
                  (
@@ -167,7 +184,7 @@ class Header extends Component {
   render() {
     /** active menu item */
     var { colors } = this.state;
-    const CSS = ` .header__menu ul li:hover>a {color:black !important; text-decoration: underline; background-color: transparent !important;} .humberger__menu__wrapper .slicknav_nav a {color:black}	.humberger__menu__wrapper .slicknav_nav a:hover  {text-decoration: underline; color:black}`
+     const CSS = ` .header__menu ul li:hover>a {color:black !important; text-decoration: underline; background-color: transparent !important;} .humberger__menu__wrapper .slicknav_nav a {color:black}	.humberger__menu__wrapper .slicknav_nav a:hover  {text-decoration: underline; color:black}`
     switch (window.location.pathname) {
       case "/":
         colors[0] = this.state.colorMenuAc;

@@ -98,9 +98,18 @@ class Commandes extends Component {
         });
       });
     }
-    else if (sortProperty === "validé" || sortProperty === "en attente de validation reste") {
+    else if (sortProperty === "validé" ) {
       this.setState({ loading: true }, () => {
         sortCmd = sorted.filter((c) => c.statut === sortProperty)
+        this.setState({
+          Commandes: sortCmd,
+          loading: false
+        });
+      });
+    }
+    else if (sortProperty === "en attente de validation reste") {
+      this.setState({ loading: true }, () => {
+        sortCmd = sorted.filter((c) => c.statut === "en attente de validation reste"||c.statut === "en attente de validation complément")
         this.setState({
           Commandes: sortCmd,
           loading: false
@@ -315,7 +324,7 @@ class Commandes extends Component {
                     this.setState({
 
                       Commandes: [...new Set(this.state.CommandesT.filter(
-                        (Commandes) => (statuts.includes(Commandes.statut) === true) || (Commandes.statut === "avarié_changement" && Commandes.ancien_statut === "validé")))]
+                        (Commandes) => (statuts.includes(Commandes.statut) === true) ||Commandes.statut==="en attente de validation complément"|| (Commandes.statut === "avarié_changement" && Commandes.ancien_statut === "validé")))]
                     }, () => {
                       for (let i = 1; i <= Math.ceil(this.state.Commandes.length / this.state.annoncesPerPage); i++) {
                         pageNumbers.push(i);
@@ -712,7 +721,7 @@ class Commandes extends Component {
                           </div>
                           <div className="  product__item__text p-2 text-justify" style={
                             titre == "annulées" ?
-                              { height: 170 - (-this.NbrEspeceMax() * 40), backgroundRepeat: "no-repeat", backgroundImage: Annonces.statut === "avarié" ? "linear-gradient(rgb(255,153,153), rgb(255,204,204))" : null, backgroundSize: "cover" }
+                              { height: 190 - (-this.NbrEspeceMax() * 40), backgroundRepeat: "no-repeat", backgroundImage: Annonces.statut === "avarié" ? "linear-gradient(rgb(255,153,153), rgb(255,204,204))" : null, backgroundSize: "cover" }
                               : (titre == "Prêt à livrer" ?
                                 { height: 250 - (-this.NbrEspeceMax() * 40), backgroundRepeat: "no-repeat", backgroundImage: Annonces.statut === "avarié" ? "linear-gradient(rgb(255,153,153), rgb(255,204,204))" : null, backgroundSize: "cover" }
                                 :
@@ -720,7 +729,7 @@ class Commandes extends Component {
                               )
 
                           }>
-                            {Annonces.statut === "en attente de validation reste" ?
+                            {Annonces.statut === "en attente de validation reste" ||Annonces.statut ==="en attente de validation complément"?
                               <div className="float-right text-warning"><i className="fa fa-hourglass-start fa-xs" aria-hidden="true"></i>
                                 <b>Validation en cours</b></div> : null}
                             {Annonces.statut === "validé" ?
@@ -812,7 +821,7 @@ class Commandes extends Component {
                             {(Annonces.statut === "en attente de validation reste" || Annonces.statut === "validé") ? <div  ><p id="gras" className=" mb-0"><i className="fa fa-calendar-o" aria-hidden="true"></i>{" "}reste transmis le : </p><p className="text-danger font-weight-bold mt-0">{Annonces.reste_transmis_le.substr(0, 10) + " à " + Annonces.reste_transmis_le.substr(11, 8)}</p></div> : null}
                             {(Annonces.statut === "validé") ? <div  ><p id="gras" className=" mb-0"><i className="fa fa-calendar-o" aria-hidden="true"></i>{" "}Date de livraison : </p><p className="text-danger font-weight-bold"> {Annonces.date_de_livraison.replace(/-/g, " / ")}</p></div> : null}
 
-                            {(Annonces.statut === "en attente de validation du complément") ?
+                            {(Annonces.statut === "en attente de validation complément") ?
                               <div  ><p className="mb-0" id="gras"><i className="fa fa-calendar-o" aria-hidden="true"></i>{" "}Complément transmis le : </p><p className="text-danger font-weight-bold"> {" "}{Annonces.complement_transmis_le.substr(0, 10) + " à " + Annonces.complement_transmis_le.substr(11, 8)}</p></div> : null}
 
 

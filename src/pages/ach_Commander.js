@@ -187,6 +187,13 @@ class Commander extends Component {
         adresse_domicile: this.state.adresse,
         isDeliveredTo_PointRelais: this.state.check2,
         isTakenFrom_Cooperative: this.state.check1,
+
+        details_remboursement: {
+          "rib_client": null,
+          "nom_prenom_client": null,
+          "montant_de_remboursement": null,
+          "isPaid": null
+        },
       },
       vide: false,
     })
@@ -299,12 +306,7 @@ class Commander extends Component {
                       "motif_annulation": null,
                       "produits_changement": [],
                       "choix_client": "",
-                      "details_remboursement": {
-                        "rib_client": null,
-                        "nom_prenom_client": null,
-                        "montant_de_remboursement": null,
-                        "isPaid": null
-                      },
+                      
                     })
                     this.setState({ especes: p }, () => { })
                   });

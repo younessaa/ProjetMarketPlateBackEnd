@@ -53,9 +53,7 @@ class Header extends Component {
 
     if (token && expiredTimeToken > formatted_date) {
       console.log(localStorage.getItem("ids"))
-      if(window.location.pathname!=="/DetailsCommande" &&localStorage.getItem("ids") &&localStorage.getItem("ids").length>0
-      
-      ){ 
+      if(window.location.pathname=="/Commandes" &&localStorage.getItem("ids") &&localStorage.getItem("ids").length>0 ){ 
        
         Swal.fire({
           title: "Changement annuler ",

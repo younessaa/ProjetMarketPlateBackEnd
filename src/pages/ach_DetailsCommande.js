@@ -34,7 +34,7 @@ class DetailsCommande extends Component {
       prixRemb: 0,
       prix_transport: 0,
       especeAv: {},
-      especesAv: [],
+       especeChoisi:{},
       redirect: false,
       image: "",
       errors: {},
@@ -50,7 +50,7 @@ class DetailsCommande extends Component {
     this.Modal = this.Modal.bind(this);
     this.ModalS = this.ModalS.bind(this);
     this.Hide = this.Hide.bind(this);
-this.terminer=this.terminer.bind(this);
+    this.terminer=this.terminer.bind(this);
     this.RefuseTSoutions = this.RefuseTSoutions.bind(this);
     this.AccepteSoution = this.AccepteSoution.bind(this);
     this.handleValidation = this.handleValidation.bind(this);
@@ -59,8 +59,7 @@ this.terminer=this.terminer.bind(this);
     this.handleChangeImage = this.handleChangeImage.bind(this);
     this.handlePut = this.handlePut.bind(this);
     this.handlPost = this.handlPost.bind(this);
-    // this.reinitialiserCmd = this.reinitialiserCmd.bind(this);
-
+ 
 
   }
   verification(id){
@@ -119,11 +118,7 @@ this.terminer=this.terminer.bind(this);
     .then((res) => {
       this.state.reponses.push(res.data)
      localStorage.setItem("reponses", JSON.stringify(this.state.reponses))
-      let espsAv = this.state.especesAv;
-
-      espsAv[(espsAv.indexOf(this.state.especesAv.filter((e) => e.id == this.state.especeAv._id)[0]))].etat = res.data;
-     espsAv[(espsAv.indexOf(this.state.especesAv.filter((e) => e.id == this.state.especeAv._id)[0]))].choix =  this.state.espece_changement;
-      this.setState({ showChoix:true,showRemb:false,especesAv: espsAv, showSolution: !this.state.showSolution }, () => {
+       this.setState({ showChoix:false,showRemb:false,  showSolution: false }, () => {
        
       })
  if(nbr=== JSON.parse(localStorage.getItem("ids")).length-1)
@@ -142,20 +137,21 @@ axios
     }
   )
   .then((res) => {
-    this.setState({cloture:true,ids:[]},()=>{
-      console.log(res.data)
-      localStorage.setItem("ids",[]);
+    this.setState({cloture:true,ids:[],showChoix:false,showSolution:false,showRemb:false},()=>{
+       localStorage.setItem("ids",[]);
       
         Swal.fire({
-      title: "Changer avec succès ",
+      title: "Votre commande a bien été changée ",
       icon: "success",
       width: 400,
       heightAuto: false,
       timer: 1500,
       showConfirmButton: false,
 
-    })})
-    this.props.history.push("./commandesParStatut");
+    })  
+      this.props.history.push("./commandesParStatut");
+
+  })
 
 
   })}
@@ -180,12 +176,10 @@ axios
   .then((res) => { 
       this.state.reponses.push(res.data)
      localStorage.setItem("reponses", JSON.stringify(this.state.reponses))
-    let espsAv = this.state.especesAv;
+ 
+ 
 
-    espsAv[(espsAv.indexOf(this.state.especesAv.filter((e) => e.id == this.state.especeAv._id)[0]))].etat = res.data;
-
-
-    this.setState({ showChoix:true,showRemb:false,especesAv: espsAv, showSolution: !this.state.showSolution }, () => {
+    this.setState({ showChoix:true,showRemb:false,  showSolution: false }, () => {
      
     })
  if(nbr=== JSON.parse(localStorage.getItem("ids")).length-1)
@@ -205,8 +199,7 @@ axios
   )
   .then((res) => {
     this.setState({cloture:true,ids:[]},()=>{
-      console.log(res.data)
-      localStorage.setItem("ids",[]);
+       localStorage.setItem("ids",[]);
       
         Swal.fire({
       title: "Changer avec succès ",
@@ -302,11 +295,11 @@ axios
       if (this.state.etat == "refuser") {  
           
       
-                 this.state.ids.push({"id":this.state.especeAv._id,"etat":this.state.etat})
+            this.state.ids.push({"id":this.state.especeAv._id,"etat":this.state.etat})
             localStorage.setItem("ids", JSON.stringify(this.state.ids))
-            let espsAv = this.state.especesAv;
+         
  
-            this.setState({ showChoix:true,showRemb:false,especesAv: espsAv, showSolution: !this.state.showSolution }, () => {
+            this.setState({  showRemb:false,  showSolution: false }, () => {
               Swal.fire({
                 title: "Changer avec succès ",
                 icon: "success",
@@ -327,9 +320,9 @@ axios
            // this.state.reponses.push(res.data)
             localStorage.setItem("ids", JSON.stringify(this.state.ids))
            // localStorage.setItem("reponses", JSON.stringify(this.state.reponses))
-            let espsAv = this.state.especesAv;
+       
 
-           this.setState({ showChoix:true,showRemb:false,especesAv: espsAv, showSolution: !this.state.showSolution }, () => {
+           this.setState({  showRemb:false,  showSolution: false }, () => {
               Swal.fire({
                 title: "Changer avec succès ",
                 icon: "success",
@@ -344,10 +337,18 @@ axios
 
          
       }
-
+ 
     }
 
 
+  }
+  getChoix(espece){
+    if(this.state.showChoix)
+    {
+         let especeChoisi=this.state.commandes.espece_avariee.filter((av)=>av._id==espece.produits_changement.filter((p)=>p.feedback==="validé")[0].id_espece)[0]     
+   return especeChoisi 
+    }
+   
   }
   getEspece(espece) {
     let esp = this.state.commandes.especes.filter((e) => (e.id_espece === espece._id))[0];
@@ -746,10 +747,9 @@ axios
               localStorage.setItem("ids", JSON.stringify(this.state.ids))
              // localStorage.setItem("reponses", JSON.stringify(this.state.reponses))
 
-              let espsAv = this.state.especesAv;
- 
+  
            
-              this.setState({ especesAv: espsAv, showSolution: !this.state.showSolution }, () => {
+              this.setState({   showSolution: false,showRemb:false }, () => {
                 
               });
           
@@ -813,18 +813,16 @@ axios
           const myToken = `Bearer ` + localStorage.getItem("myToken");
 
           if (this.state.commandes.ancien_statut === "en attente de paiement avance") {
-            this.setState({ showRemb: !this.state.showRemb,showChoix:true }, () => {
+            this.setState({ showRemb: false }, () => {
                 
           
                   this.state.ids.push({"id":this.state.especeAv._id,"etat":this.state.etat})
                 //  this.state.reponses.push(res.data)
                    localStorage.setItem("ids", JSON.stringify(this.state.ids))
                 //  localStorage.setItem("reponses", JSON.stringify(this.state.reponses))
-                  let espsAv = this.state.especesAv;
-
+ 
   
-                  this.setState({ especesAv: espsAv},()=>{
-                       Swal.fire({
+                        Swal.fire({
                     title: "Annule avec succès ",
                     icon: "success",
                     width: 400,
@@ -833,7 +831,7 @@ axios
                     showConfirmButton: false,
 
                   });
-                this.terminer()})
+                this.terminer() 
                
                 })
           
@@ -872,10 +870,12 @@ axios
 
   }
   ModalS(espece) {
-    if( this.state.especesAv.filter((e) => e.id == espece._id)[0].etat !==null)
-    {
+    let pdchangement=this.state.commandes.especes.filter((f) => f.id_espece == espece._id)[0].produits_changement;
+     if(pdchangement.filter((p)=>(p.feedback!=null)).length===pdchangement.length){
       this.setState({ showChoix: true, showSolution: false,especeAv: espece  }, () => { });  
+
     }
+   
     else {
       this.setState({showChoix:false},()=>{ 
             if (this.state.commandes.especes.filter((f) => f.id_espece == espece._id)[0].produits_changement.length == 0) {
@@ -923,55 +923,14 @@ axios
 
     });
   }
-  /*reinitialiserCmd = () => {
-    const myToken = `Bearer ` + localStorage.getItem("myToken");
-    let cmdreplace = this.props.location.state.id;
-    Swal.fire({
-      title: "Changement annuler ",
-      icon: "error",
-      width: 400,
-      heightAuto: false,
-      timer: 1500,
-      showConfirmButton: false,
-
-    })
-     console.log(this.props.location.state.id._id)
-    axios
-      .put(
-        "http://127.0.0.1:8000/api/commande/" + this.props.location.state.id._id,
-        {
-          statut: cmdreplace.statut,
-          ancien_statut: cmdreplace.ancien_statut,
-          especes: cmdreplace.especes,
-          reste: cmdreplace.reste,
-          avance: cmdreplace.avance,
-          prix_total: cmdreplace.prix_total,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": myToken,
-          },
-        }
-      )
-      .then((res) => {
-            localStorage.setItem('ids', []);
-      localStorage.setItem('reponses', []);
-      })
-  }
-*/
-  componentWillUnmount() {
+   componentWillUnmount() {
 
     if ((localStorage.getItem("ids")&&JSON.parse(localStorage.getItem("ids") ).length == 0) ||(
       localStorage.getItem("ids")&&
       JSON.parse(localStorage.getItem("ids") ).length == this.state.commandes.espece.filter((e) => e.statut == "produit avarié").length
      ) || this.state.commandes.espece.filter((e) => e.statut == "produit avarié").length == 0) {
 
-    } else {
-   
-     // this.reinitialiserCmd();
-
-    }
+    }  
 
   }
 
@@ -988,9 +947,6 @@ axios
           commandes: this.props.location.state.id,
           ids: [], reponses: []
         })
-      //  this.reinitialiserCmd();
-
-
       }
 
     });
@@ -1052,8 +1008,7 @@ axios
         espsAv.push({ "id": esp._id, "etat":null,"choix":null })
       }
     )
-    this.setState({ especesAv: espsAv }, () => {
-     })
+    
 
 
     if (!token || expiredTimeToken < formatted_date) {
@@ -1071,8 +1026,7 @@ axios
         .then((res) => {
 
           this.setState({
-            especesAv: espsAv,
-            cooperative: res.data,
+             cooperative: res.data,
             prix_transport: this.props.location.state.id.ville_livraison === "Récupérer à la coopérative" ? 0 : res.data.parametres.livraison.filter((v) => v.Ville_livraison === this.props.location.state.id.ville_livraison)[0].prix_transport
           }
             , () => {
@@ -1175,7 +1129,7 @@ axios
       return <Redirect to="./commandesParStatut" />;
     }
     let ids = localStorage.getItem("ids") ? JSON.parse(localStorage.getItem("ids")): [];
-    let especesAv = this.state.especesAv;
+ 
 
 
 
@@ -1222,8 +1176,7 @@ axios
                           <div className="row">
                             {commandes.espece.filter((e) => e.statut == "produit avarié" && !this.verification(e._id)).map((Annonces) =>
                             (<div className="col-lg-3  col-sm-6">
-                              {console.log(this.getEspece(Annonces).produits_changement.filter((p)=>p.feedback!=null))}
-                              <span className="text-danger">
+                               <span className="text-danger">
                                 <i className="fa fa-long-arrow-right" aria-hidden="true"> </i>
                                 <b>{this.getEspece(Annonces).motif_annulation}</b> </span>
                               <div id="anonce" className="product__item"
@@ -1423,17 +1376,14 @@ axios
                           <br></br>
                           <div className="shoping__checkout mt-2 pb-0">
                             <ul>
-                              <li>
-                                Prix Net <span> {prix} Dhs</span>
+                            <li>
+                                Prix Total{" "}
+                                <span>   {commandes.prix_total}Dhs</span>
                               </li>
                               <li style={{ borderBottomStyle: "dashed", borderColor: "black" }}>
                                 Prix Transport <span> {prix_transport}  Dhs    </span>
                               </li>
 
-                              <li>
-                                Prix Total{" "}
-                                <span>   {commandes.prix_total}Dhs</span>
-                              </li>
                               {commandes.statut === "en attente de paiement avance" ?
                                 <li className="text-danger">
                                   Avance a payer{" "}
@@ -1755,7 +1705,7 @@ axios
               }>
 
               {this.state.Especes[2] !== undefined 
-              &&this.state.showRemb == false ?
+              &&this.state.showRemb == false&&this.state.showChoix==false ?
                 <>  <div className={ this.state.Especes[2].length==1?null:"row"}>
                   {this.state.Especes[2].map((Annonces) =>
                   (
@@ -1890,7 +1840,7 @@ axios
                {/**modal choix*/}
                <Modal
             size="lg"
-            show={this.state.showChoix}
+            show={this.state.showChoix&&!this.state.cloture}
             onHide={this.Hide}
             backdrop="static"
             keyboard={false}>
@@ -1902,10 +1852,78 @@ axios
             </Modal.Header>
             <Modal.Body className="overflow-auto" style={{  maxHeight: "max-content"}}>
 
-            {this.state.Especes[2] !== undefined && 
+            { 
     this.state.showChoix== true  ?<div>
+  { this.getEspece(this.state.especeAv).produits_changement.filter((p)=>p.feedback==="validé").length>0?
+             <> <h4 className="text-danger mb-5 mt-2"> Vous avez choisi l'espece suivante :</h4>
+             <div className="  mb-4">
+
+
+<div className="row">
+  <div className="col-lg-6  col-sm-6 pr-0 border-0" style={{ height: "220px" }}>
+
+    <div className="product__item">
+      <div
+        className="product__item__pic set-bg"
+        style={this.getChoix(this.getEspece(this.state.especeAv)).anoc !== null ? { height: "193px" } : { height: 220 }}
+        data-setbg={this.getChoix(this.getEspece(this.state.especeAv)).images}
+      >
+
+        <img
+          src={this.getChoix(this.getEspece(this.state.especeAv)).image_face}
+          style={this.getChoix(this.getEspece(this.state.especeAv)).anoc !== null ? { height: "193px" } : { height: "220px" }}
+          className="product__item__pic set-bg"
+        />
+
+        <ul className="product__item__pic__hover">
+
+          <li>
+            <Link to={`/DetailsMouton/${this.getChoix(this.getEspece(this.state.especeAv))._id}`}>
+              <a href="#">
+                <i className="fa fa-eye"></i>
+              </a>
+            </Link>
+          </li>
+        
+        </ul>
+      </div>
+      {this.getChoix(this.getEspece(this.state.especeAv)).anoc ?
+        <h1 style={{ borderRadius: "0% 0% 0% 40%", fontSize: "14px" }} className=" badge badge-success py-1 w-100  ">
+          <HiOutlineBadgeCheck className=" mr-1 fa-lg " />
+          <span>Labélisé ANOC</span>  </h1>
+        :
+        <span className="badge pt-3 w-100  mt-1  ">{"  "}</span>}
+
+    </div>
+
+  </div>
+  <div className="col-lg-6  col-sm-6 border" style={{ height: "220px", backgroundRepeat: "no-repeat", backgroundImage: this.getChoix(this.getEspece(this.state.especeAv)).statut === "produit avarié" ? "linear-gradient(rgb(255,153,153), rgb(255,204,204))" : null, backgroundSize: "cover" }}>
+    <div className="product__item__text p-2 text-justify">
+      <h6 className=""><b>№ Boucle</b> : {this.getChoix(this.getEspece(this.state.especeAv)).boucle}</h6>
+      <h6 className=""><b>Categorie</b> : {this.getChoix(this.getEspece(this.state.especeAv)).categorie}</h6>
+      <h6 className=""><b>Race :</b> {this.getChoix(this.getEspece(this.state.especeAv)).race}</h6>
+      <h6 className=""><b>Poids : </b>{this.getChoix(this.getEspece(this.state.especeAv)).poids} Kg</h6>
+      <h6 className=""><b>Age :</b> {this.getChoix(this.getEspece(this.state.especeAv)).age} mois</h6>
+      <h6 className=""><b>Localisation :</b> {this.getChoix(this.getEspece(this.state.especeAv)).localisation}</h6>
+
+
+      <h5 className=" text-danger mt-4">
+        <i className="fa fa-usd" aria-hidden="true"></i>
+        {" "}
+        {this.getChoix(this.getEspece(this.state.especeAv)).prix + "  Dhs"}
+      </h5>
+    </div>
+  </div>
+</div>
+
+</div>
 
  
+</>
+                    :
+                    <h4 className="text-danger mb-5 mt-2"> Vous avez refuse tous les produits de changements proposés.</h4>
+                  }
+
     </div>
       :null
 }

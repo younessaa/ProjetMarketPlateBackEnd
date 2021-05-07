@@ -104,20 +104,24 @@ class Commandes extends Component {
                   },
                 })
                 .then((res) => {
-                  coopn.splice(0, 0, { "nom": res.data.nom, "idc": c });
+                  coopn.splice(0, 0, { "nom": res.data.nom, "idc": c, "adresse": res.data.adresse, "ville": res.data.ville, "rib": res.data.rib, "techniciens": res.data.techniciens, "parametres": res.data.parametres });
                   this.setState({ coopn: coopn });
                   let p = [];
-
                   this.state.coop.map((c) => {
                     p.splice(0, 0, {
                       "id_coop": c,
                       "nom_coop": coopn.filter((f) => (f.idc == c)).map((m) => m.nom)[0],
+                      "adresse_coop": coopn.filter((f) => (f.idc == c)).map((m) => m.adresse)[0],
+                      "ville_coop": coopn.filter((f) => (f.idc == c)).map((m) => m.ville)[0],
+                      "rib": coopn.filter((f) => (f.idc == c)).map((m) => m.rib)[0],
+                      "tech": coopn.filter((f) => (f.idc == c)).map((m) => m.techniciens)[0],
+                      "parametres": coopn.filter((f) => (f.idc == c)).map((m) => m.parametres)[0],
                       "id_espaces": this.state.Paniers.filter((f) => (f.id_cooperative == c)).map((m) => m._id),
                       "especes": this.state.Paniers.filter((f) => (f.id_cooperative == c)),
                       "prix": this.state.Paniers.filter((f) => (f.id_cooperative == c)).reduce(function (prev, cur) { return prev - (- cur.prix); }, 0)
                     })
                   });
-                  this.setState({ panier: p  });
+                  this.setState({ panier: p });
                   const pageNumbers = [];
                   for (let i = 1; i <= Math.ceil(this.state.panier.length / this.state.annoncesPerPage); i++) {
                     pageNumbers.push(i);
@@ -135,7 +139,7 @@ class Commandes extends Component {
     // console.log(Mid);
     const token = localStorage.getItem("usertoken");
     const myToken = `Bearer ` + localStorage.getItem("myToken");
-     if (!token) {
+    if (!token) {
       this.props.history.push("/login");
     } else {
       const swalWithBootstrapButtons = Swal.mixin({
@@ -145,7 +149,7 @@ class Commandes extends Component {
         },
         buttonsStyling: false,
       });
-  
+
       swalWithBootstrapButtons.fire({
         title: "Etes-vous sûr?",
         text: "Voulez-vous supprimer cette annonce !",
@@ -157,80 +161,81 @@ class Commandes extends Component {
       }).then((result) => {
         if (result.isConfirmed) {
 
-      axios
-        .put(
-          "http://127.0.0.1:8000/api/consommateur/" + token + "/panier/" + Mid,
-          {},
-          {
-            headers: {
-              //"Content-Type": "application/json",
+          axios
+            .put(
+              "http://127.0.0.1:8000/api/consommateur/" + token + "/panier/" + Mid,
+              {},
+              {
+                headers: {
+                  //"Content-Type": "application/json",
 
-              Authorization: myToken,
-            },
-          }
-        )
-        .then(() => {
-          this.setState(
-            {
+                  Authorization: myToken,
+                },
+              }
+            )
+            .then(() => {
+              this.setState(
+                {
 
-              Paniers: this.state.Paniers.filter(
-                (Paniers) => Paniers._id !== Mid
-              ),
+                  Paniers: this.state.Paniers.filter(
+                    (Paniers) => Paniers._id !== Mid
+                  ),
+                });
+
+              let p = [];
+
+              this.state.coop.map((c) => {
+                p.splice(0, 0, {
+                  "id_coop": c,
+                  "nom_coop": this.state.coopn.filter((f) => (f.idc == c)).map((m) => m.nom)[0],
+                  "id_espaces": this.state.Paniers.filter((f) => (f.id_cooperative == c)).map((m) => m._id),
+                  "especes": this.state.Paniers.filter((f) => (f.id_cooperative == c)),
+                  "prix": this.state.Paniers.filter((f) => (f.id_cooperative == c)).reduce(function (prev, cur) { return prev - (- cur.prix); }, 0)
+                })
+              });
+
+              this.setState({ panier: p.filter((f) => f.especes.length >= 1) });
+
+
+              this.props.history.push("/Panier")
+
             });
+          Swal.fire({
+            title: "Supprimé avec succès ",
+            icon: "success",
+            width: 400,
+            heightAuto: false,
+            timer: 1500,
+            showConfirmButton: false,
 
-          let p = [];
-         
-          this.state.coop.map((c) => {
-            p.splice(0, 0, {
-              "id_coop": c,
-              "nom_coop": this.state.coopn.filter((f) => (f.idc == c)).map((m) => m.nom)[0],
-              "id_espaces": this.state.Paniers.filter((f) => (f.id_cooperative == c)).map((m) => m._id),
-              "especes": this.state.Paniers.filter((f) => (f.id_cooperative == c)),
-              "prix": this.state.Paniers.filter((f) => (f.id_cooperative == c)).reduce(function (prev, cur) { return prev - (- cur.prix); }, 0)
-            })
           });
+          const pageNumbers = [];
+          for (
+            let i = 1;
+            i <=
+            Math.ceil(this.state.panier.filter((f) => f.especes.length >= 1).length / (this.state.annoncesPerPage));
+            i++
+          ) {
+            pageNumbers.push(i);
+          }
+          this.setState({ nombrePages: pageNumbers });
 
-          this.setState({ panier: p.filter((f) => f.especes.length >= 1)});
 
-        
-          this.props.history.push("/Panier")
-
-        });
-      Swal.fire({
-        title: "Supprimé avec succès ",
-        icon: "success",
-        width: 400,
-        heightAuto: false,
-        timer: 1500,
-        showConfirmButton: false,
-       
-      });
-      const pageNumbers = [];
-      for (
-        let i = 1;
-        i <=
-        Math.ceil(this.state.panier.filter((f) => f.especes.length >= 1).length / (this.state.annoncesPerPage));
-        i++
-      ) {
-         pageNumbers.push(i);
-      }
-      this.setState({ nombrePages: pageNumbers });
-  
-
+        }
+        else if (
+          result.dismiss === Swal.DismissReason.cancel
+        ) {
+          Swal.fire({
+            title: "Annonce non supprimée ! ",
+            icon: "error",
+            width: 400,
+            heightAuto: false,
+            timer: 1500,
+            showConfirmButton: false,
+          });
+        }
+      })
     }
-    else if (
-      result.dismiss === Swal.DismissReason.cancel
-    ) {
-      Swal.fire({
-        title: "Annonce non supprimée ! ",
-        icon: "error",
-        width: 400,
-        heightAuto: false,
-        timer: 1500,
-        showConfirmButton: false,
-      });}
-  })
-}
   }
   annonceVision(a) {
     if (a.race === undefined) {
@@ -244,7 +249,7 @@ class Commandes extends Component {
 
   render() {
     var fav = this.state.Paniers.filter((Paniers) => Paniers !== null);
- 
+
     const { loading } = this.state;
 
     let titre;
@@ -315,20 +320,21 @@ class Commandes extends Component {
                                   pathname: "/Commander",
                                   state: {
                                     id: p.id_espaces,
-                                    id_cooperative:p.id_coop
+                                     cooperative: p 
                                   },
                                 }}
                               >
                                 <b className="text-danger float-right">
                                   {p.prix} Dhs {" "} <button
-                                  id={p.id_espaces}
-                                  className=" rounded text-white bg-success py-1 px-2 ml-3  "
-                                  style={{ fontSize: "16px", border: "none" }}
-                                //  onClick={(e) => {
-                                //   this.handlePanier(e.currentTarget.id);
-                                //  }
-                                // }
-                                >{""} Commande globale</button>
+                                    id={p.id_espaces}
+                                    className=" rounded text-white bg-success py-1 px-2 ml-3  "
+                                    style={{ fontSize: "16px", border: "none" }}
+                                  //  onClick={(e) => {
+                                  //   this.handlePanier(e.currentTarget.id);
+                                  //  }
+                                  // }
+                                  >
+                                    {""} Commande globale</button>
                                 </b></Link>
                             </div>
 
@@ -336,7 +342,7 @@ class Commandes extends Component {
                             {p.especes.map((Annonces) => (
                               //  {if(Annonces){}}
                               <div className="col-lg-3 col-md-3 col-sm-6">
-                                 <br></br>
+                                <br></br>
                                 <div id="anonce" className="product__item">
                                   <div
                                     className="product__item__pic set-bg"
@@ -386,10 +392,10 @@ class Commandes extends Component {
                                     {/* <h6>{"   Livrer à :      " + Annonces.point_relais}</h6> */}
                                     {/* <h6> {"         " + Annonces.prix + "   Dhs"}</h6> */}
                                     <h6 > <img style={{ width: "18px", height: "20px", marginBottom: "5px" }}
-                                    data-imgbigurl="Images/sheep-head.png"
-                                    src="Images/sheep-head.png"
-                                    alt=""
-                                  />{" "+Annonces.categorie}
+                                      data-imgbigurl="Images/sheep-head.png"
+                                      src="Images/sheep-head.png"
+                                      alt=""
+                                    />{" " + Annonces.categorie}
 
 
                                       <span className="float-right">
@@ -404,7 +410,7 @@ class Commandes extends Component {
                                         {Annonces.age + " mois"}</span></h6>
 
                                     <h5 id="mad">
-                                    <i class="fa fa-usd" aria-hidden="true"></i>
+                                      <i class="fa fa-usd" aria-hidden="true"></i>
 
                                       {"         " + Annonces.prix + "  Dhs"}
                                     </h5>
@@ -414,7 +420,7 @@ class Commandes extends Component {
                                           pathname: "/Commander",
                                           state: {
                                             id: Annonces._id,
-                                            id_cooperative:p.id_coop
+                                            cooperative: p 
                                           },
                                         }}
                                       > <button
@@ -425,7 +431,7 @@ class Commandes extends Component {
                                       //   this.handlePanier(e.currentTarget.id);
                                       //  }
                                       // }
-                                      >
+                                      > 
                                           {""} Commander
                                     </button></Link> : null}
 

@@ -1339,10 +1339,12 @@ axios
                         <div id="centrer" className="col-lg-12 col-md-6">
                           <div className="shoping__checkout mt-2 pb-0">
                             <ul>
+                              {commandes.date_de_livraison?
                               <li>
                                 <i className="fa fa-calendar-o" aria-hidden="true"></i>
                                 {" "}Date de livraison :<b style={{ fontWeight: "normal" }}>{" "}{commandes.date_de_livraison.replace(/-/g, " / ")} </b>
                               </li>
+                              :null}
                               <li>
                                 <i className="fa fa-map-o" aria-hidden="true"></i>
                                 {" "}Ville de livraison : <b style={{ fontWeight: "normal" }}>{" " + commandes.ville_livraison}</b>  </li>
@@ -1377,11 +1379,16 @@ axios
                           <div className="shoping__checkout mt-2 pb-0">
                             <ul>
                             <li>
+                                Prix net{" "}
+                                <span>   {prix}Dhs</span>
+                              </li>
+                              {/**   <li style={{ borderBottomStyle: "dashed", borderColor: "black" }}>
+                                Prix Transport <span> {commandes.prix_total-prix}  Dhs    </span>
+                              </li> */}
+                           
+                              <li>
                                 Prix Total{" "}
                                 <span>   {commandes.prix_total}Dhs</span>
-                              </li>
-                              <li style={{ borderBottomStyle: "dashed", borderColor: "black" }}>
-                                Prix Transport <span> {prix_transport}  Dhs    </span>
                               </li>
 
                               {commandes.statut === "en attente de paiement avance" ?

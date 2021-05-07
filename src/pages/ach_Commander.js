@@ -19,6 +19,8 @@ class Commander extends Component {
       check1: false,
       check2: false,
       check3: false,
+      check4: false,
+      check5: false,
       entrée_ville: false,
       adresse: "",
       date: null,
@@ -29,12 +31,13 @@ class Commander extends Component {
       prix_total: 0,
       prix_transport: 0,
       Commande: {},
+      standard: "domicile",
+      cooperative: this.props.location.state.cooperative,
       Espece: {},
       eleveur: {},
       Especes: [],
       eleveurs: [],
       occasion: "",
-      avant_aid: null,
       deadline: new Date(),
       checked: false,
       vide: true,
@@ -55,16 +58,64 @@ class Commander extends Component {
     this.handleChange1 = this.handleChange1.bind(this);
     this.handleChange2 = this.handleChange2.bind(this);
     this.handleChange3 = this.handleChange3.bind(this);
+    this.handleChange4 = this.handleChange4.bind(this);
+    this.handleChange5 = this.handleChange5.bind(this);
+    this.validation = this.validation.bind(this);
   }
-  handleChange1(e) { 
-    if(!this.state.check1){
-      this.setState({prix_transport:0},()=>{ })
+  validation() {
+    let ids = [];
+    if (!Array.isArray(this.props.location.state.id)) { ids.push(this.props.location.state.id) }
+    else { ids = this.props.location.state.id }
+    let valide = [];
+    valide[0] = false;
+    let transport = 0;
+    if (this.state.check1) {
+      if (((this.state.date == null && this.state.occasion == "aid") ||
+        (this.state.date != null && this.state.occasion != "aid"))) {
+        valide[0] = true
+        transport = 0
+      }
     }
-    this.setState({ checked: false, check1: !this.state.check1, check2: false, check3: false, selectedOptionPoint: "", selectedOptionVille: "" }); }
+    if (this.state.check2) { }
+    if (this.state.check3) {
+      if (this.state.date != null && this.state.selectedOptionVille != "" && this.state.adresse != "") {
+        valide[0] = true
+        transport = this.state.livraison.find((f) => f.Ville_livraison == this.state.selectedOptionVille.value).prix_VIP
 
-  handleChange2(e) { this.setState({ checked: false, check2: !this.state.check2, check1: false, check3: false, adresse: "", selectedOptionVille: "" }) }
+      }
+    }
+    if (this.state.check4) {
+      if (this.state.selectedOptionVille != "" && this.state.adresse != "") {
+        valide[0] = true
+        transport = this.state.livraison.find((f) => f.Ville_livraison == this.state.selectedOptionVille.value).prix_VIP
 
-  handleChange3(e) { this.setState({ checked: false, check3: !this.state.check3, check1: false, check2: false, selectedOptionPoint: "", selectedOptionVille: "" }) }
+      }
+
+    }
+    if (this.state.check5) {
+      if (this.state.standard === "point_relais" && this.state.selectedOptionVille != "" && this.state.selectedOptionPoint != "") {
+        valide[0] = true
+        transport = (this.state.livraison.find((f) => f.Ville_livraison == this.state.selectedOptionVille.value).prix_transport_relais
+          - (-this.state.livraison.find((f) => f.Ville_livraison == this.state.selectedOptionVille.value).marge_risque)) * ids.length
+
+
+      }
+      if (this.state.standard === "domicile" && this.state.selectedOptionVille != "" && this.state.adresse != "") {
+        valide[0] = true
+        transport = (this.state.livraison.find((f) => f.Ville_livraison == this.state.selectedOptionVille.value).prix_transport_domicile
+          - (-this.state.livraison.find((f) => f.Ville_livraison == this.state.selectedOptionVille.value).marge_risque)) * ids.length
+
+      }
+    }
+    
+  valide[1] = transport;
+      return valide;
+  }
+  handleChange1(e) { this.setState({ checked: false, check1: !this.state.check1, check2: false, check3: false, check4: false, check5: false, selectedOptionPoint: "", selectedOptionVille: "" }); }
+  handleChange2(e) { this.setState({ checked: false, check1: false, check2: !this.state.check2, check3: false, check4: false, check5: false, adresse: "", selectedOptionVille: "" }) }
+  handleChange3(e) { this.setState({ checked: false, check1: false, check2: false, check3: !this.state.check3, check4: false, check5: false, selectedOptionPoint: "", selectedOptionVille: "" }) }
+  handleChange4(e) { this.setState({ checked: false, check1: false, check2: false, check3: false, check4: !this.state.check4, check5: false, selectedOptionPoint: "", selectedOptionVille: "" }) }
+  handleChange5(e) { this.setState({ checked: false, check1: false, check2: false, check3: false, check4: false, check5: !this.state.check5, selectedOptionPoint: "", selectedOptionVille: "" }) }
 
   handleChangeVille = (selectedOptionVille) => {
 
@@ -72,36 +123,12 @@ class Commander extends Component {
       this.setState({
         checked: false,
         vide: false,
+        adresse: "",
       })
 
     );
-    let ids = [];
-    if (!Array.isArray(this.props.location.state.id)) { ids.push(this.props.location.state.id) }
-    else {ids=this.props.location.state.id}
-     if(this.state.check2||this.state.check3){ 
 
-      let transport=0;
-      if (this.state.check2) {
-        transport=this.state.livraison.find((f) => f.Ville_livraison == selectedOptionVille.value).prix_transport_relais
-       
-      }
-      else if (this.state.check3) {
-        transport=this.state.livraison.find((f) => f.Ville_livraison == selectedOptionVille.value).prix_transport_domicile
-        
-      }
-      if(ids.length>6){
-        this.setState({
-          prix_transport: transport*ids.length
-        })
-      }
-      else if (ids.length>=1&&ids.length<=6)
-      {
-        this.setState({
-          prix_transport: 500
-        })
-      }
-    }
-  
+
     this.setState({
       entrée_ville: this.state.livraison.find((f) => f.Ville_livraison == selectedOptionVille.value).entrée_ville,
 
@@ -111,13 +138,12 @@ class Commander extends Component {
           "label": this.state.livraison.find((f) => f.Ville_livraison == selectedOptionVille.value).point_relais
         }],
     })
-    if(!this.state.livraison.find((f) => f.Ville_livraison == selectedOptionVille.value).entrée_ville)
-    {
-      this.setState({selectedOptionPoint:{"value":"L'entrée de la ville","label":"L'entrée de la ville"}},()=>{
-       })
+    if (!this.state.livraison.find((f) => f.Ville_livraison == selectedOptionVille.value).entrée_ville) {
+      this.setState({ selectedOptionPoint: { "value": "L'entrée de la ville", "label": "L'entrée de la ville" } }, () => {
+      })
     }
     else {
-      this.setState({selectedOptionPoint:""},()=>{})
+      this.setState({ selectedOptionPoint: "" }, () => { })
 
     }
   };
@@ -154,8 +180,8 @@ class Commander extends Component {
         ancien_statut: "",
         deadline: this.state.deadline,
         avance: this.state.avance,
-        prix_total: this.state.prix,
-        reste: this.state.prix - this.state.avance,
+        prix_total: this.state.prix-(-this.validation()[1]),
+        reste: this.state.prix-(-this.validation()[1])- this.state.avance,
 
         reçu_avance: "",
         feedback_avance: "",
@@ -191,13 +217,6 @@ class Commander extends Component {
         adresse_domicile: this.state.adresse,
         isDeliveredTo_PointRelais: this.state.check2,
         isTakenFrom_Cooperative: this.state.check1,
-
-        details_remboursement: {
-          "rib_client": null,
-          "nom_prenom_client": null,
-          "montant_de_remboursement": null,
-          "isPaid": null
-        },
       },
       vide: false,
     })
@@ -253,74 +272,65 @@ class Commander extends Component {
       let ids = [];
       if (!Array.isArray(idm)) { ids.push(idm) }
       else { ids = idm }
-       axios
 
-        .get("http://127.0.0.1:8000/api/cooperative/" + this.props.location.state.id_cooperative, {
-          headers: {
-            // "x-access-token": token, // the token is a variable which holds the token
-            Authorization: myToken,
-          },
-        })
-        .then((res) => {
-          let d = "";
-          if (res.data.parametres.occasion != "aid") {
-            d = new Date(
-              new Date().getTime()
-              - (-3600 * (res.data.parametres.delais_paiement.delai_reste - (-res.data.parametres.delais_paiement.delai_avance) - (-res.data.parametres.delais_paiement.bonus)) * 1000)
-              - ((new Date()).getTimezoneOffset() * 60 * 1000)).toISOString()
-            this.setState({ date_min: d.substr(0, 10) }, () => { })
-          }
-          this.setState({
-            livraison: res.data.parametres.livraison,
-            occasion: res.data.parametres.occasion,
-            avant_aid: res.data.parametres.jourLivraisonAvant,
+      let d = "";
+      if (this.state.cooperative.parametres.occasion != "aid") {
+        d = new Date(
+          new Date().getTime()
+          - (-3600 * (this.state.cooperative.parametres.delais_paiement.delai_reste - (-this.state.cooperative.parametres.delais_paiement.delai_avance) - (-this.state.cooperative.parametres.delais_paiement.bonus)) * 1000)
+          - ((new Date()).getTimezoneOffset() * 60 * 1000)).toISOString()
+        this.setState({ date_min: d.substr(0, 10) }, () => { })
+      }
+      this.setState({
+        livraison: this.state.cooperative.parametres.livraison,
+        occasion: this.state.cooperative.parametres.occasion,
 
-            deadline: new Date(new Date().getTime()
-              - (-3600 * (res.data.parametres.delais_paiement.delai_avance) * 1000)
-              - ((new Date()).getTimezoneOffset() * 60 * 1000)).toLocaleString(),
+        deadline: new Date(new Date().getTime()
+          - (-3600 * (this.state.cooperative.parametres.delais_paiement.delai_avance) * 1000)
+          - ((new Date()).getTimezoneOffset() * 60 * 1000)).toLocaleString(),
 
-          }, () => {
-            res.data.parametres.livraison.map((l) => (
-              this.state.optionsVille.splice(0, 0, { "value": l.Ville_livraison, "label": l.Ville_livraison })
-            ))
+      }, () => {
+        this.state.cooperative.parametres.livraison.map((l) => (
+          this.state.optionsVille.splice(0, 0, { "value": l.Ville_livraison, "label": l.Ville_livraison })
+        ))
 
 
 
-            ids.map((i) => (
-              axios
-                .get("http://127.0.0.1:8000/api/Espece/" + i, {
-                  headers: {
-                    // "x-access-token": token, // the token is a variable which holds the token
-                    Authorization: myToken,
-                  },
+        ids.map((i) => (
+          axios
+            .get("http://127.0.0.1:8000/api/Espece/" + i, {
+              headers: {
+                // "x-access-token": token, // the token is a variable which holds the token
+                Authorization: myToken,
+              },
+            })
+            .then((res) => {
+              this.setState({
+                Espece: res.data.objet,
+                eleveur: res.data.Eleveur,
+                id_cooperative: res.data.objet.id_cooperative,
+                prix: this.state.prix - (-res.data.objet.prix),
+                avance: this.state.avance - (-res.data.objet.avance),
+
+                // image: res.data.objet.image_profile,
+              }, () => {
+                p.splice(0, 0, {
+                  "id_espece": res.data.objet._id,
+                  "id_eleveur": res.data.Eleveur[0]._id,
+                  "motif_annulation": null,
+                  "produits_changement": [],
+                  "choix_client": "",
+
                 })
-                .then((res) => {
-                  this.setState({
-                    Espece: res.data.objet,
-                    eleveur: res.data.Eleveur,
-                    id_cooperative: res.data.objet.id_cooperative,
-                    prix: this.state.prix - (-res.data.objet.prix),
-                    avance: this.state.avance - (-res.data.objet.avance),
+                this.setState({ especes: p }, () => { })
+              });
+            }
 
-                    // image: res.data.objet.image_profile,
-                  }, () => {
-                    p.splice(0, 0, {
-                      "id_espece": res.data.objet._id,
-                      "id_eleveur": res.data.Eleveur[0]._id,
-                      "motif_annulation": null,
-                      "produits_changement": [],
-                      "choix_client": "",
-                      
-                    })
-                    this.setState({ especes: p }, () => { })
-                  });
-                }
-
-                )))
+            )))
 
 
-          })
-        })
+      })
+
 
 
 
@@ -339,6 +349,8 @@ class Commander extends Component {
             handleChange1={this.handleChange1}
             handleChange2={this.handleChange2}
             handleChange3={this.handleChange3}
+            handleChange4={this.handleChange4}
+            handleChange5={this.handleChange5}
             onPaiementChanged={this.onPaiementChanged}
             handleChangeVille={this.handleChangeVille}
             handleChangePoint={this.handleChangePoint} />
@@ -350,6 +362,7 @@ class Commander extends Component {
           <Commander2
             location={this.props.location}
             data={this.state}
+            validation={this.validation}
 
           />
         ),
@@ -358,7 +371,9 @@ class Commander extends Component {
         name: "Etape",
         component: (
           <Commander3 location={this.props.location} data={this.state} onChangecheck={this.onChangecheck}
-            onPaiementChanged={this.onPaiementChanged} />
+            onPaiementChanged={this.onPaiementChanged}
+            validation={this.validation}
+          />
         ),
       },
     ];

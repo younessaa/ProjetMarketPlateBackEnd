@@ -15,7 +15,7 @@ class Commander3 extends Component {
       <div>
         <div className="container">
           <div className="product-details spad">
-            {(this.props.data.date != null && (this.props.data.check1 || (this.props.data.check2 && this.props.data.selectedOptionVille != "" && this.props.data.selectedOptionPoint != "") || (this.props.data.check3 && this.props.data.selectedOptionVille != "" && this.props.data.adresse != ""))) ? (<div id="centrer" className="col-lg-12 col-md-6">
+            {this.props.validation()[0]  ? (<div id="centrer" className="col-lg-12 col-md-6">
               <br></br>
               <h3>Moyens de paiement:</h3>
               <div className="shoping__checkout mt-2 pb-0">

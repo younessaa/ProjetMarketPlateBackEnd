@@ -45,38 +45,41 @@ class Commander2 extends Component {
 
 
   render() {
-    let resultat = null;
-    resultat = (this.props.data.date != null && (this.props.data.check1 || (this.props.data.check2 && this.props.data.selectedOptionVille != "" && this.props.data.selectedOptionPoint != "") || (this.props.data.check3 && this.props.data.selectedOptionVille != "" && this.props.data.adresse != ""))) ?
+    let resultat = this.props.validation() ; /*(
+      ((this.props.data.date == null && this.props.data.occasion == "aid")||
+        (this.props.data.date != null && this.props.data.occasion != "aid"))
+       && (this.props.data.check1 || (this.props.data.check2 && this.props.data.selectedOptionVille != "" && this.props.data.selectedOptionPoint != "") || (this.props.data.check3 && this.props.data.selectedOptionVille != "" && this.props.data.adresse != ""))) 
+       ?
       this.props.data.check2 || this.props.data.check3 ? this.props.data.livraison.find((f) => f.Ville_livraison == this.props.data.selectedOptionVille.value).prix_transport : 0 : null;
-    return (
+    */return (
       <div>
         <div className="container">
           <div className="product-details spad">
-            {resultat != null ?
+            {resultat[0] != false ?
               <div id="centrer" className="col-lg-12 col-md-6">
                 <br></br>
 
                 <h3>Montant a payer : </h3>
                 <div className="shoping__checkout mt-2 pb-0">
                   <ul className="mb-0">
-                    <li style={{ borderBottomStyle: "dashed", borderColor: "black" }}>
-                      Prix Total <span>{this.props.data.prix} Dhs</span>
+                    <li >
+                      Prix net <span>{this.props.data.prix} Dhs</span>
+                    </li>
+                    <li   style={{ borderBottomStyle: "dashed", borderColor: "black" }} >
+                      Prix Transport <span>{resultat[1]} Dhs </span>
                     </li>
                     <li >
-                      Prix Transport (*) <span>{this.props.data.prix_transport} Dhs </span>
+                      Prix totale  <span>{this.props.data.prix-(-resultat[1])} Dhs </span>
                     </li>
-                    </ul>   </div>
-                    <span ><small style={{color:"#bb2124"}}>* Le paiement du montant de transport se fera à la livraison</small></span>
-                    <div className="shoping__checkout mt-2 pb-0">
-                  <ul className="mb-0">
                     <li>
                       Frais de reservation (*){" "}
                       <span>{this.props.data.avance}Dhs</span>
                     </li>
-
-
-                  </ul>   </div>
-                <span><small style={{color:"#bb2124"}}>* Avance non rembourssable</small></span>
+                  </ul>
+                </div>
+                <br></br>
+                
+                <span style={{ color: "#bb2124" }}>* Avance non rembourssable</span>
               </div> : null}
           </div>
         </div>

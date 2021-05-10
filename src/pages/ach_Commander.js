@@ -107,9 +107,9 @@ class Commander extends Component {
 
       }
     }
-    
-  valide[1] = transport;
-      return valide;
+
+    valide[1] = transport;
+    return valide;
   }
   handleChange1(e) { this.setState({ checked: false, check1: !this.state.check1, check2: false, check3: false, check4: false, check5: false, selectedOptionPoint: "", selectedOptionVille: "" }); }
   handleChange2(e) { this.setState({ checked: false, check1: false, check2: !this.state.check2, check3: false, check4: false, check5: false, adresse: "", selectedOptionVille: "" }) }
@@ -158,6 +158,7 @@ class Commander extends Component {
     );
   };
   onChangecheck(e) {
+    let type = "standard";
     if (this.state.checked == true) {
       this.setState({ checked: false });
     }
@@ -165,6 +166,9 @@ class Commander extends Component {
       this.setState({ checked: true });
 
     }
+    if (this.state.check4 || this.state.check3) { type = "vip" }
+
+
     this.setState({
       Commande: {
 
@@ -180,8 +184,8 @@ class Commander extends Component {
         ancien_statut: "",
         deadline: this.state.deadline,
         avance: this.state.avance,
-        prix_total: this.state.prix-(-this.validation()[1]),
-        reste: this.state.prix-(-this.validation()[1])- this.state.avance,
+        prix_total: this.state.prix - (-this.validation()[1]),
+        reste: this.state.prix - (-this.validation()[1]) - this.state.avance,
 
         reçu_avance: "",
         feedback_avance: "",
@@ -197,6 +201,8 @@ class Commander extends Component {
 
         date_creation: new Date(),
         date_de_livraison: this.state.date,
+        type_livraison: type,
+
         mode_paiement_choisi: this.state.paiement,
         date_annulation: null,
         date_suppression_max: null,

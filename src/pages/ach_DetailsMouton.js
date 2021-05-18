@@ -23,6 +23,7 @@ class DetailsMouton extends Component {
     this.state = {
       loading: true,
       Espece: {},
+      cooperative: {},
       eleveur: {},
       Favoris: [],
       Panier: [],
@@ -73,6 +74,19 @@ class DetailsMouton extends Component {
             image: res.data.objet.image_profile,
             loading: false,
 
+          }, () => {
+            axios
+              .get("http://127.0.0.1:8000/api/cooperative/" + res.data.objet.id_cooperative, {
+                headers: {
+                  // "x-access-token": token, // the token is a variable which holds the token
+                  "Authorization": myToken,
+                },
+              })
+              .then((res) => {
+                this.setState({ cooperative: res.data }, () => {
+
+                });
+              })
           });
           if (res.data.objet.statut === "disponible") {
             this.setState({ isDispo: true });
@@ -85,66 +99,51 @@ class DetailsMouton extends Component {
           // console.log(res);
         });
     });
-    //-------------------favoris--------------------------//
-
+    //-------------------favoris&&Panier--------------------------//
 
     if (!token) {
       // this.props.history.push("/login");
       this.setState(
         {
           Favoris: [],
+          Panier: []
         },
         () => this.setState({ isFav: false })
       );
     } else {
       axios
-        .get("http://127.0.0.1:8000/api/consommateur/" + token + "/favoris", {
+        .get("http://127.0.0.1:8000/api/consommateur/" + token, {
           headers: {
             "Authorization": myToken,
           },
         })
         .then((res) => {
-          var fav = res.data;
-          var favoris = fav.filter((fav) => fav._id == idm);
-          this.setState({
-            Favoris: favoris,
-          });
-          if (this.state.Favoris.length == 0) {
-            this.setState({ isFav: false });
-          }
-        });
-    }
-    //------------------Panier----------------------------//
+          var pan = res.data.panier;
+          var paniers = pan.filter((pan) => pan.id_espece === idm);
+          var fav = res.data.favoris;
 
-    if (!token) {
-      // this.props.history.push("/login");
-      this.setState({
-        Panier: [],
-      });
-    } else {
-      axios
-        .get("http://127.0.0.1:8000/api/consommateur/" + token + "/panier", {
-          headers: {
-            "Authorization": myToken,
-          },
-        })
+          var favoris = fav.filter((fav) => fav.id_espece === idm);
 
-        .then((res) => {
-          var fav = res.data;
-          var favoris = fav.filter((fav) => fav._id == idm);
           this.setState(
             {
-              Panier: favoris,
+              Panier: paniers,
+              Favoris: favoris,
+
             }, () => {
-              if (this.state.Panier.length != 0) {
+              if (this.state.Panier.length !== 0) {
                 this.setState({ isInpanier: true });
+              }
+              if (this.state.Favoris.length === 0) {
+                this.setState({ isFav: false });
               }
             }
 
           );
 
+
         });
     }
+
   }
 
   handleFavoris(Mid) {
@@ -263,8 +262,8 @@ class DetailsMouton extends Component {
     const shareUrl = "http://localhost:3000/DetailsMouton";
     return (
       <div>
- 
-         <style>{` .product__details__text ul{ margin-top:35px;} `}</style>
+
+        <style>{` .product__details__text ul{ margin-top:35px;} `}</style>
         {loading ? (
           <div
             style={{
@@ -305,7 +304,7 @@ class DetailsMouton extends Component {
                       />
                     </div>}
                     {this.state.Espece.anoc ?
-                      <h1 style={{ fontSize: "14px" }} className=" badge badge-success   rounded-0  w-100  ">
+                      <h1 style={{ fontSize: "14px", backgroundColor: "#4CB050", color: "white" }} className=" badge    rounded-0  w-100  ">
                         <HiOutlineBadgeCheck className=" mr-1 fa-lg " />
                         <span>Labélisé ANOC</span>  </h1>
                       :
@@ -314,21 +313,21 @@ class DetailsMouton extends Component {
                       <div className="container">
                         <div id="lesImagesM" className="col-lg-12 col-md-12 mb-2">
                           <img
-                            className="col-lg-4 col-md-4" style={{ height: "100px" }}
+                            className="col-lg-4 col-md-4" style={{ height: "100px",width:"70%" }}
                             // data-imgbigurl="Images/1.jpg"
                             src={this.state.Espece.image_boucle}
                             alt=""
                             onClick={this.onClickImageBoucle}
                           />
                           <img
-                            className="col-lg-4 col-md-4" style={{ height: "100px" }}
+                            className="col-lg-4 col-md-4" style={{ height: "100px",width:"70%" }}
                             // data-imgbigurl="Images/1.jpg"
                             src={this.state.Espece.image_face}
                             alt=""
                             onClick={this.onClickImageFace}
                           />
                           <img
-                            className="col-lg-4 col-md-4" style={{ height: "100px" }}
+                            className="col-lg-4 col-md-4" style={{ height: "100px",width:"70%" }}
                             // data-imgbigurl="Images/1.jpg"
                             src={this.state.Espece.image_profile}
                             alt=""
@@ -447,6 +446,12 @@ class DetailsMouton extends Component {
                           <b>№ Boucle</b> <span>{this.state.Espece.boucle}</span>
                         </li>
                         <li>
+                          <b>Espece</b> <span>{this.state.Espece.espece}</span>
+                        </li>
+                        <li>
+                          <b>Categorie</b> <span>{this.state.Espece.categorie}</span>
+                        </li>
+                        <li>
                           <b>Race</b> <span>{this.state.Espece.race}</span>
                         </li>
                         <li>
@@ -479,21 +484,22 @@ class DetailsMouton extends Component {
                   </div>
                   <div>
                     <h4>Description</h4>
-                    <div id="gris" className="container">
+                    <div id="gris" className="container ">
                       {this.state.Espece.description ? (
-                        <p>{this.state.Espece.description}</p>
+                        <p className="text-dark">{this.state.Espece.description}</p>
                       ) : (
-                        <p>Aucune description disponible</p>
+                        <p  >Aucune description disponible</p>
                       )}
                     </div>
                   </div>
                   <br></br>
                   <br></br>
                   <div style={{ marginLeft: "13%" }}>
+
                     {this.state.isDispo && this.state.isLoged ? (
                       <div>
                         {!this.state.isInpanier ? (
-                          <button style={{ borderColor: 'transparent' }}
+                          <button style={{ borderColor: 'transparent', backgroundColor: "#4CB050" }}
                             id={this.state.Espece._id}
                             className="primary-btn rounded mb-1"
                             onClick={(e) =>
@@ -510,12 +516,11 @@ class DetailsMouton extends Component {
                             pathname: "/Commander",
                             state: {
                               id: this.state.Espece._id,
-                              id_cooperative:this.state.Espece.id_cooperative
-
+                              cooperative: this.state.cooperative
                             },
                           }}
                         >
-                          <button style={{ borderColor: 'transparent' }}
+                          <button style={{ borderColor: 'transparent', backgroundColor: "#4CB050" }}
 
                             className="primary-btn rounded  " style={{ marginLeft: "20%" }} >
                             <i className="fa fa-plus "></i>  Commander
@@ -527,7 +532,7 @@ class DetailsMouton extends Component {
                     {this.state.isDispo && !this.state.isLoged ? (
                       <div>
                         {!this.state.isInpanier ? (
-                          <button style={{ borderColor: 'transparent' }}
+                          <button style={{ borderColor: 'transparent', backgroundColor: "#4CB050" }}
                             id={this.state.Espece._id}
                             className="primary-btn rounded mb-1"
                             onClick={(e) =>
@@ -544,12 +549,12 @@ class DetailsMouton extends Component {
                             pathname: "/Commander",
                             state: {
                               id: this.state.Espece._id,
-                              id_cooperative:this.state.Espece.id_cooperative
+                              cooperative: this.state.cooperative
 
                             },
                           }}
                         >
-                          <button style={{ borderColor: 'transparent' }}
+                          <button style={{ borderColor: 'transparent', backgroundColor: "#4CB050" }}
 
                             className="primary-btn rounded  ml-2 "  >
                             <i className="fa fa-plus "></i> Commander

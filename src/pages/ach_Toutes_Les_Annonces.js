@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import Loader from "react-loader-spinner";
 import ReactPaginate from "react-paginate";
 import { GiWeight, GiSheep } from 'react-icons/gi';
-import { AiOutlineDollar } from 'react-icons/ai'
+import { FaShapes } from 'react-icons/fa'
 import { HiOutlineBadgeCheck } from 'react-icons/hi';
 class HomeSheeps extends Component {
   constructor() {
@@ -23,7 +23,10 @@ class HomeSheeps extends Component {
       selectedOptionRace: null,
       race: [],
       selectedOptionCategorie: null,
+      selectedOptionEspece: null,
+
       optionsCategorie: [],
+      optionsEspece: [],
       selectedOptionVille: null,
       optionsVille: [],
       conditions: {
@@ -49,6 +52,8 @@ class HomeSheeps extends Component {
 
     this.onChange = this.onChange.bind(this);
     this.handleChangeCategorie = this.handleChangeCategorie.bind(this);
+    this.handleChangeEspece = this.handleChangeEspece.bind(this);
+
     this.handelChercher = this.handelChercher.bind(this);
     this.handelReinitialiser = this.handelReinitialiser.bind(this);
 
@@ -57,6 +62,37 @@ class HomeSheeps extends Component {
     this.paginate = this.paginate.bind(this);
     // this.handleFavoris=this.handleFavoris.bind(this)
   }
+  handleChangeEspece = (selectedOptionEspece) => {
+    this.setState({ selectedOptionRace: null, selectedOptionCategorie: null, selectedOptionEspece: selectedOptionEspece })
+    let annonce = this.state.AnnoncesN;
+    let c = selectedOptionEspece.value
+    let races = [];
+    let categories = [];
+    let catg = [];
+
+
+    let r = [];
+    (this.groupBy(annonce, 'espece')[c]).map((m) => {
+      races.push(m.race);
+      categories.push(m.categorie)
+    })
+    races = [...new Set(races)];
+    categories = [...new Set(categories)];
+    races.map((e) => { r.splice(0, 0, { "value": e, "label": e }); });
+    categories.map((e) => { catg.splice(0, 0, { "value": e, "label": e }); });
+
+    this.setState({
+      race: r,
+      categorie: catg,
+      Disabled: false,
+      conditions: Object.assign(this.state.conditions, {
+        espece: c,
+        categorie: null,
+        race: null,
+      })
+    });
+
+  };
 
   handleChangeCategorie = (selectedOptionCategorie) => {
     this.setState({ selectedOptionRace: null, selectedOptionCategorie: selectedOptionCategorie })
@@ -136,6 +172,11 @@ class HomeSheeps extends Component {
           },
         })
         .then((res) => {
+          //espece
+          let espece = [];
+          Object.getOwnPropertyNames(this.groupBy(res.data, 'espece')).map((e) => {
+            espece.splice(0, 0, { "value": e, "label": e });
+          });
           //categorie
           let categorie = [];
           Object.getOwnPropertyNames(this.groupBy(res.data, 'categorie')).map((e) => {
@@ -148,6 +189,7 @@ class HomeSheeps extends Component {
           villes = [...new Set(villes)];
           villes.map((e) => { ville.splice(0, 0, { "value": e, "label": e }); });
           this.setState({
+            optionsEspece: espece,
             optionsCategorie: categorie,
             optionsVille: ville,
             AnnoncesN: res.data,
@@ -248,6 +290,7 @@ class HomeSheeps extends Component {
               order_by: "categorie",
               order_mode: "asc",
             },
+            selectedOptionEspece: null,
             selectedOptionCategorie: null,
             selectedOptionRace: null,
             Disabled: true,
@@ -336,7 +379,11 @@ class HomeSheeps extends Component {
     );
     const { selectedOptionRace } = this.state;
     const { selectedOptionCategorie } = this.state;
+    const { selectedOptionEspece } = this.state;
+
     const { optionsCategorie } = this.state;
+    const { optionsEspece } = this.state;
+
     const { selectedOptionVille } = this.state;
     const { optionsVille } = this.state;
     const { optionsSort } = this.state;
@@ -366,9 +413,9 @@ class HomeSheeps extends Component {
                     <div className="row">
                       <div className="col-lg-12 col-md-12">
                         <Select
-                          value={selectedOptionCategorie}
-                          onChange={this.handleChangeCategorie}
-                          options={optionsCategorie}
+                          value={selectedOptionEspece}
+                          onChange={this.handleChangeEspece}
+                          options={optionsEspece}
                           placeholder="Espece"
                           required
                         // className="Select"
@@ -376,7 +423,23 @@ class HomeSheeps extends Component {
                         <br></br>
                       </div>
                     </div>
-
+                    <h6 id="gras" className="latest-product__item">
+                      Categorie
+                    </h6>
+                    <div className="row">
+                      <div className="col-lg-12 col-md-12">
+                        <Select
+                          value={selectedOptionCategorie}
+                          isDisabled={this.state.Disabled}
+                          onChange={this.handleChangeCategorie}
+                          options={this.state.categorie}
+                          placeholder="Categorie"
+                          required
+                        // className="Select"
+                        />
+                        <br></br>
+                      </div>
+                    </div>
                     <h6 id="gras" className="latest-product__item">
                       Race
                     </h6>
@@ -635,19 +698,27 @@ class HomeSheeps extends Component {
                                     data-imgbigurl="Images/sheep-head.png"
                                     src="Images/sheep-head.png"
                                     alt=""
-                                  />{" " + Annonces.categorie}
+                                  />{" " + Annonces.espece}
 
                                   <span className="float-right">
-                                    <i class="fa fa-dot-circle-o"></i> {this.annonceVision(Annonces)}
+                                    <FaShapes/>{" "+Annonces.race}
                                   </span> </h6>
 
-                                <h6><GiWeight className=" mr-1 fa-lg " />
-                                  {Annonces.poids + " Kg"}
-                                  <img style={{ width: "18px", height: "18px", marginLeft: "99px", marginBottom: "5px" }} src="./Images/age.png"></img>
 
-                                  <span className="float-right mt-1">
-                                    {Annonces.age + " mois"}</span></h6>
+                                <h6>
+                                  <img 
+                                  style={{ width: "18px",height: "18px",marginRight:"5px"   }} 
+                                  src="./Images/age.png"/>
+                                  
+                                  {Annonces.age + " mois"}
 
+                                  <span className="float-right ">
+                                  <GiWeight className=" mr-1 fa-lg " />
+                                  {Annonces.poids + " Kg"}</span></h6>
+
+                                <h6 className=" nbrm" style={{ color: "black", fontSize: "18px" }}>
+                                  <i class="fa fa-map-marker"></i> {Annonces.region}
+                                </h6>
                                 <h5 className=" text-danger mt-4">
                                   <i class="fa fa-usd" aria-hidden="true"></i>
                                   {" "}

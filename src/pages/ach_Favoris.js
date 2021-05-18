@@ -7,6 +7,7 @@ import Loader from "react-loader-spinner";
 import Swal from "sweetalert2";
 import { GiWeight, GiSheep } from 'react-icons/gi';
 import { HiOutlineBadgeCheck } from 'react-icons/hi';
+import { FaShapes } from 'react-icons/fa'
 
 class Commandes extends Component {
   constructor() {
@@ -388,18 +389,27 @@ this.setState( { idp:p })
                                     src="Images/sheep-head.png"
                                     alt=""
                                   />
-                              {" "+Annonces.categorie}
+                              {" "+Annonces.espece}
 
                                 <span className="float-right">
-                                  <i className="fa fa-dot-circle-o"></i> {this.annonceVision(Annonces)}
+                                <FaShapes/> {this.annonceVision(Annonces)}
                                 </span> </h6>
 
-                              <h6><GiWeight className=" mr-1 fa-lg " />
-                                {Annonces.poids + " Kg"}
-                                <img style={{ width: "18px", height: "18px", marginLeft: "99px", marginBottom: "5px" }} src="./Images/age.png"></img>
+                            
+                                <h6>
+                                  <img 
+                                  style={{ width: "18px",height: "18px",marginRight:"5px"   }} 
+                                  src="./Images/age.png"/>
+                                  
+                                  {Annonces.age + " mois"}
 
-                                <span className="float-right mt-1">
-                                  {Annonces.age + " mois"}</span></h6>
+                                  <span className="float-right ">
+                                  <GiWeight className=" mr-1 fa-lg " />
+                                  {Annonces.poids + " Kg"}</span></h6>
+
+                                <h6 className=" nbrm" style={{ color: "black", fontSize: "18px" }}>
+                                  <i class="fa fa-map-marker"></i> {Annonces.region}
+                                </h6>
 
                               <h5 id="mad">
                               <i className="fa fa-usd" aria-hidden="true"></i>

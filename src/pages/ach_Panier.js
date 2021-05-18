@@ -7,7 +7,7 @@ import { Link } from "react-router-dom";
 import Loader from "react-loader-spinner";
 import { FaShapes } from 'react-icons/fa'
 
-import { GiWeight, GiSheep } from 'react-icons/gi';
+import { GiWeight } from 'react-icons/gi';
 class Commandes extends Component {
   constructor() {
     super();
@@ -110,16 +110,16 @@ class Commandes extends Component {
                   let p = [];
                   this.state.coop.map((c) => {
                     p.splice(0, 0, {
-                      "id_coop": c,
-                      "nom_coop": coopn.filter((f) => (f.idc == c)).map((m) => m.nom)[0],
-                      "adresse_coop": coopn.filter((f) => (f.idc == c)).map((m) => m.adresse)[0],
-                      "ville_coop": coopn.filter((f) => (f.idc == c)).map((m) => m.ville)[0],
-                      "rib": coopn.filter((f) => (f.idc == c)).map((m) => m.rib)[0],
-                      "tech": coopn.filter((f) => (f.idc == c)).map((m) => m.techniciens)[0],
-                      "parametres": coopn.filter((f) => (f.idc == c)).map((m) => m.parametres)[0],
-                      "id_espaces": this.state.Paniers.filter((f) => (f.id_cooperative == c)).map((m) => m._id),
-                      "especes": this.state.Paniers.filter((f) => (f.id_cooperative == c)),
-                      "prix": this.state.Paniers.filter((f) => (f.id_cooperative == c)).reduce(function (prev, cur) { return prev - (- cur.prix); }, 0)
+                      "_id": c,
+                      "nom": coopn.filter((f) => (f.idc === c)).map((m) => m.nom)[0],
+                      "adresse": coopn.filter((f) => (f.idc === c)).map((m) => m.adresse)[0],
+                      "ville": coopn.filter((f) => (f.idc === c)).map((m) => m.ville)[0],
+                      "rib": coopn.filter((f) => (f.idc === c)).map((m) => m.rib)[0],
+                      "tech": coopn.filter((f) => (f.idc === c)).map((m) => m.techniciens)[0],
+                      "parametres": coopn.filter((f) => (f.idc === c)).map((m) => m.parametres)[0],
+                      "id_espaces": this.state.Paniers.filter((f) => (f.id_cooperative === c)).map((m) => m._id),
+                      "especes": this.state.Paniers.filter((f) => (f.id_cooperative === c)),
+                      "prix": this.state.Paniers.filter((f) => (f.id_cooperative === c)).reduce(function (prev, cur) { return prev - (- cur.prix); }, 0)
                     })
                   });
                   this.setState({ panier: p });
@@ -187,18 +187,23 @@ class Commandes extends Component {
 
               this.state.coop.map((c) => {
                 p.splice(0, 0, {
-                  "id_coop": c,
-                  "nom_coop": this.state.coopn.filter((f) => (f.idc == c)).map((m) => m.nom)[0],
-                  "id_espaces": this.state.Paniers.filter((f) => (f.id_cooperative == c)).map((m) => m._id),
-                  "especes": this.state.Paniers.filter((f) => (f.id_cooperative == c)),
-                  "prix": this.state.Paniers.filter((f) => (f.id_cooperative == c)).reduce(function (prev, cur) { return prev - (- cur.prix); }, 0)
+                  "_id": c,
+                  "nom": this.state.coopn.filter((f) => (f.idc === c)).map((m) => m.nom)[0],
+                  "adresse": this.state.coopn.filter((f) => (f.idc === c)).map((m) => m.adresse)[0],
+                  "ville": this.state.coopn.filter((f) => (f.idc === c)).map((m) => m.ville)[0],
+                  "rib": this.state.coopn.filter((f) => (f.idc === c)).map((m) => m.rib)[0],
+                  "tech": this.state.coopn.filter((f) => (f.idc === c)).map((m) => m.techniciens)[0],
+                  "parametres": this.state.coopn.filter((f) => (f.idc === c)).map((m) => m.parametres)[0],
+                  "id_espaces": this.state.Paniers.filter((f) => (f.id_cooperative === c)).map((m) => m._id),
+                  "especes": this.state.Paniers.filter((f) => (f.id_cooperative === c)),
+                  "prix": this.state.Paniers.filter((f) => (f.id_cooperative === c)).reduce(function (prev, cur) { return prev - (- cur.prix); }, 0)
                 })
               });
 
               this.setState({ panier: p.filter((f) => f.especes.length >= 1) });
 
 
-              this.props.history.push("/Panier")
+              this.props.history.push("/panier")
 
             });
           Swal.fire({
@@ -254,7 +259,7 @@ class Commandes extends Component {
     const { loading } = this.state;
 
     let titre;
-    if (fav.length == 1 || fav.length == 0) {
+    if (fav.length === 1 || fav.length === 0) {
       titre = (
         <h6>
           <span>{fav.length}</span>  Annonce{" "}
@@ -315,13 +320,13 @@ class Commandes extends Component {
                         {this.state.panier.slice(this.state.currentPage * 2 - 2, this.state.currentPage * 2)
                           .map((p) => <div class="row border mb-2">
                             <div className=" col-lg-12 col-md-12 col-sm-12 mt-3">
-                              <b className="text-dark">Cooperative : </b><b className="text-primary">{p.nom_coop}</b>
+                              <b className="text-dark">Cooperative : </b><b className="text-primary">{p.nom}</b>
                               <Link
                                 to={{
                                   pathname: "/Commander",
                                   state: {
                                     id: p.id_espaces,
-                                     cooperative: p 
+                                    cooperative: p
                                   },
                                 }}
                               >
@@ -370,7 +375,7 @@ class Commandes extends Component {
                                           id={Annonces._id}
                                           onClick={(e) =>
                                             this.handleDeleteFromPanier(
-                                              e.currentTarget.id, p.id_coop
+                                              e.currentTarget.id, p._id
                                             )
                                           }
                                         >
@@ -400,38 +405,38 @@ class Commandes extends Component {
 
 
                                       <span className="float-right">
-                                      <FaShapes/> {this.annonceVision(Annonces)}
+                                        <FaShapes /> {this.annonceVision(Annonces)}
                                       </span> </h6>
 
-                                 
-                                      <h6>
-                                  <img 
-                                  style={{ width: "18px",height: "18px",marginRight:"5px"   }} 
-                                  src="./Images/age.png"/>
-                                  
-                                  {Annonces.age + " mois"}
 
-                                  <span className="float-right ">
-                                  <GiWeight className=" mr-1 fa-lg " />
-                                  {Annonces.poids + " Kg"}</span></h6>
+                                    <h6>
+                                      <img
+                                        style={{ width: "18px", height: "18px", marginRight: "5px" }}
+                                        src="./Images/age.png" />
 
-                                <h6 className=" nbrm" style={{ color: "black", fontSize: "18px" }}>
-                                  <i class="fa fa-map-marker"></i> {Annonces.region}
-                                </h6>
-                                
+                                      {Annonces.age + " mois"}
+
+                                      <span className="float-right ">
+                                        <GiWeight className=" mr-1 fa-lg " />
+                                        {Annonces.poids + " Kg"}</span></h6>
+
+                                    <h6 className=" nbrm" style={{ color: "black", fontSize: "18px" }}>
+                                      <i class="fa fa-map-marker"></i> {Annonces.region}
+                                    </h6>
+
 
                                     <h5 id="mad">
                                       <i class="fa fa-usd" aria-hidden="true"></i>
 
                                       {"         " + Annonces.prix + "  Dhs"}
                                     </h5>
-                                    {Annonces.statut == "disponible" ?
+                                    {Annonces.statut === "disponible" ?
                                       <Link
                                         to={{
                                           pathname: "/Commander",
                                           state: {
                                             id: Annonces._id,
-                                            cooperative: p 
+                                            cooperative: p
                                           },
                                         }}
                                       > <button
@@ -442,7 +447,7 @@ class Commandes extends Component {
                                       //   this.handlePanier(e.currentTarget.id);
                                       //  }
                                       // }
-                                      > 
+                                      >
                                           {""} Commander
                                     </button></Link> : null}
 

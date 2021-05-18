@@ -347,6 +347,7 @@ class Commander extends Component {
   }
 
   render() {
+    console.log(this.state.cooperative)
     const steps = [
       {
         name: "Etape",

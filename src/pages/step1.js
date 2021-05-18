@@ -87,10 +87,10 @@ class Commander1 extends Component {
                             {this.props.data.check1 ? <>
                               <h6 className={this.props.data.occasion === "aid"
                                 ? "  mb-2"
-                                : "mb-2 mt-3"}><i class="fa fa-home fa-lg"></i>   <b>Cooperative : </b>{" " + this.props.data.cooperative.nom_coop}</h6>
-                              <h6 className="mb-2"><i class="fa fa-map-marker fa-lg"></i>   <b>Adresse :</b>{" " + this.props.data.cooperative.adresse_coop} </h6>
+                                : "mb-2 mt-3"}><i class="fa fa-home fa-lg"></i>   <b>Cooperative : </b>{" " + this.props.data.cooperative.nom}</h6>
+                              <h6 className="mb-2"><i class="fa fa-map-marker fa-lg"></i>   <b>Adresse :</b>{" " + this.props.data.cooperative.adresse} </h6>
 
-                              <h6 className="my-2">  <i class="fa fa-map"></i> <b>Ville  :</b>{" " + this.props.data.cooperative.ville_coop}  </h6>
+                              <h6 className="my-2">  <i class="fa fa-map"></i> <b>Ville  :</b>{" " + this.props.data.cooperative.ville}  </h6>
                             </> : null}
                           </div> </> : null}
 

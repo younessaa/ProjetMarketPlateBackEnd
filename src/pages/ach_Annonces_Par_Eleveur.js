@@ -20,7 +20,7 @@ class AllOffers extends Component {
       activePage: 1,
       nombrePages: [],
       currentPage: 1,
-      eleveursPerPage: 3,
+      eleveursPerPage: 6,
       redirect: false,
       Disabled: true,
       selectedOptionRace: null,
@@ -112,6 +112,7 @@ class AllOffers extends Component {
             const elv = this.state.Eleveurs.filter(
               (Eleveurs) => Eleveurs.Especes !== undefined
             );
+
             //region
             let regions = [];
             Object.getOwnPropertyNames(this.groupBy(res.data, 'region')).map((e) => {
@@ -126,7 +127,7 @@ class AllOffers extends Component {
             allville = Array.from(new Set(allville.map(s => s.value))).map(value => {
               return { value: value, label: allville.find(s => s.value === value).label }
             });
-            this.setState({ optionsVille: allville, optionsRegions: regions})
+            this.setState({ optionsVille: allville, optionsRegions: regions })
             const pageNumbers = [];
             for (
               let i = 1;
@@ -149,13 +150,15 @@ class AllOffers extends Component {
                 },
               })
               .then((res) => {
-                //categorie
-                let categorie = [];
-                Object.getOwnPropertyNames(this.groupBy(res.data, 'categorie')).map((e) => {
-                  categorie.splice(0, 0, { "value": e, "label": e });
-                })
+                //espece
+                let espece = [];
+                Object.getOwnPropertyNames(this.groupBy(res.data.filter((f) => f.statut != "produit avarié"), 'espece')).map((e) => {
+                  espece.splice(0, 0, { "value": e, "label": e });
+                });
+                console.log(this.groupBy(res.data.filter((f) => f.statut != "produit avarié"), 'espece'))
+
                 this.setState({
-                  optionsCategorie: categorie,
+                  optionsEspece: espece,
                   AnnoncesN: res.data,
                   Annonces: res.data,
                   loading: false,
@@ -165,6 +168,38 @@ class AllOffers extends Component {
       });
     }
   }
+  handleChangeEspece = (selectedOptionEspece) => {
+    this.setState({ selectedOptionRace: null, selectedOptionCategorie: null, selectedOptionEspece: selectedOptionEspece })
+    let annonce = this.state.AnnoncesN;
+    let c = selectedOptionEspece.value
+    let races = [];
+    let categories = [];
+    let catg = [];
+
+
+    let r = [];
+    (this.groupBy(annonce, 'espece')[c]).map((m) => {
+      races.push(m.race);
+      categories.push(m.categorie)
+    })
+    races = [...new Set(races)];
+    categories = [...new Set(categories)];
+    races.map((e) => { r.splice(0, 0, { "value": e, "label": e }); });
+    categories.map((e) => { catg.splice(0, 0, { "value": e, "label": e }); });
+
+    this.setState({
+      race: r,
+      categorie: catg,
+      Disabled: false,
+      conditions: Object.assign(this.state.conditions, {
+        espece: c,
+        categorie: null,
+        race: null,
+      })
+    });
+
+  };
+
 
   handleChangeCategorie = (selectedOptionCategorie) => {
     this.setState({ selectedOptionRace: null, selectedOptionCategorie: selectedOptionCategorie })
@@ -273,7 +308,7 @@ class AllOffers extends Component {
               order_by: "categorie",
               order_mode: "asc",
             },
-
+            selectedOptionEspece: null,
             selectedOptionCategorie: null,
             selectedOptionRace: null,
             Disabled: true,
@@ -374,6 +409,9 @@ class AllOffers extends Component {
       indexOfLastEleveur);
     const { loading } = this.state;
     const { selectedOptionRace } = this.state;
+
+    const { selectedOptionEspece } = this.state;
+    const { optionsEspece } = this.state;
     const { selectedOptionCategorie } = this.state;
     const { optionsCategorie } = this.state;
     const { selectedOptionVille } = this.state;
@@ -401,10 +439,27 @@ class AllOffers extends Component {
                       <div className="col-lg-12 col-md-12">
 
                         <Select
+                          value={selectedOptionEspece}
+                          onChange={this.handleChangeEspece}
+                          options={optionsEspece}
+                          placeholder="Espece"
+                          required
+                        />
+                        <br></br>
+                      </div>
+                    </div>
+                    <h6 id="gras" className="latest-product__item">
+                      Categorie
+                    </h6>
+                    <div className="row">
+                      <div className="col-lg-12 col-md-12">
+                        <Select
+                          id="recherchePlace"
+                          isDisabled={this.state.Disabled}
                           value={selectedOptionCategorie}
                           onChange={this.handleChangeCategorie}
-                          options={optionsCategorie}
-                          placeholder="Espece"
+                          options={this.state.categorie}
+                          placeholder=" Categorie"
                           required
                         />
                         <br></br>

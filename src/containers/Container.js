@@ -12,6 +12,8 @@ import AddMouton from "../pages/AddMouton";
 
 
 import DetailsCommande from "../pages/ach_DetailsCommande";
+import ConfirmeCommande from "../pages/ach_ConfirmeCommande";
+
 import Commander from "../pages/ach_Commander";
 import ToutesLesAnnonces from "../pages/ach_Toutes_Les_Annonces";
 import AnnoncesParEleveurs from "../pages/ach_Annonces_Par_Eleveur"
@@ -56,6 +58,11 @@ class Container extends Component {
                 exact
                 path="/DetailsCommande"
                 component={DetailsCommande}
+              />
+              <Route
+                exact
+                path="/ConfirmeCommande"
+                component={ConfirmeCommande}
               />
               <Route exact path="/Commander" component={Commander} />
               <Route exact path="/AlerteCommande" component={AlerteCommande} />

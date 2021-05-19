@@ -65,10 +65,7 @@ class Commandes extends Component {
         { value: "", label: "Option de filtrage" },
         { value: "prix_total", label: "Prix Moins cher au plus cher" },
         { value: "prix_total_dec", label: "Prix Plus cher au moins cher" },
-
-        { value: "date_de_livraison", label: "Date de livraison Plus proche" },
-        { value: "date_de_livraison_dec", label: "Date de livraison plus lointaine" },
-
+ 
         { value: "en attente de validation reste", label: "Commande(s) en cours de validation" },
         { value: "validé", label: "Commande(s) validee(s)" },
       ],
@@ -133,27 +130,7 @@ class Commandes extends Component {
       });
     }
 
-    else if (sortProperty === "date_de_livraison") {
-      this.setState({ loading: true }, () => {
-        sorted.sort(
-          function (a, b) {
-            return new Date(a[sortProperty]) - new Date(b[sortProperty]);
-          }); this.setState({
-            Commandes: sorted,
-            loading: false
-          });
-      });
-    }
-    else if (sortProperty === "date_de_livraison_dec") {
-      const sort_ = "date_de_livraison";
-      this.setState({ loading: true }, () => {
-        sorted.sort(
-          function (a, b) {
-            return new Date(b[sort_]) - new Date(a[sort_]);
-          });
-        this.setState({ Commandes: sorted, loading: false });
-      });
-    }
+  
 
     else if (sortProperty === "deadline") {
 
@@ -482,7 +459,7 @@ class Commandes extends Component {
   //nombre espece pour chaque categorie pour chaque commande
   NbrEspece(e, c) {
     let nombre = 0;
-    nombre = e.espece.filter((e) => e.categorie === c).length
+    nombre = e.espece.filter((e) => e.espece === c).length
     return nombre;
   }
   NbrEspeceMax() {
@@ -501,7 +478,7 @@ class Commandes extends Component {
     this.state.Commandes.map((e, i) => {
       nbr[i] = [];
       e.espece.map((c) => {
-        nbr[i].push({ "categorie": c.categorie, "nbr": this.NbrEspece(e, c.categorie) })
+        nbr[i].push({ "espece": c.espece, "nbr": this.NbrEspece(e, c.espece) })
       })
       max = max > uniq(nbr[i]).length ? max : uniq(nbr[i]).length
     })
@@ -685,6 +662,23 @@ class Commandes extends Component {
                             </centre>
 
                             <ul className="product__item__pic__hover">
+                           {Annonces.isDelivered===true?<li>
+                                <Link
+                                  to={{
+                                    pathname: "/ConfirmeCommande",
+                                    state: {
+                                      id: Annonces,
+                                    },
+                                  }}
+                                  type="submit" >
+                                  {" "}
+                                  <a onClick={this.local.bind(this, Annonces)}>
+                                    {(Annonces.statut === "en attente de paiement avance" || Annonces.statut === "en attente de paiement du reste" || Annonces.statut === "en attente de paiement du complément")
+                                    ||Annonces.statut ==="reçu avance refusé"|| Annonces.statut ==="reçu reste refusé" ?
+                                      <CgFileAdd className="fa-lg" /> : <i className="fa fa-eye"></i>}
+                                  </a>
+                                </Link>
+                              </li>:
                               <li>
                                 <Link
                                   to={{
@@ -701,7 +695,7 @@ class Commandes extends Component {
                                       <CgFileAdd className="fa-lg" /> : <i className="fa fa-eye"></i>}
                                   </a>
                                 </Link>
-                              </li>
+                              </li>}
                               {Annonces.statut === "commande annulée (deadline dépassé)"
                                 || Annonces.statut === "reçu avance refusé"
                                 || Annonces.statut === "reçu reste refusé"
@@ -803,11 +797,17 @@ class Commandes extends Component {
                                 <span style={{ color: "black", fontWeight: "normal" }}>entre : {this.Max(Annonces, "age")} mois et {this.Min(Annonces, "age")} mois</span>
                               </p>}
 
-                            {Annonces.statut === "en attente de paiement avance" ?
+                            {Annonces.statut === "en attente de paiement avance"
+                            ||
+                            (Annonces.ancien_statut==="en attente de paiement avance"&&Annonces.statut==="avarié_changement")
+                             ?
                               <div  ><p id="gras" className=" mb-0"><i className="fa fa-calendar-o" aria-hidden="true"></i>{" "}Dernier delai : </p><p className="text-danger mb-0 font-weight-bold">{Annonces.deadline.replace(",", " à ")}</p><p id="gras" className=""><i className="fa fa-usd" aria-hidden="true"></i>{" "}Avance à payer  :<span className="text-danger ">{" "}{Annonces.avance} Dhs</span>  </p></div>
                               : null
                             }
-                            {Annonces.statut === "en attente de paiement du reste" ?
+                            {Annonces.statut === "en attente de paiement du reste" 
+                              ||
+                              (Annonces.ancien_statut==="en attente de paiement du reste"&&Annonces.statut==="avarié_changement")
+                               ?
                               <div  ><p id="gras" className=" mb-0"><i className="fa fa-calendar-o" aria-hidden="true"></i>{" "}Dernier delai : </p><p className="text-danger mb-0 font-weight-bold">{Annonces.deadline.replace(",", " à ")}</p><p id="gras" className=""><i className="fa fa-usd" aria-hidden="true"></i>{" "}Reste à payer  :  <span className="text-danger ">{" "}{Annonces.reste} Dhs</span></p></div>
                               : null
                             }
@@ -818,7 +818,7 @@ class Commandes extends Component {
                             {
                               Annonces.statut === "en attente de validation avance" ? <div ><p id="gras" className=" mb-0"><i className="fa fa-calendar-o" aria-hidden="true"></i>{" "} avance transmis le :</p> <p className="text-danger font-weight-bold mt-0">  {Annonces.avance_transmis_le.substr(0, 10) + " à " + Annonces.avance_transmis_le.substr(11, 8)}</p></div> : null
                             }
-                            {(Annonces.statut === "en attente de validation reste" || Annonces.statut === "validé") ? <div  ><p id="gras" className=" mb-0"><i className="fa fa-calendar-o" aria-hidden="true"></i>{" "}reste transmis le : </p><p className="text-danger font-weight-bold mt-0">{Annonces.reste_transmis_le.substr(0, 10) + " à " + Annonces.reste_transmis_le.substr(11, 8)}</p></div> : null}
+                            {(Annonces.statut === "en attente de validation reste" || Annonces.statut === "validé"||(Annonces.statut ==="avarié_changement"&& Annonces.ancien_statut === "validé")) ? <div  ><p id="gras" className=" mb-0"><i className="fa fa-calendar-o" aria-hidden="true"></i>{" "}reste transmis le : </p><p className="text-danger font-weight-bold mt-0">{Annonces.reste_transmis_le.substr(0, 10) + " à " + Annonces.reste_transmis_le.substr(11, 8)}</p></div> : null}
                             {(Annonces.statut === "validé") ? <div  ><p id="gras" className=" mb-0"><i className="fa fa-calendar-o" aria-hidden="true"></i>{" "}Date de livraison : </p><p className="text-danger font-weight-bold"> {Annonces.date_de_livraison.replace(/-/g, " / ")}</p></div> : null}
 
                             {(Annonces.statut === "en attente de validation complément") ?

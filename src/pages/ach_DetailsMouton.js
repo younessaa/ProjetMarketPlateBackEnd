@@ -31,7 +31,7 @@ class DetailsMouton extends Component {
       image: "",
       isDispo: false,
       isLoged: false,
-      isFav: true,
+      isFav: false,
       isInpanier: false,
     };
     this.onClickImageBoucle = this.onClickImageBoucle.bind(this);
@@ -91,11 +91,10 @@ class DetailsMouton extends Component {
           if (res.data.objet.statut === "disponible") {
             this.setState({ isDispo: true });
           }
-          // const token = localStorage.getItem("usertoken");
-          // if (token) {
-          //   this.setState({ isLoged: true });
-          //   // this.props.history.push("/login");
-          // }
+          if (token) {
+            this.setState({ isLoged: true });
+            // this.props.history.push("/login");
+          }
           // console.log(res);
         });
     });
@@ -133,8 +132,8 @@ class DetailsMouton extends Component {
               if (this.state.Panier.length !== 0) {
                 this.setState({ isInpanier: true });
               }
-              if (this.state.Favoris.length === 0) {
-                this.setState({ isFav: false });
+              if (this.state.Favoris.length !== 0) {
+                this.setState({ isFav: true });
               }
             }
 
@@ -312,27 +311,30 @@ class DetailsMouton extends Component {
                     <div className="row">
                       <div className="container">
                         <div id="lesImagesM" className="col-lg-12 col-md-12 mb-2">
-                          <img
-                            className="col-lg-4 col-md-4" style={{ height: "100px",width:"70%" }}
+                          <div className="row"> <img
+                            className="col-sm-4" style={{ height: "100px", width: "auto",margin:"auto" }}
                             // data-imgbigurl="Images/1.jpg"
                             src={this.state.Espece.image_boucle}
                             alt=""
                             onClick={this.onClickImageBoucle}
                           />
-                          <img
-                            className="col-lg-4 col-md-4" style={{ height: "100px",width:"70%" }}
-                            // data-imgbigurl="Images/1.jpg"
-                            src={this.state.Espece.image_face}
-                            alt=""
-                            onClick={this.onClickImageFace}
-                          />
-                          <img
-                            className="col-lg-4 col-md-4" style={{ height: "100px",width:"70%" }}
-                            // data-imgbigurl="Images/1.jpg"
-                            src={this.state.Espece.image_profile}
-                            alt=""
-                            onClick={this.onClickImageProfile}
-                          />
+                            <img
+                              className="col-sm-4" style={{ height: "100px", width: "auto",margin:"auto" }}
+                              // data-imgbigurl="Images/1.jpg"
+                              src={this.state.Espece.image_face}
+                              alt=""
+                              onClick={this.onClickImageFace}
+                            />
+                            <img
+                              className="col-sm-4" style={{ height: "100px", width: "auto",margin:"auto" }}
+                              // data-imgbigurl="Images/1.jpg"
+                              src={this.state.Espece.image_profile}
+                              alt=""
+                              onClick={this.onClickImageProfile}
+                            />
+
+                          </div>
+
                         </div>
                         {this.state.Espece.anoc ?
                           <span className=" text-success ">
@@ -430,7 +432,7 @@ class DetailsMouton extends Component {
                     <h3 id="centrer2">
 
                     </h3>
-                    <div id="centrer" className="container">
+                    <div id="centrer" className="container col-md-12">
                       <b>{" "}</b>
                       <br></br>
                       <b>Annonce № : <span className="text-secondary">{this.state.Espece.reference}</span> <br></br> </b>
@@ -448,9 +450,9 @@ class DetailsMouton extends Component {
                         <li>
                           <b>Espece</b> <span>{this.state.Espece.espece}</span>
                         </li>
-                        <li>
+                        {/*<li>
                           <b>Categorie</b> <span>{this.state.Espece.categorie}</span>
-                        </li>
+                        </li>*/}
                         <li>
                           <b>Race</b> <span>{this.state.Espece.race}</span>
                         </li>
@@ -486,88 +488,101 @@ class DetailsMouton extends Component {
                     <h4>Description</h4>
                     <div id="gris" className="container ">
                       {this.state.Espece.description ? (
-                        <p className="text-dark">{this.state.Espece.description}</p>
+                        <p className="text-dark col-md-12">{this.state.Espece.description}</p>
                       ) : (
                         <p  >Aucune description disponible</p>
                       )}
                     </div>
-                  </div>
-                  <br></br>
-                  <br></br>
-                  <div style={{ marginLeft: "13%" }}>
-
-                    {this.state.isDispo && this.state.isLoged ? (
-                      <div>
-                        {!this.state.isInpanier ? (
-                          <button style={{ borderColor: 'transparent', backgroundColor: "#4CB050" }}
-                            id={this.state.Espece._id}
-                            className="primary-btn rounded mb-1"
-                            onClick={(e) =>
-                              this.handlePanier(e.currentTarget.id)
-                            }
-                          >
-                            <i className="fa fa-shopping-cart"></i> Ajouter au
-                            panier
-                          </button>
-                        ) : null}
-
-                        <Link
-                          to={{
-                            pathname: "/Commander",
-                            state: {
-                              id: this.state.Espece._id,
-                              cooperative: this.state.cooperative
-                            },
-                          }}
-                        >
-                          <button style={{ borderColor: 'transparent', backgroundColor: "#4CB050" }}
-
-                            className="primary-btn rounded  " style={{ marginLeft: "20%" }} >
-                            <i className="fa fa-plus "></i>  Commander
-                          </button>
-                        </Link>
-                      </div>
-                    ) : null}
-
-                    {this.state.isDispo && !this.state.isLoged ? (
-                      <div>
-                        {!this.state.isInpanier ? (
-                          <button style={{ borderColor: 'transparent', backgroundColor: "#4CB050" }}
-                            id={this.state.Espece._id}
-                            className="primary-btn rounded mb-1"
-                            onClick={(e) =>
-                              this.handlePanier(e.currentTarget.id)
-                            }
-                          >
-                            <i className="fa fa-shopping-cart mb-1 "></i> Ajouter au
-                            panier
-                          </button>
-                        ) : null}
-
-                        <Link
-                          to={{
-                            pathname: "/Commander",
-                            state: {
-                              id: this.state.Espece._id,
-                              cooperative: this.state.cooperative
-
-                            },
-                          }}
-                        >
-                          <button style={{ borderColor: 'transparent', backgroundColor: "#4CB050" }}
-
-                            className="primary-btn rounded  ml-2 "  >
-                            <i className="fa fa-plus "></i> Commander
-                          </button>
-                        </Link>
-                      </div>
-                    ) : null}
                     <br></br>
-                  </div>
-                </div>
+                
+                  
+                <br></br>
+                <div  className="row  text-center">    
+                    {!this.state.isLoged ? this.state.isDispo ?
+                         <div className="col-md-6 mt-2">  <Link
+                          to={{
+                            pathname: "/Commander",
+                            state: {
+                              id: this.state.Espece._id,
+                              cooperative: this.state.cooperative
+                            },
+                          }}
+                        >
+                          <button style={{ borderColor: 'transparent', backgroundColor: "#4CB050",paddingLeft:"19px",paddingRight:"19px" }}
 
+                            className="primary-btn rounded     "  >
+                             <i className="fa fa-plus"></i> Commander l'espece
+        </button>
+                        </Link></div>
+ 
+
+                      : null :
+                      this.state.isDispo && !this.state.isInpanier ? <>
+                        <div className="col-md-6 mt-2"> 
+                        <Link  >
+                         <button style={{ borderColor: 'transparent', backgroundColor: "#4CB050" }}
+                          id={this.state.Espece._id}
+                          className="primary-btn rounded "
+                          onClick={(e) =>
+                            this.handlePanier(e.currentTarget.id)
+                          }
+                        >
+                          <i className="fa fa-shopping-cart"></i> Ajouter au panier
+            </button>  </Link> </div>
+                        <div className="col-md-6 mt-2">  <Link
+                          to={{
+                            pathname: "/Commander",
+                            state: {
+                              id: this.state.Espece._id,
+                              cooperative: this.state.cooperative
+                            },
+                          }}
+                        >
+                          <button style={{ borderColor: 'transparent', backgroundColor: "#4CB050",paddingLeft:"19px",paddingRight:"19px" }}
+
+                            className="primary-btn rounded    "  >
+                            <i className="fa fa-plus"></i> Commander l'espece
+</button>
+                        </Link></div>
+                      </>
+
+                        : this.state.isDispo && this.state.isInpanier ?
+                           
+                            <div className="col-md-6 mt-2">  <Link
+                              to={{
+                                pathname: "/Commander",
+                                state: {
+                                  id: this.state.Espece._id,
+                                  cooperative: this.state.cooperative
+                                },
+                              }}
+                            >
+                              <button style={{ borderColor: 'transparent', backgroundColor: "#4CB050" ,paddingLeft:"19px",paddingRight:"19px"}}
+
+                                className="primary-btn rounded    "  >
+                                 <i className="fa fa-plus"></i> Commander l'espece
+</button>
+                            </Link></div>
+                            : null}
+                     
+                </div>
+          
+                <br></br>
+                 </div>
+               
+             
+
+
+                 
+
+
+
+                    <br></br>
+                    
+                  </div>
+ 
               </div>
-            </div>
+          </div>
           </section>
         )}
       </div>

@@ -4,8 +4,9 @@ import { FaClipboardCheck } from 'react-icons/fa';
 import Rating from '@material-ui/lab/Rating';
 import Box from '@material-ui/core/Box';
 import Switch from "react-switch";
- import { FaShapes } from 'react-icons/fa'
+import { FaShapes } from 'react-icons/fa'
 import Select from "react-select";
+import { HiOutlineBadgeCheck } from 'react-icons/hi';
 
 import { Redirect } from "react-router";
 import Swal from "sweetalert2";
@@ -15,19 +16,32 @@ class ConfirmeCommande extends Component {
         super(props);
         // let redirect = false;
         this.state = {
+            commandes: this.props.location.state.id,
+
             show1: "collapse show",
             show2: "collapse show",
+            show3: "collapse show",
+            showMotif: false,
             ratingLivraison: 0,
             ratingProduit: 0,
             conforme: false,
             rejete: false,
             optionsMotif: [],
+            optionsMotifs: [
+                { value: "Numéro de boucle non conforme", label: "Numéro de boucle non conforme" },
+                { value: "Produit avarié", label: "Produit avarié" },
+            ],
+
             selectedOptionMotif: "",
+            selectedOptionMotifs: "",
+
             motif: null,
+            motifs: null,
 
 
 
         };
+        this.valider=this.valider.bind(this);
 
 
     }
@@ -35,7 +49,7 @@ class ConfirmeCommande extends Component {
 
     handleChangeEtat(CR) {
         if (CR === "conforme") {
-            this.setState({ conforme: !this.state.conforme, rejete: false })
+            this.setState({ conforme: !this.state.conforme, rejete: false,selectedOptionMotifs:null })
         }
         else if (CR === "rejete") {
             this.setState({ conforme: false, rejete: !this.state.rejete })
@@ -59,7 +73,7 @@ class ConfirmeCommande extends Component {
                 res.data.parametres.motif_annulation.map((m) =>
                     this.state.optionsMotif.splice(0, 0, { "value": m, "label": m })
                 )
- 
+
 
             });
     }
@@ -71,43 +85,89 @@ class ConfirmeCommande extends Component {
             })
 
         );
-        console.log(this.state.motif)
 
 
     };
-    valider(){
-        console.log("ok")
+    handleChangeMotifs = (selectedOptionMotifs) => {
+         if (selectedOptionMotifs.value === "Produit avarié") {
+            this.setState({ showMotif: true })
+        }
+        else {
+            this.setState({ showMotif: false })
+        }
+
+        this.setState({ selectedOptionMotifs }, () =>
+            this.setState({
+                motifs: selectedOptionMotifs.value
+            })
+
+        );
+
+
+    };
+    valider() {
+      
         const myToken = `Bearer ` + localStorage.getItem("myToken");
         const swalWithBootstrapButtons = Swal.mixin({
-          customClass: {
-            confirmButton: "ml-3 btn btn-success",
-            cancelButton: "btn btn-danger",
-          },
-          buttonsStyling: false,
+            customClass: {
+                confirmButton: "ml-3 btn btn-success",
+                cancelButton: "btn btn-danger",
+            },
+            buttonsStyling: false,
         });
-    
+
         swalWithBootstrapButtons.fire({
-          title: "Etes-vous sûr?", text: "Voulez-vous confirmer votre evaluation !",
-          icon: "warning",
-          showCancelButton: true,
-          confirmButtonText: "  Oui!  ",
-          cancelButtonText: "  Non!  ",
-          reverseButtons: true,
+            title: "Etes-vous sûr?", text: "Voulez-vous confirmer votre evaluation !",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "  Oui!  ",
+            cancelButtonText: "  Non!  ",
+            reverseButtons: true,
         }).then((result) => {
-          if (result.isConfirmed) {
-            swalWithBootstrapButtons.fire(
-                'confirmation et evalution validées!',
-                'Votre confirmation et evalution ont bien été enregistrés',
-                'success'
-              )
-          }
-        else {
-            swalWithBootstrapButtons.fire(
-                'Annulation !',
-                'Votre confirmation et evalution ont bien été annulées',
-                'error'
-              )
-        }})
+            if (result.isConfirmed) {
+                axios
+                .put(
+                  "http://127.0.0.1:8000/api/commande/" + this.state.commandes._id,
+                  {
+                    rating_livraison: this.state.ratingLivraison,
+                    rating_produit:this.state.ratingProduit,
+                    motif_rejet: this.conforme===true?"Numéro de boucle non conforme":this.state.selectedOptionMotif.value,
+         
+                  },
+                  {
+                    headers: {
+                      "Content-Type": "application/json",
+                      "Authorization": myToken,
+                    },
+                  }
+                )
+                .then((res) => {
+                
+        this.setState({
+            commandes:res.data.Objet
+        },()=>{
+            
+                   swalWithBootstrapButtons.fire(
+                    'confirmation et evalution validées!',
+                    'Votre confirmation et evalution ont bien été enregistrés',
+                    'success'
+                )
+                this.props.history.push("./commandesParStatut");
+
+        })
+                    
+         
+                });
+              
+            }
+            else {
+                swalWithBootstrapButtons.fire(
+                    'Annulation !',
+                    'Votre confirmation et evalution ont bien été annulées',
+                    'error'
+                )
+            }
+        })
     }
 
     setValue(val, PL) {
@@ -128,6 +188,7 @@ class ConfirmeCommande extends Component {
         //  if (this.state.redirect) {
         // return <Redirect to="./commandesParStatut" />;
         //}  
+        const commandes = this.state.commandes;
 
 
         return (
@@ -139,7 +200,7 @@ class ConfirmeCommande extends Component {
                     <br></br>
                     <div>
                         <div id="accordion">
-                            <div className="card">
+                       <div className="card">
                                 <div className="card-header p-0" style={{ backgroundColor: "#009141" }} id="headingTwo">
                                     <h5 className="mb-0">
                                         <button className="btn btn-link collapsed" >
@@ -162,15 +223,26 @@ class ConfirmeCommande extends Component {
                                                             <div class=" font-weight-bold mt-2">
                                                                 <FaShapes />{" "} motif de rejet</div>
                                                             <br></br>
-                                                             <div class="w-75">
+                                                            <div class="w-75">
 
                                                                 <Select
-                                                                    value={this.state.selectedOptionMotif}
-                                                                    onChange={this.handleChangeMotif}
-                                                                    options={this.state.optionsMotif}
-                                                                    placeholder="Motif de rejet"
+                                                                
+                                                                    value={this.state.selectedOptionMotifs}
+                                                                    onChange={this.handleChangeMotifs}
+                                                                    options={this.state.optionsMotifs}
+                                                                    placeholder="A choisir"
                                                                     name="selectedOptionMotif" />
-                                                            </div>  </>
+                                                            </div>  <div class="w-75">
+                                                                {this.state.showMotif ?
+                                                                    <Select
+                                                                        value={this.state.selectedOptionMotif}
+                                                                        onChange={this.handleChangeMotif}
+                                                                        options={this.state.optionsMotif}
+                                                                        placeholder="Motif de rejet"
+                                                                        name="selectedOptionMotif"
+                                                                        className="mt-2" />
+
+                                                                    : null}  </div>  </>
                                                         : null}
 
                                                 </div><br></br>
@@ -229,6 +301,8 @@ class ConfirmeCommande extends Component {
 
                                             </div>
                                         </div></div>
+                                        
+                                
                                 </div>
 
                             </div>

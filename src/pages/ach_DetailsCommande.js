@@ -1,6 +1,5 @@
-import React, { Component, useState } from "react";
+import React, { Component } from "react";
 import { Link } from "react-router-dom";
-import { withRouter } from "react-router-dom";
 import { FaClipboardCheck } from 'react-icons/fa';
 import { BsFileEarmarkPlus } from 'react-icons/bs'
 import { BiTrash } from 'react-icons/bi'
@@ -15,6 +14,7 @@ class DetailsCommande extends Component {
     super(props);
     // let redirect = false;
     this.state = {
+      show:["collapse show","collapse show","collapse","collapse","collapse","collapse"],
       cloture:false,
       connectedUserEmail: "",
       espece_changement: '',
@@ -33,6 +33,8 @@ class DetailsCommande extends Component {
       showChoix: false,
       prixRemb: 0,
       prix_transport: 0,
+      prix_total: JSON.parse( window.sessionStorage.getItem("prix_total")),
+
       especeAv: {},
        especeChoisi:{},
       redirect: false,
@@ -41,8 +43,8 @@ class DetailsCommande extends Component {
       date: Date,
       mode_paiement_choisi: this.props.location.state.id.mode_paiement_choisi,
       dataUrl: "",
-      ids: localStorage.getItem("ids") ? JSON.parse(localStorage.getItem("ids")) : [],
-      reponses: localStorage.getItem("reponses") ? JSON.parse(localStorage.getItem("reponses")) : [],
+      ids:  window.sessionStorage.getItem("ids") ? JSON.parse( window.sessionStorage.getItem("ids")) : [],
+      reponses:  window.sessionStorage.getItem("reponses") ? JSON.parse( window.sessionStorage.getItem("reponses")) : [],
 
     };
 
@@ -59,7 +61,7 @@ class DetailsCommande extends Component {
     this.handleChangeImage = this.handleChangeImage.bind(this);
     this.handlePut = this.handlePut.bind(this);
     this.handlPost = this.handlPost.bind(this);
- 
+ this.showCard=this.showCard.bind(this);
 
   }
   verification(id){
@@ -68,16 +70,22 @@ class DetailsCommande extends Component {
     return found;
 
   }
+  showCard(num){
+    this.state.show[num]=this.state.show[num]==="collapse show"?"collapse":"collapse show";
+
+this.setState({
+  show:this.state.show
+})  }
   Hide(){
     this.setState({showChoix:false,showRemb:false,showSolution:false},()=>{})
   }
   terminer(){
      if(this.state.cloture==false)
     { 
-       if ((localStorage.getItem("ids")&&JSON.parse(localStorage.getItem("ids") ).length == 0) ||
-   (    localStorage.getItem("ids")&&
-      JSON.parse(localStorage.getItem("ids") ).length == this.state.commandes.espece.filter((e) => e.statut == "produit avarié").length
-      )|| this.state.commandes.espece.filter((e) => e.statut == "produit avarié").length == 0)
+       if (( window.sessionStorage.getItem("ids")&&JSON.parse( window.sessionStorage.getItem("ids") ).length === 0) ||
+   (     window.sessionStorage.getItem("ids")&&
+      JSON.parse( window.sessionStorage.getItem("ids") ).length === this.state.commandes.espece.filter((e) => e.statut === "produit avarié").length
+      )|| this.state.commandes.espece.filter((e) => e.statut === "produit avarié").length === 0)
        {  window.onbeforeunload = undefined  } 
        else {
 
@@ -90,13 +98,13 @@ class DetailsCommande extends Component {
 
     }
 
-    if (localStorage.getItem("ids") &&JSON.parse(localStorage.getItem("ids") ).length != 0 &&
-      JSON.parse(localStorage.getItem("ids") ).length == this.state.commandes.espece.filter((e) => e.statut == "produit avarié").length
-      && this.state.commandes.espece.filter((e) => e.statut == "produit avarié").length != 0)
+    if ( window.sessionStorage.getItem("ids") &&JSON.parse( window.sessionStorage.getItem("ids") ).length !== 0 &&
+      JSON.parse( window.sessionStorage.getItem("ids") ).length === this.state.commandes.espece.filter((e) => e.statut === "produit avarié").length
+      && this.state.commandes.espece.filter((e) => e.statut === "produit avarié").length !== 0)
        {
       const myToken = `Bearer ` + localStorage.getItem("myToken");
  
-  JSON.parse(localStorage.getItem("ids")).map((i,nbr)=>{
+  JSON.parse( window.sessionStorage.getItem("ids")).map((i,nbr)=>{
   if(i.etat=="accepter"){ 
 
     axios
@@ -117,15 +125,15 @@ class DetailsCommande extends Component {
     )
     .then((res) => {
       this.state.reponses.push(res.data)
-     localStorage.setItem("reponses", JSON.stringify(this.state.reponses))
+      window.sessionStorage.setItem("reponses", JSON.stringify(this.state.reponses))
        this.setState({ showChoix:false,showRemb:false,  showSolution: false }, () => {
        
       })
- if(nbr=== JSON.parse(localStorage.getItem("ids")).length-1)
+ if(nbr=== JSON.parse( window.sessionStorage.getItem("ids")).length-1)
 { 
 axios
   .put(
-    "http://127.0.0.1:8000/api/commandeStatut/" + this.state.commandes._id,
+    "http://127.0.0.1:8000/api/commandeStatut/" + this.state.commandes._id,this.state.reponses,
     {
       all: this.state.reponses,
     },
@@ -137,8 +145,8 @@ axios
     }
   )
   .then((res) => {
-    this.setState({cloture:true,ids:[],showChoix:false,showSolution:false,showRemb:false},()=>{
-       localStorage.setItem("ids",[]);
+     this.setState({cloture:true,ids:[],showChoix:false,showSolution:false,showRemb:false},()=>{
+        window.sessionStorage.setItem("ids",[]);
       
         Swal.fire({
       title: "Votre commande a bien été changée ",
@@ -175,20 +183,20 @@ axios
   )
   .then((res) => { 
       this.state.reponses.push(res.data)
-     localStorage.setItem("reponses", JSON.stringify(this.state.reponses))
+      window.sessionStorage.setItem("reponses", JSON.stringify(this.state.reponses))
  
  
 
     this.setState({ showChoix:true,showRemb:false,  showSolution: false }, () => {
      
     })
- if(nbr=== JSON.parse(localStorage.getItem("ids")).length-1)
+ if(nbr=== JSON.parse( window.sessionStorage.getItem("ids")).length-1)
 { 
 axios
   .put(
-    "http://127.0.0.1:8000/api/commandeStatut/" + this.state.commandes._id,
+    "http://127.0.0.1:8000/api/commandeStatut/" + this.state.commandes._id,this.state.reponses,
     {
-      all: this.state.reponses,
+      
     },
     {
       headers: {
@@ -199,8 +207,7 @@ axios
   )
   .then((res) => {
     this.setState({cloture:true,ids:[]},()=>{
-       localStorage.setItem("ids",[]);
-      
+        window.sessionStorage.setItem("ids",[]);
         Swal.fire({
       title: "Changer avec succès ",
       icon: "success",
@@ -211,26 +218,17 @@ axios
 
     })})
     this.props.history.push("./commandesParStatut");
-
-
   })}
   })
 }
-
 })
-
- 
- 
     }}
-
   }
   componentDidUpdate = () => {
-  if( localStorage.getItem("ids")) { 
-     if(this.state.ids.length>0 &&  JSON.parse(localStorage.getItem("ids") ).length==0 ){
-      this.setState({ids:[]},()=>{ 
-        
-       
-        Swal.fire({
+  if(  window.sessionStorage.getItem("ids")) { 
+     if(this.state.ids.length>0 &&  JSON.parse( window.sessionStorage.getItem("ids") ).length==0 ){
+      this.setState({ids:[]},()=>{  
+         Swal.fire({
           title: "Changement annuler ",
           icon: "error",
           width: 400,
@@ -246,8 +244,7 @@ axios
   {    
       if(this.state.ids.length>0  ){
       this.setState({ids:[]},()=>{
-        
-       
+     
         Swal.fire({
           title: "Changement annuler ",
           icon: "error",
@@ -269,16 +266,16 @@ axios
     let errors = {};
     let valide = true;
 
-    if (this.state.nom_prenom.length == 0 || this.state.nom_prenom == " ") {
+    if (this.state.nom_prenom.length === 0 || this.state.nom_prenom === " ") {
 
       errors["nom_prenom"] = "Ce champs est obligatoire ";
       valide = false;
     }
-    if (this.state.rib.length == 0) {
+    if (this.state.rib.length === 0) {
       errors["rib"] = "Ce champs est obligatoire ";
       valide = false;
     }
-    if (this.state.rib.length != 0 && this.state.rib.length != 24) {
+    if (this.state.rib.length !== 0 && this.state.rib.length !== 24) {
       errors["rib"] = " Le rib doit contenir 24 caractères ";
       valide = false;
     }
@@ -292,11 +289,11 @@ axios
     if (this.handleValidation()) {
       //rembourssement
 
-      if (this.state.etat == "refuser") {  
+      if (this.state.etat === "refuser") {  
           
       
             this.state.ids.push({"id":this.state.especeAv._id,"etat":this.state.etat})
-            localStorage.setItem("ids", JSON.stringify(this.state.ids))
+             window.sessionStorage.setItem("ids", JSON.stringify(this.state.ids))
          
  
             this.setState({  showRemb:false,  showSolution: false }, () => {
@@ -313,13 +310,13 @@ axios
             })
        }
       //rembourssement pour changement (old.prix>new.prix)
-      if (this.state.etat == "accepter") {
+      if (this.state.etat === "accepter") {
           
        
              this.state.ids.push({"id":this.state.especeAv._id,"id_changement":this.state.espece_changement._id,"etat":this.state.etat})
            // this.state.reponses.push(res.data)
-            localStorage.setItem("ids", JSON.stringify(this.state.ids))
-           // localStorage.setItem("reponses", JSON.stringify(this.state.reponses))
+             window.sessionStorage.setItem("ids", JSON.stringify(this.state.ids))
+           //  window.sessionStorage.setItem("reponses", JSON.stringify(this.state.reponses))
        
 
            this.setState({  showRemb:false,  showSolution: false }, () => {
@@ -453,17 +450,17 @@ axios
             )
             .then((res) => {
               let all = this.state.commandes;
-              all.espece = this.state.commandes.espece.filter((f) => f._id != espece._id);
-              all.especes = this.state.commandes.especes.filter((f) => f.id_espece != espece._id);
+              all.espece = this.state.commandes.espece.filter((f) => f._id !== espece._id);
+              all.especes = this.state.commandes.especes.filter((f) => f.id_espece !== espece._id);
 
-              if (all.reçu_avance == null) {
+              if (all.reçu_avance === null) {
                 all.avance = (all.avance - espece.avance);
                 all.prix_total = (all.prix_total - espece.prix);
                 all.reste = (all.prix_total - all.avance);
 
               }
 
-              if (all.reçu_avance != null) {
+              if (all.reçu_avance !== null) {
                 all.prix_total = (all.prix_total - espece.prix) - (- espece.avance);
                 all.reste = (all.prix_total - all.avance);
               }
@@ -738,20 +735,15 @@ axios
 
         //ancien_statut validé =>Montant du produit avarié a remboursé par l'ANOC
         if (this.state.commandes.ancien_statut === "validé" && espece.prix < this.state.especeAv.prix) {
-          this.setState({ prixRemb: this.state.especeAv.prix - espece.prix, showRemb: !this.state.showRemb }, () => { });
+          this.setState({ prix_total:this.state.prix_total-(this.state.especeAv.prix-this.state.espece_changement.prix ),prixRemb: this.state.especeAv.prix - espece.prix, showRemb: !this.state.showRemb }, () => { });
         }
         else {
               
         this.state.ids.push({"id":this.state.especeAv._id,"id_changement":this.state.espece_changement._id,"etat":this.state.etat})
-             // this.state.reponses.push(res.data)
-              localStorage.setItem("ids", JSON.stringify(this.state.ids))
-             // localStorage.setItem("reponses", JSON.stringify(this.state.reponses))
-
-  
-           
-              this.setState({   showSolution: false,showRemb:false }, () => {
-                
-              });
+                window.sessionStorage.setItem("ids", JSON.stringify(this.state.ids))
+   
+              this.setState({   showSolution: false,showRemb:false,prix_total:this.state.prix_total-(this.state.especeAv.prix-this.state.espece_changement.prix )}, () => {
+               });
           
           Swal.fire({
             title: "change avec succès ",
@@ -818,8 +810,8 @@ axios
           
                   this.state.ids.push({"id":this.state.especeAv._id,"etat":this.state.etat})
                 //  this.state.reponses.push(res.data)
-                   localStorage.setItem("ids", JSON.stringify(this.state.ids))
-                //  localStorage.setItem("reponses", JSON.stringify(this.state.reponses))
+                    window.sessionStorage.setItem("ids", JSON.stringify(this.state.ids))
+                //   window.sessionStorage.setItem("reponses", JSON.stringify(this.state.reponses))
  
   
                         Swal.fire({
@@ -870,15 +862,15 @@ axios
 
   }
   ModalS(espece) {
-    let pdchangement=this.state.commandes.especes.filter((f) => f.id_espece == espece._id)[0].produits_changement;
-     if(pdchangement.filter((p)=>(p.feedback!=null)).length===pdchangement.length){
+    let pdchangement=this.state.commandes.especes.filter((f) => f.id_espece === espece._id)[0].produits_changement;
+     if(pdchangement.filter((p)=>(p.feedback!=null&&p.feedback!="")).length===pdchangement.length){
       this.setState({ showChoix: true, showSolution: false,especeAv: espece  }, () => { });  
 
     }
    
     else {
       this.setState({showChoix:false},()=>{ 
-            if (this.state.commandes.especes.filter((f) => f.id_espece == espece._id)[0].produits_changement.length == 0) {
+            if (this.state.commandes.especes.filter((f) => f.id_espece === espece._id)[0].produits_changement.length === 0) {
       this.setState({ etat: "refuser", especeAv: espece }, () => {
         //ancien_statut en attente de paiement avance=>soustraire le montant du produit initial
 
@@ -902,12 +894,12 @@ axios
     else {
       let tab = [];
       this.setState({ showRemb: false, showSolution: !this.state.showSolution, especeAv: espece }, () => {
-        if (espece != undefined && espece != {} && espece != null && Object.keys(espece).length > 0) {
+        if (espece !== undefined && espece !== {} && espece !== null && Object.keys(espece).length > 0) {
           tab[0] = espece;
-          tab[1] = this.state.commandes.especes.filter((e) => (e.id_espece == espece._id))[0];
+          tab[1] = this.state.commandes.especes.filter((e) => (e.id_espece === espece._id))[0];
           tab[2] = [];
           tab[1].produits_changement.map((e) => {
-            tab[2].push(this.state.commandes.espece_avariee.filter((esp) => (esp._id == e.id_espece))[0]);
+            tab[2].push(this.state.commandes.espece_avariee.filter((esp) => (esp._id === e.id_espece))[0]);
           })
         } this.setState({ Especes: tab }, () => { })
       });
@@ -925,10 +917,10 @@ axios
   }
    componentWillUnmount() {
 
-    if ((localStorage.getItem("ids")&&JSON.parse(localStorage.getItem("ids") ).length == 0) ||(
-      localStorage.getItem("ids")&&
-      JSON.parse(localStorage.getItem("ids") ).length == this.state.commandes.espece.filter((e) => e.statut == "produit avarié").length
-     ) || this.state.commandes.espece.filter((e) => e.statut == "produit avarié").length == 0) {
+    if (( window.sessionStorage.getItem("ids")&&JSON.parse( window.sessionStorage.getItem("ids") ).length === 0) ||(
+       window.sessionStorage.getItem("ids")&&
+      JSON.parse( window.sessionStorage.getItem("ids") ).length === this.state.commandes.espece.filter((e) => e.statut === "produit avarié").length
+     ) || this.state.commandes.espece.filter((e) => e.statut === "produit avarié").length === 0) {
 
     }  
 
@@ -936,17 +928,30 @@ axios
 
 
   componentDidMount() {
+    
     window.addEventListener("load", (ev) => {
       ev.preventDefault();
-      if (!((localStorage.getItem("ids")&&JSON.parse(localStorage.getItem("ids") ).length == 0) ||(localStorage.getItem("ids")&&
-        JSON.parse(localStorage.getItem("ids") ).length == this.state.commandes.espece.filter((e) => e.statut == "produit avarié").length
-       ) || this.state.commandes.espece.filter((e) => e.statut == "produit avarié").length == 0)) {
-         localStorage.setItem('ids', []);
-        localStorage.setItem('reponses', []);
+
+      if (  window.sessionStorage.getItem("ids")&& !(      
+        (JSON.parse( window.sessionStorage.getItem("ids") ).length === 0) 
+        ||(JSON.parse( window.sessionStorage.getItem("ids") ).length === this.state.commandes.espece.filter((e) => e.statut === "produit avarié").length ) 
+        || this.state.commandes.espece.filter((e) => e.statut === "produit avarié").length === 0
+        )
+       ) {
+          window.sessionStorage.setItem('ids', []);
+         window.sessionStorage.setItem('reponses', []);
         this.setState({
           commandes: this.props.location.state.id,
           ids: [], reponses: []
-        })
+        },()=>{  Swal.fire({
+          title: "Changement annuler ",
+          icon: "error",
+          width: 400,
+          heightAuto: false,
+          timer: 1500,
+          showConfirmButton: false,
+    
+        })})
       }
 
     });
@@ -987,7 +992,7 @@ axios
       var year = year;
       var hours = 16;
     }
-    if ((hours > 16 && hours < 24) || hours == "00") {
+    if ((hours > 16 && hours < 24) || hours === "00") {
       var day = day + 1;
       var month = month;
       var year = year;
@@ -1003,7 +1008,7 @@ axios
     var datetime = day + "/" + month + "/" + year + " à " + hours + ":00:00";
     // this.setState({ date: datetime });
     let espsAv = [];
-    this.props.location.state.id.espece.filter((e) => e.statut == "produit avarié").map(
+    this.props.location.state.id.espece.filter((e) => e.statut === "produit avarié").map(
       (esp) => {
         espsAv.push({ "id": esp._id, "etat":null,"choix":null })
       }
@@ -1024,10 +1029,22 @@ axios
         })
 
         .then((res) => {
-
+           let prixT=0;
+           if(this.props.location.state.id.ville_livraison !== "Récupérer à la coopérative"){  let villeL=res.data.parametres.livraison.filter((v) => v.ville_livraison === this.props.location.state.id.ville_livraison)[0];
+           if(this.props.location.state.id.type_livraison==="vip"){
+             prixT=villeL.prix_VIP; }
+          else {
+              prixT=this.props.location.state.id.adresse_domicile?
+( villeL.prix_transport_domicile-(-villeL.marge_risque))*this.props.location.state.id.especes.length
+: 
+ ( villeL.prix_transport_relais-(-villeL.marge_risque))*this.props.location.state.id.especes.length
+          }  }
+ 
+ 
           this.setState({
              cooperative: res.data,
-            prix_transport: this.props.location.state.id.ville_livraison === "Récupérer à la coopérative" ? 0 : res.data.parametres.livraison.filter((v) => v.Ville_livraison === this.props.location.state.id.ville_livraison)[0].prix_transport
+            prix_transport: this.props.location.state.id.ville_livraison === "Récupérer à la coopérative" ? 0 
+            :prixT
           }
             , () => {
               this.setState({ cooperative_rib: this.state.cooperative.rib, tech: this.state.cooperative.tech[0].prenom + " " + this.state.cooperative.tech[0].nom });
@@ -1128,7 +1145,7 @@ axios
     if (this.state.redirect) {
       return <Redirect to="./commandesParStatut" />;
     }
-    let ids = localStorage.getItem("ids") ? JSON.parse(localStorage.getItem("ids")): [];
+    let ids =  window.sessionStorage.getItem("ids") ? JSON.parse( window.sessionStorage.getItem("ids")): [];
  
 
 
@@ -1142,9 +1159,9 @@ axios
         <Prompt
 
           when={
-            !(ids.length == 0 ||
-              ids.length == this.state.commandes.espece.filter((e) => e.statut == "produit avarié").length
-              || this.state.commandes.espece.filter((e) => e.statut == "produit avarié").length == 0)
+            !(ids.length === 0 ||
+              ids.length === this.state.commandes.espece.filter((e) => e.statut === "produit avarié").length
+              || this.state.commandes.espece.filter((e) => e.statut === "produit avarié").length === 0)
 
           }
           message='Voulez-vous vraiment quitter cette page ? Les modifications que vous avez apportées ne seront pas enregistrées'
@@ -1157,24 +1174,24 @@ axios
             <div>
               <div id="accordion">
 
-                {commandes.espece.filter((e) => e.statut == "produit avarié").length>0
+                {commandes.espece.filter((e) => e.statut === "produit avarié").length>0
                   ?
                   <div className="card">
                     <div className="card-header p-0" style={{ backgroundColor: "#009141" }} id="headingfour">
                       <h5 className="mb-0">
-                        <button className="btn btn-link collapsed" data-toggle="collapse" data-target="#collapsefour" aria-expanded="true" aria-controls="collapsefour">
+                        <button onClick={this.showCard.bind(this,0)} className="btn btn-link collapsed" >
                           <h5 style={{ color: "white" }}><FaClipboardCheck className="mb-2" /> {" "}Motif de l'annulation
                       </h5>  </button>
                       </h5>
                     </div>
-                    <div id="collapsefour" className="collapse show" aria-labelledby="headingfour" data-parent="#accordion">
+                    <div id="collapsefour" className={this.state.show[0]} >
                       <div className="card-body">
 
                         <br></br>
 
                         <ul>
                           <div className="row">
-                            {commandes.espece.filter((e) => e.statut == "produit avarié" && !this.verification(e._id)).map((Annonces) =>
+                            {commandes.espece.filter((e) => e.statut === "produit avarié" && !this.verification(e._id)).map((Annonces) =>
                             (<div className="col-lg-3  col-sm-6">
                                <span className="text-danger">
                                 <i className="fa fa-long-arrow-right" aria-hidden="true"> </i>
@@ -1203,8 +1220,8 @@ axios
                                 <div className="product__item__text p-2 text-justify"
                                 >
                                   <h6 className=""><b>№ Boucle</b> : {Annonces.boucle}</h6>
-                                  <h6 className=""><b>Categorie</b> : {Annonces.categorie}</h6>
-                                  <h6 className=""><b>Race :</b> {Annonces.race}</h6>
+                                  <h6 className=""><b>Espece</b> : {Annonces.espece}</h6>
+                                   <h6 className=""><b>Race :</b> {Annonces.race}</h6>
                                   <h6 className=""><b>Poids : </b>{Annonces.poids} Kg</h6>
                                   <h6 className=""><b>Age :</b> {Annonces.age} mois</h6>
                                   <h6 className=""><b>Localisation :</b> {Annonces.localisation}</h6>
@@ -1216,7 +1233,7 @@ axios
                                   <div className="row mt-3">
                                     <div className="col-2">{" "}</div>
                                     <button type="button" onClick={this.ModalS.bind(this, Annonces)} className="col-8 py-1 btn btn-success">
-                                    {this.getEspece(Annonces).produits_changement.filter((p)=>p.feedback!=null).length>0?
+                                    {this.getEspece(Annonces).produits_changement.filter((p)=>p.feedback!=null&&p.feedback!="").length>0?
                                     "Solution choisi"
                                     :" Solutions proposées"
                                     }
@@ -1240,31 +1257,31 @@ axios
                 <div className="card">
                   <div className="card-header p-0" style={{ backgroundColor: "#009141" }} id="headingOne">
                     <h5 className="mb-0">
-                      <button className="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                      <button onClick={this.showCard.bind(this,1)} className="btn btn-link" >
                         <h5 style={{ color: "white" }}><FaClipboardCheck className="mb-2" /> {" "}  Détails produit </h5>  </button>
 
                     </h5>
                   </div>
 
-                  <div id="collapseOne" className="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
+                  <div id="collapseOne" className={this.state.show[1]} >
                     <div className="card-body">
                       <div className="row">
                         {commandes.espece.map((esp) =>
                           <div className="col-lg-6  col-sm-6 mb-4">
 
                             <div className="row">
-                              <div className="col-lg-6  col-sm-6 pr-0 border-0" style={{ height: "220px" }}>
+                              <div className="col-lg-6  col-sm-6 pr-0 border-0" style={{ height: "250px" }}>
 
                                 <div className="product__item">
                                   <div
                                     className="product__item__pic set-bg"
-                                    style={esp.anoc !== null ? { height: "193px" } : { height: 220 }}
+                                    style={esp.anoc !== null ? { height: "223px" } : { height: 250 }}
                                     data-setbg={esp.images}
                                   >
 
                                     <img
                                       src={esp.image_face}
-                                      style={esp.anoc !== null ? { height: "193px" } : { height: "220px" }}
+                                      style={esp.anoc !== null ? { height: "223px" } : { height: "250px" }}
                                       className="product__item__pic set-bg"
                                     />
 
@@ -1296,11 +1313,11 @@ axios
                                 </div>
 
                               </div>
-                              <div className="col-lg-6  col-sm-6 border" style={{ height: "220px", backgroundRepeat: "no-repeat", backgroundImage: esp.statut === "produit avarié" ? "linear-gradient(rgb(255,153,153), rgb(255,204,204))" : null, backgroundSize: "cover" }}>
+                              <div className="col-lg-6  col-sm-6 border" style={{ height: "250px", backgroundRepeat: "no-repeat", backgroundImage: esp.statut === "produit avarié" ? "linear-gradient(rgb(255,153,153), rgb(255,204,204))" : null, backgroundSize: "cover" }}>
                                 <div className="product__item__text p-2 text-justify">
                                   <h6 className=""><b>№ Boucle</b> : {esp.boucle}</h6>
-                                  <h6 className=""><b>Categorie</b> : {esp.categorie}</h6>
-                                  <h6 className=""><b>Race :</b> {esp.race}</h6>
+                                  <h6 className=""><b>Espece</b> : {esp.espece}</h6>
+                                   <h6 className=""><b>Race :</b> {esp.race}</h6>
                                   <h6 className=""><b>Poids : </b>{esp.poids} Kg</h6>
                                   <h6 className=""><b>Age :</b> {esp.age} mois</h6>
                                   <h6 className=""><b>Localisation :</b> {esp.localisation}</h6>
@@ -1329,12 +1346,12 @@ axios
                 <div className="card">
                   <div className="card-header p-0" style={{ backgroundColor: "#009141" }} id="headingTwo">
                     <h5 className="mb-0">
-                      <button className="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                      <button   onClick={this.showCard.bind(this,2)} className="btn btn-link collapsed"  >
                         <h5 style={{ color: "white" }}><FaClipboardCheck className="mb-2" /> {" "}  Détails livraison </h5>  </button>
                     </h5>
                   </div>
                   <div className="">
-                    <div id="collapseTwo" className="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
+                    <div id="collapseTwo" className={this.state.show[2]} >
                       <div className="card-body">
                         <div id="centrer" className="col-lg-12 col-md-6">
                           <div className="shoping__checkout mt-2 pb-0">
@@ -1351,6 +1368,13 @@ axios
                               <li>
                                 <i className="fa fa-map-marker" aria-hidden="true"></i>
                                 {" "}Adresse de livraison : <b style={{ fontWeight: "normal" }}>{commandes.adresse_domicile ? commandes.adresse_domicile : commandes.point_relais}</b>  </li>
+                                {commandes.date_de_livraison?
+                            null
+                              :
+                              <h6 style={{ color: "#bb2124",marginBottom:"10px"  }}>
+                              <i class="fa fa-exclamation-circle" aria-hidden="true"></i>{" "}Votre commande sera livre 24h a 48h avant le jour de l'aid. Nous vous contacterons par telephone preciser vous informer du jour et de l'heure exacte.                                </h6>
+                         
+                         }
                             </ul>
                           </div>
                           <br></br>
@@ -1365,13 +1389,13 @@ axios
                 <div className="card">
                   <div className="card-header p-0" style={{ backgroundColor: "#009141" }} id="headingThree">
                     <h5 className="mb-0">
-                      <button className="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                      <button onClick={this.showCard.bind(this,3)} className="btn btn-link collapsed"  >
 
                         <h5 style={{ color: "white" }}><FaClipboardCheck className="mb-2" /> {" "}  Détails prix</h5>  </button>
 
                     </h5>
                   </div>
-                  <div id="collapseThree" className="collapse" aria-labelledby="headingThree" data-parent="#accordion">
+                  <div id="collapseThree" className={this.state.show[3]} >
                     <div className="card-body">
                       <div id="centrer" className="col-lg-12 col-md-6">
                         <div className="shoping__checkout mt-2 pb-0">
@@ -1380,15 +1404,15 @@ axios
                             <ul>
                             <li>
                                 Prix net{" "}
-                                <span>   {prix}Dhs</span>
+                                <span>   {this.state.prix_total-this.state.prix_transport}Dhs</span>
                               </li>
-                              {/**   <li style={{ borderBottomStyle: "dashed", borderColor: "black" }}>
-                                Prix Transport <span> {commandes.prix_total-prix}  Dhs    </span>
-                              </li> */}
+                              {   <li style={{ borderBottomStyle: "dashed", borderColor: "black" }}>
+                                Prix Transport <span>  {this.state.prix_transport}  Dhs    </span>
+                              </li> }
                            
                               <li>
                                 Prix Total{" "}
-                                <span>   {commandes.prix_total}Dhs</span>
+                                <span>   {this.state.prix_total}Dhs</span>
                               </li>
 
                               {commandes.statut === "en attente de paiement avance" ?
@@ -1471,7 +1495,7 @@ axios
                   <div className="card">
                     <div className="card-header p-0" style={{ backgroundColor: "#009141" }} id="headingfive">
                       <h5 className="mb-0">
-                        <button className="btn btn-link collapsed" data-toggle="collapse" data-target="#collapsefive" aria-expanded="false" aria-controls="collapsefive">
+                        <button onClick={this.showCard.bind(this,5)} className="btn btn-link collapsed"  >
                           <h5 style={{ color: "white" }}><FaClipboardCheck className="mb-2" /> {" "}
                             {commandes.statut === "en attente de paiement avance" || commandes.statut === "en attente de validation avance" ? "Paiement des frais de resevation" : null}
                             {commandes.statut === "en attente de paiement du reste" || commandes.statut === "en attente de validation reste" || commandes.statut === "validé" ? "Paiement du reste du montant" : null}
@@ -1479,7 +1503,7 @@ axios
                           </h5>  </button>
                       </h5>
                     </div>
-                    <div id="collapsefive" className="collapse" aria-labelledby="headingfive" data-parent="#accordion">
+                    <div id="collapsefive" className={this.state.show[5]} >
                       <div className="card-body">
 
                         <br></br>
@@ -1494,7 +1518,7 @@ axios
                               <h5>  <b>Frais de reservation (non remboursable) </b><small>{commandes.avance} {" Dhs"}</small></h5>
                               <br></br>
                               <div className="form-check">
-                                <input checked={this.state.mode_paiement_choisi == "virement"} onChange={this.onChange} className="form-check-input" type="radio" name="mode_paiement_choisi" id="virement" value="virement" />
+                                <input checked={this.state.mode_paiement_choisi === "virement"} onChange={this.onChange} className="form-check-input" type="radio" name="mode_paiement_choisi" id="virement" value="virement" />
                                 <label className="form-check-label" htmlFor="virement">
                                   <b> Virement bancaire</b>
                                 </label>
@@ -1502,7 +1526,7 @@ axios
                               <p>pour payer les frais de reservation, il vous suffit d'effectuer un virement sur le RIB suivant
                           <span className="text-danger">{" " + this.state.cooperative_rib}</span></p>
                               <div className="form-check mt-2">
-                                <input checked={this.state.mode_paiement_choisi == "transfert"} onChange={this.onChange} className="form-check-input" type="radio" name="mode_paiement_choisi" id="transfert" value="transfert" />
+                                <input checked={this.state.mode_paiement_choisi === "transfert"} onChange={this.onChange} className="form-check-input" type="radio" name="mode_paiement_choisi" id="transfert" value="transfert" />
                                 <label className="form-check-label" htmlFor="transfert">
                                   <b>Par agence de transfert d'argent (*)</b>
                                 </label>
@@ -1601,7 +1625,7 @@ axios
                                 <div className="col">{" "}</div>
                                 <div className="col">   <div className="product__details__pic">
                                   <div className="product__details__pic__item">
-                                    {commandes.reçu_montant_complement == null || commandes.reçu_montant_complement == undefined ?
+                                    {commandes.reçu_montant_complement === null || commandes.reçu_montant_complement === undefined ?
                                       <img
                                         className="product__details__pic__item--large"
                                         src={commandes.reçu_montant_restant}
@@ -1630,14 +1654,14 @@ axios
                   commandes.statut !== "en attente de paiement du reste" && commandes.statut !== "en attente de validation reste" && commandes.statut !== "validé" &&
                   commandes.statut !== "en attente de paiement du complément" && commandes.statut !== "en attente de validation du complément" ?
                   <div className="card">
-                    <div className="card-header p-0" style={{ backgroundColor: "#009141" }} id="headingfour">
+                    <div   className="card-header p-0" style={{ backgroundColor: "#009141" }}  >
                       <h5 className="mb-0">
-                        <button className="btn btn-link collapsed" data-toggle="collapse" data-target="#collapsefour" aria-expanded="true" aria-controls="collapsefour">
+                        <button onClick={this.showCard.bind(this,4)} className="btn btn-link collapsed"  >
                           <h5 style={{ color: "white" }}><FaClipboardCheck className="mb-2" /> {" "}Motif de l'annulation
                       </h5>  </button>
                       </h5>
                     </div>
-                    <div id="collapsefour" className="collapse" aria-labelledby="headingfour" data-parent="#accordion">
+                    <div id="collapsefour" className={this.state.show[4]} >
                       <div className="card-body">
 
                         <br></br>
@@ -1659,17 +1683,17 @@ axios
                 <div className="col-md-4 offset-md-4">
 
                   {commandes.statut === "en attente de paiement avance"||commandes.statut==="reçu avance refusé" ?
-                    <button style={{ fontSize: "19px" }} id="centre" onClick={this.Modal.bind(this, "avance")}
+                    <button style={{ fontSize: "18px" }} id="centre" onClick={this.Modal.bind(this, "avance")}
                       className="btn-success py-1 px-4 mb-3 w-75" ><BsFileEarmarkPlus className="fa-lg" /> {" "}
                         Payer l'avance{" "}
                     </button> : null}
                   {commandes.statut === "en attente de paiement du reste" ||commandes.statut==="reçu reste refusé"?
-                    <button style={{ fontSize: "19px" }} id="centre" onClick={this.Modal.bind(this, "reste")}
+                    <button style={{ fontSize: "18px" }} id="centre" onClick={this.Modal.bind(this, "reste")}
                       className="btn-success py-1 px-4 mb-3 w-75" ><BsFileEarmarkPlus className="fa-lg" /> {" "}
                         Payer le reste{" "}
                     </button> : null}
                   {commandes.statut === "en attente de paiement du complément" ?
-                    <button style={{ fontSize: "19px" }} id="centre" onClick={this.Modal.bind(this, "complement")}
+                    <button style={{ fontSize: "18px" }} id="centre" onClick={this.Modal.bind(this, "complement")}
                       className="btn-success py-1 px-4 mb-3 w-75" > <BsFileEarmarkPlus className="fa-lg" />{" "}
                         Payer le complement{" "}
                     </button> : null}
@@ -1680,7 +1704,7 @@ axios
               </div>
               <div className="row mb-5">
                 <div className="col-md-4 offset-md-4 ">
-                  <button style={{ fontSize: "19px" }}
+                  <button style={{ fontSize: "18px" }}
                     id="centre"
                     className="btn-danger py-1 px-4 mb-3 w-75"
                     onClick={this.handelDelete}
@@ -1704,7 +1728,7 @@ axios
                
               </Modal.Title>
             </Modal.Header>
-             <Modal.Body className="overflow-auto" style={this.state.showRemb == false ?
+             <Modal.Body className="overflow-auto" style={this.state.showRemb === false ?
              this.state.Especes[2] !== undefined&& this.state.Especes[2].length==1&& !this.state.showRemb?
               { maxHeight: "max-content",margin:"auto" }
               :{height: "620px" }
@@ -1712,7 +1736,7 @@ axios
               }>
 
               {this.state.Especes[2] !== undefined 
-              &&this.state.showRemb == false&&this.state.showChoix==false ?
+              &&this.state.showRemb === false&&this.state.showChoix==false ?
                 <>  <div className={ this.state.Especes[2].length==1?null:"row"}>
                   {this.state.Especes[2].map((Annonces) =>
                   (
@@ -1746,8 +1770,8 @@ axios
                           <span className="badge pt-3 w-100  mt-1  ">{"  "}</span>
                         }
                         <div className="product__item__text p-2 text-justify">
-                          <h6 className=""><b>Categorie</b> : {Annonces.categorie}</h6>
-                          <h6 className=""><b>Race :</b> {Annonces.race}</h6>
+                          <h6 className=""><b>Espece</b> : {Annonces.espece}</h6>
+                           <h6 className=""><b>Race :</b> {Annonces.race}</h6>
                           <h6 className=""><b>Poids : </b>{Annonces.poids} Kg</h6>
                           <h6 className=""><b>Age :</b> {Annonces.age} mois</h6>
                           {this.state.Especes[0].prix - Annonces.prix > 0 ?
@@ -1769,7 +1793,7 @@ axios
                             <button type="button" onClick={this.AccepteSoution.bind(this, Annonces)} className="col-6 py-1 btn btn-success">Accepter</button>
                             <div className="col-3">{" "}</div>
                           </div> : null}
-                          {this.state.Especes[2].length == 1 ?
+                          {this.state.Especes[2].length === 1 ?
                             <div className="row mt-3">
                               <div className="col-1">{" "}</div>
                               <button type="button" onClick={this.AccepteSoution.bind(this, Annonces)} className="col-4 py-1 btn btn-success">Accepter</button>
@@ -1791,9 +1815,9 @@ axios
                       <button type="button" onClick={this.RefuseTSoutions} className="col-4 py-1 btn btn-danger">Refuser les solutions proposées</button>
                       <div className="col-4">{" "}</div>
                     </div> : null}
-                </> : (this.state.showRemb == true ? <div>
+                </> : (this.state.showRemb === true ? <div>
 
-                  {this.state.commandes.especes.filter((f) => f.id_espece == this.state.especeAv._id)[0].produits_changement.length == 0 ?
+                  {this.state.commandes.especes.filter((f) => f.id_espece === this.state.especeAv._id)[0].produits_changement.length === 0 ?
                     <h4 className="text-danger mb-5 mt-2"> Pas de produits de changements proposés.</h4>
                     :
                     <h4 className="text-danger mb-5 mt-2"> Vous avez refuse tous les produits de changements proposés.</h4>
@@ -1866,19 +1890,19 @@ axios
              <div className="  mb-4">
 
 
-<div className="row">
-  <div className="col-lg-6  col-sm-6 pr-0 border-0" style={{ height: "220px" }}>
+<div className="row m-auto">
+  <div className="col-lg-6  col-sm-6 pr-0 border-0" style={{ height: "250px" }}>
 
     <div className="product__item">
       <div
         className="product__item__pic set-bg"
-        style={this.getChoix(this.getEspece(this.state.especeAv)).anoc !== null ? { height: "193px" } : { height: 220 }}
+        style={this.getChoix(this.getEspece(this.state.especeAv)).anoc !== null ? { height: "223px" } : { height: 250 }}
         data-setbg={this.getChoix(this.getEspece(this.state.especeAv)).images}
       >
 
         <img
           src={this.getChoix(this.getEspece(this.state.especeAv)).image_face}
-          style={this.getChoix(this.getEspece(this.state.especeAv)).anoc !== null ? { height: "193px" } : { height: "220px" }}
+          style={this.getChoix(this.getEspece(this.state.especeAv)).anoc !== null ? { height: "223px" } : { height: "250px" }}
           className="product__item__pic set-bg"
         />
 
@@ -1904,11 +1928,11 @@ axios
     </div>
 
   </div>
-  <div className="col-lg-6  col-sm-6 border" style={{ height: "220px", backgroundRepeat: "no-repeat", backgroundImage: this.getChoix(this.getEspece(this.state.especeAv)).statut === "produit avarié" ? "linear-gradient(rgb(255,153,153), rgb(255,204,204))" : null, backgroundSize: "cover" }}>
+  <div className="col-lg-6  col-sm-6 border" style={{ height: "250px", backgroundRepeat: "no-repeat", backgroundImage: this.getChoix(this.getEspece(this.state.especeAv)).statut === "produit avarié" ? "linear-gradient(rgb(255,153,153), rgb(255,204,204))" : null, backgroundSize: "cover" }}>
     <div className="product__item__text p-2 text-justify">
       <h6 className=""><b>№ Boucle</b> : {this.getChoix(this.getEspece(this.state.especeAv)).boucle}</h6>
-      <h6 className=""><b>Categorie</b> : {this.getChoix(this.getEspece(this.state.especeAv)).categorie}</h6>
-      <h6 className=""><b>Race :</b> {this.getChoix(this.getEspece(this.state.especeAv)).race}</h6>
+      <h6 className=""><b>Espece</b> : {this.getChoix(this.getEspece(this.state.especeAv)).espece}</h6>
+       <h6 className=""><b>Race :</b> {this.getChoix(this.getEspece(this.state.especeAv)).race}</h6>
       <h6 className=""><b>Poids : </b>{this.getChoix(this.getEspece(this.state.especeAv)).poids} Kg</h6>
       <h6 className=""><b>Age :</b> {this.getChoix(this.getEspece(this.state.especeAv)).age} mois</h6>
       <h6 className=""><b>Localisation :</b> {this.getChoix(this.getEspece(this.state.especeAv)).localisation}</h6>

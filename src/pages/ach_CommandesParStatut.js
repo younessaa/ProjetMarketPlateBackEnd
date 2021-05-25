@@ -1,10 +1,8 @@
 import React, { Component } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
-// import blu from ;
 import Loader from "react-loader-spinner";
-import { GiSheep } from 'react-icons/gi';
-
+ 
 class CommandesParStatut extends Component {
   constructor(props) {
     super(props);
@@ -347,9 +345,7 @@ class CommandesParStatut extends Component {
                               <span
                               style={{color:"#bb2124",position:"relative",right:"31%"}}
                                className="  text-left  ">Dernier delai : {this.state.deadline[1].substr(6, 4)+"/"+this.state.deadline[1].substr(3, 2)+"/"+this.state.deadline[1].substr(0, 2)}</span>
-
                               : null}
-
                             <center>
                               <a href="">
                                 <br></br>{" "}
@@ -393,7 +389,7 @@ class CommandesParStatut extends Component {
                             padding-left="10px"
                             padding-right="10px"
                           >
-                            {cmdLivrer > 0 ?
+                            {cmdLivrer > 0 &&this.state.delivery?
                               <span
                               style={{color:"#bb2124",position:"relative",right:"28%"}}
                                className="   text-left  ">Date de livraison : {this.state.delivery.replace(/-/g,"/")}</span>

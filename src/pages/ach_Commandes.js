@@ -1,8 +1,8 @@
 import React, { Component } from "react";
 import axios from "axios";
-import { GiWeight, GiSheep, GiConsoleController } from 'react-icons/gi';
+import { GiWeight} from 'react-icons/gi';
 import Swal from "sweetalert2";
-import { CgFileAdd } from 'react-icons/cg'
+ import { CgFileAdd } from 'react-icons/cg';
 import Loader from "react-loader-spinner";
 import Select from "react-select";
 
@@ -65,7 +65,7 @@ class Commandes extends Component {
         { value: "", label: "Option de filtrage" },
         { value: "prix_total", label: "Prix Moins cher au plus cher" },
         { value: "prix_total_dec", label: "Prix Plus cher au moins cher" },
- 
+
         { value: "en attente de validation reste", label: "Commande(s) en cours de validation" },
         { value: "validé", label: "Commande(s) validee(s)" },
       ],
@@ -76,8 +76,9 @@ class Commandes extends Component {
     this.sortData = this.sortData.bind(this);
   }
   local(annonce) {
-    localStorage.setItem('ids', []);
-    localStorage.setItem('reponses', []);
+     window.sessionStorage.setItem('ids', []);
+     window.sessionStorage.setItem('reponses', []);
+     window.sessionStorage.setItem("prix_total",JSON.stringify(annonce.prix_total))
   }
 
   sortData(e) {
@@ -95,7 +96,7 @@ class Commandes extends Component {
         });
       });
     }
-    else if (sortProperty === "validé" ) {
+    else if (sortProperty === "validé") {
       this.setState({ loading: true }, () => {
         sortCmd = sorted.filter((c) => c.statut === sortProperty)
         this.setState({
@@ -106,7 +107,7 @@ class Commandes extends Component {
     }
     else if (sortProperty === "en attente de validation reste") {
       this.setState({ loading: true }, () => {
-        sortCmd = sorted.filter((c) => c.statut === "en attente de validation reste"||c.statut === "en attente de validation complément")
+        sortCmd = sorted.filter((c) => c.statut === "en attente de validation reste" || c.statut === "en attente de validation complément")
         this.setState({
           Commandes: sortCmd,
           loading: false
@@ -129,9 +130,6 @@ class Commandes extends Component {
         this.setState({ Commandes: sorted, loading: false });
       });
     }
-
-  
-
     else if (sortProperty === "deadline") {
 
       this.setState({ loading: true }, () => {
@@ -206,7 +204,19 @@ class Commandes extends Component {
   }
 
   componentDidMount() {
+    if ( window.sessionStorage.getItem("ids") &&  window.sessionStorage.getItem("ids").length > 0) {
 
+      Swal.fire({
+        title: "Changement annuler ",
+        icon: "error",
+        width: 400,
+        heightAuto: false,
+        timer: 1500,
+        showConfirmButton: false,
+
+      })
+       window.sessionStorage.setItem("ids", [])
+    }
     const token = localStorage.getItem("usertoken");
     const statut = this.props.location.state.id;
     let statuts = statut.split('#')
@@ -301,7 +311,7 @@ class Commandes extends Component {
                     this.setState({
 
                       Commandes: [...new Set(this.state.CommandesT.filter(
-                        (Commandes) => (statuts.includes(Commandes.statut) === true) ||Commandes.statut==="en attente de validation complément"|| (Commandes.statut === "avarié_changement" && Commandes.ancien_statut === "validé")))]
+                        (Commandes) => (statuts.includes(Commandes.statut) === true) || Commandes.statut === "en attente de validation complément" || (Commandes.statut === "avarié_changement" && Commandes.ancien_statut === "validé")))]
                     }, () => {
                       for (let i = 1; i <= Math.ceil(this.state.Commandes.length / this.state.annoncesPerPage); i++) {
                         pageNumbers.push(i);
@@ -398,7 +408,7 @@ class Commandes extends Component {
           )
           .then((res) => {
             c.espece.map((e) => {
-              if (e.statut == "réservé") {
+              if (e.statut === "réservé") {
                 axios
                   .put(
                     "http://127.0.0.1:8000/api/Espece/" + e._id,
@@ -413,8 +423,8 @@ class Commandes extends Component {
                     }
                   )
               }
-              else if (e.statut == "produit avarié") {
-                c.especes.filter((esp) => esp.id_espece == e._id)[0].produits_changement.map((chang) => {
+              else if (e.statut === "produit avarié") {
+                c.especes.filter((esp) => esp.id_espece === e._id)[0].produits_changement.map((chang) => {
                   axios
                     .put(
                       "http://127.0.0.1:8000/api/Espece/" + chang.id_espece,
@@ -456,7 +466,7 @@ class Commandes extends Component {
       }
     })
   }
-  //nombre espece pour chaque categorie pour chaque commande
+  //nombre espece  pour chaque commande
   NbrEspece(e, c) {
     let nombre = 0;
     nombre = e.espece.filter((e) => e.espece === c).length
@@ -465,7 +475,7 @@ class Commandes extends Component {
   NbrEspeceMax() {
     function uniq(arr) {
       return arr.reduce(function (p, c) {
-        var id = [c.categorie, c.nbr].join('|');
+        var id = [c.espece, c.nbr].join('|');
         if (p.temp.indexOf(id) === -1) {
           p.out.push(c);
           p.temp.push(id);
@@ -662,40 +672,41 @@ class Commandes extends Component {
                             </centre>
 
                             <ul className="product__item__pic__hover">
-                           {Annonces.isDelivered===true?<li>
+                              {Annonces.isDelivered === true ? <li>
                                 <Link
                                   to={{
                                     pathname: "/ConfirmeCommande",
                                     state: {
                                       id: Annonces,
-                                    },
+                                    }, 
                                   }}
                                   type="submit" >
                                   {" "}
                                   <a onClick={this.local.bind(this, Annonces)}>
                                     {(Annonces.statut === "en attente de paiement avance" || Annonces.statut === "en attente de paiement du reste" || Annonces.statut === "en attente de paiement du complément")
-                                    ||Annonces.statut ==="reçu avance refusé"|| Annonces.statut ==="reçu reste refusé" ?
-                                      <CgFileAdd className="fa-lg" /> : <i className="fa fa-eye"></i>}
+                                      || Annonces.statut === "reçu avance refusé" || Annonces.statut === "reçu reste refusé" ?
+                                      <CgFileAdd className="fa-lg" /> :Annonces.isDelivered === true ?<i class="fa fa-star fa-lg" aria-hidden="true"></i>
+                                      : <i className="fa fa-eye"></i>}
                                   </a>
                                 </Link>
-                              </li>:
-                              <li>
-                                <Link
-                                  to={{
-                                    pathname: "/DetailsCommande",
-                                    state: {
-                                      id: Annonces,
-                                    },
-                                  }}
-                                  type="submit" >
-                                  {" "}
-                                  <a onClick={this.local.bind(this, Annonces)}>
-                                    {(Annonces.statut === "en attente de paiement avance" || Annonces.statut === "en attente de paiement du reste" || Annonces.statut === "en attente de paiement du complément")
-                                    ||Annonces.statut ==="reçu avance refusé"|| Annonces.statut ==="reçu reste refusé" ?
-                                      <CgFileAdd className="fa-lg" /> : <i className="fa fa-eye"></i>}
-                                  </a>
-                                </Link>
-                              </li>}
+                              </li> :
+                                <li>
+                                  <Link
+                                    to={{
+                                      pathname: "/DetailsCommande",
+                                      state: {
+                                        id: Annonces,
+                                      },
+                                    }}
+                                    type="submit" >
+                                    {" "}
+                                    <a onClick={this.local.bind(this, Annonces)}>
+                                      {(Annonces.statut === "en attente de paiement avance" || Annonces.statut === "en attente de paiement du reste" || Annonces.statut === "en attente de paiement du complément")
+                                        || Annonces.statut === "reçu avance refusé" || Annonces.statut === "reçu reste refusé" ?
+                                        <CgFileAdd className="fa-lg" /> : <i className="fa fa-eye"></i>}
+                                    </a>
+                                  </Link>
+                                </li>}
                               {Annonces.statut === "commande annulée (deadline dépassé)"
                                 || Annonces.statut === "reçu avance refusé"
                                 || Annonces.statut === "reçu reste refusé"
@@ -714,16 +725,16 @@ class Commandes extends Component {
                             </ul>
                           </div>
                           <div className="  product__item__text p-2 text-justify" style={
-                            titre == "annulées" ?
-                              { height: 190 - (-this.NbrEspeceMax() * 40), backgroundRepeat: "no-repeat", backgroundImage: Annonces.statut === "avarié" ? "linear-gradient(rgb(255,153,153), rgb(255,204,204))" : null, backgroundSize: "cover" }
-                              : (titre == "Prêt à livrer" ?
-                                { height: 250 - (-this.NbrEspeceMax() * 40), backgroundRepeat: "no-repeat", backgroundImage: Annonces.statut === "avarié" ? "linear-gradient(rgb(255,153,153), rgb(255,204,204))" : null, backgroundSize: "cover" }
+                            titre === "annulées" ?
+                              { height: 220 - (-this.NbrEspeceMax() * 40), backgroundRepeat: "no-repeat", backgroundImage: Annonces.statut === "avarié" ? "linear-gradient(rgb(255,153,153), rgb(255,204,204))" : null, backgroundSize: "cover" }
+                              : (titre === "Prêt à livrer" ?
+                                { height: 320 - (-this.NbrEspeceMax() * 40), backgroundRepeat: "no-repeat", backgroundImage: Annonces.statut === "avarié" ? "linear-gradient(rgb(255,153,153), rgb(255,204,204))" : null, backgroundSize: "cover" }
                                 :
-                                { height: 220 - (-this.NbrEspeceMax() * 40), backgroundRepeat: "no-repeat", backgroundImage: Annonces.statut === "avarié" ? "linear-gradient(rgb(255,153,153), rgb(255,204,204))" : null, backgroundSize: "cover" }
+                                { height: 270 - (-this.NbrEspeceMax() * 40), backgroundRepeat: "no-repeat", backgroundImage: Annonces.statut === "avarié" ? "linear-gradient(rgb(255,153,153), rgb(255,204,204))" : null, backgroundSize: "cover" }
                               )
 
                           }>
-                            {Annonces.statut === "en attente de validation reste" ||Annonces.statut ==="en attente de validation complément"?
+                            {Annonces.statut === "en attente de validation reste" || Annonces.statut === "en attente de validation complément" ?
                               <div className="float-right text-warning"><i className="fa fa-hourglass-start fa-xs" aria-hidden="true"></i>
                                 <b>Validation en cours</b></div> : null}
                             {Annonces.statut === "validé" ?
@@ -753,7 +764,7 @@ class Commandes extends Component {
                                   src="Images/sheep-head.png"
                                   alt=""
                                 />
-                                <h6 id="gras">   {Annonces.espece[0].categorie + " : "}<span style={{ color: "black", fontWeight: "normal" }}>{" " + Annonces.espece[0].race} </span></h6>
+                                <h6 id="gras">   {Annonces.espece[0].espece + " : "}<span style={{ color: "black", fontWeight: "normal" }}>{" " + Annonces.espece[0].race} </span></h6>
                               </div>
                               :
                               <p>
@@ -798,28 +809,28 @@ class Commandes extends Component {
                               </p>}
 
                             {Annonces.statut === "en attente de paiement avance"
-                            ||
-                            (Annonces.ancien_statut==="en attente de paiement avance"&&Annonces.statut==="avarié_changement")
-                             ?
+                              ||
+                              (Annonces.ancien_statut === "en attente de paiement avance" && Annonces.statut === "avarié_changement")
+                              ?
                               <div  ><p id="gras" className=" mb-0"><i className="fa fa-calendar-o" aria-hidden="true"></i>{" "}Dernier delai : </p><p className="text-danger mb-0 font-weight-bold">{Annonces.deadline.replace(",", " à ")}</p><p id="gras" className=""><i className="fa fa-usd" aria-hidden="true"></i>{" "}Avance à payer  :<span className="text-danger ">{" "}{Annonces.avance} Dhs</span>  </p></div>
                               : null
                             }
-                            {Annonces.statut === "en attente de paiement du reste" 
+                            {Annonces.statut === "en attente de paiement du reste"
                               ||
-                              (Annonces.ancien_statut==="en attente de paiement du reste"&&Annonces.statut==="avarié_changement")
-                               ?
+                              (Annonces.ancien_statut === "en attente de paiement du reste" && Annonces.statut === "avarié_changement")
+                              ?
                               <div  ><p id="gras" className=" mb-0"><i className="fa fa-calendar-o" aria-hidden="true"></i>{" "}Dernier delai : </p><p className="text-danger mb-0 font-weight-bold">{Annonces.deadline.replace(",", " à ")}</p><p id="gras" className=""><i className="fa fa-usd" aria-hidden="true"></i>{" "}Reste à payer  :  <span className="text-danger ">{" "}{Annonces.reste} Dhs</span></p></div>
                               : null
                             }
                             {Annonces.statut === "en attente de paiement du complément" ?
-                              <div  ><p id="gras" className="  mb-0"><i className="fa fa-calendar-o" aria-hidden="true"></i>{" "}Dernier delai : </p><p className="text-danger mb-0 font-weight-bold">{Annonces.deadline.replace(",", " à ")}</p><p id="gras" className=""><i className="fa fa-usd" aria-hidden="true"></i>{" "}Complement à payer  : <span className="text-danger ">{" "}{Annonces.complement} Dhs</span> </p></div>
+                              <div  ><p id="gras" className="  mb-0"><i className="fa fa-calendar-o" aria-hidden="true"></i>{" "}Dernier delai : </p><p className="text-danger mb-0 font-weight-bold">{Annonces.deadline.replace(",", " à ")}</p><p id="gras" className=""><i className="fa fa-usd" aria-hidden="true"></i> Complement à payer  : <span className="text-danger ">{" "}{Annonces.complement} Dhs</span> </p></div>
                               : null
                             }
                             {
                               Annonces.statut === "en attente de validation avance" ? <div ><p id="gras" className=" mb-0"><i className="fa fa-calendar-o" aria-hidden="true"></i>{" "} avance transmis le :</p> <p className="text-danger font-weight-bold mt-0">  {Annonces.avance_transmis_le.substr(0, 10) + " à " + Annonces.avance_transmis_le.substr(11, 8)}</p></div> : null
                             }
-                            {(Annonces.statut === "en attente de validation reste" || Annonces.statut === "validé"||(Annonces.statut ==="avarié_changement"&& Annonces.ancien_statut === "validé")) ? <div  ><p id="gras" className=" mb-0"><i className="fa fa-calendar-o" aria-hidden="true"></i>{" "}reste transmis le : </p><p className="text-danger font-weight-bold mt-0">{Annonces.reste_transmis_le.substr(0, 10) + " à " + Annonces.reste_transmis_le.substr(11, 8)}</p></div> : null}
-                            {(Annonces.statut === "validé") ? <div  ><p id="gras" className=" mb-0"><i className="fa fa-calendar-o" aria-hidden="true"></i>{" "}Date de livraison : </p><p className="text-danger font-weight-bold"> {Annonces.date_de_livraison.replace(/-/g, " / ")}</p></div> : null}
+                            {(Annonces.statut === "en attente de validation reste" || Annonces.statut === "validé" || (Annonces.statut === "avarié_changement" && Annonces.ancien_statut === "validé")) ? <div  ><p id="gras" className=" mb-0"><i className="fa fa-calendar-o" aria-hidden="true"></i>{" "}reste transmis le : </p><p className="text-danger font-weight-bold mt-0">{Annonces.reste_transmis_le.substr(0, 10) + " à " + Annonces.reste_transmis_le.substr(11, 8)}</p></div> : null}
+                            {(Annonces.statut === "validé" && Annonces.date_de_livraison) ? <div  ><p id="gras" className=" mb-0"><i className="fa fa-calendar-o" aria-hidden="true"></i>{" "}Date de livraison : </p><p className="text-danger font-weight-bold"> {Annonces.date_de_livraison.replace(/-/g, " / ")}</p></div> : null}
 
                             {(Annonces.statut === "en attente de validation complément") ?
                               <div  ><p className="mb-0" id="gras"><i className="fa fa-calendar-o" aria-hidden="true"></i>{" "}Complément transmis le : </p><p className="text-danger font-weight-bold"> {" "}{Annonces.complement_transmis_le.substr(0, 10) + " à " + Annonces.complement_transmis_le.substr(11, 8)}</p></div> : null}

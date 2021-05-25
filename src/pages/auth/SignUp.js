@@ -109,15 +109,14 @@ class SignUp extends Component {
               )
               .then((resultat) => {
 
-                console.log(resultat);
-              });
+               });
           });
         this.props.history.push("login");
 
         Swal.fire({
           title: "Compte créé",
           text:
-            "Votre compte a été créé avec succès. Connectez-vous avce l'adresse mail ou le numéro renseignés",
+            "Votre compte a été créé avec succès. Connectez-vous avec l'adresse mail ou le numéro renseignés",
           icon: "success",
           width: 400,
           heightAuto: false,
@@ -149,22 +148,22 @@ class SignUp extends Component {
     let errors = {};
     let valide = true;
 
-    if (this.state.telephone.length == 0) {
+    if (this.state.telephone.length === 0) {
 
       errors["telephone"] = "Ce champs est obligatoire ";
       valide = false;
     }
-    if (this.state.password.length == 0) {
+    if (this.state.password.length === 0) {
       errors["password"] = "Ce champs est obligatoire ";
       valide = false;
     }
-    if (this.state.isChecked == false) {
+    if (this.state.isChecked === false) {
       errors["check"] = " Vous devez accepter les Conditions Générales ";
       valide = false;
     }
 
-    if (this.state.conpassword !== this.state.password||this.state.conpassword.length == 0) {
-      if (this.state.conpassword.length == 0) {
+    if (this.state.conpassword !== this.state.password||this.state.conpassword.length === 0) {
+      if (this.state.conpassword.length === 0) {
         errors["conpassword"] = "Ce champs est obligatoire ";
         valide = false;
       }

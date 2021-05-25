@@ -52,10 +52,8 @@ class Header extends Component {
     const myToken = `Bearer ` + localStorage.getItem("myToken");
 
     if (token && expiredTimeToken > formatted_date) {
-      console.log(localStorage.getItem("ids"))
-      if(window.location.pathname=="/Commandes" &&localStorage.getItem("ids") &&localStorage.getItem("ids").length>0 ){ 
-       
-        Swal.fire({
+       if(window.location.pathname=="/Commandes" && window.sessionStorage.getItem("ids") && window.sessionStorage.getItem("ids").length>0 ){ 
+         Swal.fire({
           title: "Changement annuler ",
           icon: "error",
           width: 400,
@@ -64,7 +62,7 @@ class Header extends Component {
           showConfirmButton: false,
     
         })
-        localStorage.setItem("ids",[])
+         window.sessionStorage.setItem("ids",[])
       }
       this.setState({ isLoged: true });
       axios
@@ -105,15 +103,15 @@ class Header extends Component {
               deadline.substr(18, 2));
             if (
               now.getTime() >= dd.getTime() && (
-                statutCmd == "en attente de paiement avance" ||
-                statutCmd == "en attente de paiement du reste" ||
-                statutCmd == "en attente de validation complément" ||
+                statutCmd === "en attente de paiement avance" ||
+                statutCmd === "en attente de paiement du reste" ||
+                statutCmd === "en attente de validation complément" ||
                 statutCmd === "reçu avance refusé"|| 
                 statutCmd === "reçu reste refusé" ||
                  (
-                  res.data[i].ancien_statut == " avarié_changement" && (
-                    statutCmd == "en attente de paiement avance" ||
-                    statutCmd == "en attente de paiement du reste")
+                  res.data[i].ancien_statut === " avarié_changement" && (
+                    statutCmd === "en attente de paiement avance" ||
+                    statutCmd === "en attente de paiement du reste")
                 ))
             ) {
               axios
@@ -173,7 +171,10 @@ class Header extends Component {
       () => {
         localStorage.removeItem("usertoken");
         localStorage.removeItem("myToken");
-      }
+        localStorage.removeItem("commandes");
+        localStorage.removeItem("ids");
+        localStorage.removeItem("reponses");
+       }
     );
   }
 

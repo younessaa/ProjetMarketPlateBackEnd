@@ -18,24 +18,24 @@ class Login extends Component {
     this.onSubmit = this.onSubmit.bind(this);
   }
   decryp(sample) {
-    var alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz".split("");
-    var rot13Alphabet = "NOPQRSTUVWXYZABCDEFGHIJKLMnopqrstuvwxyzabcdefghijklm".split("");
+    var alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890;~!@#$%^&*()_+<>?,./|{}][".split("");
+    var rot13Alphabet = "NOPQRSTUVWXYZABCDEFGHIJKLMnopqrstuvwxyzabcdefghijklm0987654321[]}{|/.,?><+_)(*&^%$#@!~;".split("");
     var result = "";
     for (var x = 0; x < sample.length; x++) {
       for (var y = 0; y < alphabet.length; y++) {
-        if (sample[x] == alphabet[y]) {
+        if (sample[x] === alphabet[y]) {
           result += rot13Alphabet[y];
         }
       }
-      if (sample[x] == " ") {
+      if (sample[x] === " ") {
         result += " ";
       }
     }
-    return result;
+     return result;
   }
   cryp(str) {
-    const input = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
-    const output = 'NOPQRSTUVWXYZABCDEFGHIJKLMnopqrstuvwxyzabcdefghijklm';
+    const input = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890;~!@#$%^&*()_+<>?,./|{}][';
+    const output = 'NOPQRSTUVWXYZABCDEFGHIJKLMnopqrstuvwxyzabcdefghijklm0987654321[]}{|/.,?><+_)(*&^%$#@!~;';
     let encoded = '';
     for (let i = 0; i < str.length; i++) {
       const index = input.indexOf(str[i]);
@@ -46,11 +46,11 @@ class Login extends Component {
   }
   onChange(e) {
     this.setState({ [e.target.name]: e.target.value });
-    if ([e.target.name] == "login"&&localStorage.getItem(e.target.value)!=null) {
+    if ([e.target.name] === "login"&&localStorage.getItem(e.target.value)!=null) {
       var all = document.querySelectorAll('input[name="password"]')
       Array.from(all).map((a) => (a.value = this.decryp(localStorage.getItem(e.target.value))))
       this.setState({ password: this.decryp(localStorage.getItem(e.target.value)) })
-      if (localStorage.getItem(e.target.value) != null) {
+      if (localStorage.getItem(e.target.value) !== null) {
         this.setState({ isChecked: true })
       }
       else {
@@ -72,12 +72,13 @@ class Login extends Component {
 
   onSubmit(e) {
     e.preventDefault();
+  
     const user = {
       login: this.state.login,
       password: this.state.password,
       remember_token: this.state.isChecked,
+      role:"Consommateur",
     };
-
 
     this.setState({ loading: true }, () => {
       axios

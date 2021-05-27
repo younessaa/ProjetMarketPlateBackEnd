@@ -25,8 +25,7 @@ class HomeSheepsParEleveur extends Component {
       currentPage: 1,
       annoncesPerPage: 6,
       selectedOptionRace: null,
-      selectedOptionCategorie: null,
-      optionsCategorie: [],
+  
       selectedOptionEspece: null,
       optionsEspece: [],
       selectedOptionVille: null,
@@ -50,8 +49,7 @@ class HomeSheepsParEleveur extends Component {
       ],
     };
     this.onChange = this.onChange.bind(this);
-    this.handleChangeCategorie = this.handleChangeCategorie.bind(this);
-    this.handelChercher = this.handelChercher.bind(this);
+     this.handelChercher = this.handelChercher.bind(this);
     this.handelReinitialiser = this.handelReinitialiser.bind(this);
 
     this.sortData = this.sortData.bind(this);
@@ -59,55 +57,31 @@ class HomeSheepsParEleveur extends Component {
     this.paginate = this.paginate.bind(this);
   }
   handleChangeEspece = (selectedOptionEspece) => {
-    this.setState({ selectedOptionRace: null, selectedOptionCategorie: null, selectedOptionEspece: selectedOptionEspece })
+    this.setState({ selectedOptionRace: null,   selectedOptionEspece: selectedOptionEspece })
     let annonce = this.state.AnnoncesN;
     let c = selectedOptionEspece.value
     let races = [];
-    let categories = [];
-    let catg = [];
-
+ 
     let r = [];
     (this.groupBy(annonce, 'espece')[c]).map((m) => {
       races.push(m.race);
-      categories.push(m.categorie)
-    })
+     })
 
     races = [...new Set(races)];
-    categories = [...new Set(categories)];
-    races.map((e) => { r.splice(0, 0, { "value": e, "label": e }); });
-    categories.map((e) => { catg.splice(0, 0, { "value": e, "label": e }); });
-    this.setState({
+     races.map((e) => { r.splice(0, 0, { "value": e, "label": e }); });
+     this.setState({
       race: r,
-      categorie: catg,
+     
       Disabled: false,
       conditions: Object.assign(this.state.conditions, {
         espece: c,
-        categorie: null,
-        race: null,
+         race: null,
       })
     });
 
   };
 
-  handleChangeCategorie = (selectedOptionCategorie) => {
-    this.setState({ selectedOptionRace: null, selectedOptionCategorie: selectedOptionCategorie })
-    let annonce = this.state.AnnoncesN;
-    let c = selectedOptionCategorie.value
-    let races = [];
-    let r = [];
-    (this.groupBy(annonce, 'categorie')[c]).map((m) => { races.push(m.race) })
-    races = [...new Set(races)];
-    races.map((e) => { r.splice(0, 0, { "value": e, "label": e }); });
-    this.setState({
-      race: r,
-      Disabled: false,
-      conditions: Object.assign(this.state.conditions, {
-        categorie: c,
-        race: null,
-      })
-    });
-
-  };
+ 
   handleChangeRace = (selectedOptionRace) => {
     this.setState({ selectedOptionRace }, () =>
       this.setState({
@@ -145,21 +119,20 @@ class HomeSheepsParEleveur extends Component {
 
           },
           params: {
-            order_by: "categorie",
+            order_by: "espece",
             order_mode: "asc",
           },
         })
         .then((res) => {
           this.setState({
-            Annonces: res.data.filter((data) => data.id_eleveur === this.props.location.state.id.id._id).filter((f) => f.statut != "produit avarié"),
+            Annonces: res.data.filter((data) => data.id_eleveur === this.props.location.state.id.id._id).filter((f) => f.statut !== "produit avarié"),
             loading: false,
             conditions: {
-              order_by: "categorie",
+              order_by: "espece",
               order_mode: "asc",
             },
             selectedOptionEspece: null,
-            selectedOptionCategorie: null,
-            selectedOptionRace: null,
+             selectedOptionRace: null,
             Disabled: true,
             selectedOptionVille: null,
           });
@@ -232,7 +205,7 @@ class HomeSheepsParEleveur extends Component {
           .then((res) => {
             //espece
             let espece = [];
-            Object.getOwnPropertyNames(this.groupBy(res.data.filter((f) => f.statut != "produit avarié"), 'espece')).map((e) => {
+            Object.getOwnPropertyNames(this.groupBy(res.data.filter((f) => f.statut !== "produit avarié"), 'espece')).map((e) => {
               espece.splice(0, 0, { "value": e, "label": e });
             });
 
@@ -245,8 +218,8 @@ class HomeSheepsParEleveur extends Component {
             });
             this.setState({
               optionsEspece: espece,
-              AnnoncesN: res.data.filter((f) => f.statut != "produit avarié"),
-              Annonces: res.data.filter((f) => f.statut != "produit avarié"),
+              AnnoncesN: res.data.filter((f) => f.statut !== "produit avarié"),
+              Annonces: res.data.filter((f) => f.statut !== "produit avarié"),
               loading: false,
               optionsVille: [...new Set(ville)]
 
@@ -332,7 +305,7 @@ class HomeSheepsParEleveur extends Component {
         })
         .then((res) => {
           this.setState({
-            Annonces: res.data.filter((data) => data.id_eleveur === this.props.location.state.id.id._id).filter((f) => f.statut != "produit avarié"),
+            Annonces: res.data.filter((data) => data.id_eleveur === this.props.location.state.id.id._id).filter((f) => f.statut !== "produit avarié"),
             loading: false,
           });
           const pageNumbers = [];
@@ -358,8 +331,6 @@ class HomeSheepsParEleveur extends Component {
     const currentAnnonces = this.state.Annonces.slice(indexOfFirstAnnonce, indexOfLastAnnonce);
     const { selectedOptionEspece } = this.state;
     const { optionsEspece } = this.state;
-    const { selectedOptionCategorie } = this.state;
-    const { optionsCategorie } = this.state;
     const { selectedOptionRace } = this.state;
     const { optionsRace } = this.state;
     const { selectedOptionVille } = this.state;
@@ -367,13 +338,13 @@ class HomeSheepsParEleveur extends Component {
     const { optionsSort } = this.state;
     const { loading } = this.state;
     var reserv = this.state.Annonces.filter(
-      (Annonces) => Annonces.statut == "réservé"
+      (Annonces) => Annonces.statut === "réservé"
     );
     var dispo = this.state.Annonces.filter(
-      (Annonces) => Annonces.statut == "disponible"
+      (Annonces) => Annonces.statut === "disponible"
     );
     var vendu = this.state.Annonces.filter(
-      (Annonces) => Annonces.statut == "vendu"
+      (Annonces) => Annonces.statut === "vendu"
     );
 
     return (
@@ -405,25 +376,8 @@ class HomeSheepsParEleveur extends Component {
                         <br></br>
                       </div>
                     </div>
-                    <h6 id="gras" className="latest-product__item">
-                      Categorie
-                    </h6>
-                    <div className="row">
-                      <div className="col-lg-12 col-md-12">
-
-                        <Select
-                          value={selectedOptionCategorie}
-                          onChange={this.handleChangeCategorie}
-                          options={this.state.categorie}
-                          placeholder="Categorie"
-                          required
-                          isDisabled={this.state.Disabled}
-
-                        // className="Select"
-                        />
-                        <br></br>
-                      </div>
-                    </div>
+              
+                   
                     <h6 id="gras" className="latest-product__item">
                       Race
                     </h6>
@@ -575,7 +529,7 @@ class HomeSheepsParEleveur extends Component {
                               <span>Labélisé ANOC</span>  </h1>
                             :
                             <span className="badge pt-3 w-100 mt-1   ">{"  "}</span>}</div>
-                        <div class="col-8" style={{ position: "relative" }}>
+                        <div class="col-7" >
                           <h3 className="mt-1">
                             <Box component="fieldset" mb={3} borderColor="transparent">
                               Eleveur :{" "}
@@ -608,8 +562,9 @@ class HomeSheepsParEleveur extends Component {
                         <b id="nbEspece">{vendu.length}{" "}</b> Vendus{" "}
                         <b className="ml-3" id="nbEspece">{dispo.length}{" "}</b> Disponibles{" "}
                         <b className="ml-3" id="nbEspece">{reserv.length}{" "}</b> Réservés{" "}
-
                       </h6>
+                      <br></br>
+                      <h5>Ce qu'il vous propose :</h5> 
                       <br></br>
                       <div>
                         <div id="filterPlace" className="col-lg-5 col-md-5 fa ">
@@ -625,6 +580,7 @@ class HomeSheepsParEleveur extends Component {
                           // className="Select"
                           />
                         </div>
+                        
                       </div>
                       <br></br>
 

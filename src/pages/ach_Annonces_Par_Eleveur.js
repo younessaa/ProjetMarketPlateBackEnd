@@ -25,14 +25,12 @@ class AllOffers extends Component {
       Disabled: true,
       selectedOptionRace: null,
       race: [],
-      selectedOptionCategorie: null,
-      optionsCategorie: [],
       selectedOptionRegions: null,
       optionsRegions: [],
       selectedOptionVille: null,
       optionsVille: [],
       conditions: {
-        order_by: "categorie",
+        order_by: "espece",
         order_mode: "asc",
       },
       redirect: false,
@@ -45,11 +43,13 @@ class AllOffers extends Component {
     };
 
     this.onChange = this.onChange.bind(this);
-    this.handleChangeCategorie = this.handleChangeCategorie.bind(this);
     this.handelChercher = this.handelChercher.bind(this);
     this.handelReinitialiser = this.handelReinitialiser.bind(this);
     this.sortData = this.sortData.bind(this);
     this.paginate = this.paginate.bind(this);
+  }
+  nombre(eleveur) {
+    return this.state.AnnoncesN.filter((esp) => esp.id_eleveur === eleveur._id && esp.statut !== "produit avarié");
   }
   groupBy(objectArray, property) {
     return objectArray.reduce((acc, obj) => {
@@ -94,8 +94,14 @@ class AllOffers extends Component {
     } else {
       this.setState({ loading: true }, () => {
         axios
-          .get("http://127.0.0.1:8000/api/eleveurs", {
+          .get("http://127.0.0.1:8000/api/eleveur", {
             headers: {
+              // "x-access-token": token, // the token is a variable which holds the token
+              "Content-Type": "application/json",
+            },
+            params: {
+              order_by: "espece",
+              order_mode: "asc",
             },
           })
           .then((res) => {
@@ -145,7 +151,7 @@ class AllOffers extends Component {
                   "Content-Type": "application/json",
                 },
                 params: {
-                  order_by: "categorie",
+                  order_by: "espece",
                   order_mode: "asc",
                 },
               })
@@ -155,7 +161,6 @@ class AllOffers extends Component {
                 Object.getOwnPropertyNames(this.groupBy(res.data.filter((f) => f.statut != "produit avarié"), 'espece')).map((e) => {
                   espece.splice(0, 0, { "value": e, "label": e });
                 });
-                console.log(this.groupBy(res.data.filter((f) => f.statut != "produit avarié"), 'espece'))
 
                 this.setState({
                   optionsEspece: espece,
@@ -169,31 +174,25 @@ class AllOffers extends Component {
     }
   }
   handleChangeEspece = (selectedOptionEspece) => {
-    this.setState({ selectedOptionRace: null, selectedOptionCategorie: null, selectedOptionEspece: selectedOptionEspece })
+    this.setState({ selectedOptionRace: null, selectedOptionEspece: selectedOptionEspece })
     let annonce = this.state.AnnoncesN;
     let c = selectedOptionEspece.value
     let races = [];
-    let categories = [];
     let catg = [];
 
 
     let r = [];
     (this.groupBy(annonce, 'espece')[c]).map((m) => {
       races.push(m.race);
-      categories.push(m.categorie)
     })
     races = [...new Set(races)];
-    categories = [...new Set(categories)];
     races.map((e) => { r.splice(0, 0, { "value": e, "label": e }); });
-    categories.map((e) => { catg.splice(0, 0, { "value": e, "label": e }); });
 
     this.setState({
       race: r,
-      categorie: catg,
       Disabled: false,
       conditions: Object.assign(this.state.conditions, {
         espece: c,
-        categorie: null,
         race: null,
       })
     });
@@ -201,25 +200,6 @@ class AllOffers extends Component {
   };
 
 
-  handleChangeCategorie = (selectedOptionCategorie) => {
-    this.setState({ selectedOptionRace: null, selectedOptionCategorie: selectedOptionCategorie })
-    let annonce = this.state.AnnoncesN;
-    let c = selectedOptionCategorie.value
-    let races = [];
-    let r = [];
-    (this.groupBy(annonce, 'categorie')[c]).map((m) => { races.push(m.race) })
-    races = [...new Set(races)];
-    races.map((e) => { r.splice(0, 0, { "value": e, "label": e }); });
-    this.setState({
-      race: r,
-      Disabled: false,
-      conditions: Object.assign(this.state.conditions, {
-        categorie: c,
-        race: null,
-      })
-    });
-
-  };
 
   handleChangeRace = (selectedOptionRace) => {
     this.setState({ selectedOptionRace }, () =>
@@ -295,7 +275,7 @@ class AllOffers extends Component {
 
           },
           params: {
-            order_by: "categorie",
+            order_by: "espece",
             order_mode: "asc",
           },
         })
@@ -305,11 +285,10 @@ class AllOffers extends Component {
             Eleveurs: res.data,
             loading: false,
             conditions: {
-              order_by: "categorie",
+              order_by: "espece",
               order_mode: "asc",
             },
             selectedOptionEspece: null,
-            selectedOptionCategorie: null,
             selectedOptionRace: null,
             Disabled: true,
             selectedOptionVille: null,
@@ -364,7 +343,6 @@ class AllOffers extends Component {
           params: this.state.conditions,
         })
         .then((res) => {
-
           this.setState({
             Eleveurs: res.data,
             loading: false,
@@ -409,11 +387,8 @@ class AllOffers extends Component {
       indexOfLastEleveur);
     const { loading } = this.state;
     const { selectedOptionRace } = this.state;
-
     const { selectedOptionEspece } = this.state;
     const { optionsEspece } = this.state;
-    const { selectedOptionCategorie } = this.state;
-    const { optionsCategorie } = this.state;
     const { selectedOptionVille } = this.state;
     const { selectedOptionRegions } = this.state;
     const { optionsVille } = this.state;
@@ -443,23 +418,6 @@ class AllOffers extends Component {
                           onChange={this.handleChangeEspece}
                           options={optionsEspece}
                           placeholder="Espece"
-                          required
-                        />
-                        <br></br>
-                      </div>
-                    </div>
-                    <h6 id="gras" className="latest-product__item">
-                      Categorie
-                    </h6>
-                    <div className="row">
-                      <div className="col-lg-12 col-md-12">
-                        <Select
-                          id="recherchePlace"
-                          isDisabled={this.state.Disabled}
-                          value={selectedOptionCategorie}
-                          onChange={this.handleChangeCategorie}
-                          options={this.state.categorie}
-                          placeholder=" Categorie"
                           required
                         />
                         <br></br>
@@ -595,7 +553,14 @@ class AllOffers extends Component {
                     </div>
                   ) : (
                     <div>
-                      <div className="row">
+                      {elv.length === 0 ? <div className="text-center my-5">
+                        <p style={{ color: "#fba502" }}>
+
+                          <i class="fa fa-frown-o fa-5x" aria-hidden="true"></i>
+                        </p>
+
+                        <h3 style={{ color: "#28a745" }}>Pas d'eleveur !</h3>
+                      </div> : <div className="row">
                         {currentEleveurs.map((Eleveurs) => (
                           <div className="col-lg-4  col-sm-6">
 
@@ -640,7 +605,8 @@ class AllOffers extends Component {
                                       data-imgbigurl="Images/sheep-head.png"
                                       src="Images/sheep-head.png"
                                       alt=""
-                                    />{"  " + Eleveurs.Especes.length + " "}
+                                    />{"  " + this.nombre(Eleveurs).length + " "}
+
                                   </span>
                                 </h6>
                                 <h6 >  <i className="fa fa-map"></i>{" " + Eleveurs.region} </h6>
@@ -655,7 +621,8 @@ class AllOffers extends Component {
 
                           </div>
                         ))}
-                      </div>
+                      </div>}
+
 
                       <div className="center-div">
                         <nav className="row">

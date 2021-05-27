@@ -22,16 +22,14 @@ class HomeSheeps extends Component {
       AnnoncesN: [],
       selectedOptionRace: null,
       race: [],
-      selectedOptionCategorie: null,
       selectedOptionEspece: null,
 
-      optionsCategorie: [],
       optionsEspece: [],
       selectedOptionVille: null,
       optionsVille: [],
       conditions: {
         statut: "disponible",
-        order_by: "categorie",
+        order_by: "espece",
         order_mode: "asc",
       },
       redirect: false,
@@ -51,7 +49,6 @@ class HomeSheeps extends Component {
     };
 
     this.onChange = this.onChange.bind(this);
-    this.handleChangeCategorie = this.handleChangeCategorie.bind(this);
     this.handleChangeEspece = this.handleChangeEspece.bind(this);
 
     this.handelChercher = this.handelChercher.bind(this);
@@ -63,56 +60,30 @@ class HomeSheeps extends Component {
     // this.handleFavoris=this.handleFavoris.bind(this)
   }
   handleChangeEspece = (selectedOptionEspece) => {
-    this.setState({ selectedOptionRace: null, selectedOptionCategorie: null, selectedOptionEspece: selectedOptionEspece })
+    this.setState({ selectedOptionRace: null, selectedOptionEspece: selectedOptionEspece })
     let annonce = this.state.AnnoncesN;
     let c = selectedOptionEspece.value
     let races = [];
-    let categories = [];
-    let catg = [];
-
 
     let r = [];
     (this.groupBy(annonce, 'espece')[c]).map((m) => {
       races.push(m.race);
-      categories.push(m.categorie)
     })
     races = [...new Set(races)];
-    categories = [...new Set(categories)];
     races.map((e) => { r.splice(0, 0, { "value": e, "label": e }); });
-    categories.map((e) => { catg.splice(0, 0, { "value": e, "label": e }); });
 
     this.setState({
       race: r,
-      categorie: catg,
       Disabled: false,
       conditions: Object.assign(this.state.conditions, {
         espece: c,
-        categorie: null,
         race: null,
       })
     });
 
   };
 
-  handleChangeCategorie = (selectedOptionCategorie) => {
-    this.setState({ selectedOptionRace: null, selectedOptionCategorie: selectedOptionCategorie })
-    let annonce = this.state.AnnoncesN;
-    let c = selectedOptionCategorie.value
-    let races = [];
-    let r = [];
-    (this.groupBy(annonce, 'categorie')[c]).map((m) => { races.push(m.race) })
-    races = [...new Set(races)];
-    races.map((e) => { r.splice(0, 0, { "value": e, "label": e }); });
-    this.setState({
-      race: r,
-      Disabled: false,
-      conditions: Object.assign(this.state.conditions, {
-        categorie: c,
-        race: null,
-      })
-    });
 
-  };
 
   handleChangeRace = (selectedOptionRace) => {
     this.setState({ selectedOptionRace }, () =>
@@ -167,7 +138,7 @@ class HomeSheeps extends Component {
           },
           params: {
             statut: "disponible",
-            order_by: "categorie",
+            order_by: "espece",
             order_mode: "asc",
           },
         })
@@ -177,11 +148,7 @@ class HomeSheeps extends Component {
           Object.getOwnPropertyNames(this.groupBy(res.data, 'espece')).map((e) => {
             espece.splice(0, 0, { "value": e, "label": e });
           });
-          //categorie
-          let categorie = [];
-          Object.getOwnPropertyNames(this.groupBy(res.data, 'categorie')).map((e) => {
-            categorie.splice(0, 0, { "value": e, "label": e });
-          });
+
           //ville
           let ville = [];
           let villes = [];
@@ -190,7 +157,6 @@ class HomeSheeps extends Component {
           villes.map((e) => { ville.splice(0, 0, { "value": e, "label": e }); });
           this.setState({
             optionsEspece: espece,
-            optionsCategorie: categorie,
             optionsVille: ville,
             AnnoncesN: res.data,
             Annonces: res.data,
@@ -215,11 +181,7 @@ class HomeSheeps extends Component {
   }
 
   sortData(e) {
-    //this.setState({ selectedOptionSort: Object.values(e)[0] });
-    //console.log(this.state.selectedOptionSort);
-    // console.log(Object.values(e)[0]);
-    // console.log( (Object.values(e)[0]).getFullYear());
-    // created_date.getTime();
+
     const sortProperty = Object.values(e)[0];
     const sorted = this.state.Annonces;
     if (sortProperty === "prix" || sortProperty === "poids" || sortProperty === "age") {
@@ -261,10 +223,6 @@ class HomeSheeps extends Component {
     }
   }
 
-  /* handlePageChange(pageNumber) {
-    console.log(`active page is ${pageNumber}`);
-    this.setState({ activePage: pageNumber });
-  }*/
 
   handelReinitialiser() {
     this.setState({ loading: true }, () => {
@@ -277,7 +235,7 @@ class HomeSheeps extends Component {
           },
           params: {
             statut: "disponible",
-            order_by: "categorie",
+            order_by: "espece",
             order_mode: "asc",
           },
         })
@@ -287,11 +245,10 @@ class HomeSheeps extends Component {
             loading: false,
             conditions: {
               statut: "disponible",
-              order_by: "categorie",
+              order_by: "espece",
               order_mode: "asc",
             },
             selectedOptionEspece: null,
-            selectedOptionCategorie: null,
             selectedOptionRace: null,
             Disabled: true,
             selectedOptionVille: null,
@@ -378,12 +335,8 @@ class HomeSheeps extends Component {
       indexOfLastAnnonce
     );
     const { selectedOptionRace } = this.state;
-    const { selectedOptionCategorie } = this.state;
     const { selectedOptionEspece } = this.state;
-
-    const { optionsCategorie } = this.state;
     const { optionsEspece } = this.state;
-
     const { selectedOptionVille } = this.state;
     const { optionsVille } = this.state;
     const { optionsSort } = this.state;
@@ -423,23 +376,7 @@ class HomeSheeps extends Component {
                         <br></br>
                       </div>
                     </div>
-                    <h6 id="gras" className="latest-product__item">
-                      Categorie
-                    </h6>
-                    <div className="row">
-                      <div className="col-lg-12 col-md-12">
-                        <Select
-                          value={selectedOptionCategorie}
-                          isDisabled={this.state.Disabled}
-                          onChange={this.handleChangeCategorie}
-                          options={this.state.categorie}
-                          placeholder="Categorie"
-                          required
-                        // className="Select"
-                        />
-                        <br></br>
-                      </div>
-                    </div>
+
                     <h6 id="gras" className="latest-product__item">
                       Race
                     </h6>
@@ -648,7 +585,14 @@ class HomeSheeps extends Component {
                     </div>
                   ) : (
                     <div>
-                      <div className="row">
+                      {this.state.Annonces.length === 0 ? <div className="text-center my-5">
+                        <p style={{ color: "#fba502" }}>
+
+                          <i class="fa fa-frown-o fa-5x" aria-hidden="true"></i>
+                        </p>
+
+                        <h3 style={{ color: "#28a745" }}>Pas d'annonce disponible à vendre !</h3>
+                      </div> : <div className="row">
                         {currentAnnonces.map((Annonces) => (
                           <div className="col-lg-4  col-sm-6">
 
@@ -701,23 +645,23 @@ class HomeSheeps extends Component {
                                   />{" " + Annonces.espece}
 
                                   <span className="float-right">
-                                    <FaShapes/>{" "+Annonces.race}
+                                    <FaShapes />{" " + Annonces.race}
                                   </span> </h6>
 
 
                                 <h6>
-                                  <img 
-                                  style={{ width: "18px",height: "18px",marginRight:"5px"   }} 
-                                  src="./Images/age.png"/>
-                                  
+                                  <img
+                                    style={{ width: "18px", height: "18px", marginRight: "5px" }}
+                                    src="./Images/age.png" />
+
                                   {Annonces.age + " mois"}
 
                                   <span className="float-right ">
-                                  <GiWeight className=" mr-1 fa-lg " />
-                                  {Annonces.poids + " Kg"}</span></h6>
+                                    <GiWeight className=" mr-1 fa-lg " />
+                                    {Annonces.poids + " Kg"}</span></h6>
 
                                 <h6 className=" nbrm" style={{ color: "black", fontSize: "18px" }}>
-                                  <i class="fa fa-map-marker"></i> {Annonces.region}
+                                  <i class="fa fa-map-marker"></i> {Annonces.localisation}
                                 </h6>
                                 <h5 className=" text-danger mt-4">
                                   <i class="fa fa-usd" aria-hidden="true"></i>
@@ -730,6 +674,7 @@ class HomeSheeps extends Component {
                           </div>
                         ))}
                       </div>
+                      }
 
                       <div className="center-div">
                         <nav className="row">

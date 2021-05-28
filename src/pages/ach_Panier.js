@@ -317,7 +317,14 @@ class Commandes extends Component {
                   ) : (
                     <div>
                       <div >
-                        {this.state.panier.slice(this.state.currentPage * 2 - 2, this.state.currentPage * 2)
+                        {this.state.panier.length===0?   <div className="text-center my-5">
+                           <p style={{color:"#fba502"}}>
+
+                          <i class="fa fa-frown-o fa-5x" aria-hidden="true"></i>
+                        </p>
+
+                          <h3 style={{color:"#28a745"}}>Liste de panier vide !</h3> 
+                      </div>:this.state.panier.slice(this.state.currentPage * 2 - 2, this.state.currentPage * 2)
                           .map((p) => <div class="row border mb-2">
                             <div className=" col-lg-12 col-md-12 col-sm-12 mt-3">
                               <b className="text-dark">Cooperative : </b><b className="text-primary">{p.nom}</b>
@@ -346,8 +353,7 @@ class Commandes extends Component {
 
                             <br></br>
                             {p.especes.map((Annonces) => (
-                              //  {if(Annonces){}}
-                              <div className="col-lg-3 col-md-3 col-sm-6">
+                               <div className="col-lg-3 col-md-3 col-sm-6">
                                 <br></br>
                                 <div id="anonce" className="product__item">
                                   <div
@@ -455,7 +461,7 @@ class Commandes extends Component {
                                 </div>
                               </div>
                             ))}</div>)}
-                      </div>
+                       </div>
                       {/* <!-- Sheeps Grid Section End --> */}
 
                       { <div className="center-div">

@@ -20,8 +20,10 @@ class DetailsCommande extends Component {
       espece_changement: '',
       etat: '',
       nom_prenom: '',
+      nom_prenom_valide: '',
       commandes: this.props.location.state.id,
       rib: '',
+      rib_valide:'',
       cooperative: null,
       cooperative_rib: '',
       tech: '',
@@ -34,6 +36,9 @@ class DetailsCommande extends Component {
       prixRemb: 0,
       prix_transport: 0,
       prix_total: JSON.parse( window.sessionStorage.getItem("prix_total")),
+      prix_avance: JSON.parse( window.sessionStorage.getItem("avance")),
+      prix_reste: JSON.parse( window.sessionStorage.getItem("reste")),
+      prix_complement: JSON.parse( window.sessionStorage.getItem("complement")),
 
       especeAv: {},
        especeChoisi:{},
@@ -71,7 +76,7 @@ class DetailsCommande extends Component {
 
   }
   showCard(num){
-    this.state.show[num]=this.state.show[num]==="collapse show"?"collapse":"collapse show";
+    this.state.show[num]=this.state.show[num] ==="collapse show"?"collapse":"collapse show";
 
 this.setState({
   show:this.state.show
@@ -82,10 +87,10 @@ this.setState({
   terminer(){
      if(this.state.cloture==false)
     { 
-       if (( window.sessionStorage.getItem("ids")&&JSON.parse( window.sessionStorage.getItem("ids") ).length === 0) ||
+       if (( window.sessionStorage.getItem("ids")&&JSON.parse( window.sessionStorage.getItem("ids") ).length  === 0) ||
    (     window.sessionStorage.getItem("ids")&&
-      JSON.parse( window.sessionStorage.getItem("ids") ).length === this.state.commandes.espece.filter((e) => e.statut === "produit avarié").length
-      )|| this.state.commandes.espece.filter((e) => e.statut === "produit avarié").length === 0)
+      JSON.parse( window.sessionStorage.getItem("ids") ).length  === this.state.commandes.espece.filter((e) => e.statut  === "produit avarié").length
+      )|| this.state.commandes.espece.filter((e) => e.statut  === "produit avarié").length  === 0)
        {  window.onbeforeunload = undefined  } 
        else {
 
@@ -98,9 +103,9 @@ this.setState({
 
     }
 
-    if ( window.sessionStorage.getItem("ids") &&JSON.parse( window.sessionStorage.getItem("ids") ).length !== 0 &&
-      JSON.parse( window.sessionStorage.getItem("ids") ).length === this.state.commandes.espece.filter((e) => e.statut === "produit avarié").length
-      && this.state.commandes.espece.filter((e) => e.statut === "produit avarié").length !== 0)
+    if ( window.sessionStorage.getItem("ids") &&JSON.parse( window.sessionStorage.getItem("ids") ).length  !== 0 &&
+      JSON.parse( window.sessionStorage.getItem("ids") ).length  === this.state.commandes.espece.filter((e) => e.statut  === "produit avarié").length
+      && this.state.commandes.espece.filter((e) => e.statut  === "produit avarié").length  !== 0)
        {
       const myToken = `Bearer ` + localStorage.getItem("myToken");
  
@@ -129,7 +134,7 @@ this.setState({
        this.setState({ showChoix:false,showRemb:false,  showSolution: false }, () => {
        
       })
- if(nbr=== JSON.parse( window.sessionStorage.getItem("ids")).length-1)
+ if(nbr === JSON.parse( window.sessionStorage.getItem("ids")).length-1)
 { 
 axios
   .put(
@@ -190,7 +195,7 @@ axios
     this.setState({ showChoix:true,showRemb:false,  showSolution: false }, () => {
      
     })
- if(nbr=== JSON.parse( window.sessionStorage.getItem("ids")).length-1)
+ if(nbr === JSON.parse( window.sessionStorage.getItem("ids")).length-1)
 { 
 axios
   .put(
@@ -266,16 +271,16 @@ axios
     let errors = {};
     let valide = true;
 
-    if (this.state.nom_prenom.length === 0 || this.state.nom_prenom === " ") {
+    if (this.state.nom_prenom.length  === 0 || this.state.nom_prenom  === " ") {
 
       errors["nom_prenom"] = "Ce champs est obligatoire ";
       valide = false;
     }
-    if (this.state.rib.length === 0) {
+    if (this.state.rib.length  === 0) {
       errors["rib"] = "Ce champs est obligatoire ";
       valide = false;
     }
-    if (this.state.rib.length !== 0 && this.state.rib.length !== 24) {
+    if (this.state.rib.length  !== 0 && this.state.rib.length  !== 24) {
       errors["rib"] = " Le rib doit contenir 24 caractères ";
       valide = false;
     }
@@ -289,14 +294,14 @@ axios
     if (this.handleValidation()) {
       //rembourssement
 
-      if (this.state.etat === "refuser") {  
+      if (this.state.etat  === "refuser") {  
           
       
             this.state.ids.push({"id":this.state.especeAv._id,"etat":this.state.etat})
              window.sessionStorage.setItem("ids", JSON.stringify(this.state.ids))
          
  
-            this.setState({  showRemb:false,  showSolution: false }, () => {
+            this.setState({  nom_prenom_valide:this.state.nom_prenom.length>0&&this.state.nom_prenom.length !==" "?this.state.nom_prenom:this.state.nom_prenom_valide,rib_valide:this.state.rib.length ===24?this.state.rib:this.state.rib_valide,showRemb:false,  showSolution: false }, () => {
               Swal.fire({
                 title: "Changer avec succès ",
                 icon: "success",
@@ -310,7 +315,7 @@ axios
             })
        }
       //rembourssement pour changement (old.prix>new.prix)
-      if (this.state.etat === "accepter") {
+      if (this.state.etat  === "accepter") {
           
        
              this.state.ids.push({"id":this.state.especeAv._id,"id_changement":this.state.espece_changement._id,"etat":this.state.etat})
@@ -319,7 +324,7 @@ axios
            //  window.sessionStorage.setItem("reponses", JSON.stringify(this.state.reponses))
        
 
-           this.setState({  showRemb:false,  showSolution: false }, () => {
+           this.setState({   nom_prenom_valide:this.state.nom_prenom.length>0&&this.state.nom_prenom.length !==" "?this.state.nom_prenom:this.state.nom_prenom_valide,rib_valide:this.state.rib.length ===24?this.state.rib:this.state.rib_valide,showRemb:false,  showSolution: false }, () => {
               Swal.fire({
                 title: "Changer avec succès ",
                 icon: "success",
@@ -342,13 +347,13 @@ axios
   getChoix(espece){
     if(this.state.showChoix)
     {
-         let especeChoisi=this.state.commandes.espece_avariee.filter((av)=>av._id==espece.produits_changement.filter((p)=>p.feedback==="validé")[0].id_espece)[0]     
+         let especeChoisi=this.state.commandes.espece_avariee.filter((av)=>av._id==espece.produits_changement.filter((p)=>p.feedback ==="validé")[0].id_espece)[0]     
    return especeChoisi 
     }
    
   }
   getEspece(espece) {
-    let esp = this.state.commandes.especes.filter((e) => (e.id_espece === espece._id))[0];
+    let esp = this.state.commandes.especes.filter((e) => (e.id_espece  === espece._id))[0];
     let motif = "";
     switch (esp.motif_annulation) {
       case 'Apparition d\'un abcès':
@@ -396,7 +401,7 @@ axios
       reverseButtons: true,
     }).then((result) => {
       if (result.isConfirmed) {
-        if (this.state.commandes.especes.length === 1) {
+        if (this.state.commandes.especes.length  === 1) {
           axios
             .delete(
               "http://127.0.0.1:8000/api/commande/" + this.state.commandes._id,
@@ -450,17 +455,17 @@ axios
             )
             .then((res) => {
               let all = this.state.commandes;
-              all.espece = this.state.commandes.espece.filter((f) => f._id !== espece._id);
-              all.especes = this.state.commandes.especes.filter((f) => f.id_espece !== espece._id);
+              all.espece = this.state.commandes.espece.filter((f) => f._id  !== espece._id);
+              all.especes = this.state.commandes.especes.filter((f) => f.id_espece  !== espece._id);
 
-              if (all.reçu_avance === null) {
+              if (all.reçu_avance  === null) {
                 all.avance = (all.avance - espece.avance);
                 all.prix_total = (all.prix_total - espece.prix);
                 all.reste = (all.prix_total - all.avance);
 
               }
 
-              if (all.reçu_avance !== null) {
+              if (all.reçu_avance  !== null) {
                 all.prix_total = (all.prix_total - espece.prix) - (- espece.avance);
                 all.reste = (all.prix_total - all.avance);
               }
@@ -485,7 +490,7 @@ axios
 
 
       } else if (
-        result.dismiss === Swal.DismissReason.cancel
+        result.dismiss  === Swal.DismissReason.cancel
       ) {
         swalWithBootstrapButtons.fire(
           'Annulation',
@@ -557,7 +562,7 @@ axios
           });
 
       } else if (
-        result.dismiss === Swal.DismissReason.cancel
+        result.dismiss  === Swal.DismissReason.cancel
       ) {
         swalWithBootstrapButtons.fire(
           'Annulation',
@@ -571,7 +576,7 @@ axios
   handlePut = (e) => {
     e.preventDefault();
     const myToken = `Bearer ` + localStorage.getItem("myToken");
-    if (this.state.payer === "avance") {
+    if (this.state.payer  === "avance") {
       //paiement
       axios
         .put(
@@ -606,7 +611,7 @@ axios
 
         });
     }
-    else if (this.state.payer === "reste") {
+    else if (this.state.payer  === "reste") {
       axios
         .put(
           "http://127.0.0.1:8000/api/commande/" + this.state.commandes._id,
@@ -636,7 +641,7 @@ axios
           this.props.history.push("/commandesParStatut");
         });
     }
-    else if (this.state.payer === "complement") {
+    else if (this.state.payer  === "complement") {
       axios
         .put(
           "http://127.0.0.1:8000/api/commande/" + this.state.commandes._id,
@@ -734,15 +739,15 @@ axios
         this.setState({ etat: "accepter", espece_changement: espece }, () => { });
 
         //ancien_statut validé =>Montant du produit avarié a remboursé par l'ANOC
-        if (this.state.commandes.ancien_statut === "validé" && espece.prix < this.state.especeAv.prix) {
-          this.setState({ prix_total:this.state.prix_total-(this.state.especeAv.prix-this.state.espece_changement.prix ),prixRemb: this.state.especeAv.prix - espece.prix, showRemb: !this.state.showRemb }, () => { });
+        if (this.state.commandes.ancien_statut  === "validé" && espece.prix < this.state.especeAv.prix) {
+          this.setState({ prix_reste:this.state.prix_reste-((this.state.especeAv.prix-this.state.especeAv.avance)-(this.state.espece_changement.prix-this.state.espece_changement.avance) ),prix_avance:this.state.prix_avance-(this.state.especeAv.avance-this.state.espece_changement.avance ),prix_total:this.state.prix_total-(this.state.especeAv.prix-this.state.espece_changement.prix ),prixRemb: this.state.especeAv.prix - espece.prix, showRemb: !this.state.showRemb }, () => { });
         }
         else {
               
         this.state.ids.push({"id":this.state.especeAv._id,"id_changement":this.state.espece_changement._id,"etat":this.state.etat})
                 window.sessionStorage.setItem("ids", JSON.stringify(this.state.ids))
    
-              this.setState({   showSolution: false,showRemb:false,prix_total:this.state.prix_total-(this.state.especeAv.prix-this.state.espece_changement.prix )}, () => {
+              this.setState({   prix_reste:this.state.prix_reste-((this.state.especeAv.prix-this.state.especeAv.avance)-(this.state.espece_changement.prix-this.state.espece_changement.avance) ),prix_avance:this.state.prix_avance-(this.state.especeAv.avance-this.state.espece_changement.avance ),showSolution: false,showRemb:false,prix_total:this.state.prix_total-(this.state.especeAv.prix-this.state.espece_changement.prix )}, () => {
                });
           
           Swal.fire({
@@ -760,7 +765,7 @@ axios
 
 
       else if (
-        result.dismiss === Swal.DismissReason.cancel
+        result.dismiss  === Swal.DismissReason.cancel
       ) {
         Swal.fire({
           title: "Annonce non changee ! ",
@@ -804,7 +809,7 @@ axios
           //ancien_statut en attente de paiement avance=>soustraire le montant du produit initial
           const myToken = `Bearer ` + localStorage.getItem("myToken");
 
-          if (this.state.commandes.ancien_statut === "en attente de paiement avance") {
+          if (this.state.commandes.ancien_statut  === "en attente de paiement avance") {
             this.setState({ showRemb: false }, () => {
                 
           
@@ -831,18 +836,18 @@ axios
 
           //ancien_statut en attente de paiement du reste =>
           //Montant reste à payer = Montant reste initial - prix total produit avarié  | avance a remboursé par l'ANOC
-          if (this.state.commandes.ancien_statut === "en attente de paiement du reste") {
+          if (this.state.commandes.ancien_statut  === "en attente de paiement du reste") {
             this.setState({ prixRemb: this.state.especeAv.avance, showRemb: !this.state.showRemb }, () => { });
           }
 
           //ancien_statut validé =>Montant du produit avarié a remboursé par l'ANOC
-          if (this.state.commandes.ancien_statut === "validé") {
+          if (this.state.commandes.ancien_statut  === "validé") {
             this.setState({ prixRemb: this.state.especeAv.prix, showRemb: !this.state.showRemb }, () => { });
           }
         });
 
       } else if (
-        result.dismiss === Swal.DismissReason.cancel
+        result.dismiss  === Swal.DismissReason.cancel
       ) {
         Swal.fire({
           title: "Non refuser ! ",
@@ -862,31 +867,31 @@ axios
 
   }
   ModalS(espece) {
-    let pdchangement=this.state.commandes.especes.filter((f) => f.id_espece === espece._id)[0].produits_changement;
-     if(pdchangement.filter((p)=>(p.feedback!=null&&p.feedback!="")).length===pdchangement.length){
+    let pdchangement=this.state.commandes.especes.filter((f) => f.id_espece  === espece._id)[0].produits_changement;
+     if(pdchangement.filter((p)=>(p.feedback !== null&&p.feedback !== "")).length ===pdchangement.length){
       this.setState({ showChoix: true, showSolution: false,especeAv: espece  }, () => { });  
 
     }
    
     else {
       this.setState({showChoix:false},()=>{ 
-            if (this.state.commandes.especes.filter((f) => f.id_espece === espece._id)[0].produits_changement.length === 0) {
+            if (this.state.commandes.especes.filter((f) => f.id_espece  === espece._id)[0].produits_changement.length  === 0) {
       this.setState({ etat: "refuser", especeAv: espece }, () => {
         //ancien_statut en attente de paiement avance=>soustraire le montant du produit initial
 
-        if (this.state.commandes.ancien_statut === "en attente de paiement avance") {
+        if (this.state.commandes.ancien_statut  === "en attente de paiement avance") {
           this.setState({  showRemb: !this.state.showRemb, showSolution: !this.state.showSolution }, () => {
           });
         }
 
         //ancien_statut en attente de paiement du reste =>
         //Montant reste à payer = Montant reste initial - prix total produit avarié  | avance a remboursé par l'ANOC
-        if (this.state.commandes.ancien_statut === "en attente de paiement du reste") {
+        if (this.state.commandes.ancien_statut  === "en attente de paiement du reste") {
           this.setState({ prixRemb: this.state.especeAv.avance, showRemb: !this.state.showRemb }, () => { });
         }
 
         //ancien_statut validé =>Montant du produit avarié a remboursé par l'ANOC
-        if (this.state.commandes.ancien_statut === "validé") {
+        if (this.state.commandes.ancien_statut  === "validé") {
           this.setState({ prixRemb: this.state.especeAv.prix, showRemb: !this.state.showRemb }, () => { });
         }
       })
@@ -894,12 +899,12 @@ axios
     else {
       let tab = [];
       this.setState({ showRemb: false, showSolution: !this.state.showSolution, especeAv: espece }, () => {
-        if (espece !== undefined && espece !== {} && espece !== null && Object.keys(espece).length > 0) {
+        if (espece  !== undefined && espece  !== {} && espece  !== null && Object.keys(espece).length > 0) {
           tab[0] = espece;
-          tab[1] = this.state.commandes.especes.filter((e) => (e.id_espece === espece._id))[0];
+          tab[1] = this.state.commandes.especes.filter((e) => (e.id_espece  === espece._id))[0];
           tab[2] = [];
           tab[1].produits_changement.map((e) => {
-            tab[2].push(this.state.commandes.espece_avariee.filter((esp) => (esp._id === e.id_espece))[0]);
+            tab[2].push(this.state.commandes.espece_avariee.filter((esp) => (esp._id  === e.id_espece))[0]);
           })
         } this.setState({ Especes: tab }, () => { })
       });
@@ -917,10 +922,10 @@ axios
   }
    componentWillUnmount() {
 
-    if (( window.sessionStorage.getItem("ids")&&JSON.parse( window.sessionStorage.getItem("ids") ).length === 0) ||(
+    if (( window.sessionStorage.getItem("ids")&&JSON.parse( window.sessionStorage.getItem("ids") ).length  === 0) ||(
        window.sessionStorage.getItem("ids")&&
-      JSON.parse( window.sessionStorage.getItem("ids") ).length === this.state.commandes.espece.filter((e) => e.statut === "produit avarié").length
-     ) || this.state.commandes.espece.filter((e) => e.statut === "produit avarié").length === 0) {
+      JSON.parse( window.sessionStorage.getItem("ids") ).length  === this.state.commandes.espece.filter((e) => e.statut  === "produit avarié").length
+     ) || this.state.commandes.espece.filter((e) => e.statut  === "produit avarié").length  === 0) {
 
     }  
 
@@ -933,9 +938,9 @@ axios
       ev.preventDefault();
 
       if (  window.sessionStorage.getItem("ids")&& !(      
-        (JSON.parse( window.sessionStorage.getItem("ids") ).length === 0) 
-        ||(JSON.parse( window.sessionStorage.getItem("ids") ).length === this.state.commandes.espece.filter((e) => e.statut === "produit avarié").length ) 
-        || this.state.commandes.espece.filter((e) => e.statut === "produit avarié").length === 0
+        (JSON.parse( window.sessionStorage.getItem("ids") ).length  === 0) 
+        ||(JSON.parse( window.sessionStorage.getItem("ids") ).length  === this.state.commandes.espece.filter((e) => e.statut  === "produit avarié").length ) 
+        || this.state.commandes.espece.filter((e) => e.statut  === "produit avarié").length  === 0
         )
        ) {
           window.sessionStorage.setItem('ids', []);
@@ -992,7 +997,7 @@ axios
       var year = year;
       var hours = 16;
     }
-    if ((hours > 16 && hours < 24) || hours === "00") {
+    if ((hours > 16 && hours < 24) || hours  === "00") {
       var day = day + 1;
       var month = month;
       var year = year;
@@ -1008,7 +1013,7 @@ axios
     var datetime = day + "/" + month + "/" + year + " à " + hours + ":00:00";
     // this.setState({ date: datetime });
     let espsAv = [];
-    this.props.location.state.id.espece.filter((e) => e.statut === "produit avarié").map(
+    this.props.location.state.id.espece.filter((e) => e.statut  === "produit avarié").map(
       (esp) => {
         espsAv.push({ "id": esp._id, "etat":null,"choix":null })
       }
@@ -1030,8 +1035,8 @@ axios
 
         .then((res) => {
            let prixT=0;
-           if(this.props.location.state.id.ville_livraison !== "Récupérer à la coopérative"){  let villeL=res.data.parametres.livraison.filter((v) => v.ville_livraison === this.props.location.state.id.ville_livraison)[0];
-           if(this.props.location.state.id.type_livraison==="vip"){
+           if(this.props.location.state.id.ville_livraison  !== "Récupérer à la coopérative"){  let villeL=res.data.parametres.livraison.filter((v) => v.ville_livraison  === this.props.location.state.id.ville_livraison)[0];
+           if(this.props.location.state.id.type_livraison ==="vip"){
              prixT=villeL.prix_VIP; }
           else {
               prixT=this.props.location.state.id.adresse_domicile?
@@ -1043,7 +1048,7 @@ axios
  
           this.setState({
              cooperative: res.data,
-            prix_transport: this.props.location.state.id.ville_livraison === "Récupérer à la coopérative" ? 0 
+            prix_transport: this.props.location.state.id.ville_livraison  === "Récupérer à la coopérative" ? 0 
             :prixT
           }
             , () => {
@@ -1130,7 +1135,7 @@ axios
         //fin
       } else if (
         /* Read more about handling dismissals below */
-        result.dismiss === Swal.DismissReason.cancel
+        result.dismiss  === Swal.DismissReason.cancel
       ) {
         swalWithBootstrapButtons.fire(
           'Annulation',
@@ -1159,9 +1164,9 @@ axios
         <Prompt
 
           when={
-            !(ids.length === 0 ||
-              ids.length === this.state.commandes.espece.filter((e) => e.statut === "produit avarié").length
-              || this.state.commandes.espece.filter((e) => e.statut === "produit avarié").length === 0)
+            !(ids.length  === 0 ||
+              ids.length  === this.state.commandes.espece.filter((e) => e.statut  === "produit avarié").length
+              || this.state.commandes.espece.filter((e) => e.statut  === "produit avarié").length  === 0)
 
           }
           message='Voulez-vous vraiment quitter cette page ? Les modifications que vous avez apportées ne seront pas enregistrées'
@@ -1174,7 +1179,7 @@ axios
             <div>
               <div id="accordion">
 
-                {commandes.espece.filter((e) => e.statut === "produit avarié").length>0
+                {commandes.espece.filter((e) => e.statut  === "produit avarié").length>0
                   ?
                   <div className="card">
                     <div className="card-header p-0" style={{ backgroundColor: "#009141" }} id="headingfour">
@@ -1191,7 +1196,7 @@ axios
 
                         <ul>
                           <div className="row">
-                            {commandes.espece.filter((e) => e.statut === "produit avarié" && !this.verification(e._id)).map((Annonces) =>
+                            {commandes.espece.filter((e) => e.statut  === "produit avarié" && !this.verification(e._id)).map((Annonces) =>
                             (<div className="col-lg-3  col-sm-6">
                                <span className="text-danger">
                                 <i className="fa fa-long-arrow-right" aria-hidden="true"> </i>
@@ -1233,7 +1238,7 @@ axios
                                   <div className="row mt-3">
                                     <div className="col-2">{" "}</div>
                                     <button type="button" onClick={this.ModalS.bind(this, Annonces)} className="col-8 py-1 btn btn-success">
-                                    {this.getEspece(Annonces).produits_changement.filter((p)=>p.feedback!=null&&p.feedback!="").length>0?
+                                    {this.getEspece(Annonces).produits_changement.filter((p)=>p.feedback !== null&&p.feedback !== "").length>0?
                                     "Solution choisi"
                                     :" Solutions proposées"
                                     }
@@ -1275,13 +1280,13 @@ axios
                                 <div className="product__item">
                                   <div
                                     className="product__item__pic set-bg"
-                                    style={esp.anoc !== null ? { height: "223px" } : { height: 250 }}
+                                    style={esp.anoc  !== null ? { height: "223px" } : { height: 250 }}
                                     data-setbg={esp.images}
                                   >
 
                                     <img
                                       src={esp.image_face}
-                                      style={esp.anoc !== null ? { height: "223px" } : { height: "250px" }}
+                                      style={esp.anoc  !== null ? { height: "223px" } : { height: "250px" }}
                                       className="product__item__pic set-bg"
                                     />
 
@@ -1294,7 +1299,7 @@ axios
                                           </a>
                                         </Link>
                                       </li>
-                                      {commandes.statut === "en attente de paiement avance" || commandes.statut === "en attente de validation avance" || commandes.statut === "en attente de paiement du reste" ?
+                                      {commandes.statut  === "en attente de paiement avance" || commandes.statut  === "en attente de validation avance" || commandes.statut  === "en attente de paiement du reste" ?
                                         <li>
                                           <a type="button" onClick={this.handelDeleteEspece.bind(this, esp)}>
                                             <i className="fa fa-trash"></i>
@@ -1313,7 +1318,7 @@ axios
                                 </div>
 
                               </div>
-                              <div className="col-lg-6  col-sm-6 border" style={{ height: "250px", backgroundRepeat: "no-repeat", backgroundImage: esp.statut === "produit avarié" ? "linear-gradient(rgb(255,153,153), rgb(255,204,204))" : null, backgroundSize: "cover" }}>
+                              <div className="col-lg-6  col-sm-6 border" style={{ height: "250px", backgroundRepeat: "no-repeat", backgroundImage: esp.statut  === "produit avarié" ? "linear-gradient(rgb(255,153,153), rgb(255,204,204))" : null, backgroundSize: "cover" }}>
                                 <div className="product__item__text p-2 text-justify">
                                   <h6 className=""><b>№ Boucle</b> : {esp.boucle}</h6>
                                   <h6 className=""><b>Espece</b> : {esp.espece}</h6>
@@ -1415,66 +1420,69 @@ axios
                                 <span>   {this.state.prix_total}Dhs</span>
                               </li>
 
-                              {commandes.statut === "en attente de paiement avance" ?
+                              {commandes.statut  === "en attente de paiement avance"||(commandes.statut ==="avarié"&&commandes.ancien_statut ==="en attente de paiement avance") ?
                                 <li className="text-danger">
-                                  Avance a payer{" "}
-                                  <span>   {commandes.avance}Dhs</span>
+                                  <i class="fa fa-exclamation-circle" aria-hidden="true"></i>
+                                  {" "}Avance a payer{" "}
+                                  <span>   {this.state.prix_avance}Dhs</span>
                                 </li> : null}
-                              {commandes.statut === "en attente de validation avance" ?
+                              {commandes.statut  === "en attente de validation avance" ?
                                 <li>
                                   Avance deja payee{" "}
-                                  <span>   {commandes.avance}Dhs</span>
+                                  <span>   {this.state.prix_avance}Dhs</span>
                                 </li> : null}
-                              {commandes.statut === "en attente de paiement du reste" ?
+                              {commandes.statut  === "en attente de paiement du reste"||(commandes.statut ==="avarié"&&commandes.ancien_statut ==="en attente de paiement du reste") ?
                                 <>
                                   <li>
                                     Avance deja payee{" "}
-                                    <span>   {commandes.avance}Dhs</span>
+                                    <span>   {this.state.prix_avance}Dhs</span>
                                   </li>
                                   <li className="text-danger">
-                                    Reste a payer{" "}
-                                    <span>   {commandes.avance}Dhs</span>
+                                  <i class="fa fa-exclamation-circle" aria-hidden="true"></i>
+                                  {" "} Reste a payer{" "}
+                                    <span>   {this.state.prix_reste}Dhs</span>
                                   </li></> : null}
 
-                              {commandes.statut === "en attente de validation reste" || commandes.statut === "validé" ?
+                              {commandes.statut  === "en attente de validation reste" || commandes.statut  === "validé" ?
                                 <>
                                   <li>
                                     Avance deja payee{" "}
-                                    <span>   {commandes.avance}Dhs</span>
+                                    <span>   {this.state.prix_avance}Dhs</span>
                                   </li>
                                   <li>
                                     Reste deja payee{" "}
-                                    <span>   {commandes.avance}Dhs</span>
+                                    <span>   {this.state.prix_reste}Dhs</span>
                                   </li></> : null}
-                              {commandes.statut === "en attente de paiement du complément" ?
+                              {commandes.statut  === "en attente de paiement du complément"||(commandes.statut ==="avarié"&&commandes.ancien_statut ==="en attente de paiement du complément") ?
                                 <>
                                   <li>
                                     Avance deja payee{" "}
-                                    <span>   {commandes.avance}Dhs</span>
+                                    <span>   {this.state.prix_avance}Dhs</span>
                                   </li>
                                   <li>
                                     Reste deja payee{" "}
-                                    <span>   {commandes.avance}Dhs</span>
+                                    <span>   {this.state.prix_reste}Dhs</span>
                                   </li>
                                   <li className="text-danger">
-                                    Complement a payer{" "}
-                                    <span>   {commandes.avance}Dhs</span>
+                                  <i class="fa fa-exclamation-circle" aria-hidden="true"></i>
+                                  {" "}Complement a payer{" "}
+                                    <span>   {commandes.complement}Dhs</span>
                                   </li></> : null}
-                              {commandes.statut === "en attente de validation du complément" ?
+                              {commandes.statut  === "en attente de validation du complément" ?
                                 <>
                                   <li>
                                     Avance deja payee{" "}
-                                    <span>   {commandes.avance}Dhs</span>
+                                    <span>   {this.state.prix_avance}Dhs</span>
                                   </li>
                                   <li>
                                     Reste deja payee{" "}
-                                    <span>   {commandes.avance}Dhs</span>
+                                    <span>   {this.state.prix_reste}Dhs</span>
                                   </li>
                                   <li>
                                     Complement deja payee{" "}
-                                    <span>   {commandes.avance}Dhs</span>
+                                    <span>   {this.state.prix_complement}Dhs</span>
                                   </li></> : null}
-                              {commandes.statut === "validé" ?
+                              {commandes.statut  === "validé" ?
                                 <li className=" text-success">
                                   <i className="fa fa-exclamation-circle" aria-hidden="true"></i>
                                   {" "}  Commande validee
@@ -1489,17 +1497,17 @@ axios
                       </div></div>
                   </div>
 
-                </div>{commandes.statut === "en attente de paiement avance" || commandes.statut === "en attente de validation avance" ||
-                  commandes.statut === "en attente de paiement du reste" || commandes.statut === "en attente de validation reste" || commandes.statut === "validé"
-                  || commandes.statut === "en attente de paiement du complément" || commandes.statut === "en attente de validation du complément" ?
+                </div>{commandes.statut  === "en attente de paiement avance" || commandes.statut  === "en attente de validation avance" ||
+                  commandes.statut  === "en attente de paiement du reste" || commandes.statut  === "en attente de validation reste" || commandes.statut  === "validé"
+                  || commandes.statut  === "en attente de paiement du complément" || commandes.statut  === "en attente de validation du complément" ?
                   <div className="card">
                     <div className="card-header p-0" style={{ backgroundColor: "#009141" }} id="headingfive">
                       <h5 className="mb-0">
                         <button onClick={this.showCard.bind(this,5)} className="btn btn-link collapsed"  >
                           <h5 style={{ color: "white" }}><FaClipboardCheck className="mb-2" /> {" "}
-                            {commandes.statut === "en attente de paiement avance" || commandes.statut === "en attente de validation avance" ? "Paiement des frais de resevation" : null}
-                            {commandes.statut === "en attente de paiement du reste" || commandes.statut === "en attente de validation reste" || commandes.statut === "validé" ? "Paiement du reste du montant" : null}
-                            {commandes.statut === "en attente de paiement du complément" || commandes.statut === "en attente de validation du complément" ? "Paiement du complément du montant" : null}
+                            {commandes.statut  === "en attente de paiement avance" || commandes.statut  === "en attente de validation avance" ? "Paiement des frais de resevation" : null}
+                            {commandes.statut  === "en attente de paiement du reste" || commandes.statut  === "en attente de validation reste" || commandes.statut  === "validé" ? "Paiement du reste du montant" : null}
+                            {commandes.statut  === "en attente de paiement du complément" || commandes.statut  === "en attente de validation du complément" ? "Paiement du complément du montant" : null}
                           </h5>  </button>
                       </h5>
                     </div>
@@ -1511,14 +1519,14 @@ axios
                         <ul>
 
 
-                          {commandes.statut === "en attente de paiement avance"
-                          ||commandes.statut==="reçu avance refusé" ?
+                          {commandes.statut  === "en attente de paiement avance"
+                          ||commandes.statut ==="reçu avance refusé" ?
                             <div>
 
                               <h5>  <b>Frais de reservation (non remboursable) </b><small>{commandes.avance} {" Dhs"}</small></h5>
                               <br></br>
                               <div className="form-check">
-                                <input checked={this.state.mode_paiement_choisi === "virement"} onChange={this.onChange} className="form-check-input" type="radio" name="mode_paiement_choisi" id="virement" value="virement" />
+                                <input checked={this.state.mode_paiement_choisi  === "virement"} onChange={this.onChange} className="form-check-input" type="radio" name="mode_paiement_choisi" id="virement" value="virement" />
                                 <label className="form-check-label" htmlFor="virement">
                                   <b> Virement bancaire</b>
                                 </label>
@@ -1526,7 +1534,7 @@ axios
                               <p>pour payer les frais de reservation, il vous suffit d'effectuer un virement sur le RIB suivant
                           <span className="text-danger">{" " + this.state.cooperative_rib}</span></p>
                               <div className="form-check mt-2">
-                                <input checked={this.state.mode_paiement_choisi === "transfert"} onChange={this.onChange} className="form-check-input" type="radio" name="mode_paiement_choisi" id="transfert" value="transfert" />
+                                <input checked={this.state.mode_paiement_choisi  === "transfert"} onChange={this.onChange} className="form-check-input" type="radio" name="mode_paiement_choisi" id="transfert" value="transfert" />
                                 <label className="form-check-label" htmlFor="transfert">
                                   <b>Par agence de transfert d'argent (*)</b>
                                 </label>
@@ -1542,7 +1550,7 @@ axios
                         Vous avez jusqu'au {" " + commandes.deadline + " "} pour nous transmettre la copie (scan / photo) de l'ordre de virement ou de transfert .Au-delà de ce delai, votre commande sera annulee.</p>
 
                             </div> : null}
-                          {commandes.statut === "en attente de validation avance" ?
+                          {commandes.statut  === "en attente de validation avance" ?
                             <div>
                               <b>Validation en cours</b> {commandes.avance + " Dhs"}
                               <p className="text-danger">Votre reçu a bien ete receptionne. Il sera verifie dans les plus brefs delais. Des reception du virement, votre produit sera reserve</p>
@@ -1563,13 +1571,13 @@ axios
                                 <div className="col">{" "}</div>
                               </div>
                             </div> : null}
-                          {commandes.statut === "en attente de paiement du reste"
-                           ||commandes.statut==="reçu reste refusé" ?
+                          {commandes.statut  === "en attente de paiement du reste"
+                           ||commandes.statut ==="reçu reste refusé" ?
                             <div>
                               <b>Reste du montant : {commandes.reste + "Dhs"}</b>
                             </div> : null}
 
-                          {commandes.statut === "en attente de validation reste" ?
+                          {commandes.statut  === "en attente de validation reste" ?
                             <div>
                               <b>Validation en cours</b> {commandes.reste + " Dhs"}
                               <p className="text-danger">Votre reçu a bien ete receptionne. Il sera verifie dans les plus brefs delais. Des reception du virement, nous vous contacterons pour la livraison</p>
@@ -1590,11 +1598,11 @@ axios
                                 <div className="col">{" "}</div>
                               </div>
                             </div> : null}
-                          {commandes.statut === "en attente de paiement du complément" ?
+                          {commandes.statut  === "en attente de paiement du complément" ?
                             <div>
                               <b>Complément du montant : {commandes.complement + "Dhs"}</b>
                             </div> : null}
-                          {commandes.statut === "en attente de validation du complément" ?
+                          {commandes.statut  === "en attente de validation du complément" ?
                             <div>
                               <b>Validation en cours</b> {commandes.complement + " Dhs"}
                               <p className="text-danger">Votre reçu a bien ete receptionne. Il sera verifie dans les plus brefs delais. Des reception du virement, nous vous contacterons pour la livraison</p>
@@ -1615,7 +1623,7 @@ axios
                                 <div className="col">{" "}</div>
                               </div>
                             </div> : null}
-                          {commandes.statut === "validé" ?
+                          {commandes.statut  === "validé" ?
                             <div>
                               <p className="text-danger">Votre virement est valide. la livraison est prevu le {commandes.date_de_livraison} . Nous vous contacterons par telephone  pour preciser l'heure exacte</p>
                               <br></br>
@@ -1625,7 +1633,7 @@ axios
                                 <div className="col">{" "}</div>
                                 <div className="col">   <div className="product__details__pic">
                                   <div className="product__details__pic__item">
-                                    {commandes.reçu_montant_complement === null || commandes.reçu_montant_complement === undefined ?
+                                    {commandes.reçu_montant_complement  === null || commandes.reçu_montant_complement  === undefined ?
                                       <img
                                         className="product__details__pic__item--large"
                                         src={commandes.reçu_montant_restant}
@@ -1650,9 +1658,9 @@ axios
                   </div>
 
                   : null}
-                {commandes.statut !== "avarié" && commandes.statut !== "en attente de paiement avance" && commandes.statut !== "en attente de validation avance" &&
-                  commandes.statut !== "en attente de paiement du reste" && commandes.statut !== "en attente de validation reste" && commandes.statut !== "validé" &&
-                  commandes.statut !== "en attente de paiement du complément" && commandes.statut !== "en attente de validation du complément" ?
+                {commandes.statut  !== "avarié" && commandes.statut  !== "en attente de paiement avance" && commandes.statut  !== "en attente de validation avance" &&
+                  commandes.statut  !== "en attente de paiement du reste" && commandes.statut  !== "en attente de validation reste" && commandes.statut  !== "validé" &&
+                  commandes.statut  !== "en attente de paiement du complément" && commandes.statut  !== "en attente de validation du complément" ?
                   <div className="card">
                     <div   className="card-header p-0" style={{ backgroundColor: "#009141" }}  >
                       <h5 className="mb-0">
@@ -1682,17 +1690,17 @@ axios
               <div className="row">
                 <div className="col-md-4 offset-md-4">
 
-                  {commandes.statut === "en attente de paiement avance"||commandes.statut==="reçu avance refusé" ?
+                  {commandes.statut  === "en attente de paiement avance"||commandes.statut ==="reçu avance refusé" ?
                     <button style={{ fontSize: "18px" }} id="centre" onClick={this.Modal.bind(this, "avance")}
                       className="btn-success py-1 px-4 mb-3 w-75" ><BsFileEarmarkPlus className="fa-lg" /> {" "}
                         Payer l'avance{" "}
                     </button> : null}
-                  {commandes.statut === "en attente de paiement du reste" ||commandes.statut==="reçu reste refusé"?
+                  {commandes.statut  === "en attente de paiement du reste" ||commandes.statut ==="reçu reste refusé"?
                     <button style={{ fontSize: "18px" }} id="centre" onClick={this.Modal.bind(this, "reste")}
                       className="btn-success py-1 px-4 mb-3 w-75" ><BsFileEarmarkPlus className="fa-lg" /> {" "}
                         Payer le reste{" "}
                     </button> : null}
-                  {commandes.statut === "en attente de paiement du complément" ?
+                  {commandes.statut  === "en attente de paiement du complément" ?
                     <button style={{ fontSize: "18px" }} id="centre" onClick={this.Modal.bind(this, "complement")}
                       className="btn-success py-1 px-4 mb-3 w-75" > <BsFileEarmarkPlus className="fa-lg" />{" "}
                         Payer le complement{" "}
@@ -1717,7 +1725,7 @@ axios
           </div>
           {/**modal de changement*/}
           <Modal
-            size= {this.state.Especes[2] !== undefined&& this.state.Especes[2].length==1 && !this.state.showRemb?null:"xl"} 
+            size= {this.state.Especes[2]  !== undefined&& this.state.Especes[2].length ===1 && !this.state.showRemb?null:"xl"} 
             show={this.state.showSolution}
             onHide={this.Hide}
             backdrop="static"
@@ -1728,20 +1736,20 @@ axios
                
               </Modal.Title>
             </Modal.Header>
-             <Modal.Body className="overflow-auto" style={this.state.showRemb === false ?
-             this.state.Especes[2] !== undefined&& this.state.Especes[2].length==1&& !this.state.showRemb?
+             <Modal.Body className="overflow-auto" style={this.state.showRemb  === false ?
+             this.state.Especes[2]  !== undefined&& this.state.Especes[2].length ===1&& !this.state.showRemb?
               { maxHeight: "max-content",margin:"auto" }
               :{height: "620px" }
               :{ maxHeight: "max-content",minWidth:"600px"}
               }>
 
-              {this.state.Especes[2] !== undefined 
-              &&this.state.showRemb === false&&this.state.showChoix==false ?
+              {this.state.Especes[2]  !== undefined 
+              &&this.state.showRemb  === false&&this.state.showChoix ===false ?
                 <>  <div className={ this.state.Especes[2].length==1?null:"row"}>
                   {this.state.Especes[2].map((Annonces) =>
                   (
                     
-                    <div style={ this.state.Especes[2].length==1?{maxWidth:"max-content"}:null}className={ this.state.Especes[2].length==1?null:"col-lg-3  col-sm-6"}>
+                    <div style={ this.state.Especes[2].length ===1?{maxWidth:"max-content"}:null}className={ this.state.Especes[2].length ===1?null:"col-lg-3  col-sm-6"}>
 
                       <div id="anonce" className="product__item">
                         <div
@@ -1793,7 +1801,7 @@ axios
                             <button type="button" onClick={this.AccepteSoution.bind(this, Annonces)} className="col-6 py-1 btn btn-success">Accepter</button>
                             <div className="col-3">{" "}</div>
                           </div> : null}
-                          {this.state.Especes[2].length === 1 ?
+                          {this.state.Especes[2].length  === 1 ?
                             <div className="row mt-3">
                               <div className="col-1">{" "}</div>
                               <button type="button" onClick={this.AccepteSoution.bind(this, Annonces)} className="col-4 py-1 btn btn-success">Accepter</button>
@@ -1815,32 +1823,32 @@ axios
                       <button type="button" onClick={this.RefuseTSoutions} className="col-4 py-1 btn btn-danger">Refuser les solutions proposées</button>
                       <div className="col-4">{" "}</div>
                     </div> : null}
-                </> : (this.state.showRemb === true ? <div>
+                </> : (this.state.showRemb  === true ? <div>
 
-                  {this.state.commandes.especes.filter((f) => f.id_espece === this.state.especeAv._id)[0].produits_changement.length === 0 ?
+                  {this.state.commandes.especes.filter((f) => f.id_espece  === this.state.especeAv._id)[0].produits_changement.length  === 0 ?
                     <h4 className="text-danger mb-5 mt-2"> Pas de produits de changements proposés.</h4>
                     :
                     <h4 className="text-danger mb-5 mt-2"> Vous avez refuse tous les produits de changements proposés.</h4>
                   }
-                  {this.state.commandes.ancien_statut !== "en attente de paiement avance" ?
+                  {this.state.commandes.ancien_statut  !== "en attente de paiement avance" ?
                     <>
                       <h5>Dans ce cas là, nous procederons à  votre remboursement : <span className="text-danger">{this.state.prixRemb} Dhs</span></h5>
                       <form className="my-5 ">
                         <div className="form-group">
                           <label htmlFor="nom_prenom">Votre nom et prenom</label>
-                          {this.state.nom_prenom==''?
+                          {this.state.nom_prenom_valide ===''?
                           <input onChange={this.onChange} type="text" className="form-control" id="nom_prenom" name="nom_prenom" placeholder="Nom et prenom" />
                          :
-                         <input disabled value={this.state.nom_prenom} onChange={this.onChange} type="text" className="form-control" id="nom_prenom" name="nom_prenom" placeholder="Nom et prenom" />
+                         <input disabled value={this.state.nom_prenom_valide} onChange={this.onChange} type="text" className="form-control" id="nom_prenom" name="nom_prenom" placeholder="Nom et prenom" />
                 }
                           <span className="text-danger">{this.state.errors["nom_prenom"]}</span>
                         </div>
                         <div className="form-group">
                           <label htmlFor="rib">Votre numero de RIB</label>
-                          {this.state.rib==''?
+                          {this.state.rib_valide ===''?
                           <input   onChange={this.onChange} type="text" className="form-control" id="rib" name="rib" placeholder="RIB" />
                           :
-                          <input  disabled onChange={this.onChange} value={this.state.rib} type="text" className="form-control" id="rib" name="rib" placeholder="RIB" />
+                          <input  disabled onChange={this.onChange} value={this.state.rib_valide} type="text" className="form-control" id="rib" name="rib" placeholder="RIB" />
 
                           }
                           <span className="text-danger">{this.state.errors["rib"]}</span>
@@ -1884,8 +1892,8 @@ axios
             <Modal.Body className="overflow-auto" style={{  maxHeight: "max-content"}}>
 
             { 
-    this.state.showChoix== true  ?<div>
-  { this.getEspece(this.state.especeAv).produits_changement.filter((p)=>p.feedback==="validé").length>0?
+    this.state.showChoix === true  ?<div>
+  { this.getEspece(this.state.especeAv).produits_changement.filter((p)=>p.feedback ==="validé").length>0?
              <> <h4 className="text-danger mb-5 mt-2"> Vous avez choisi l'espece suivante :</h4>
              <div className="  mb-4">
 
@@ -1896,13 +1904,13 @@ axios
     <div className="product__item">
       <div
         className="product__item__pic set-bg"
-        style={this.getChoix(this.getEspece(this.state.especeAv)).anoc !== null ? { height: "223px" } : { height: 250 }}
+        style={this.getChoix(this.getEspece(this.state.especeAv)).anoc  !== null ? { height: "223px" } : { height: 250 }}
         data-setbg={this.getChoix(this.getEspece(this.state.especeAv)).images}
       >
 
         <img
           src={this.getChoix(this.getEspece(this.state.especeAv)).image_face}
-          style={this.getChoix(this.getEspece(this.state.especeAv)).anoc !== null ? { height: "223px" } : { height: "250px" }}
+          style={this.getChoix(this.getEspece(this.state.especeAv)).anoc  !== null ? { height: "223px" } : { height: "250px" }}
           className="product__item__pic set-bg"
         />
 
@@ -1928,7 +1936,7 @@ axios
     </div>
 
   </div>
-  <div className="col-lg-6  col-sm-6 border" style={{ height: "250px", backgroundRepeat: "no-repeat", backgroundImage: this.getChoix(this.getEspece(this.state.especeAv)).statut === "produit avarié" ? "linear-gradient(rgb(255,153,153), rgb(255,204,204))" : null, backgroundSize: "cover" }}>
+  <div className="col-lg-6  col-sm-6 border" style={{ height: "250px", backgroundRepeat: "no-repeat", backgroundImage: this.getChoix(this.getEspece(this.state.especeAv)).statut  === "produit avarié" ? "linear-gradient(rgb(255,153,153), rgb(255,204,204))" : null, backgroundSize: "cover" }}>
     <div className="product__item__text p-2 text-justify">
       <h6 className=""><b>№ Boucle</b> : {this.getChoix(this.getEspece(this.state.especeAv)).boucle}</h6>
       <h6 className=""><b>Espece</b> : {this.getChoix(this.getEspece(this.state.especeAv)).espece}</h6>
@@ -1975,9 +1983,9 @@ axios
           >
             <Modal.Header closeButton>
               <Modal.Title>
-                {this.state.payer === "avance" ? <h4>Importer le reçu : paiement d'avance</h4> : null}
-                {this.state.payer === "reste" ? <h4>Importer le reçu : paiement du reste</h4> : null}
-                {this.state.payer === "complement" ? <h4>Importer le reçu : paiement du complement</h4> : null} </Modal.Title>
+                {this.state.payer  === "avance" ? <h4>Importer le reçu : paiement d'avance</h4> : null}
+                {this.state.payer  === "reste" ? <h4>Importer le reçu : paiement du reste</h4> : null}
+                {this.state.payer  === "complement" ? <h4>Importer le reçu : paiement du complement</h4> : null} </Modal.Title>
             </Modal.Header>
             <Modal.Body>
 

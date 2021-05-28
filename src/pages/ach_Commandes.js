@@ -76,9 +76,15 @@ class Commandes extends Component {
     this.sortData = this.sortData.bind(this);
   }
   local(annonce) {
+    
      window.sessionStorage.setItem('ids', []);
      window.sessionStorage.setItem('reponses', []);
      window.sessionStorage.setItem("prix_total",JSON.stringify(annonce.prix_total))
+     window.sessionStorage.setItem("reste",JSON.stringify(annonce.prix_total-annonce.avance))
+     window.sessionStorage.setItem("avance",JSON.stringify(annonce.avance))
+     window.sessionStorage.setItem("complement",JSON.stringify(annonce.complement)?JSON.stringify(annonce.complement):0)
+
+
   }
 
   sortData(e) {

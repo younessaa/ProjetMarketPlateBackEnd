@@ -14,7 +14,7 @@ class Commandes extends Component {
     super();
     // let redirect = false;
     this.state = {
-      nbr:null,
+      nbr: null,
       loading: true,
       activePage: 1,
       nombrePages: [],
@@ -24,7 +24,7 @@ class Commandes extends Component {
       redirect: false,
       activePage: 15,
       panier: [],
-       idp:[],
+      idp: [],
     };
     // this.elv = this.elv.bind(this);
     this.handleDeleteFromFavoris = this.handleDeleteFromFavoris.bind(this);
@@ -121,10 +121,10 @@ class Commandes extends Component {
 
             }
           );
-          let p=[];
-this.state.panier.map((e)=>{p.push(e._id)}) 
-this.setState( { idp:p })
-         });
+          let p = [];
+          this.state.panier.map((e) => { p.push(e._id) })
+          this.setState({ idp: p })
+        });
 
     });
   }
@@ -134,8 +134,8 @@ this.setState( { idp:p })
     } else return a.race;
   }
   ispanier(a) {
-  
-   return this.state.idp.includes(a);
+
+    return this.state.idp.includes(a);
   }
   handlePanier(Mid) {
     const token = localStorage.getItem("usertoken");
@@ -157,10 +157,10 @@ this.setState( { idp:p })
               "Authorization": myToken,
             },
           }
-        )   
-        .then(this.setState({ nbr:this.state.idp.push(Mid) ,idp:this.state.idp }));      
-        
- 
+        )
+        .then(this.setState({ nbr: this.state.idp.push(Mid), idp: this.state.idp }));
+
+
       Swal.fire({
         title: "Ajouté dans Pannier",
         icon: "success",
@@ -172,94 +172,94 @@ this.setState( { idp:p })
 
         confirmButtonText: "Ok!",*/
       });
-      
+
     }
   }
   handleDeleteFromFavoris(Mid) {
-   
+
     const token = localStorage.getItem("usertoken");
     const myToken = `Bearer ` + localStorage.getItem("myToken");
     if (!token) {
       this.props.history.push("/login");
     } else {
-       const swalWithBootstrapButtons = Swal.mixin({
-      customClass: {
-        confirmButton: "ml-2 btn btn-success",
-        cancelButton: " btn btn-danger",
-      },
-      buttonsStyling: false,
-    });
-
-    swalWithBootstrapButtons.fire({
-      title: "Etes-vous sûr?",
-      text: "Voulez-vous supprimer cette annonce !",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonText: "  Oui !  ",
-      cancelButtonText: "  Non !  ",
-      reverseButtons: true,
-    }).then((result) => {
-      if (result.isConfirmed) {
-
-
-      axios
-        .put(
-          "http://127.0.0.1:8000/api/consommateur/" + token + "/favoris/" + Mid,
-          {},
-          {
-            headers: {
-              //"Content-Type": "application/json",
-
-              Authorization: myToken,
-            },
-          }
-        )
-        .then(() => {
-          this.setState(
-            {
-              Favoris: this.state.Favoris.filter(
-                (Favoris) => Favoris._id !== Mid
-              ),
-            });
-          this.props.history.push("/Favoris")
-
-        });
-      Swal.fire({
-        title: "Supprimé avec succès ",
-        icon: "success",
-        width: 400,
-        heightAuto: false,
-        timer: 1500,
-        showConfirmButton: false,
+      const swalWithBootstrapButtons = Swal.mixin({
+        customClass: {
+          confirmButton: "ml-2 btn btn-success",
+          cancelButton: " btn btn-danger",
+        },
+        buttonsStyling: false,
       });
-      const pageNumbers = [];
-      for (
-        let i = 1;
-        i <=
-        Math.ceil(this.state.Favoris.length / this.state.annoncesPerPage);
-        i++
-      ) {
-        pageNumbers.push(i);
-      }
-      this.setState({ nombrePages: pageNumbers });
 
- }
- else if (
-  result.dismiss === Swal.DismissReason.cancel
-) {
-  Swal.fire({
-    title: "Annonce non supprimée ! ",
-    icon: "error",
-    width: 400,
-    heightAuto: false,
-    timer: 1500,
-    showConfirmButton: false,
-  });
- 
-}
-})
+      swalWithBootstrapButtons.fire({
+        title: "Etes-vous sûr?",
+        text: "Voulez-vous supprimer cette annonce !",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "  Oui !  ",
+        cancelButtonText: "  Non !  ",
+        reverseButtons: true,
+      }).then((result) => {
+        if (result.isConfirmed) {
+
+
+          axios
+            .put(
+              "http://127.0.0.1:8000/api/consommateur/" + token + "/favoris/" + Mid,
+              {},
+              {
+                headers: {
+                  //"Content-Type": "application/json",
+
+                  Authorization: myToken,
+                },
+              }
+            )
+            .then(() => {
+              this.setState(
+                {
+                  Favoris: this.state.Favoris.filter(
+                    (Favoris) => Favoris._id !== Mid
+                  ),
+                });
+              this.props.history.push("/Favoris")
+
+            });
+          Swal.fire({
+            title: "Supprimé avec succès ",
+            icon: "success",
+            width: 400,
+            heightAuto: false,
+            timer: 1500,
+            showConfirmButton: false,
+          });
+          const pageNumbers = [];
+          for (
+            let i = 1;
+            i <=
+            Math.ceil(this.state.Favoris.length / this.state.annoncesPerPage);
+            i++
+          ) {
+            pageNumbers.push(i);
+          }
+          this.setState({ nombrePages: pageNumbers });
+
+        }
+        else if (
+          result.dismiss === Swal.DismissReason.cancel
+        ) {
+          Swal.fire({
+            title: "Annonce non supprimée ! ",
+            icon: "error",
+            width: 400,
+            heightAuto: false,
+            timer: 1500,
+            showConfirmButton: false,
+          });
+
+        }
+      })
     }
- 
+
   }
 
   handlePageChange(pageNumber) {
@@ -335,126 +335,135 @@ this.setState( { idp:p })
                   </div>
                 ) : (
                   <div>
-                    <div className="row">
-                      {currentAnnonces.map((Annonces) => (
-                        //  {if(Annonces){}}
-                        <div className="col-lg-3 col-md-3 col-sm-6">
-                          <div id="anonce" className="product__item">
-                            <div
-                              className="product__item__pic set-bg"
-                            // data-setbg={Annonces.images}
-                            // src="Images/sardi1.jpg"
-                            >
-                              <centre>
-                                {" "}
-                                <img
-                                  src={Annonces.image_face}
-                                  className="product__item__pic set-bg"
-                                />
-                              </centre>
-                              <ul className="product__item__pic__hover">
-                                <li>
-                                  <Link to={`/DetailsMouton/${Annonces._id}`}>
-                                    <a href="#">
-                                      <i className="fa fa-eye"></i>
-                                    </a>
-                                  </Link>
-                                </li>
-                                <li>
-                                  <a
-                                    id={Annonces._id}
-                                    onClick={(e) =>
-                                      this.handleDeleteFromFavoris(
-                                        e.currentTarget.id
-                                      )
-                                    }
-                                  >
-                                    <i className="fa fa-trash"></i>
-                                  </a>
-                                </li>
-                              </ul>
-                            </div>
-                            {Annonces.anoc ?
-                              <h1 style={{ borderRadius: "0% 0% 0% 40%", fontSize: "14px" }} className=" badge badge-success pt-2 w-100  ">
-                                <HiOutlineBadgeCheck className=" mr-1 fa-lg " />
-                                <span>Labélisé ANOC</span>  </h1>
-                              :
-                              <span className="badge pt-3 w-100 mb-2    ">{" "}</span>
-                            }
+                    {this.state.Favoris.length == 0 ?
+                      <div className="text-center my-5">
+                           <p style={{color:"#fba502"}}>
 
-                            <div className="product__item__text p-2 text-justify">
-                              <h6 >
-                                 <img style={{ width: "18px", height: "20px", marginBottom: "5px" }}
+                          <i class="fa fa-frown-o fa-5x" aria-hidden="true"></i>
+                        </p>
+
+                          <h3 style={{color:"#28a745"}}>Liste des favoris vide !</h3> 
+                      </div>
+                      :
+                      <div className="row">
+                        {currentAnnonces.map((Annonces) => (
+                          <div className="col-lg-3 col-md-3 col-sm-6">
+                            <div id="anonce" className="product__item">
+                              <div
+                                className="product__item__pic set-bg"
+                              // data-setbg={Annonces.images}
+                              // src="Images/sardi1.jpg"
+                              >
+                                <centre>
+                                  {" "}
+                                  <img
+                                    src={Annonces.image_face}
+                                    className="product__item__pic set-bg"
+                                  />
+                                </centre>
+                                <ul className="product__item__pic__hover">
+                                  <li>
+                                    <Link to={`/DetailsMouton/${Annonces._id}`}>
+                                      <a href="#">
+                                        <i className="fa fa-eye"></i>
+                                      </a>
+                                    </Link>
+                                  </li>
+                                  <li>
+                                    <a
+                                      id={Annonces._id}
+                                      onClick={(e) =>
+                                        this.handleDeleteFromFavoris(
+                                          e.currentTarget.id
+                                        )
+                                      }
+                                    >
+                                      <i className="fa fa-trash"></i>
+                                    </a>
+                                  </li>
+                                </ul>
+                              </div>
+                              {Annonces.anoc ?
+                                <h1 style={{ borderRadius: "0% 0% 0% 40%", fontSize: "14px" }} className=" badge badge-success pt-2 w-100  ">
+                                  <HiOutlineBadgeCheck className=" mr-1 fa-lg " />
+                                  <span>Labélisé ANOC</span>  </h1>
+                                :
+                                <span className="badge pt-3 w-100 mb-2    ">{" "}</span>
+                              }
+
+                              <div className="product__item__text p-2 text-justify">
+                                <h6 >
+                                  <img style={{ width: "18px", height: "20px", marginBottom: "5px" }}
                                     data-imgbigurl="Images/sheep-head.png"
                                     src="Images/sheep-head.png"
                                     alt=""
                                   />
-                              {" "+Annonces.espece}
+                                  {" " + Annonces.espece}
 
-                                <span className="float-right">
-                                <FaShapes/> {this.annonceVision(Annonces)}
-                                </span> </h6>
+                                  <span className="float-right">
+                                    <FaShapes /> {this.annonceVision(Annonces)}
+                                  </span> </h6>
 
-                            
+
                                 <h6>
-                                  <img 
-                                  style={{ width: "18px",height: "18px",marginRight:"5px"   }} 
-                                  src="./Images/age.png"/>
-                                  
+                                  <img
+                                    style={{ width: "18px", height: "18px", marginRight: "5px" }}
+                                    src="./Images/age.png" />
+
                                   {Annonces.age + " mois"}
 
                                   <span className="float-right ">
-                                  <GiWeight className=" mr-1 fa-lg " />
-                                  {Annonces.poids + " Kg"}</span></h6>
+                                    <GiWeight className=" mr-1 fa-lg " />
+                                    {Annonces.poids + " Kg"}</span></h6>
 
                                 <h6 className=" nbrm" style={{ color: "black", fontSize: "18px" }}>
                                   <i class="fa fa-map-marker"></i> {Annonces.region}
                                 </h6>
 
-                              <h5 id="mad">
-                              <i className="fa fa-usd" aria-hidden="true"></i>
+                                <h5 id="mad">
+                                  <i className="fa fa-usd" aria-hidden="true"></i>
 
-                                {"         " + Annonces.prix + "  Dhs"}
-                              </h5>
+                                  {"         " + Annonces.prix + "  Dhs"}
+                                </h5>
 
-                              {Annonces.statut == "disponible" ?
-                                (<div>
-                                  {!this.ispanier(Annonces._id) ?
-                                    <button
-                                      id={Annonces._id}
-                                      className="float-right rounded mt-2 text-white bg-success py-1 px-2  "
-                                      style={{   fontSize: "16px",  border: "none" }}
-                                      onClick={(e) => {
-                                        this.handlePanier(e.currentTarget.id);
-                                      }
-                                      }
-                                    >
-                                      <i className="fa fa-shopping-cart "> {""} ajouter au Panier</i>
-                                    </button>
-                                    : <button
-                                     
-                                      disabled="disabled"
-                                      className="float-right rounded text-white mt-2    btn-default py-1 px-2  "
-                                      style={{   fontSize: "16px",    border: "none" }}
-                                    >
-                                      <i className="fa fa "> </i>
-                                    </button>}
-                                </div>)
-                                : (<button
-                                 
-                                  disabled="disabled"
-                                  className="float-right rounded text-white  mt-2  btn-default py-1 px-2  "
-                                  style={{   fontSize: "16px",    border: "none" }}
-                                >
-                                  <i className="fa fa "> </i>
-                                </button>)}<div>
+                                {Annonces.statut == "disponible" ?
+                                  (<div>
+                                    {!this.ispanier(Annonces._id) ?
+                                      <button
+                                        id={Annonces._id}
+                                        className="float-right rounded mt-2 text-white bg-success py-1 px-2  "
+                                        style={{ fontSize: "16px", border: "none" }}
+                                        onClick={(e) => {
+                                          this.handlePanier(e.currentTarget.id);
+                                        }
+                                        }
+                                      >
+                                        <i className="fa fa-shopping-cart "> {""} ajouter au Panier</i>
+                                      </button>
+                                      : <button
+
+                                        disabled="disabled"
+                                        className="float-right rounded text-white mt-2    btn-default py-1 px-2  "
+                                        style={{ fontSize: "16px", border: "none" }}
+                                      >
+                                        <i className="fa fa "> </i>
+                                      </button>}
+                                  </div>)
+                                  : (<button
+
+                                    disabled="disabled"
+                                    className="float-right rounded text-white  mt-2  btn-default py-1 px-2  "
+                                    style={{ fontSize: "16px", border: "none" }}
+                                  >
+                                    <i className="fa fa "> </i>
+                                  </button>)}<div>
+                                </div>
                               </div>
                             </div>
                           </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>)}
+                        ))}
+                      </div>
+                    }  </div>)}
                 <div className="center-div">
                   <nav className="row">
                     <ul className="pagination center-div">

@@ -70,40 +70,40 @@ class Commander extends Component {
     valide[0] = false;
     let transport = 0;
     if (this.state.check1) {
-      if (((this.state.date == null && this.state.occasion == "aid") ||
-        (this.state.date != null && this.state.occasion != "aid"))) {
+      if (((this.state.date  ===  null && this.state.occasion  ===  "aid") ||
+        (this.state.date   !==   null && this.state.occasion   !==   "aid"))) {
         valide[0] = true
         transport = 0
       }
     }
     if (this.state.check2) { }
     if (this.state.check3) {
-      if (this.state.date != null && this.state.selectedOptionVille != "" && this.state.adresse != "") {
+      if (this.state.date   !==   null && this.state.selectedOptionVille   !==   "" && this.state.adresse   !==   "") {
         valide[0] = true
-        transport = this.state.livraison.find((f) => f.Ville_livraison == this.state.selectedOptionVille.value).prix_VIP
+        transport = this.state.livraison.find((f) => f.ville_livraison  ===  this.state.selectedOptionVille.value).prix_VIP
 
       }
     }
     if (this.state.check4) {
-      if (this.state.selectedOptionVille != "" && this.state.adresse != "") {
+      if (this.state.selectedOptionVille  !==  "" && this.state.adresse  !==  "") {
         valide[0] = true
-        transport = this.state.livraison.find((f) => f.Ville_livraison == this.state.selectedOptionVille.value).prix_VIP
+        transport = this.state.livraison.find((f) => f.ville_livraison  ===  this.state.selectedOptionVille.value).prix_VIP
 
       }
 
     }
     if (this.state.check5) {
-      if (this.state.standard === "point_relais" && this.state.selectedOptionVille != "" && this.state.selectedOptionPoint != "") {
+      if (this.state.standard  ===  "point_relais" && this.state.selectedOptionVille  !==  "" && this.state.selectedOptionPoint  !==  "") {
         valide[0] = true
-        transport = (this.state.livraison.find((f) => f.Ville_livraison == this.state.selectedOptionVille.value).prix_transport_relais
-          - (-this.state.livraison.find((f) => f.Ville_livraison == this.state.selectedOptionVille.value).marge_risque)) * ids.length
+        transport = (this.state.livraison.find((f) => f.ville_livraison  ===  this.state.selectedOptionVille.value).prix_transport_relais
+          - (-this.state.livraison.find((f) => f.ville_livraison  ===  this.state.selectedOptionVille.value).marge_risque)) * ids.length
 
 
       }
-      if (this.state.standard === "domicile" && this.state.selectedOptionVille != "" && this.state.adresse != "") {
+      if (this.state.standard  ===  "domicile" && this.state.selectedOptionVille  !==  "" && this.state.adresse  !==  "") {
         valide[0] = true
-        transport = (this.state.livraison.find((f) => f.Ville_livraison == this.state.selectedOptionVille.value).prix_transport_domicile
-          - (-this.state.livraison.find((f) => f.Ville_livraison == this.state.selectedOptionVille.value).marge_risque)) * ids.length
+        transport = (this.state.livraison.find((f) => f.ville_livraison  ===  this.state.selectedOptionVille.value).prix_transport_domicile
+          - (-this.state.livraison.find((f) => f.ville_livraison  ===  this.state.selectedOptionVille.value).marge_risque)) * ids.length
 
       }
     }
@@ -130,15 +130,14 @@ class Commander extends Component {
 
 
     this.setState({
-      entrée_ville: this.state.livraison.find((f) => f.Ville_livraison == selectedOptionVille.value).entrée_ville,
-
+      entrée_ville: this.state.livraison.find((f) => f.ville_livraison  ===  selectedOptionVille.value).entrée_ville,
       optionsPoint:
         [{
-          "value": this.state.livraison.find((f) => f.Ville_livraison == selectedOptionVille.value).point_relais,
-          "label": this.state.livraison.find((f) => f.Ville_livraison == selectedOptionVille.value).point_relais
+          "value": this.state.livraison.find((f) => f.ville_livraison  ===  selectedOptionVille.value).point_relais,
+          "label": this.state.livraison.find((f) => f.ville_livraison  ===  selectedOptionVille.value).point_relais
         }],
     })
-    if (!this.state.livraison.find((f) => f.Ville_livraison == selectedOptionVille.value).entrée_ville) {
+    if (this.state.livraison.find((f) => f.ville_livraison  ===  selectedOptionVille.value).entrée_ville) {
       this.setState({ selectedOptionPoint: { "value": "L'entrée de la ville", "label": "L'entrée de la ville" } }, () => {
       })
     }
@@ -159,7 +158,7 @@ class Commander extends Component {
   };
   onChangecheck(e) {
     let type = "standard";
-    if (this.state.checked == true) {
+    if (this.state.checked  ===  true) {
       this.setState({ checked: false });
     }
     else {
@@ -173,7 +172,7 @@ class Commander extends Component {
       Commande: {
 
         // localisation: e.target.value,
-        point_relais: this.state.check1 ? "Récupérer à la coopérative" : this.state.selectedOptionPoint.value,
+        point_relais: this.state.check1 ? "Récupérer à la coopérative" : this.state.check5 === true && this.state.standard  ===  "point_relais"?this.state.entrée_ville  ===  true?"entrée de la ville":this.state.selectedOptionPoint.value:"",
         ville_livraison: this.state.check1 ? "Récupérer à la coopérative" : this.state.selectedOptionVille.value,
         especes: this.state.especes,
 
@@ -219,9 +218,9 @@ class Commander extends Component {
         justification_rejet: null,
 
         rating: null,
-        isDeliveredTo_Home: this.state.check3,
+        isDeliveredTo_Home: this.state.check3||this.state.check4||(this.state.check5&&this.state.standard  ===  "domicile"),
         adresse_domicile: this.state.adresse,
-        isDeliveredTo_PointRelais: this.state.check2,
+        isDeliveredTo_PointRelais: this.state.check2||(this.state.check5&&this.state.standard  ===  "point_relais"),
         isTakenFrom_Cooperative: this.state.check1,
       },
       vide: false,
@@ -280,7 +279,7 @@ class Commander extends Component {
       else { ids = idm }
 
       let d = "";
-      if (this.state.cooperative.parametres.occasion != "aid") {
+      if (this.state.cooperative.parametres.occasion   !==   "aid") {
         d = new Date(
           new Date().getTime()
           - (-3600 * (this.state.cooperative.parametres.delais_paiement.delai_reste - (-this.state.cooperative.parametres.delais_paiement.delai_avance) - (-this.state.cooperative.parametres.delais_paiement.bonus)) * 1000)
@@ -297,7 +296,7 @@ class Commander extends Component {
 
       }, () => {
         this.state.cooperative.parametres.livraison.map((l) => (
-          this.state.optionsVille.splice(0, 0, { "value": l.Ville_livraison, "label": l.Ville_livraison })
+          this.state.optionsVille.splice(0, 0, { "value": l.ville_livraison, "label": l.ville_livraison })
         ))
 
 
@@ -347,8 +346,7 @@ class Commander extends Component {
   }
 
   render() {
-    console.log(this.state.cooperative)
-    const steps = [
+     const steps = [
       {
         name: "Etape",
         component: (

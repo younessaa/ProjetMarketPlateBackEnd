@@ -41,13 +41,13 @@ class Commander1 extends Component {
                             {this.props.data.check5 ?
                               <div className=" ml-3">
                                 <div class="form-check">
-                                  <input checked={this.props.data.standard === "domicile"} onChange={this.props.onPaiementChanged} class="form-check-input" type="radio" name="standard" value="domicile" id="standard" />
-                                  <label class="form-check-label" for="flexRadioDefault1">
+                                  <input checked={this.props.data.standard === "domicile"} onChange={this.props.onPaiementChanged} class="form-check-input" type="radio" name="standard" value="domicile" id="domicile" />
+                                  <label class="form-check-label" for="domicile">
                                     Me faire livrer a domicile</label>
                                 </div>
                                 <div class="form-check">
-                                  <input checked={this.props.data.standard === "point_relais"} onChange={this.props.onPaiementChanged} class="form-check-input" type="radio" name="standard" value="point_relais" id="standard" />
-                                  <label class="form-check-label" for="flexRadioDefault2">
+                                  <input checked={this.props.data.standard === "point_relais"} onChange={this.props.onPaiementChanged} class="form-check-input" type="radio" name="standard" value="point_relais" id="point_relais" />
+                                  <label class="form-check-label" for="point_relais">
                                     Me faire livrer en point relais</label>
                                 </div>
                                 <br></br>
@@ -106,7 +106,7 @@ class Commander1 extends Component {
                                 placeholder="Ville"
                                 name="selectedOptionVille" />
                             </div> : null}
-                          {(this.props.data.check2 || (this.props.data.check5 && this.props.data.standard === "point_relais")) ? (this.props.data.entrée_ville ? <div className="col-lg-6 col-md-6 mt-2">
+                          {(this.props.data.check2 || (this.props.data.check5 && this.props.data.standard === "point_relais")) ? (this.props.data.entrée_ville===false ? <div className="col-lg-6 col-md-6 mt-2">
                             <i className="fa fa-map-marker" aria-hidden="true">{" "}Point relais de Livraison {" "}</i>
                             <Select
                               value={this.props.data.selectedOptionPoint}
@@ -114,7 +114,7 @@ class Commander1 extends Component {
                               options={this.props.data.optionsPoint}
                               placeholder="point de relais" />
                           </div> : null) : null}
-                          {(this.props.data.check2 || (this.props.data.check5 && this.props.data.standard === "point_relais")) && this.props.data.entrée_ville === false && this.props.data.selectedOptionVille !== "" ?
+                          {(this.props.data.check2 || (this.props.data.check5 && this.props.data.standard === "point_relais")) && this.props.data.entrée_ville === true && this.props.data.selectedOptionVille !== "" ?
                             <h6 style={{ color: "#bb2124", marginTop: "4px" }}>Un technicien ANOC va vous contacter le jour de livraison que vous avez choisi pour vous informer de l'adresse exacte de la livraison.</h6>
                             : null}
                           {this.props.data.check3 || this.props.data.check4 || (this.props.data.check5 && this.props.data.standard === "domicile") ? <div className="col-lg-6  col-md-6 mt-2">

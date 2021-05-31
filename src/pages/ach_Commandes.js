@@ -1,8 +1,8 @@
 import React, { Component } from "react";
 import axios from "axios";
-import { GiWeight} from 'react-icons/gi';
+import { GiWeight } from 'react-icons/gi';
 import Swal from "sweetalert2";
- import { CgFileAdd } from 'react-icons/cg';
+import { CgFileAdd } from 'react-icons/cg';
 import Loader from "react-loader-spinner";
 import Select from "react-select";
 
@@ -76,13 +76,13 @@ class Commandes extends Component {
     this.sortData = this.sortData.bind(this);
   }
   local(annonce) {
-    
-     window.sessionStorage.setItem('ids', []);
-     window.sessionStorage.setItem('reponses', []);
-     window.sessionStorage.setItem("prix_total",JSON.stringify(annonce.prix_total))
-     window.sessionStorage.setItem("reste",JSON.stringify(annonce.prix_total-annonce.avance))
-     window.sessionStorage.setItem("avance",JSON.stringify(annonce.avance))
-     window.sessionStorage.setItem("complement",JSON.stringify(annonce.complement)?JSON.stringify(annonce.complement):0)
+
+    window.sessionStorage.setItem('ids', []);
+    window.sessionStorage.setItem('reponses', []);
+    window.sessionStorage.setItem("prix_total", JSON.stringify(annonce.prix_total))
+    window.sessionStorage.setItem("reste", JSON.stringify(annonce.prix_total - annonce.avance))
+    window.sessionStorage.setItem("avance", JSON.stringify(annonce.avance))
+    window.sessionStorage.setItem("complement", JSON.stringify(annonce.complement) ? JSON.stringify(annonce.complement) : 0)
 
 
   }
@@ -210,7 +210,7 @@ class Commandes extends Component {
   }
 
   componentDidMount() {
-    if ( window.sessionStorage.getItem("ids") &&  window.sessionStorage.getItem("ids").length > 0) {
+    if (window.sessionStorage.getItem("ids") && window.sessionStorage.getItem("ids").length > 0) {
 
       Swal.fire({
         title: "Changement annuler ",
@@ -221,7 +221,7 @@ class Commandes extends Component {
         showConfirmButton: false,
 
       })
-       window.sessionStorage.setItem("ids", [])
+      window.sessionStorage.setItem("ids", [])
     }
     const token = localStorage.getItem("usertoken");
     const statut = this.props.location.state.id;
@@ -242,7 +242,34 @@ class Commandes extends Component {
 
     const myToken = `Bearer ` + localStorage.getItem("myToken");
     this.setState({ loading: true }, () => {
-      if (!token) {
+
+      function appendLeadingZeroes(n) {
+        if (n <= 9) {
+          return "0" + n;
+        }
+        return n;
+      }
+
+      let current_datetime = new Date();
+      let formatted_date =
+        current_datetime.getFullYear() +
+        "-" +
+        appendLeadingZeroes(current_datetime.getMonth() + 1) +
+        "-" +
+        appendLeadingZeroes(current_datetime.getDate()) +
+        " " +
+        appendLeadingZeroes(current_datetime.getHours()) +
+        ":" +
+        appendLeadingZeroes(current_datetime.getMinutes()) +
+        ":" +
+        appendLeadingZeroes(current_datetime.getSeconds());
+
+
+      const expiredTimeToken = localStorage.getItem("expiredTimeToken");
+      const token = localStorage.getItem("usertoken");
+      const myToken = `Bearer ` + localStorage.getItem("myToken");
+
+      if (!token || expiredTimeToken < formatted_date) {
         this.props.history.push("/login");
       }
       else {
@@ -684,15 +711,15 @@ class Commandes extends Component {
                                     pathname: "/ConfirmeCommande",
                                     state: {
                                       id: Annonces,
-                                    }, 
+                                    },
                                   }}
                                   type="submit" >
                                   {" "}
                                   <a onClick={this.local.bind(this, Annonces)}>
                                     {(Annonces.statut === "en attente de paiement avance" || Annonces.statut === "en attente de paiement du reste" || Annonces.statut === "en attente de paiement du complément")
                                       || Annonces.statut === "reçu avance refusé" || Annonces.statut === "reçu reste refusé" ?
-                                      <CgFileAdd className="fa-lg" /> :Annonces.isDelivered === true ?<i class="fa fa-star fa-lg" aria-hidden="true"></i>
-                                      : <i className="fa fa-eye"></i>}
+                                      <CgFileAdd className="fa-lg" /> : Annonces.isDelivered === true ? <i class="fa fa-star fa-lg" aria-hidden="true"></i>
+                                        : <i className="fa fa-eye"></i>}
                                   </a>
                                 </Link>
                               </li> :
@@ -740,6 +767,14 @@ class Commandes extends Component {
                               )
 
                           }>
+                            {Annonces.statut === "commande annulée (deadline dépassé)" ?
+                              <div className="float-right text-danger"><i className="fa fa-exclamation-circle fa-xs" aria-hidden="true"></i>
+                                 {" "}Délai dépassé</div> : null}
+                             
+                            {Annonces.statut === "avarié" ?
+
+                              <div className="float-right text-danger "><i className="fa fa-exclamation-circle fa-xs" aria-hidden="true"></i>
+                                {" "}Produit avarié</div> : null}
                             {Annonces.statut === "en attente de validation reste" || Annonces.statut === "en attente de validation complément" ?
                               <div className="float-right text-warning"><i className="fa fa-hourglass-start fa-xs" aria-hidden="true"></i>
                                 <b>Validation en cours</b></div> : null}
@@ -843,16 +878,10 @@ class Commandes extends Component {
 
 
                             {this.props.location.state.id === "commande annulée (deadline dépassé)#reçu avance refusé#reçu reste refusé#reçu complément refusé#avarié#rejetée#annulée manuellement#remboursement#avarié_changement#avarié_remboursement#avarié_annulé" ?
-                              (Annonces.statut === "avarié") ? <p className=" text-danger">
-                                <i className="fa fa-exclamation-triangle" aria-hidden="true"></i>
-                                {" "} Produit avarié  </p>
-                                :
-                                <p className=" text-danger">
-                                  <i className="fa fa-exclamation-triangle" aria-hidden="true"></i>
-                                  {" "} {Annonces.statut}
-
-                                </p>
-                              : null}
+                              (Annonces.statut === "annulée manuellement") ? <p className=" text-danger">
+                                <i className="fa fa-exclamation-circle" aria-hidden="true"></i>
+                                {" "} Annulée manuellement  </p>
+                                 :  null:null}
                           </div>
                         </div>
                       </div>

@@ -8,6 +8,7 @@ import Commander3 from "./step3";
 
 import axios from "axios";
 import Select from "react-select";
+import Swal from "sweetalert2";
 
 import { Link } from "react-router-dom";
 class Commander extends Component {
@@ -61,7 +62,25 @@ class Commander extends Component {
     this.handleChange4 = this.handleChange4.bind(this);
     this.handleChange5 = this.handleChange5.bind(this);
     this.validation = this.validation.bind(this);
+    this.valide = this.valide.bind(this);
   }
+  valide(){ 
+      if(this.validation()[0] ){return this.validation()[0]}
+      else {
+        const swalWithBootstrapButtons = Swal.mixin({
+          customClass: {
+            confirmButton: "ml-2 btn btn-success",
+            cancelButton: " btn btn-danger",
+          },
+          buttonsStyling: false,
+        }); 
+         swalWithBootstrapButtons.fire(
+          'Rappel !',
+          'Vous n\'avez pas fini de remplir cette etape',
+          'error'
+        )
+        return false ;}  
+   }
   validation() {
     let ids = [];
     if (!Array.isArray(this.props.location.state.id)) { ids.push(this.props.location.state.id) }
@@ -428,6 +447,9 @@ class Commander extends Component {
             steps={steps}
             prevStyle={prevStyle}
             nextStyle={nextStyle}
+            data={this.state}
+            valide={this.valide}
+
           />
         </div>
         <br></br>

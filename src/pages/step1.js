@@ -61,7 +61,7 @@ class Commander1 extends Component {
                   </div>
                   <div className="col-lg-6 col-md-6">
                     <div className="checkout__form">
-                      <form action="#" onSubmit="" name="commander">
+                      <form action="#"   name="commander">
                         {this.props.data.check2 || this.props.data.check3 || this.props.data.check1 ?
                           <>    <div className="col-lg-12  col-md-12 ">
 

@@ -663,7 +663,7 @@ class HomeSheeps extends Component {
                                 <h6 className=" nbrm" style={{ color: "black", fontSize: "18px" }}>
                                   <i class="fa fa-map-marker"></i> {Annonces.localisation}
                                 </h6>
-                                <h5 className=" text-danger mt-4">
+                                <h5 style={{color:"rgb(187, 33, 36)"}} className="  mt-4">
                                   <i class="fa fa-usd" aria-hidden="true"></i>
                                   {" "}
                                   {Annonces.prix + "  Dhs"}

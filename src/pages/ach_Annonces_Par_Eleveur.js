@@ -89,9 +89,9 @@ class AllOffers extends Component {
     const token = localStorage.getItem("usertoken");
     const myToken = `Bearer ` + localStorage.getItem("myToken");
 
-    if (!token || expiredTimeToken < formatted_date) {
-      this.props.history.push("/login");
-    } else {
+   // if (!token || expiredTimeToken < formatted_date) {
+    //  this.props.history.push("/login");
+   // } else {
       this.setState({ loading: true }, () => {
         axios
           .get("http://127.0.0.1:8000/api/eleveur", {
@@ -171,7 +171,7 @@ class AllOffers extends Component {
               })
           });
       });
-    }
+ //   }
   }
   handleChangeEspece = (selectedOptionEspece) => {
     this.setState({ selectedOptionRace: null, selectedOptionEspece: selectedOptionEspece })

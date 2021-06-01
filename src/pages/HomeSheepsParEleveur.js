@@ -187,9 +187,9 @@ class HomeSheepsParEleveur extends Component {
     const token = localStorage.getItem("usertoken");
     const myToken = `Bearer ` + localStorage.getItem("myToken");
 
-    if (!token || expiredTimeToken < formatted_date) {
-      this.props.history.push("/login");
-    } else {
+    //if (!token || expiredTimeToken < formatted_date) {
+   //   this.props.history.push("/login");
+   // } else {
       this.setState({ loading: true }, () => {
         axios
           .get("http://127.0.0.1:8000/api/Espece", {
@@ -232,7 +232,7 @@ class HomeSheepsParEleveur extends Component {
             this.setState({ nombrePages: pageNumbers });
           });
       });
-    }
+    //}
   }
 
   sortData(e) {
@@ -662,10 +662,10 @@ class HomeSheepsParEleveur extends Component {
                                   <i class="fa fa-map-marker"></i> {Annonces.region}
                                 </h6>
 
-                                <h5 id="mad">
+                                <h5  id="mad">
                                   <i class="fa fa-usd" aria-hidden="true"></i>
                                   {"         " + Annonces.prix + " Dhs"}
-                                  <h5 className="text-danger float-right" >
+                                  <h5 style={{color:"rgb(187, 33, 36)"}} className="  float-right" >
                                     {"         " + Annonces.statut}</h5></h5>
                               </div>
                             </div>

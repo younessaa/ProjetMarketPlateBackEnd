@@ -576,7 +576,7 @@ axios
   handlePut = (e) => {
     e.preventDefault();
     const myToken = `Bearer ` + localStorage.getItem("myToken");
-    if (this.state.payer  === "avance") {
+    if(this.state.dataUrl.length>0){  if (this.state.payer  === "avance") {
       //paiement
       axios
         .put(
@@ -692,7 +692,22 @@ axios
           // "Access-Control-Allow-Origin": "*",
         },
       }
-    );
+    );}
+    else {
+      const swalWithBootstrapButtons = Swal.mixin({
+        customClass: {
+          confirmButton: "ml-2 btn btn-success",
+          cancelButton: " btn btn-danger",
+        },
+        buttonsStyling: false,
+      }); 
+       swalWithBootstrapButtons.fire(
+        'Rappel !',
+        'Vous n\'avez pas choisi une image !',
+        'error'
+      )
+    }
+  
 
   };
 

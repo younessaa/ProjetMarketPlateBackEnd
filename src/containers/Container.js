@@ -104,7 +104,7 @@ class Container extends Component {
               />
               <Route
                 exact
-                path="/HomeSheepsParEleveur"
+                path="/HomeSheepsParEleveur/:id"
                 component={HomeSheepsParEleveur}
               />
               <Route

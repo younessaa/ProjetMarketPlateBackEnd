@@ -25,7 +25,7 @@ class HomeSheepsParEleveur extends Component {
       currentPage: 1,
       annoncesPerPage: 6,
       selectedOptionRace: null,
-  
+  Eleveur:{},
       selectedOptionEspece: null,
       optionsEspece: [],
       selectedOptionVille: null,
@@ -125,7 +125,7 @@ class HomeSheepsParEleveur extends Component {
         })
         .then((res) => {
           this.setState({
-            Annonces: res.data.filter((data) => data.id_eleveur === this.props.location.state.id.id._id).filter((f) => f.statut !== "produit avarié"),
+            Annonces: res.data.filter((data) => data.id_eleveur === this.state.Eleveur._id).filter((f) => f.statut !== "produit avarié"),
             loading: false,
             conditions: {
               order_by: "espece",
@@ -192,45 +192,66 @@ class HomeSheepsParEleveur extends Component {
    // } else {
       this.setState({ loading: true }, () => {
         axios
-          .get("http://127.0.0.1:8000/api/Espece", {
-            headers: {
-              // "x-access-token": token, // the token is a variable which holds the token
-            },
-            params: {
-              id_eleveur: this.props.location.state.id.id._id,
-              order_by: "race",
-              order_mode: "asc",
-            },
-          })
-          .then((res) => {
-            //espece
-            let espece = [];
-            Object.getOwnPropertyNames(this.groupBy(res.data.filter((f) => f.statut !== "produit avarié"), 'espece')).map((e) => {
-              espece.splice(0, 0, { "value": e, "label": e });
+        .get("http://127.0.0.1:8000/api/eleveur/"+ this.props.match.params.id, {
+          headers: {
+            // "x-access-token": token, // the token is a variable which holds the token
+          },
+          
+        })
+        .then((res) => {
+     
+          this.setState({
+     Eleveur:res.data
+
+          },()=>{
+            console.log(this.state.Eleveur)
+
+            axios
+            .get("http://127.0.0.1:8000/api/Espece", {
+              headers: {
+                // "x-access-token": token, // the token is a variable which holds the token
+              },
+              params: {
+                id_eleveur: this.state.Eleveur._id,
+                order_by: "race",
+                order_mode: "asc",
+              },
+            })
+            .then((res) => {
+              //espece
+              let espece = [];
+              Object.getOwnPropertyNames(this.groupBy(res.data.filter((f) => f.statut !== "produit avarié"), 'espece')).map((e) => {
+                espece.splice(0, 0, { "value": e, "label": e });
+              });
+  
+              let ville = [];
+              res.data.map((e) => {
+                ville.splice(0, 0, { "value": e.localisation, "label": e.localisation });
+              });
+              ville = Array.from(new Set(ville.map(s => s.value))).map(value => {
+                return { value: value, label: ville.find(s => s.value === value).label }
+              });
+              this.setState({
+                optionsEspece: espece,
+                AnnoncesN: res.data.filter((f) => f.statut !== "produit avarié"),
+                Annonces: res.data.filter((f) => f.statut !== "produit avarié"),
+                loading: false,
+                optionsVille: [...new Set(ville)]
+  
+              });
+              const pageNumbers = [];
+              for (let i = 1; i <= Math.ceil(this.state.Annonces.length / this.state.annoncesPerPage); i++
+              ) {
+                pageNumbers.push(i);
+              }
+              this.setState({ nombrePages: pageNumbers });
             });
 
-            let ville = [];
-            res.data.map((e) => {
-              ville.splice(0, 0, { "value": e.localisation, "label": e.localisation });
-            });
-            ville = Array.from(new Set(ville.map(s => s.value))).map(value => {
-              return { value: value, label: ville.find(s => s.value === value).label }
-            });
-            this.setState({
-              optionsEspece: espece,
-              AnnoncesN: res.data.filter((f) => f.statut !== "produit avarié"),
-              Annonces: res.data.filter((f) => f.statut !== "produit avarié"),
-              loading: false,
-              optionsVille: [...new Set(ville)]
-
-            });
-            const pageNumbers = [];
-            for (let i = 1; i <= Math.ceil(this.state.Annonces.length / this.state.annoncesPerPage); i++
-            ) {
-              pageNumbers.push(i);
-            }
-            this.setState({ nombrePages: pageNumbers });
           });
+          
+        });
+
+      
       });
     //}
   }
@@ -305,7 +326,7 @@ class HomeSheepsParEleveur extends Component {
         })
         .then((res) => {
           this.setState({
-            Annonces: res.data.filter((data) => data.id_eleveur === this.props.location.state.id.id._id).filter((f) => f.statut !== "produit avarié"),
+            Annonces: res.data.filter((data) => data.id_eleveur === this.state.Eleveur._id).filter((f) => f.statut !== "produit avarié"),
             loading: false,
           });
           const pageNumbers = [];
@@ -514,6 +535,24 @@ class HomeSheepsParEleveur extends Component {
               </div>
 
               <div className="col-lg-9 col-md-7">
+              {loading ? (
+                    <div
+                      style={{
+                        width: "100%",
+                        height: "100",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                      }}
+                    >
+                      <Loader
+                        type="Oval"
+                        color="#7fad39"
+                        height="80"
+                        width="80"
+                      />
+                    </div>
+                  ) : (
                 <div className="filter__item">
                   <div className="row">
                     <div className="col-lg-4 col-md-5"></div>
@@ -521,9 +560,9 @@ class HomeSheepsParEleveur extends Component {
                       <br />
                       <div class="row mb-5">
                         <div class="col-4"> <img
-                          src={this.props.location.state.id.id.photo_profil}
+                          src={this.state.Eleveur.photo_profil}
                           class=" product__item__pic  set-bg" />
-                          {this.props.location.state.id.id.anoc ?
+                          {this.state.Eleveur.anoc ?
                             <h1 style={{ borderRadius: "0% 0% 0% 40%", fontSize: "14px" }} class=" badge badge-success  pt-1 w-100  ">
                               <HiOutlineBadgeCheck className=" mr-1 fa-lg " />
                               <span>Labélisé ANOC</span>  </h1>
@@ -533,15 +572,15 @@ class HomeSheepsParEleveur extends Component {
                           <h3 className="mt-1">
                             <Box component="fieldset" mb={3} borderColor="transparent">
                               Eleveur :{" "}
-                              {this.props.location.state.id.id.nom.toUpperCase() +
+                              {this.state.Eleveur.nom +
                                 " " +
-                                this.props.location.state.id.id.prenom}{" "}{" "}
-                              <Rating name="read-only" value={this.props.location.state.id.id.rating} readOnly />
+                                this.state.Eleveur.prenom}{" "}{" "}
+                              <Rating name="read-only" value={this.state.Eleveur.rating} readOnly />
                             </Box>
                           </h3>{" "}
-                          <h6 className="my-2">  <i class="fa fa-map"></i> <b>Region  : </b>{" " + this.props.location.state.id.id.region} </h6>
-                          <h6 className="mb-2"><i class="fa fa-home"></i>   <b>Ville : </b>{" " + this.props.location.state.id.id.ville}</h6>
-                          <h6 className="mb-2"><i class="fa fa-phone" aria-hidden="true"></i>   <b>Telephone : </b>{" " + this.props.location.state.id.id.tel}</h6>
+                          <h6 className="my-2">  <i class="fa fa-map"></i> <b>Region  : </b>{" " + this.state.Eleveur.region} </h6>
+                          <h6 className="mb-2"><i class="fa fa-home"></i>   <b>Ville : </b>{" " + this.state.Eleveur.ville}</h6>
+                          <h6 className="mb-2"><i class="fa fa-phone" aria-hidden="true"></i>   <b>Telephone : </b>{" " + this.state.Eleveur.tel}</h6>
                           <h6 className="">  <img style={{ width: "18px", height: "20px", marginBottom: "5px" }}
                             data-imgbigurl="Images/sheep-head.png"
                             src="Images/sheep-head.png"
@@ -550,7 +589,7 @@ class HomeSheepsParEleveur extends Component {
                             {this.state.Annonces.length}
                           </span>{" "}
                              Têtes au total</b></h6>
-                          {this.props.location.state.id.id.anoc ?
+                          {this.state.Eleveur.anoc ?
                             <span className=" text-success" style={{ position: "relative", top: "40px" }}>
                               <HiOutlineBadgeCheck className=" mr-1 fa-lg " /> Le label de l'ANOC est un gage de la qualité du produit. <br></br></span>
                             : null}
@@ -587,26 +626,11 @@ class HomeSheepsParEleveur extends Component {
                     </div>
                   </div>
                 </div>
-
+                  )}
                 {/*<!-- Sheeps Grid Section Begin --> */}
                 <div>
                   {loading ? (
-                    <div
-                      style={{
-                        width: "100%",
-                        height: "100",
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                      }}
-                    >
-                      <Loader
-                        type="Oval"
-                        color="#7fad39"
-                        height="80"
-                        width="80"
-                      />
-                    </div>
+                 null
                   ) : (
                     <div>
                       <div className="row">

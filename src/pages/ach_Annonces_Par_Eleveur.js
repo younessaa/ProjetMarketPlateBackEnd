@@ -577,7 +577,7 @@ class AllOffers extends Component {
                                   <Link
                                     key={Eleveurs._id}
                                     to={{
-                                      pathname: "/HomeSheepsParEleveur",
+                                      pathname: `/HomeSheepsParEleveur/${Eleveurs._id}`,
                                       state: {
                                         id: {
                                           id: Eleveurs,

@@ -223,12 +223,7 @@ class Header extends Component {
                 <div className="col-lg-6 col-md-6">
                   <div className="header__top__left">
                     <ul>
-                      <li  >
-                        <a style={{ color: colors[5] }} href="./Regles" className="btn btn-light btn-sm">
-                          {" "}
-                          <FaUniversity /> Règles de vente et d'achat
-                        </a>
-                      </li>
+                     
                       <li>
                         <a style={{ color: colors[6] }} href="./Apropos">  <AiOutlineSearch className=" fa-lg " /> A propos</a>
                       </li>
@@ -238,20 +233,20 @@ class Header extends Component {
                 <div className="col-lg-6 col-md-6">
                   <div className="header__top__right">
                     <div className="header__top__right__social">
-                      <a href="https://www.facebook.com/Association.nationale.ovine.et.caprine/">
-                        <i id="facebook" className="fa fa-facebook"></i>
+                      <a style={{height:"30px",width:"30px"}} href="https://www.facebook.com/Association.nationale.ovine.et.caprine/">
+                          <img src="/Images/facebook.png"/>
                       </a>
-                      <a href="#">
-                        <i id="twitter" className="fa fa-twitter"></i>
+                      <a style={{height:"30px",width:"30px"}} href="http://www.anoc.ma/">
+                         <img src="/Images/site.png"/>
                       </a>
-                      <a
+                      <a style={{height:"30px",width:"30px"}}
                         id="youtube"
                         href="https://www.youtube.com/channel/UCzX4064MubkoUVL1ecFDGpQ"
                       >
-                        <i className="fa fa-youtube"></i>
+                          <img src="/Images/youtube.png"/>
                       </a>
                     </div>
-                    <div className="header__top__right__language " style={{ marginRight: "26px" }}>
+               { /*    <div className="header__top__right__language " style={{ marginRight: "26px" }}>
                       <i className="fa fa-globe mr-2" aria-hidden="true">{" "}</i>
                       <div> Français</div>
                       <span className="arrow_carrot-down"></span>
@@ -263,7 +258,7 @@ class Header extends Component {
                           <a href="#"> العربية</a>
                         </li>
                       </ul>
-                    </div>
+    </div>*/}
                     {this.state.isLoged ? (
                       <div className="header__top__right__language mr-0">
                         <div>
@@ -301,7 +296,7 @@ class Header extends Component {
               <div className="col-lg-2">
                 <div className="header__logo">
                   <a href="./">
-                    <img src="assets/img/logo.png" alt="" />
+                    <img style={{height:"115px"}} src="/Images/myanoc.jpg" alt="" />
                   </a>
                 </div>
               </div>
@@ -357,7 +352,18 @@ class Header extends Component {
         <div className="humberger__menu__wrapper">
           <div className="humberger__menu__logo">
             <a href="#">
-              <img src="assets/img/logo.png" alt="" />
+              <img src="/Images/myanoc.jpg" alt="" />
+            </a>
+          </div>
+          <div className="header__top__right__social">
+            <a style={{height:"30px",width:"30px"}} href="https://www.facebook.com/Association.nationale.ovine.et.caprine/">
+               <img src="/Images/facebook.png"/>
+            </a>
+            <a style={{height:"30px",width:"30px"}} href="http://www.anoc.ma/">
+                <img src="/Images/site.png"/>
+            </a>
+            <a style={{height:"30px",width:"30px"}} href="https://www.youtube.com/channel/UCzX4064MubkoUVL1ecFDGpQ">
+               <img src="/Images/youtube.png"/>
             </a>
           </div>
           <div className="humberger__menu__widget">
@@ -369,7 +375,7 @@ class Header extends Component {
                   </div>
                 </div>) : null}
               <br></br>
-              <i className="fa fa-globe" aria-hidden="true"></i>      <div>Français</div>
+            {/*}  <i className="fa fa-globe" aria-hidden="true"></i>      <div>Français</div>
               <span className="arrow_carrot-down"></span>
               <ul>
                 <li>
@@ -378,7 +384,7 @@ class Header extends Component {
                 <li>
                   <a href="#">العربية</a>
                 </li>
-              </ul>
+              </ul>*/}
             </div>
             <div className="header__top__right__auth">
               {this.state.isLoged ? (
@@ -422,26 +428,14 @@ class Header extends Component {
                   </li>
                 </span>
               ) : null}
-              <li  >
-                <a href="./Regles" style={{ color: colors[5] }}>   <FaUniversity /> Règles de vente et achat</a>
-              </li>
+         
               <li>
                 <a style={{ color: colors[6] }} href="./Apropos"> <AiOutlineSearch className=" fa-lg " /> A propos de nous</a>
               </li>
             </ul>
           </nav>
           <div id="mobile-menu-wrap"></div>
-          <div className="header__top__right__social">
-            <a href="https://www.facebook.com/Association.nationale.ovine.et.caprine/">
-              <i className="fa fa-facebook"></i>
-            </a>
-            <a href="#">
-              <i className="fa fa-twitter"></i>
-            </a>
-            <a href="https://www.youtube.com/channel/UCzX4064MubkoUVL1ecFDGpQ">
-              <i className="fa fa-youtube"></i>
-            </a>
-          </div>
+    
         </div>
         {/* <!-- Humberger End -->*/}
       </div>

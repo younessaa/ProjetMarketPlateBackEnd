@@ -11,14 +11,14 @@ class Footer extends Component {
                 <div className="footer__widget">
                   <div className="footer__widget__social ">
                     <h6> SUIVEZ NOUS {"  "} </h6>
-                    <a href="https://www.facebook.com/Association.nationale.ovine.et.caprine/">
-                      <i id="facebook" className="fa fa-facebook"></i>
+                    <a style={{height:"max-content"}} href="https://www.facebook.com/Association.nationale.ovine.et.caprine/">
+                      <img src="/Images/facebook.png"/>
                     </a>
-                    <a href="#">
-                      <i id="twitter" className="fa fa-twitter"></i>
+                    <a style={{height:"max-content"}} href="http://www.anoc.ma/">
+                    <img src="/Images/site.png"/>
                     </a>
-                    <a href="https://www.youtube.com/channel/UCzX4064MubkoUVL1ecFDGpQ">
-                      <i id="youtube" className="fa fa-youtube"></i>
+                    <a style={{height:"max-content"}} href="https://www.youtube.com/channel/UCzX4064MubkoUVL1ecFDGpQ">
+                    <img src="/Images/youtube.png"/>
                     </a>
                   </div>
                 </div>

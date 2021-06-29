@@ -105,7 +105,7 @@ class Commandes extends Component {
                   },
                 })
                 .then((res) => {
-                  coopn.splice(0, 0, { "nom": res.data.nom, "idc": c, "adresse": res.data.adresse, "ville": res.data.ville, "rib": res.data.rib, "techniciens": res.data.techniciens, "parametres": res.data.parametres });
+                  coopn.splice(0, 0, { "nom": res.data.nom, "idc": c, "adresse": res.data.adresse, "ville": res.data.ville, "rib": res.data.rib, "techniciens": res.data.techniciens, "parametres": res.data.parametres,"livraison":res.data.livraison,"occasion":res.data.occasion,"id_animateur":res.data.id_animateur });
                   this.setState({ coopn: coopn });
                   let p = [];
                   this.state.coop.map((c) => {
@@ -117,6 +117,9 @@ class Commandes extends Component {
                       "rib": coopn.filter((f) => (f.idc === c)).map((m) => m.rib)[0],
                       "tech": coopn.filter((f) => (f.idc === c)).map((m) => m.techniciens)[0],
                       "parametres": coopn.filter((f) => (f.idc === c)).map((m) => m.parametres)[0],
+                      "livraison":coopn.filter((f) => (f.idc === c)).map((m) => m.livraison)[0],
+                      "occasion":coopn.filter((f) => (f.idc === c)).map((m) => m.occasion)[0],
+                      "id_animateur":coopn.filter((f) => (f.idc === c)).map((m) => m.id_animateur)[0],
                       "id_espaces": this.state.Paniers.filter((f) => (f.id_cooperative === c)).map((m) => m._id),
                       "especes": this.state.Paniers.filter((f) => (f.id_cooperative === c)),
                       "prix": this.state.Paniers.filter((f) => (f.id_cooperative === c)).reduce(function (prev, cur) { return prev - (- cur.prix); }, 0)

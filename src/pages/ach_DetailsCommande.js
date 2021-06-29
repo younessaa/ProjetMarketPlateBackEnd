@@ -344,7 +344,7 @@ axios
 
 
   }
-  getChoix(espece){
+  getChoix(espece){console.log(this.state.commandes)
     if(this.state.showChoix)
     {
          let especeChoisi=this.state.commandes.espece_avariee.filter((av)=>av._id==espece.produits_changement.filter((p)=>p.feedback ==="validé")[0].id_espece)[0]     
@@ -1050,7 +1050,7 @@ axios
 
         .then((res) => {
            let prixT=0;
-           if(this.props.location.state.id.ville_livraison  !== "Récupérer à la coopérative"){  let villeL=res.data.parametres.livraison.filter((v) => v.ville_livraison  === this.props.location.state.id.ville_livraison)[0];
+           if(this.props.location.state.id.ville_livraison  !== "Récupérer à la coopérative"){  let villeL=res.data.livraison.filter((v) => v.ville_livraison  === this.props.location.state.id.ville_livraison)[0];
            if(this.props.location.state.id.type_livraison ==="vip"){
              prixT=villeL.prix_VIP; }
           else {
@@ -1916,7 +1916,7 @@ axios
 <div className="row m-auto">
   <div className="col-lg-6  col-sm-6 pr-0 border-0" style={{ height: "250px" }}>
 
-    <div className="product__item">
+    <div className="product__item">{console.log(this.getChoix(this.getEspece(this.state.especeAv)))}
       <div
         className="product__item__pic set-bg"
         style={this.getChoix(this.getEspece(this.state.especeAv)).anoc  !== null ? { height: "223px" } : { height: 250 }}

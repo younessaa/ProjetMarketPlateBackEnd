@@ -41,7 +41,7 @@ class ConfirmeCommande extends Component {
 
 
         };
-        this.valider=this.valider.bind(this);
+        this.valider = this.valider.bind(this);
 
 
     }
@@ -49,7 +49,7 @@ class ConfirmeCommande extends Component {
 
     handleChangeEtat(CR) {
         if (CR === "conforme") {
-            this.setState({ conforme: !this.state.conforme, rejete: false,selectedOptionMotifs:null })
+            this.setState({ conforme: !this.state.conforme, rejete: false, selectedOptionMotifs: null })
         }
         else if (CR === "rejete") {
             this.setState({ conforme: false, rejete: !this.state.rejete })
@@ -59,23 +59,15 @@ class ConfirmeCommande extends Component {
 
     componentDidMount() {
         const myToken = `Bearer ` + localStorage.getItem("myToken");
+        console.log(this.props.location.state.id)
+        console.log(this.props.location.state.id.animateur.parametrage_global)
 
-        axios
-            .get("http://127.0.0.1:8000/api/cooperative/" + this.props.location.state.id.id_cooperative, {
-                headers: {
-                    // "x-access-token": token, // the token is a variable which holds the token
-                    "Content-Type": "application/json",
-                    "Authorization": myToken,
-                },
-            })
-
-            .then((res) => {
-                res.data.parametres.motif_annulation.map((m) =>
-                    this.state.optionsMotif.splice(0, 0, { "value": m, "label": m })
-                )
+        this.props.location.state.id.animateur.parametrage_global.motif_annulation.map((m) =>
+            this.state.optionsMotif.splice(0, 0, { "value": m, "label": m })
+        )
 
 
-            });
+
     }
     handleChangeMotif = (selectedOptionMotif) => {
 
@@ -89,7 +81,7 @@ class ConfirmeCommande extends Component {
 
     };
     handleChangeMotifs = (selectedOptionMotifs) => {
-         if (selectedOptionMotifs.value === "Produit avarié") {
+        if (selectedOptionMotifs.value === "Produit avarié") {
             this.setState({ showMotif: true })
         }
         else {
@@ -106,7 +98,7 @@ class ConfirmeCommande extends Component {
 
     };
     valider() {
-      
+
         const myToken = `Bearer ` + localStorage.getItem("myToken");
         const swalWithBootstrapButtons = Swal.mixin({
             customClass: {
@@ -115,59 +107,65 @@ class ConfirmeCommande extends Component {
             },
             buttonsStyling: false,
         });
+       console.log(this.state.conforme)
+      console.log(this.state.rejete)
+       console.log(this.state.motifs)
+      console.log(this.state.motif)
 
-        swalWithBootstrapButtons.fire({
-            title: "Etes-vous sûr?", text: "Voulez-vous confirmer votre evaluation !",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonText: "  Oui!  ",
-            cancelButtonText: "  Non!  ",
-            reverseButtons: true,
-        }).then((result) => {
-            if (result.isConfirmed) {
-                axios
-                .put(
-                  "http://127.0.0.1:8000/api/commande/" + this.state.commandes._id,
-                  {
-                    rating_livraison: this.state.ratingLivraison,
-                    rating_produit:this.state.ratingProduit,
-                    motif_rejet: this.conforme===true?"Numéro de boucle non conforme":this.state.selectedOptionMotif.value,
-         
-                  },
-                  {
-                    headers: {
-                      "Content-Type": "application/json",
-                      "Authorization": myToken,
-                    },
-                  }
-                )
-                .then((res) => {
-                
-        this.setState({
-            commandes:res.data.Objet
-        },()=>{
-            
-                   swalWithBootstrapButtons.fire(
-                    'confirmation et evalution validées!',
-                    'Votre confirmation et evalution ont bien été enregistrés',
-                    'success'
-                )
-                this.props.history.push("./commandesParStatut");
+        if (this.state.conforme===true || (this.state.rejete===true && (this.state.motifs=="Numéro de boucle non conforme"|| (this.state.motifs=="Produit avarié"&&this.state.motif!=""&&this.state.motif!=null )))) {
+            swalWithBootstrapButtons.fire({
+                title: "Etes-vous sûr?", text: "Voulez-vous confirmer votre evaluation !",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "  Oui!  ",
+                cancelButtonText: "  Non!  ",
+                reverseButtons: true,
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    axios
+                        .put(
+                            "http://127.0.0.1:8000/api/commande/" + this.state.commandes._id,
+                            {
+                                rating_livraison: this.state.ratingLivraison,
+                                rating_produit: this.state.ratingProduit,
+                                motif_rejet: this.conforme === true ? "Numéro de boucle non conforme" : this.state.selectedOptionMotif.value,
 
-        })
-                    
-         
-                });
-              
-            }
-            else {
-                swalWithBootstrapButtons.fire(
-                    'Annulation !',
-                    'Votre confirmation et evalution ont bien été annulées',
-                    'error'
-                )
-            }
-        })
+                            },
+                            {
+                                headers: {
+                                    "Content-Type": "application/json",
+                                    "Authorization": myToken,
+                                },
+                            }
+                        )
+                        .then((res) => {
+
+                            this.setState({
+                                commandes: res.data.Objet
+                            }, () => {
+
+                                swalWithBootstrapButtons.fire(
+                                    'confirmation et evalution validées!',
+                                    'Votre confirmation et evalution ont bien été enregistrés',
+                                    'success'
+                                )
+                                this.props.history.push("./commandesParStatut");
+
+                            })
+
+
+                        });
+
+                }
+                else {
+                    swalWithBootstrapButtons.fire(
+                        'Annulation !',
+                        'Votre confirmation et evalution ont bien été annulées',
+                        'error'
+                    )
+                }
+            })
+        }
     }
 
     setValue(val, PL) {
@@ -200,7 +198,7 @@ class ConfirmeCommande extends Component {
                     <br></br>
                     <div>
                         <div id="accordion">
-                       <div className="card">
+                            <div className="card">
                                 <div className="card-header p-0" style={{ backgroundColor: "#009141" }} id="headingTwo">
                                     <h5 className="mb-0">
                                         <button className="btn btn-link collapsed" >
@@ -226,7 +224,7 @@ class ConfirmeCommande extends Component {
                                                             <div class="w-75">
 
                                                                 <Select
-                                                                
+
                                                                     value={this.state.selectedOptionMotifs}
                                                                     onChange={this.handleChangeMotifs}
                                                                     options={this.state.optionsMotifs}
@@ -301,8 +299,8 @@ class ConfirmeCommande extends Component {
 
                                             </div>
                                         </div></div>
-                                        
-                                
+
+
                                 </div>
 
                             </div>
@@ -315,7 +313,7 @@ class ConfirmeCommande extends Component {
                                             onClick={this.valider}
                                             className="btn-success py-1 px-4 mb-3 w-75" >
                                             {" "}
-                        Valider{" "}
+                                            Valider{" "}
                                         </button> </div></div></div>
                         </div>
                     </div>

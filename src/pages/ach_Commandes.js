@@ -359,7 +359,7 @@ class Commandes extends Component {
                     this.setState({
 
                       Commandes: [...new Set(this.state.CommandesT.filter(
-                        (Commandes) => statuts.includes(Commandes.statut) === true))]
+                        (Commandes) => statuts.includes(Commandes.statut) === true||Commandes.statut === "en attente de paiement du complement"))]
                     }, () => {
                       for (let i = 1; i <= Math.ceil(this.state.Commandes.length / this.state.annoncesPerPage); i++) {
                         pageNumbers.push(i);

@@ -241,6 +241,7 @@ class Commander extends Component {
         adresse_domicile: this.state.adresse,
         isDeliveredTo_PointRelais: this.state.check2||(this.state.check5&&this.state.standard  ===  "point_relais"),
         isTakenFrom_Cooperative: this.state.check1,
+        id_animateur:this.props.location.state.cooperative.id_animateur,
       },
       vide: false,
     })
@@ -298,7 +299,7 @@ class Commander extends Component {
       else { ids = idm }
 
       let d = "";
-      if (this.state.cooperative.parametres.occasion   !==   "aid") {
+      if (this.state.cooperative.occasion   !==   "aid") {
         d = new Date(
           new Date().getTime()
           - (-3600 * (this.state.cooperative.parametres.delais_paiement.delai_reste - (-this.state.cooperative.parametres.delais_paiement.delai_avance) - (-this.state.cooperative.parametres.delais_paiement.bonus)) * 1000)
@@ -306,15 +307,15 @@ class Commander extends Component {
         this.setState({ date_min: d.substr(0, 10) }, () => { })
       }
       this.setState({
-        livraison: this.state.cooperative.parametres.livraison,
-        occasion: this.state.cooperative.parametres.occasion,
+        livraison: this.state.cooperative.livraison,
+        occasion: this.state.cooperative.occasion,
 
         deadline: new Date(new Date().getTime()
           - (-3600 * (this.state.cooperative.parametres.delais_paiement.delai_avance) * 1000)
           - ((new Date()).getTimezoneOffset() * 60 * 1000)).toLocaleString(),
 
       }, () => {
-        this.state.cooperative.parametres.livraison.map((l) => (
+        this.state.cooperative.livraison.map((l) => (
           this.state.optionsVille.splice(0, 0, { "value": l.ville_livraison, "label": l.ville_livraison })
         ))
 
@@ -364,7 +365,8 @@ class Commander extends Component {
     }
   }
 
-  render() {
+  render() {console.log("f")
+    console.log(this.state.cooperative)
      const steps = [
       {
         name: "Etape",

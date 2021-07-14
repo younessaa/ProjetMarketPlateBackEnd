@@ -213,33 +213,63 @@ class Header extends Component {
     }
     /** */
     return (
-      <>
+      <div>
         <style>{CSS}</style>
         <header className="header">
           {/* Comment goes here */}
           <div className="header__top">
-            <div
-              className="container"
-              style={{ paddingLeft: "0px", paddingRight: "0px" }}
-            >
+            <div className="container">
               <div className="row">
                 <div className="col-lg-6 col-md-6">
                   <div className="header__top__left">
-                    <div className="header__logo">
-                      <a href="./">
-                        <img
-                          style={{ height: "50px" }}
-                          src="/Images/myanoc.jpg"
-                          alt=""
-                        />
-                      </a>
-                    </div>
+                    <ul>
+                      <li>
+                        <a style={{ color: colors[6] }} href="./Apropos">
+                          {" "}
+                          <AiOutlineSearch className=" fa-lg " /> A propos
+                        </a>
+                      </li>
+                    </ul>
                   </div>
                 </div>
                 <div className="col-lg-6 col-md-6">
                   <div className="header__top__right">
+                    <div className="header__top__right__social">
+                      <a
+                        style={{ height: "30px", width: "30px" }}
+                        href="https://www.facebook.com/Association.nationale.ovine.et.caprine/"
+                      >
+                        <img src="/Images/facebook.png" />
+                      </a>
+                      <a
+                        style={{ height: "30px", width: "30px" }}
+                        href="http://www.anoc.ma/"
+                      >
+                        <img src="/Images/site.png" />
+                      </a>
+                      <a
+                        style={{ height: "30px", width: "30px" }}
+                        id="youtube"
+                        href="https://www.youtube.com/channel/UCzX4064MubkoUVL1ecFDGpQ"
+                      >
+                        <img src="/Images/youtube.png" />
+                      </a>
+                    </div>
+                    {/*    <div className="header__top__right__language " style={{ marginRight: "26px" }}>
+                      <i className="fa fa-globe mr-2" aria-hidden="true">{" "}</i>
+                      <div> Français</div>
+                      <span className="arrow_carrot-down"></span>
+                      <ul>
+                        <li>
+                          <a href="#">Français</a>
+                        </li>
+                        <li>
+                          <a href="#"> العربية</a>
+                        </li>
+                      </ul>
+    </div>*/}
                     {this.state.isLoged ? (
-                      <div className="header__top__right__auth  item">
+                      <div className="header__top__right__language mr-0">
                         <div>
                           <h6
                             style={{
@@ -254,7 +284,7 @@ class Header extends Component {
                         </div>
                       </div>
                     ) : null}
-                    <div className="header__top__right__auth  item">
+                    <div className="header__top__right__auth ml-4 ">
                       {this.state.isLoged ? (
                         <div>
                           {" "}
@@ -290,47 +320,26 @@ class Header extends Component {
                         </div>
                       ) : null}
                     </div>
-                    <div className="header__top__right__button item">
-                      <div className="rulesButton">
-                        <a href="./Regles">Règles de vente et d'achat</a>
-                      </div>
-                    </div>
-                    {
-                      <div className="header__top__right__language item">
-                        <i className="fa fa-globe mr-2" aria-hidden="true">
-                          {" "}
-                        </i>
-                        <div> Français</div>
-                        <span className="arrow_carrot-down"></span>
-                        <ul>
-                          <li>
-                            <a href="#">Français</a>
-                          </li>
-                          <li>
-                            <a href="#"> العربية</a>
-                          </li>
-                        </ul>
-                      </div>
-                    }
                   </div>
                 </div>
               </div>
             </div>
           </div>
-        </header>
-        {/* <!-- Humberger Begin --> */}
-        <header className="header sticky_header">
-          <div style={{ paddingLeft: "0px", paddingRight: "0px" }}>
+
+          <div className="container">
             <div className="row">
-              <div
-                className="col"
-                style={{
-                  paddingLeft: "0px",
-                  paddingRight: "0px",
-                  position: "sticky",
-                  top: 0,
-                }}
-              >
+              <div className="col-lg-2">
+                <div className="header__logo">
+                  <a href="./">
+                    <img
+                      style={{ height: "115px" }}
+                      src="/Images/myanoc.jpg"
+                      alt=""
+                    />
+                  </a>
+                </div>
+              </div>
+              <div className="col-lg-10">
                 <nav className="header__menu">
                   <ul>
                     <li className="header__menu__dropdown">
@@ -393,6 +402,7 @@ class Header extends Component {
             </div>
           </div>
         </header>
+        {/* <!-- Humberger Begin --> */}
         <div className="humberger__menu__overlay"></div>
         <div className="humberger__menu__wrapper">
           <div className="humberger__menu__logo">
@@ -400,7 +410,26 @@ class Header extends Component {
               <img src="/Images/myanoc.jpg" alt="" />
             </a>
           </div>
-
+          <div className="header__top__right__social">
+            <a
+              style={{ height: "30px", width: "30px" }}
+              href="https://www.facebook.com/Association.nationale.ovine.et.caprine/"
+            >
+              <img src="/Images/facebook.png" />
+            </a>
+            <a
+              style={{ height: "30px", width: "30px" }}
+              href="http://www.anoc.ma/"
+            >
+              <img src="/Images/site.png" />
+            </a>
+            <a
+              style={{ height: "30px", width: "30px" }}
+              href="https://www.youtube.com/channel/UCzX4064MubkoUVL1ecFDGpQ"
+            >
+              <img src="/Images/youtube.png" />
+            </a>
+          </div>
           <div className="humberger__menu__widget">
             <div className="header__top__right__language">
               {this.state.isLoged ? (
@@ -513,7 +542,7 @@ class Header extends Component {
           <div id="mobile-menu-wrap"></div>
         </div>
         {/* <!-- Humberger End -->*/}
-      </>
+      </div>
     );
   }
 }

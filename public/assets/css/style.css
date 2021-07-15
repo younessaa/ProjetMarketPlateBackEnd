@@ -25,6 +25,7 @@ ol.gradient-list > li::before {
 *:after {
   box-sizing: border-box;
 }
+
 html,
 body {
   margin: 0;
@@ -35,6 +36,21 @@ body {
   color: #1d1f20;
   font-family: "Raleway", sans-serif;
 }
+.pageAnnonceEleveur{
+	padding: 0 10%;
+	
+}
+.pageAnnonceEspeces{
+	padding: 0 10%;
+}
+.test{
+	position:static;
+}
+/* .search-header{
+	background-image: url("../../../src/pages/Images/secondsection.JPG");
+	height: 100%;
+  width: 100%;
+}  */
 main {
   display: block;
   margin: 0 auto;
@@ -604,6 +620,8 @@ ol {
 }
 
 .header__top__right__button {
+	padding-top: 3%;
+
   flex-basis: 40%;
 }
 .header__top__right__button a {
@@ -611,12 +629,14 @@ ol {
   font-size: 14px;
 }
 .rulesButton {
-  background: #fe6927;
+	background: #fe6927;
   color: #fff !important;
   padding: 10px 25px;
   border-radius: 20px;
 }
 .header__top__right__language {
+	padding-top: 1%;
+
   cursor: pointer;
   flex-basis: 20%;
   text-align: center;
@@ -681,6 +701,8 @@ ol {
 }
 
 .header__top__right__auth {
+	padding-top: 3%;
+
   flex-basis: 20%;
   text-align: center;
   margin-block: auto;
@@ -705,7 +727,7 @@ ol {
 }
 
 .header__menu {
-  padding: 24px 10%;
+  padding: 14px 10%;
   background-color: #2a2f36;
   width: 100%;
 }
@@ -3954,5 +3976,6 @@ h3 {
   }
   .blog__details__hero__text h2 {
     font-size: 24px;
+	
   }
 }

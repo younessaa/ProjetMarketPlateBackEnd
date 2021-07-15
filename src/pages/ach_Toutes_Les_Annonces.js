@@ -343,6 +343,12 @@ class HomeSheeps extends Component {
     const { loading } = this.state;
     return (
       <div>
+        <section className ="search-header">
+        <img style={{ height: "30%" }} src={require('./Images/secondsectionespece.JPG')} alt="" >
+
+        </img>
+        </section>
+      <div className ="pageAnnonceEspeces">
         {/* <!-- Page Preloder --> */}
         {/* <div id="preloder">
           <div className="loader"></div>
@@ -705,6 +711,7 @@ class HomeSheeps extends Component {
             </div>
           </div>
         </section>
+      </div>
       </div>
     );
   }

@@ -396,6 +396,16 @@ class AllOffers extends Component {
     const { optionsSort } = this.state;
     return (
       <div>
+         <section className ="search-header">
+        <img style={{ height: "50%" }} src={require('./Images/secondsection.JPG')} alt="" />
+{/*         <div className="test">
+                    <h4>Rechercher</h4>
+
+                </div> */}
+  
+        </section>
+      <div className="pageAnnonceEleveur">
+       
         <section className="">
           <br></br>
           <div className="container">
@@ -650,6 +660,7 @@ class AllOffers extends Component {
             </div>
           </div>
         </section>
+      </div>
       </div>
     );
   }

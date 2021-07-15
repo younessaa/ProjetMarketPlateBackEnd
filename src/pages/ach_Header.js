@@ -228,10 +228,12 @@ class Header extends Component {
                     <div className="header__logo">
                       <a href="./">
                         <img
-                          style={{ height: "50px" }}
+                          style={{ height: "70px" }}
                           src="/Images/myanoc.jpg"
                           alt=""
                         />
+                        <img style={{ height: "40px" }} src={require('./Images/logo-text.png')} alt="" />
+
                       </a>
                     </div>
                   </div>
@@ -292,11 +294,12 @@ class Header extends Component {
                     </div>
                     <div className="header__top__right__button item">
                       <div className="rulesButton">
-                        <a href="./Regles">Règles de vente et d'achat</a>
+                      <i class="fa fa-gavel" aria-hidden="true"></i>
+                        <a href="./Regles"> Règles de vente et d'achat</a>
                       </div>
                     </div>
                     {
-                      <div className="header__top__right__language item">
+                      <div className="header__top__right__language item ">
                         <i className="fa fa-globe mr-2" aria-hidden="true">
                           {" "}
                         </i>
@@ -310,7 +313,11 @@ class Header extends Component {
                             <a href="#"> العربية</a>
                           </li>
                         </ul>
+                        
                       </div>
+                      
+                      
+                
                     }
                   </div>
                 </div>
@@ -321,7 +328,7 @@ class Header extends Component {
         {/* <!-- Humberger Begin --> */}
         <header className="header sticky_header">
           <div style={{ paddingLeft: "0px", paddingRight: "0px" }}>
-            <div className="row">
+            <div >
               <div
                 className="col"
                 style={{

@@ -51,6 +51,17 @@ body {
 	height: 100%;
   width: 100%;
 }  */
+
+.stayhere{
+	position: absolute;
+	bottom: 70%;
+	left: 20%;
+	top: 30%;
+	margin: 0 3.5rem;
+	display: flex;
+  justify-content: center;
+  align-items: center;
+} 
 main {
   display: block;
   margin: 0 auto;

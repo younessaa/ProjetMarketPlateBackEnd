@@ -10,6 +10,7 @@
 ******************************************************************/
 /*** FONTS ***/
 @import url(https://fonts.googleapis.com/css?family=Montserrat:900|Raleway:400,400i,700,700i);
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300&display=swap');
 /*** VARIABLES ***/
 /* Colors */
 /*** EXTEND ***/
@@ -31,11 +32,14 @@ body {
   margin: 0;
   padding: 0;
 }
+*{
+	font-family: 'Cairo'
+}
 body {
   background-color: #fafafa;
   color: #1d1f20;
-  font-family: "Raleway", sans-serif;
-}
+/*   font-family: "Raleway", sans-serif;
+ */}
 .pageAnnonceEleveur{
 	padding: 0 10%;
 	
@@ -603,7 +607,6 @@ ol {
 
 .header__top {
   background: #ffffff;
-  padding: 0px 10%;
 }
 
 /*.header__top__left {
@@ -633,8 +636,8 @@ ol {
 .header__top__right__button {
 	padding-top: 3%;
 
-  flex-basis: 40%;
-}
+/*   flex-basis: 40%;
+ */}
 .header__top__right__button a {
   color: white;
   font-size: 14px;

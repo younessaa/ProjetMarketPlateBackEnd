@@ -7,7 +7,12 @@ import ReactPaginate from "react-paginate";
 import { GiWeight, GiSheep } from 'react-icons/gi';
 import { FaShapes } from 'react-icons/fa'
 import { HiOutlineBadgeCheck } from 'react-icons/hi';
+import 'bootstrap/dist/css/bootstrap.css';
+import 'react-bootstrap-range-slider/dist/react-bootstrap-range-slider.css';
+import RangeSlider from 'react-bootstrap-range-slider';
+
 class HomeSheeps extends Component {
+
   constructor() {
     super();
     // let redirect = false;
@@ -23,6 +28,7 @@ class HomeSheeps extends Component {
       selectedOptionRace: null,
       race: [],
       selectedOptionEspece: null,
+      valueprice: 3500,
 
       optionsEspece: [],
       selectedOptionVille: null,
@@ -123,8 +129,11 @@ class HomeSheeps extends Component {
       acc[key].push(obj);
       return acc;
     }, {});
+
   }
+
   componentDidMount() {
+
     const token = localStorage.getItem("usertoken");
     this.setState({ loading: true }, () => {
       axios
@@ -326,6 +335,7 @@ class HomeSheeps extends Component {
   }
 
   render() {
+
     var mois = new Array("Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre");
     const indexOfLastAnnonce =
       this.state.currentPage * this.state.annoncesPerPage;
@@ -341,6 +351,8 @@ class HomeSheeps extends Component {
     const { optionsVille } = this.state;
     const { optionsSort } = this.state;
     const { loading } = this.state;
+    const { valueprice } = this.state
+
     return (
       <div>
         <section className="search-header">
@@ -370,6 +382,15 @@ class HomeSheeps extends Component {
               />
               <br></br>
             </div>
+            <div className="col-lg-2 col-md-3" >
+              <Select
+                value={selectedOptionVille}
+                onChange={this.handleChangeVille}
+                options={optionsVille}
+                placeholder=" Ville"
+              />
+
+            </div>
             {/*             <div className="col-lg-3 col-md-3">
               <input
                 id="recherchePlace"
@@ -391,15 +412,39 @@ class HomeSheeps extends Component {
               />
             </div> */}
 
-            <div className="col-lg-3 col-md-3">
-              <input
+            <div className="col-lg-3 col-md-3"
+            name="prix_max"
+            id="recherchePlace">
+              
+              <RangeSlider
+                tooltip='auto'
+                name="prix_max"
+                id="recherchePlace"
+                
+
+                value={valueprice}
+                min={1}
+                max={10000}
+            
+                onChange={e => this.setState({
+                  conditions: Object.assign(this.state.conditions, {prix_max: e.target.value }),valueprice: e.target.value
+                })}
+               /*  onAfterChange={e => this.setState({
+                  conditions: Object.assign(this.state.conditions, { [e.target.name]: e.target.value }),
+                  valueprice: e.target.value
+                })} */
+
+              />
+              <div style={{ color: "white" }}> Prix max : {valueprice} DH</div>
+
+              {/*   <input
                 id="recherchePlace"
                 type="text"
                 class="form-control"
                 placeholder=" Budget max"
                 name="prix_max"
                 onChange={this.onChange}
-              />
+              /> */}
             </div>
 
             {/*             <div className="col-lg-2 col-md-3">
@@ -422,15 +467,7 @@ class HomeSheeps extends Component {
                 onChange={this.onChange}
               />
             </div> */}
-            <div className="col-lg-2 col-md-3" >
-              <Select
-                value={selectedOptionVille}
-                onChange={this.handleChangeVille}
-                options={optionsVille}
-                placeholder=" Ville"
-              />
 
-            </div>
             <div className="col-lg-3 col-md-3">
               <button
                 id="roundB"
@@ -474,9 +511,8 @@ class HomeSheeps extends Component {
                 <div className="col-lg-3 col-md-6">
                   <div id="rechercher" className="col-lg-12">
                     <br></br>
-                    <br></br>
                     <div className="sidebar__item">
-                      <h4>Rechercher</h4>
+                      <h4>Catégorie</h4>
 
                       <h6 id="gras" className="latest-product__item">
                         Espece

@@ -4,15 +4,14 @@ import Select from "react-select";
 import { Link } from "react-router-dom";
 import Loader from "react-loader-spinner";
 import ReactPaginate from "react-paginate";
-import { GiWeight, GiSheep } from 'react-icons/gi';
-import { FaShapes } from 'react-icons/fa'
-import { HiOutlineBadgeCheck } from 'react-icons/hi';
-import 'bootstrap/dist/css/bootstrap.css';
-import 'react-bootstrap-range-slider/dist/react-bootstrap-range-slider.css';
-import RangeSlider from 'react-bootstrap-range-slider';
+import { GiWeight, GiSheep } from "react-icons/gi";
+import { FaShapes } from "react-icons/fa";
+import { HiOutlineBadgeCheck } from "react-icons/hi";
+import "bootstrap/dist/css/bootstrap.css";
+import "react-bootstrap-range-slider/dist/react-bootstrap-range-slider.css";
+import RangeSlider from "react-bootstrap-range-slider";
 
 class HomeSheeps extends Component {
-
   constructor() {
     super();
     // let redirect = false;
@@ -42,7 +41,6 @@ class HomeSheeps extends Component {
 
       selectedOptionSort: null,
       optionsSort: [
-
         { value: "prix", label: "Moins cher au plus cher" },
         { value: "prix_dec", label: "Plus cher au moins cher" },
 
@@ -66,17 +64,22 @@ class HomeSheeps extends Component {
     // this.handleFavoris=this.handleFavoris.bind(this)
   }
   handleChangeEspece = (selectedOptionEspece) => {
-    this.setState({ selectedOptionRace: null, selectedOptionEspece: selectedOptionEspece })
+    this.setState({
+      selectedOptionRace: null,
+      selectedOptionEspece: selectedOptionEspece,
+    });
     let annonce = this.state.AnnoncesN;
-    let c = selectedOptionEspece.value
+    let c = selectedOptionEspece.value;
     let races = [];
 
     let r = [];
-    (this.groupBy(annonce, 'espece')[c]).map((m) => {
+    this.groupBy(annonce, "espece")[c].map((m) => {
       races.push(m.race);
-    })
+    });
     races = [...new Set(races)];
-    races.map((e) => { r.splice(0, 0, { "value": e, "label": e }); });
+    races.map((e) => {
+      r.splice(0, 0, { value: e, label: e });
+    });
 
     this.setState({
       race: r,
@@ -84,12 +87,9 @@ class HomeSheeps extends Component {
       conditions: Object.assign(this.state.conditions, {
         espece: c,
         race: null,
-      })
+      }),
     });
-
   };
-
-
 
   handleChangeRace = (selectedOptionRace) => {
     this.setState({ selectedOptionRace }, () =>
@@ -129,11 +129,9 @@ class HomeSheeps extends Component {
       acc[key].push(obj);
       return acc;
     }, {});
-
   }
 
   componentDidMount() {
-
     const token = localStorage.getItem("usertoken");
     this.setState({ loading: true }, () => {
       axios
@@ -154,16 +152,22 @@ class HomeSheeps extends Component {
         .then((res) => {
           //espece
           let espece = [];
-          Object.getOwnPropertyNames(this.groupBy(res.data, 'espece')).map((e) => {
-            espece.splice(0, 0, { "value": e, "label": e });
-          });
+          Object.getOwnPropertyNames(this.groupBy(res.data, "espece")).map(
+            (e) => {
+              espece.splice(0, 0, { value: e, label: e });
+            }
+          );
 
           //ville
           let ville = [];
           let villes = [];
-          res.data.map((e) => { villes.push(e.localisation) })
+          res.data.map((e) => {
+            villes.push(e.localisation);
+          });
           villes = [...new Set(villes)];
-          villes.map((e) => { ville.splice(0, 0, { "value": e, "label": e }); });
+          villes.map((e) => {
+            ville.splice(0, 0, { value: e, label: e });
+          });
           this.setState({
             optionsEspece: espece,
             optionsVille: ville,
@@ -172,7 +176,12 @@ class HomeSheeps extends Component {
             loading: false,
           });
           const pageNumbers = [];
-          for (let i = 1; i <= Math.ceil(this.state.Annonces.length / this.state.annoncesPerPage); i++) {
+          for (
+            let i = 1;
+            i <=
+            Math.ceil(this.state.Annonces.length / this.state.annoncesPerPage);
+            i++
+          ) {
             pageNumbers.push(i);
           }
           this.setState({ nombrePages: pageNumbers });
@@ -190,15 +199,18 @@ class HomeSheeps extends Component {
   }
 
   sortData(e) {
-
     const sortProperty = Object.values(e)[0];
     const sorted = this.state.Annonces;
-    if (sortProperty === "prix" || sortProperty === "poids" || sortProperty === "age") {
+    if (
+      sortProperty === "prix" ||
+      sortProperty === "poids" ||
+      sortProperty === "age"
+    ) {
       this.setState({ loading: true }, () => {
         sorted.sort((a, b) => a[sortProperty] - b[sortProperty]);
         this.setState({
           Annonces: sorted,
-          loading: false
+          loading: false,
         });
       });
     } else if (sortProperty === "prix_dec") {
@@ -219,28 +231,22 @@ class HomeSheeps extends Component {
         sorted.sort((a, b) => b[sort_] - a[sort_]);
         this.setState({ Annonces: sorted, loading: false });
       });
-    }
-    else {
+    } else {
       this.setState({ loading: true }, () => {
-        sorted.sort(
-          function (a, b) {
-
-            return new Date(b[sortProperty]) - new Date(a[sortProperty]);
-          });
+        sorted.sort(function (a, b) {
+          return new Date(b[sortProperty]) - new Date(a[sortProperty]);
+        });
         this.setState({ Annonces: sorted, loading: false });
       });
     }
   }
-
 
   handelReinitialiser() {
     this.setState({ loading: true }, () => {
       axios
         .get("http://127.0.0.1:8000/api/Espece", {
           headers: {
-
             "Content-Type": "application/json",
-
           },
           params: {
             statut: "disponible",
@@ -262,8 +268,10 @@ class HomeSheeps extends Component {
             Disabled: true,
             selectedOptionVille: null,
           });
-          var all = document.querySelectorAll('input[name="reference"],input[name="prix_min"],input[name="prix_max"],input[name="poids_min"],input[name="poids_max"]')
-          Array.from(all).map((a) => (a.value = null))
+          var all = document.querySelectorAll(
+            'input[name="reference"],input[name="prix_min"],input[name="prix_max"],input[name="poids_min"],input[name="poids_max"]'
+          );
+          Array.from(all).map((a) => (a.value = null));
 
           const pageNumbers = [];
           for (
@@ -277,7 +285,6 @@ class HomeSheeps extends Component {
           this.setState({ nombrePages: pageNumbers });
         });
     });
-
   }
   handelChercher() {
     this.setState({ loading: true }, () => {
@@ -295,7 +302,12 @@ class HomeSheeps extends Component {
             loading: false,
           });
           const pageNumbers = [];
-          for (let i = 1; i <= Math.ceil(this.state.Annonces.length / this.state.annoncesPerPage); i++) {
+          for (
+            let i = 1;
+            i <=
+            Math.ceil(this.state.Annonces.length / this.state.annoncesPerPage);
+            i++
+          ) {
             pageNumbers.push(i);
           }
           this.setState({ nombrePages: pageNumbers });
@@ -335,8 +347,20 @@ class HomeSheeps extends Component {
   }
 
   render() {
-
-    var mois = new Array("Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre");
+    var mois = new Array(
+      "Janvier",
+      "Février",
+      "Mars",
+      "Avril",
+      "Mai",
+      "Juin",
+      "Juillet",
+      "Août",
+      "Septembre",
+      "Octobre",
+      "Novembre",
+      "Décembre"
+    );
     const indexOfLastAnnonce =
       this.state.currentPage * this.state.annoncesPerPage;
     const indexOfFirstAnnonce = indexOfLastAnnonce - this.state.annoncesPerPage;
@@ -351,15 +375,18 @@ class HomeSheeps extends Component {
     const { optionsVille } = this.state;
     const { optionsSort } = this.state;
     const { loading } = this.state;
-    const { valueprice } = this.state
+    const { valueprice } = this.state;
 
     return (
       <div>
         <section className="search-header">
-
-          <img style={{ height: "30%" }} src={require('./Images/secondsectionespece.JPG')} alt="" />
+          <img
+            style={{ height: "30%" }}
+            src={require("./Images/secondsectionespece.JPG")}
+            alt=""
+          />
           <div className="stayhere">
-            <div className="col-lg-3 col-md-3" style={{ paddingTop: "20px" }} >
+            <div className="col-lg-3 col-md-3" style={{ paddingTop: "20px" }}>
               <Select
                 value={selectedOptionEspece}
                 onChange={this.handleChangeEspece}
@@ -382,14 +409,13 @@ class HomeSheeps extends Component {
               />
               <br></br>
             </div>
-            <div className="col-lg-2 col-md-3" >
+            <div className="col-lg-2 col-md-3">
               <Select
                 value={selectedOptionVille}
                 onChange={this.handleChangeVille}
                 options={optionsVille}
                 placeholder=" Ville"
               />
-
             </div>
             {/*             <div className="col-lg-3 col-md-3">
               <input
@@ -412,28 +438,30 @@ class HomeSheeps extends Component {
               />
             </div> */}
 
-            <div className="col-lg-3 col-md-3"
-            name="prix_max"
-            id="recherchePlace">
-              
+            <div
+              className="col-lg-3 col-md-3"
+              name="prix_max"
+              id="recherchePlace"
+            >
               <RangeSlider
-                tooltip='auto'
+                tooltip="auto"
                 name="prix_max"
                 id="recherchePlace"
-                
-
                 value={valueprice}
                 min={1}
                 max={10000}
-            
-                onChange={e => this.setState({
-                  conditions: Object.assign(this.state.conditions, {prix_max: e.target.value }),valueprice: e.target.value
-                })}
-               /*  onAfterChange={e => this.setState({
+                onChange={(e) =>
+                  this.setState({
+                    conditions: Object.assign(this.state.conditions, {
+                      prix_max: e.target.value,
+                    }),
+                    valueprice: e.target.value,
+                  })
+                }
+                /*  onAfterChange={e => this.setState({
                   conditions: Object.assign(this.state.conditions, { [e.target.name]: e.target.value }),
                   valueprice: e.target.value
                 })} */
-
               />
               <div style={{ color: "white" }}> Prix max : {valueprice} DH</div>
 
@@ -472,30 +500,21 @@ class HomeSheeps extends Component {
               <button
                 id="roundB"
                 className="newBtn site-btn"
-                onClick={this.handelChercher} >
-                <i className="fa fa-search "></i>
-
-                {" "}
-                Rechercher{" "}
+                onClick={this.handelChercher}
+              >
+                <i className="fa fa-search "></i> Rechercher{" "}
               </button>
             </div>
             <div className="col-lg-3 col-md-3">
               <button
                 id="roundB"
                 className="newBtn site-btn"
-                onClick={this.handelReinitialiser} >
-                <i className="fa fa-refresh"></i>
-                {" "}
-                Reinitialiser{" "}
+                onClick={this.handelReinitialiser}
+              >
+                <i className="fa fa-refresh"></i> Reinitialiser{" "}
               </button>
             </div>
-
           </div>
-
-
-
-
-
         </section>
         <div className="pageAnnonceEspeces">
           {/* <!-- Page Preloder --> */}
@@ -525,7 +544,7 @@ class HomeSheeps extends Component {
                             options={optionsEspece}
                             placeholder="Espece"
                             required
-                          // className="Select"
+                            // className="Select"
                           />
                           <br></br>
                         </div>
@@ -544,7 +563,7 @@ class HomeSheeps extends Component {
                             options={this.state.race}
                             placeholder=" Race"
                             required
-                          // className="Select"
+                            // className="Select"
                           />
                           <br></br>
                         </div>
@@ -556,7 +575,6 @@ class HomeSheeps extends Component {
                         <div className="col-lg-12 col-md-12">
                           <input
                             id="recherchePlace"
-
                             type="text"
                             class="form-control"
                             placeholder=" Reference de l'annonce"
@@ -636,7 +654,7 @@ class HomeSheeps extends Component {
                             options={optionsVille}
                             placeholder=" Ville"
 
-                          // className="Select"
+                            // className="Select"
                           />
                           <br></br>
                           <br></br>
@@ -648,21 +666,18 @@ class HomeSheeps extends Component {
                           <button
                             id="roundB"
                             className="newBtn site-btn"
-                            onClick={this.handelChercher} >
-                            <i className="fa fa-search "></i>
-
-                            {" "}
-                            Rechercher{" "}
+                            onClick={this.handelChercher}
+                          >
+                            <i className="fa fa-search "></i> Rechercher{" "}
                           </button>
                           <br></br>
                           <br></br>
                           <button
                             id="roundB"
                             className="newBtn site-btn"
-                            onClick={this.handelReinitialiser} >
-                            <i className="fa fa-refresh"></i>
-                            {" "}
-                            Reinitialiser{" "}
+                            onClick={this.handelReinitialiser}
+                          >
+                            <i className="fa fa-refresh"></i> Reinitialiser{" "}
                           </button>
                           <br></br>
                           <br></br>
@@ -687,7 +702,6 @@ class HomeSheeps extends Component {
                 </div> 
                 Fin Text Marketing */}
 
-
                   <div className="filter__item">
                     <div>
                       <div id="filterPlace" className="col-lg-5 col-md-5 fa ">
@@ -697,7 +711,6 @@ class HomeSheeps extends Component {
                           onChange={this.sortData}
                           options={optionsSort}
                           placeholder="&#xf161; Trier par"
-
                         />
                       </div>
                     </div>
@@ -739,96 +752,134 @@ class HomeSheeps extends Component {
                       </div>
                     ) : (
                       <div>
-                        {this.state.Annonces.length === 0 ? <div className="text-center my-5">
-                          <p style={{ color: "#fba502" }}>
+                        {this.state.Annonces.length === 0 ? (
+                          <div className="text-center my-5">
+                            <p style={{ color: "#fba502" }}>
+                              <i
+                                class="fa fa-frown-o fa-5x"
+                                aria-hidden="true"
+                              ></i>
+                            </p>
 
-                            <i class="fa fa-frown-o fa-5x" aria-hidden="true"></i>
-                          </p>
-
-                          <h3 style={{ color: "#28a745" }}>Pas d'annonce disponible à vendre !</h3>
-                        </div> : <div className="row">
-                          {currentAnnonces.map((Annonces) => (
-                            <div className="col-lg-4  col-sm-6">
-
-                              <div id="anonce" class="product__item">
-                                <div
-                                  class="product__item__pic set-bg"
-                                  data-setbg={Annonces.images}
+                            <h3 style={{ color: "#28a745" }}>
+                              Pas d'annonce disponible à vendre !
+                            </h3>
+                          </div>
+                        ) : (
+                          <div className="row">
+                            {currentAnnonces.map((Annonces) => (
+                              <div className="col-lg-4  col-sm-6">
+                                <Link
+                                  to={`/DetailsMouton/${Annonces._id.$oid}`}
                                 >
-
-                                  <img
-                                    src={Annonces.image_face}
-                                    class="product__item__pic set-bg"
-                                  />
-
-                                  <ul class="product__item__pic__hover">
-                                    {/* <li>
-                              <a
-                                id={Annonces._id}
-                                onClick={(e) =>
-                                  this.handleFavoris(e.currentTarget.id)
-                                }
-                              >
-                                <i className="fa fa-heart"></i>
-                              </a>
-                            </li> */}
-                                    <li>
-                                      <Link to={`/DetailsMouton/${Annonces._id.$oid}`}>
-                                        <a href="#">
-                                          <i class="fa fa-eye"></i>
-                                        </a>
-                                      </Link>
-                                    </li>
-                                  </ul>
-                                </div>
-                                {Annonces.anoc ?
-                                  <h1 style={{ borderRadius: "0% 0% 0% 40%", fontSize: "14px" }} class=" badge badge-success py-1 w-100  ">
-                                    <HiOutlineBadgeCheck className=" mr-1 fa-lg " />
-                                    <span>Labélisé ANOC</span>  </h1>
-                                  :
-                                  <span className="badge pt-3 w-100  mt-1  ">{"  "}</span>}
-
-                                <div className="product__item__text p-2 text-justify">
-
-                                  <h6 className=" nbrm" style={{ color: "black", fontSize: "18px" }}>
-
-                                    <img style={{ width: "18px", height: "20px", marginBottom: "5px" }}
-                                      data-imgbigurl="Images/sheep-head.png"
-                                      src="Images/sheep-head.png"
-                                      alt=""
-                                    />{" " + Annonces.espece}
-
-                                    <span className="float-right">
-                                      <FaShapes />{" " + Annonces.race}
-                                    </span> </h6>
-
-
-                                  <h6>
+                                  <div id="anonce" class="product__item">
                                     <img
-                                      style={{ width: "18px", height: "18px", marginRight: "5px" }}
-                                      src="./Images/age.png" />
+                                      src={Annonces.image_face}
+                                      alt="item"
+                                      style={{
+                                        width: "355px",
+                                        height: "170px",
+                                        borderTopRightRadius: "10%",
+                                        borderTopLeftRadius: "10%",
+                                      }}
+                                    />
+                                    {Annonces.anoc ? (
+                                      <h1
+                                        style={{
+                                          borderRadius: "0% 0% 0% 40%",
+                                          fontSize: "14px",
+                                        }}
+                                        class=" badge badge-success py-1 w-100  "
+                                      >
+                                        <HiOutlineBadgeCheck className=" mr-1 fa-lg " />
+                                        <span>Labélisé ANOC</span>{" "}
+                                      </h1>
+                                    ) : (
+                                      <span className="badge pt-3 w-100  mt-1  ">
+                                        {"  "}
+                                      </span>
+                                    )}
 
-                                    {Annonces.age + " mois"}
+                                    <div className="product__item__text p-2 text-justify">
+                                      <div
+                                        className="region"
+                                        style={{
+                                          color: "#aaa",
+                                          fontSize: "15px",
+                                          textAlign: "center",
+                                        }}
+                                      >
+                                        <i
+                                          class="fa fa-map-marker"
+                                          style={{ marginRight: "0.5rem" }}
+                                        ></i>
+                                        {Annonces.localisation}
+                                      </div>
+                                      <div
+                                        className="product__item__information"
+                                        style={{
+                                          color: "black",
+                                          fontSize: "15px",
+                                        }}
+                                      >
+                                        <div className=" nbrm">
+                                          <img
+                                            style={{
+                                              width: "18px",
+                                              height: "18px",
+                                              marginBottom: "5px",
+                                              marginRight: "0.5rem",
+                                            }}
+                                            data-imgbigurl="Images/sheep-head.png"
+                                            src="Images/sheep-head.png"
+                                            alt=""
+                                          />
+                                          {" " + Annonces.espece}
+                                          <span className="float-right">
+                                            <FaShapes
+                                              style={{ marginRight: "0.5rem" }}
+                                            />
+                                            {" " + Annonces.race}
+                                          </span>
+                                        </div>
+                                        <div>
+                                          <img
+                                            style={{
+                                              width: "18px",
+                                              height: "18px",
+                                              marginRight: "0.5rem",
+                                            }}
+                                            src="./Images/age.png"
+                                          />
 
-                                    <span className="float-right ">
-                                      <GiWeight className=" mr-1 fa-lg " />
-                                      {Annonces.poids + " Kg"}</span></h6>
+                                          {Annonces.age + " mois"}
 
-                                  <h6 className=" nbrm" style={{ color: "black", fontSize: "18px" }}>
-                                    <i class="fa fa-map-marker"></i> {Annonces.localisation}
-                                  </h6>
-                                  <h5 style={{ color: "rgb(187, 33, 36)" }} className="  mt-4">
-                                    <i class="fa fa-usd" aria-hidden="true"></i>
-                                    {" "}
-                                    {Annonces.prix + "  Dhs"}
-                                  </h5>
-                                </div>
+                                          <span className="float-right ">
+                                            <GiWeight
+                                              className=" mr-1 fa-lg "
+                                              style={{ marginRight: "0.5rem" }}
+                                            />
+                                            {Annonces.poids + " Kg"}
+                                          </span>
+                                        </div>
+                                        <div
+                                          style={{
+                                            color: "#fe6927",
+                                            fontSize: "20px",
+                                            fontWeight: "1000",
+                                            textDecoration: "bold",
+                                          }}
+                                        >
+                                          {"Prix : " + Annonces.prix + "  Dhs"}
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </Link>
                               </div>
-
-                            </div>
-                          ))}
-                        </div>
-                        }
+                            ))}
+                          </div>
+                        )}
 
                         <div className="center-div">
                           <nav className="row">
@@ -854,7 +905,6 @@ class HomeSheeps extends Component {
                     )}
                     {/* <!-- Sheeps Grid Section End --> */}
                   </div>
-
                 </div>
               </div>
             </div>

@@ -200,6 +200,14 @@ ol.gradient-list > li + li {
   margin: auto;
   width: 50%;
 }
+.page-link {
+  color: rgb(40, 167, 69) !important;
+}
+.active .page-link {
+  background-color: rgb(40, 167, 69) !important;
+  color: white !important;
+  border-color: rgb(40, 167, 69) !important;
+}
 #Head {
   padding-right: 2%;
   padding-left: 2%;
@@ -2085,11 +2093,6 @@ h3 {
   Shop Details
 -----------------------*/
 #lesImagesM {
-  background-color: #f3f6fa;
-  /*#aec5bc94;*/
-  border-radius: 1px;
-
-  border: 1px ridge #d3d3d3;
   display: block;
   margin-left: auto;
   margin-right: auto;
@@ -2099,9 +2102,8 @@ h3 {
   display: block;
   margin-left: auto;
   margin-right: auto;
-  border-radius: 1px;
-  border: 1px ridge #d3d3d3;
-  background-color: #f3f6fa;
+  border-radius: 5%;
+  background-color: #fff;
   /* #cfd4d3;*/
 }
 
@@ -2110,7 +2112,22 @@ h3 {
   margin-left: auto;
   margin-right: auto;
 }
-
+.single-price-wrap {
+  color: white;
+  background-color: #86c831;
+  margin-bottom: 20px;
+  font-weight: 600;
+  padding: 20px 0 20px 20px;
+  border-radius: 2%;
+}
+.single-price .fa-euro-sign {
+  position: absolute;
+  right: 0;
+  top: 30px;
+  font-size: 150px;
+  opacity: 0.1;
+  transform: rotate(-45deg);
+}
 #centre {
   border-radius: 8px;
 
@@ -2128,16 +2145,17 @@ h3 {
 	margin-right: auto;*/
   padding-left: auto;
   padding-right: auto;
+  background-color: #fff /* rgb(225, 231, 219); */;
+  padding: 10px 0 10px 10px;
+  border-radius: 2%;
 }
 
 #gris {
-  background-color: #f3f6fa /* rgb(225, 231, 219); */;
-  border-style: inset;
-  border-color: black;
-  border: 1px ridge #d3d3d3;
-  border-radius: 1px;
+  background-color: #fff /* rgb(225, 231, 219); */;
+  border-radius: 5%;
   margin-left: auto;
   margin-right: auto;
+  padding: 10px 0 10px 10px;
 }
 
 #coul {

@@ -10,6 +10,8 @@ import { HiOutlineBadgeCheck } from "react-icons/hi";
 import "bootstrap/dist/css/bootstrap.css";
 import "react-bootstrap-range-slider/dist/react-bootstrap-range-slider.css";
 import RangeSlider from "react-bootstrap-range-slider";
+import Pagination from "react-js-pagination";
+require("bootstrap-less/bootstrap/bootstrap.less");
 
 class HomeSheeps extends Component {
   constructor() {
@@ -882,22 +884,18 @@ class HomeSheeps extends Component {
                         )}
 
                         <div className="center-div">
-                          <nav className="row">
-                            <ul className="pagination center-div">
-                              {this.state.nombrePages.map((number) => (
-                                <li
-                                  key={number}
-                                  className="page-item stylePagination"
-                                >
-                                  <a
-                                    onClick={() => this.paginate(number)}
-                                    className="page-link"
-                                  >
-                                    {number}
-                                  </a>
-                                </li>
-                              ))}
-                            </ul>
+                          <nav>
+                            <div className="row">
+                              <Pagination
+                                activePage={this.state.currentPage}
+                                itemsCountPerPage={9}
+                                totalItemsCount={this.state.Annonces.length}
+                                pageRangeDisplayed={7}
+                                onChange={this.paginate.bind(this)}
+                                itemClass="page-item"
+                                linkClass="page-link"
+                              />
+                            </div>
                           </nav>
                         </div>
                         <br></br>
@@ -914,5 +912,23 @@ class HomeSheeps extends Component {
     );
   }
 }
-
+/*
+     <nav className="row">
+                            <ul className="pagination center-div">
+                              {this.state.nombrePages.map((number) => (
+                                <li
+                                  key={number}
+                                  className="page-item stylePagination"
+                                >
+                                  <a
+                                    onClick={() => this.paginate(number)}
+                                    className="page-link"
+                                  >
+                                    {number}
+                                  </a>
+                                </li>
+                              ))}
+                            </ul>
+                          </nav>
+*/
 export default HomeSheeps;

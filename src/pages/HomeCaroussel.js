@@ -58,8 +58,8 @@ class HomeCaroussel extends Component {
     const responsive = {
       desktop: {
         breakpoint: { max: 3000, min: 1024 },
-        items: 6,
-        slidesToSlide: 6, // optional, default to 1.
+        items: 5,
+        slidesToSlide: 5, // optional, default to 1.
       },
       tablet: {
         breakpoint: { max: 1024, min: 464 },
@@ -73,7 +73,7 @@ class HomeCaroussel extends Component {
       },
     };
     return (
-      <div style={{ marginBottom: "1rem", borderBottom: "1px solid #ebebeb" }}>
+      <div style={{ marginBottom: "1rem" }}>
         {l > 0 ? (
           <Carousel
             responsive={responsive}
@@ -99,7 +99,6 @@ class HomeCaroussel extends Component {
                 className="product__item"
                 style={{
                   margin: "0 10px 0 10px",
-                  borderWidth: "0px 1px 0px 0px",
                 }}
               >
                 <div data-setbg={Annonces.images}>
@@ -107,10 +106,8 @@ class HomeCaroussel extends Component {
                     src={Annonces.image_face}
                     style={{
                       borderRadius: "30%",
-                      width: "80%",
                       height: "100px",
-                      padding: "5px",
-                      margin: "auto",
+                      margin: "15px",
                     }}
                   />
                 </div>

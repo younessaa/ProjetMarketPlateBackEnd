@@ -7,6 +7,8 @@ import { HiOutlineBadgeCheck } from "react-icons/hi";
 import Rating from "@material-ui/lab/Rating";
 import Box from "@material-ui/core/Box";
 import Pagination from "react-js-pagination";
+import RangeSlider from "react-bootstrap-range-slider";
+
 require("bootstrap-less/bootstrap/bootstrap.less");
 
 class AllOffers extends Component {
@@ -36,7 +38,8 @@ class AllOffers extends Component {
         order_mode: "asc",
       },
       redirect: false,
-
+      valueprice: 3500,
+      poids_max: 80,
       selectedOptionSort: null,
       optionsSort: [
         {
@@ -409,6 +412,7 @@ class AllOffers extends Component {
     });
   }
 
+
   render() {
     var elv = this.state.Eleveurs.filter(
       (Eleveurs) => Eleveurs.Especes !== undefined
@@ -427,18 +431,58 @@ class AllOffers extends Component {
     const { optionsVille } = this.state;
     const { optionsRegions } = this.state;
     const { optionsSort } = this.state;
+    const { valueprice } = this.state;
+    const { poids_max } = this.state;
+
+    
     return (
       <div>
         <section className="search-header">
-          <img
-            style={{ height: "50%" }}
-            src={require("./Images/secondsection.JPG")}
-            alt=""
-          />
-          {/*         <div className="test">
-                    <h4>Rechercher</h4>
+        <div   style={{backgroundImage: 'url("https://i.ibb.co/G54gS3V/secondsection.jpg")', backgroundSize: 'cover', height: '120px',paddingTop:'2%',textAlign:'center'}}>
+            <div className="searchheader">
+            <div className="col-lg-2 col-md-3"  style={{display: 'table-cell'}}>
+              <Select
+                value={selectedOptionEspece}
+                onChange={this.handleChangeEspece}
+                options={optionsEspece}
+                placeholder="Espece"
+                required
+              />
+              <br></br>
+            </div>
 
-                </div> */}
+
+            <div className="col-lg-2 col-md-3"  style={{display: 'table-cell'}}>
+              <Select
+                value={selectedOptionVille}
+                onChange={this.handleChangeVille}
+                options={optionsVille}
+                placeholder=" Ville"
+              />
+            </div>
+
+            <div className="col-lg-2 col-md-3" style={{display: 'table-cell'}}>
+              <button
+                id="roundB"
+                className="newBtn site-btn"
+                onClick={this.handelChercher}
+              >
+                <i className="fa fa-search "></i> Rechercher{" "}
+              </button>
+            </div>
+            <div className="col-lg-2 col-md-3" style={{display: 'table-cell'}} >
+              <button
+                id="roundB"
+                className="newBtn site-btn"
+                onClick={this.handelReinitialiser}
+              >
+                <i className="fa fa-refresh"></i> Reinitialiser{" "}
+              </button>
+            </div>
+            </div>
+          </div>
+
+
         </section>
         <div className="pageAnnonceEleveur">
           <section className="">

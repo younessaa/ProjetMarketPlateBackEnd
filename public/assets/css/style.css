@@ -786,15 +786,12 @@ ol {
 
 .header__menu li a {
   display: block;
-  color: rgb(66, 11, 11);
   text-align: center;
   padding: 14px 16px;
-  text-decoration: none;
 }
 
-.header__menu li a:hover {
-  background-color: #b8d1ae;
-  color: #ffffff;
+.header__menu ul li a:hover {
+  color: #70ff8d;
 }
 
 .header__menu li a:active {
@@ -831,9 +828,13 @@ ol {
   margin-right: 0;
   display: block;
 }
-
+.header__menu__dropdown :hover {
+  margin-right: 0;
+  display: block;
+  text-decoration: none;
+}
 .header__menu ul li .header__menu__dropdown li:hover > a {
-  color: #7fad39;
+  text-decoration: none;
 }
 
 .header__menu ul li .header__menu__dropdown li a {
@@ -841,10 +842,6 @@ ol {
   color: #ffffff;
   font-weight: 400;
   padding: 5px 15px;
-}
-
-.header__menu ul li a:active {
-  color: #cf1b24;
 }
 
 .header__menu ul li:hover .header__menu__dropdown {

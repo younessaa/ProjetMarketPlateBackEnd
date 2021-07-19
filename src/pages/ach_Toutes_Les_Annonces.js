@@ -773,6 +773,7 @@ class HomeSheeps extends Component {
                               <div className="col-lg-4  col-sm-6">
                                 <Link
                                   to={`/DetailsMouton/${Annonces._id.$oid}`}
+                                  style={{ textDecoration: "none" }}
                                 >
                                   <div id="anonce" class="product__item">
                                     <img

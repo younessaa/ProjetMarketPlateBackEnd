@@ -232,8 +232,11 @@ class Header extends Component {
                           src="/Images/myanoc.jpg"
                           alt=""
                         />
-                        <img style={{ height: "40px" }} src={require('./Images/logo-text.png')} alt="" />
-
+                        <img
+                          style={{ height: "40px" }}
+                          src={require("./Images/logo-text.png")}
+                          alt=""
+                        />
                       </a>
                     </div>
                   </div>
@@ -294,7 +297,7 @@ class Header extends Component {
                     </div>
                     <div className="header__top__right__button item">
                       <div className="rulesButton">
-                      <i class="fa fa-gavel" aria-hidden="true"></i>
+                        <i class="fa fa-gavel" aria-hidden="true"></i>
                         <a href="./Regles"> Règles de vente et d'achat</a>
                       </div>
                     </div>
@@ -313,11 +316,7 @@ class Header extends Component {
                             <a href="#"> العربية</a>
                           </li>
                         </ul>
-                        
                       </div>
-                      
-                      
-                
                     }
                   </div>
                 </div>
@@ -328,7 +327,7 @@ class Header extends Component {
         {/* <!-- Humberger Begin --> */}
         <header className="header sticky_header">
           <div style={{ paddingLeft: "0px", paddingRight: "0px" }}>
-            <div >
+            <div>
               <div
                 className="col"
                 style={{
@@ -340,52 +339,68 @@ class Header extends Component {
               >
                 <nav className="header__menu">
                   <ul>
-                    <li className="header__menu__dropdown">
-                      <a style={{ color: colors[0] }} href="./">
-                        <GiSheep className=" mr-1 fa-lg " />
-                        Nos espèces
-                      </a>
+                    <li className="">
+                      <div>
+                        {" "}
+                        <a style={{ color: colors[0] }} href="./">
+                          <GiSheep className=" mr-1 fa-lg " />
+                          Nos espèces
+                        </a>
+                      </div>
                     </li>
-                    <li>
-                      <a
-                        style={{ color: colors[1] }}
-                        href="./AnnoncesParEleveurs"
-                        className="Header"
-                      >
-                        <FaUserAlt className="  mb-1 " /> Nos éleveurs
-                      </a>
+                    <li className="">
+                      <div>
+                        {" "}
+                        <a
+                          style={{ color: colors[1] }}
+                          href="./AnnoncesParEleveurs"
+                          className="Header"
+                        >
+                          <FaUserAlt className="  mb-1 " /> Nos éleveurs
+                        </a>
+                      </div>
                     </li>
                     {this.state.isLoged ? (
                       <span>
                         <li>
-                          <a
-                            style={{ color: colors[2] }}
-                            className="Header"
-                            href="./commandesParStatut"
-                          >
-                            <MdAssignment className="  fa-lg " /> Mes commandes
-                          </a>
+                          <div>
+                            {" "}
+                            <a
+                              style={{ color: colors[2] }}
+                              className="Header"
+                              href="./commandesParStatut"
+                            >
+                              <MdAssignment className="  fa-lg " /> Mes
+                              commandes
+                            </a>
+                          </div>
                         </li>
                         <span className="form-inline my-2 my-lg-0">
                           <li>
-                            <a
-                              style={{ color: colors[3] }}
-                              className="Header"
-                              href="./Favoris"
-                            >
-                              <AiFillHeart className=" fa-lg " /> Mes favoris
-                            </a>
+                            <div>
+                              {" "}
+                              <a
+                                style={{ color: colors[3] }}
+                                className="Header"
+                                href="./Favoris"
+                              >
+                                <AiFillHeart className=" fa-lg " /> Mes favoris
+                              </a>
+                            </div>
                           </li>
 
                           <li>
-                            <a
-                              className="Header"
-                              style={{ color: colors[4] }}
-                              href="./panier"
-                            >
-                              <FaShoppingCart className="fa-sm mb-1 " /> Mon
-                              panier d'achat
-                            </a>
+                            <div>
+                              {" "}
+                              <a
+                                className="Header"
+                                style={{ color: colors[4] }}
+                                href="./panier"
+                              >
+                                <FaShoppingCart className="fa-sm mb-1 " /> Mon
+                                panier d'achat
+                              </a>
+                            </div>
                           </li>
                         </span>
                       </span>

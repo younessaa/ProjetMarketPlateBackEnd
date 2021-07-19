@@ -45,7 +45,48 @@ body {
   padding: 0 10%;
 }
 .pageAnnonceEspeces {
+  background-color: #f8f6f6;
   padding: 0 10%;
+}
+.searchheader{
+  display: table;
+  margin: 0 auto;margin: 0 auto; 
+
+}
+.categorie_items span{
+  display: block;
+  position: absolute;
+  background-color:rgb(13, 131, 76);
+
+}
+.categorie_items span:nth-child(1){
+  left: 0;
+  bottom: 0;
+  width: 1px;
+  height: 100%;
+  transform: scaleY(0);
+  transform-origin: top;
+  transition: transform 0.5s;
+}
+.categorie_items:hover span:nth-child(1){
+  transform: scaleY(1);
+  transform-origin: bottom;
+  transition: transform 0.5s;
+}
+
+.categorie_items:hover{
+  color: rgb(13, 131, 76);
+  transform: scaleY(0);
+  transform-origin: top;
+  transition: transform 0.5s;
+  transform: scaleY(1);
+  transform-origin: bottom;
+  transition: transform 0.5s;
+  box-shadow: 0 0 8px #c5f1bf, 0 0 8px #2196f3, 0 0 0px #2196f3;
+
+}
+.lienapropos:hover{
+  text-decoration: none;
 }
 .test {
   position: static;
@@ -345,6 +386,8 @@ ol.gradient-list > li + li {
 
 #filterPlace {
   padding: 0;
+  box-shadow: 0 3px 5px 0px rgba(141, 219, 141, 0.6);
+
 }
 /*------------------------------------------------------------------
 [Table of contents]
@@ -1138,9 +1181,10 @@ ol {
 }
 
 #rechercher {
-  background-color: #f3f6fa;
+  background-color: #fefeff;
   padding-left: 8px;
   padding-right: 8px;
+  box-shadow: 0 3px 5px 0px rgba(158, 158, 158, 0.6);
   /* #F3F6FA;*/
   border-radius: 3px;
   /*#aeb8b5;*/
@@ -1851,10 +1895,12 @@ h3 {
   padding-top: 45px;
   border-top: 1px solid #ebebeb;
   padding-bottom: 20px;
+  
 }
 
 .filter__sort {
   margin-bottom: 15px;
+  
 }
 
 .filter__sort span {
@@ -1877,6 +1923,7 @@ h3 {
   color: #1c1c1c;
   font-weight: 700;
   cursor: pointer;
+  
 }
 
 .filter__sort .nice-select span {

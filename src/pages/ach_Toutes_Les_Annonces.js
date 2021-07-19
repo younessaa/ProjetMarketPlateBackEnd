@@ -4,7 +4,7 @@ import Select from "react-select";
 import { Link } from "react-router-dom";
 import Loader from "react-loader-spinner";
 import ReactPaginate from "react-paginate";
-import { GiWeight, GiSheep } from "react-icons/gi";
+import { GiWeight, GiSheep, GiGoat } from "react-icons/gi";
 import { FaShapes } from "react-icons/fa";
 import { HiOutlineBadgeCheck } from "react-icons/hi";
 import "bootstrap/dist/css/bootstrap.css";
@@ -30,6 +30,9 @@ class HomeSheeps extends Component {
       race: [],
       selectedOptionEspece: null,
       valueprice: 3500,
+      poids_max: 80,
+      nbrmoutons: null,
+      nbrchevre: null,
 
       optionsEspece: [],
       selectedOptionVille: null,
@@ -65,6 +68,20 @@ class HomeSheeps extends Component {
     this.paginate = this.paginate.bind(this);
     // this.handleFavoris=this.handleFavoris.bind(this)
   }
+  /*  countmoutons() {
+     axios
+         .get("http://127.0.0.1:8000/api/Espece?statut=disponible&order_by=espece&order_mode=asc&espece=mouton", {
+           headers: {
+             "Content-Type": "application/json",
+           },
+           params: this.state.conditions,
+         })
+         .then((res) => {
+           this.setState({
+             nbrmoutons: res.data.length,
+           });
+         });
+   } */
   handleChangeEspece = (selectedOptionEspece) => {
     this.setState({
       selectedOptionRace: null,
@@ -137,58 +154,78 @@ class HomeSheeps extends Component {
     const token = localStorage.getItem("usertoken");
     this.setState({ loading: true }, () => {
       axios
-        .get("http://127.0.0.1:8000/api/Espece", {
+        .get("http://127.0.0.1:8000/api/Espece?statut=disponible&order_by=espece&order_mode=asc&espece=mouton", {
           headers: {
-            // "x-access-token": token, // the token is a variable which holds the token
-            // "Access-Control-Allow-Origin": "*",
             "Content-Type": "application/json",
-            // Accept: "application/json",
-            // Authorization: myToken,
           },
-          params: {
-            statut: "disponible",
-            order_by: "espece",
-            order_mode: "asc",
-          },
+          params: this.state.conditions,
         })
         .then((res) => {
-          //espece
-          let espece = [];
-          Object.getOwnPropertyNames(this.groupBy(res.data, "espece")).map(
-            (e) => {
-              espece.splice(0, 0, { value: e, label: e });
-            }
-          );
-
-          //ville
-          let ville = [];
-          let villes = [];
-          res.data.map((e) => {
-            villes.push(e.localisation);
-          });
-          villes = [...new Set(villes)];
-          villes.map((e) => {
-            ville.splice(0, 0, { value: e, label: e });
-          });
           this.setState({
-            optionsEspece: espece,
-            optionsVille: ville,
-            AnnoncesN: res.data,
-            Annonces: res.data,
-            loading: false,
+            nbrmoutons: res.data.length,
           });
-          const pageNumbers = [];
-          for (
-            let i = 1;
-            i <=
-            Math.ceil(this.state.Annonces.length / this.state.annoncesPerPage);
-            i++
-          ) {
-            pageNumbers.push(i);
-          }
-          this.setState({ nombrePages: pageNumbers });
+        });
+      axios
+        .get("http://127.0.0.1:8000/api/Espece?statut=disponible&order_by=espece&order_mode=asc&espece=chevre", {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          params: this.state.conditions,
+        })
+        .then((res) => {
+          this.setState({
+            nbrchevre: res.data.length,
+          });
         });
     });
+    axios
+      .get("http://127.0.0.1:8000/api/Espece", {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        params: {
+          statut: "disponible",
+          order_by: "espece",
+          order_mode: "asc",
+        },
+      })
+      .then((res) => {
+        //espece
+        let espece = [];
+        Object.getOwnPropertyNames(this.groupBy(res.data, "espece")).map(
+          (e) => {
+            espece.splice(0, 0, { value: e, label: e });
+          }
+        );
+
+        //ville
+        let ville = [];
+        let villes = [];
+        res.data.map((e) => {
+          villes.push(e.localisation);
+        });
+        villes = [...new Set(villes)];
+        villes.map((e) => {
+          ville.splice(0, 0, { value: e, label: e });
+        });
+        this.setState({
+          optionsEspece: espece,
+          optionsVille: ville,
+          AnnoncesN: res.data,
+          Annonces: res.data,
+          loading: false,
+        });
+        const pageNumbers = [];
+        for (
+          let i = 1;
+          i <=
+          Math.ceil(this.state.Annonces.length / this.state.annoncesPerPage);
+          i++
+        ) {
+          pageNumbers.push(i);
+        }
+        this.setState({ nombrePages: pageNumbers });
+      });
   }
 
   onChange(e) {
@@ -378,48 +415,56 @@ class HomeSheeps extends Component {
     const { optionsSort } = this.state;
     const { loading } = this.state;
     const { valueprice } = this.state;
+    const { poids_max } = this.state;
+    const { nbrmoutons } = this.state;
+    const { nbrchevre } = this.state;
+
+
 
     return (
       <div>
         <section className="search-header">
-          <img
+          {/*     <img
             style={{ height: "30%" }}
             src={require("./Images/secondsectionespece.JPG")}
             alt=""
-          />
-          <div className="stayhere">
-            <div className="col-lg-3 col-md-3" style={{ paddingTop: "20px" }}>
-              <Select
-                value={selectedOptionEspece}
-                onChange={this.handleChangeEspece}
-                options={optionsEspece}
-                placeholder="Espece"
-                required
-              />
-              <br></br>
-            </div>
+          /> */}
 
-            <div className="col-lg-3 col-md-3" style={{ paddingTop: "20px" }}>
-              <Select
-                id="recherchePlace"
-                isDisabled={this.state.Disabled}
-                value={selectedOptionRace}
-                onChange={this.handleChangeRace}
-                options={this.state.race}
-                placeholder=" Race"
-                required
-              />
-              <br></br>
-            </div>
-            <div className="col-lg-2 col-md-3">
-              <Select
-                value={selectedOptionVille}
-                onChange={this.handleChangeVille}
-                options={optionsVille}
-                placeholder=" Ville"
-              />
-            </div>
-            {/*             <div className="col-lg-3 col-md-3">
+
+          <div style={{ backgroundImage: 'url("https://i.ibb.co/88zvScY/secondsectionespece.jpg")', backgroundSize: 'cover', height: '100%', textAlign: 'center' }}>
+            <div className="searchheader">
+              <div className="col-lg-2 col-md-3" style={{ display: 'table-cell' }}>
+                <Select
+                  value={selectedOptionEspece}
+                  onChange={this.handleChangeEspece}
+                  options={optionsEspece}
+                  placeholder="Espece"
+                  required
+                />
+                <br></br>
+              </div>
+
+              <div className="col-lg-2 col-md-3" style={{ display: 'table-cell', paddingTop: "3%" }}>
+                <Select
+                  id="recherchePlace"
+                  isDisabled={this.state.Disabled}
+                  value={selectedOptionRace}
+                  onChange={this.handleChangeRace}
+                  options={this.state.race}
+                  placeholder=" Race"
+                  required
+                />
+                <br></br>
+              </div>
+              <div className="col-lg-2 col-md-3" style={{ display: 'table-cell' }}>
+                <Select
+                  value={selectedOptionVille}
+                  onChange={this.handleChangeVille}
+                  options={optionsVille}
+                  placeholder=" Ville"
+                />
+              </div>
+              {/*             <div className="col-lg-3 col-md-3">
               <input
                 id="recherchePlace"
                 type="text"
@@ -429,7 +474,7 @@ class HomeSheeps extends Component {
                 onChange={this.onChange}
               />
             </div> */}
-            {/*             <div className="col-lg-2 col-md-3">
+              {/*             <div className="col-lg-2 col-md-3">
               <input
                 id="recherchePlace"
                 type="text"
@@ -440,34 +485,54 @@ class HomeSheeps extends Component {
               />
             </div> */}
 
-            <div
-              className="col-lg-3 col-md-3"
-              name="prix_max"
-              id="recherchePlace"
-            >
-              <RangeSlider
-                tooltip="auto"
+              <div
+                className="col-lg-2 col-md-3"
                 name="prix_max"
                 id="recherchePlace"
-                value={valueprice}
-                min={1}
-                max={10000}
-                onChange={(e) =>
-                  this.setState({
-                    conditions: Object.assign(this.state.conditions, {
-                      prix_max: e.target.value,
-                    }),
-                    valueprice: e.target.value,
-                  })
-                }
+                style={{ display: 'table-cell' }}
+              >
+                <RangeSlider
+                  tooltip="auto"
+                  name="prix_max"
+                  id="recherchePlace"
+                  value={valueprice}
+                  min={1}
+                  max={10000}
+                  onChange={(e) =>
+                    this.setState({
+                      conditions: Object.assign(this.state.conditions, {
+                        prix_max: e.target.value,
+                      }),
+                      valueprice: e.target.value,
+                    })
+                  }
                 /*  onAfterChange={e => this.setState({
                   conditions: Object.assign(this.state.conditions, { [e.target.name]: e.target.value }),
                   valueprice: e.target.value
                 })} */
-              />
-              <div style={{ color: "white" }}> Prix max : {valueprice} DH</div>
-
-              {/*   <input
+                />
+                <div style={{ color: "white", }}> Prix max : {valueprice} DH</div>
+                <RangeSlider
+                  tooltip="auto"
+                  name="poids_max"
+                  value={poids_max}
+                  min={1}
+                  max={100}
+                  onChange={(e) =>
+                    this.setState({
+                      conditions: Object.assign(this.state.conditions, {
+                        poids_max: e.target.value,
+                      }),
+                      poids_max: e.target.value,
+                    })
+                  }
+                /*  onAfterChange={e => this.setState({
+                  conditions: Object.assign(this.state.conditions, { [e.target.name]: e.target.value }),
+                  valueprice: e.target.value
+                })} */
+                />
+                <div style={{ color: "white", }}> Poids max : {poids_max} KG</div>
+                {/*   <input
                 id="recherchePlace"
                 type="text"
                 class="form-control"
@@ -475,9 +540,9 @@ class HomeSheeps extends Component {
                 name="prix_max"
                 onChange={this.onChange}
               /> */}
-            </div>
+              </div>
 
-            {/*             <div className="col-lg-2 col-md-3">
+              {/*             <div className="col-lg-2 col-md-3">
               <input
                 id="recherchePlace"
                 type="text"
@@ -498,23 +563,24 @@ class HomeSheeps extends Component {
               />
             </div> */}
 
-            <div className="col-lg-3 col-md-3">
-              <button
-                id="roundB"
-                className="newBtn site-btn"
-                onClick={this.handelChercher}
-              >
-                <i className="fa fa-search "></i> Rechercher{" "}
-              </button>
-            </div>
-            <div className="col-lg-3 col-md-3">
-              <button
-                id="roundB"
-                className="newBtn site-btn"
-                onClick={this.handelReinitialiser}
-              >
-                <i className="fa fa-refresh"></i> Reinitialiser{" "}
-              </button>
+              <div className="col-lg-2 col-md-3" style={{ display: 'table-cell' }}>
+                <button
+                  id="roundB"
+                  className="newBtn site-btn"
+                  onClick={this.handelChercher}
+                >
+                  <i className="fa fa-search "></i> Rechercher{" "}
+                </button>
+              </div>
+              <div className="col-lg-2 col-md-3" style={{ display: 'table-cell' }} >
+                <button
+                  id="roundB"
+                  className="newBtn site-btn"
+                  onClick={this.handelReinitialiser}
+                >
+                  <i className="fa fa-refresh"></i> Reinitialiser{" "}
+                </button>
+              </div>
             </div>
           </div>
         </section>
@@ -529,16 +595,33 @@ class HomeSheeps extends Component {
 
             <div className="container">
               <div className="row">
-                <div className="col-lg-3 col-md-6">
+                <div className="col-lg-3 col-md-4">
                   <div id="rechercher" className="col-lg-12">
                     <br></br>
                     <div className="sidebar__item">
                       <h4>Catégorie</h4>
 
-                      <h6 id="gras" className="latest-product__item">
-                        Espece
-                      </h6>
-                      <div className="row">
+                      <div id="gras" style={{ cursor: 'pointer' }} className="categorie_items" onClick={() => { }} >
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+
+                        <GiSheep className=" mr-1 fa-lg " />
+                        Moutons
+                        <p style={{ textAlign: 'right' }}>  {nbrmoutons}  Annonces </p>
+                      </div>
+                      <div id="gras" style={{ cursor: 'pointer' }} className="categorie_items">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <GiGoat className=" mr-1 fa-lg " />
+                        Chèvres
+                        <p style={{ textAlign: 'right' }}>  {nbrchevre}  Annonces </p>
+
+                      </div>
+                      {/*  <div className="row">
                         <div className="col-lg-12 col-md-12">
                           <Select
                             value={selectedOptionEspece}
@@ -546,16 +629,30 @@ class HomeSheeps extends Component {
                             options={optionsEspece}
                             placeholder="Espece"
                             required
-                            // className="Select"
+                          // className="Select"
                           />
                           <br></br>
                         </div>
-                      </div>
+                      </div> */}
+                      <hr></hr>
+                      <a className="lienapropos" href="./Apropos">
 
-                      <h6 id="gras" className="latest-product__item">
-                        Race
-                      </h6>
-                      <div className="row">
+                        <div style={{ cursor: 'pointer' }} className="categorie_items">
+                          <span></span>
+
+                          <h4 >A propos de nous</h4>
+
+                          <img style={{ height: "40px" }} src={require('./Images/logo-text.png')} alt="" />
+                          <br></br>
+                          <p>Découvrez nous d'avantage, votre confiance est notre priorité.</p>
+                        </div>
+                      </a>
+
+
+
+
+
+                      {/* <div className="row">
                         <div className="col-lg-12 col-md-12">
                           <Select
                             id="recherchePlace"
@@ -565,11 +662,11 @@ class HomeSheeps extends Component {
                             options={this.state.race}
                             placeholder=" Race"
                             required
-                            // className="Select"
+                          // className="Select"
                           />
                           <br></br>
                         </div>
-                      </div>
+                      </div> */}
                       <h6 id="gras" className="latest-product__item">
                         Reference
                       </h6>
@@ -656,7 +753,7 @@ class HomeSheeps extends Component {
                             options={optionsVille}
                             placeholder=" Ville"
 
-                            // className="Select"
+                          // className="Select"
                           />
                           <br></br>
                           <br></br>

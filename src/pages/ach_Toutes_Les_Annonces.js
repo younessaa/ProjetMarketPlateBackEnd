@@ -596,6 +596,18 @@ class HomeSheeps extends Component {
             <div className="container">
               <div className="row">
                 <div className="col-lg-3 col-md-4">
+                  <a className="lienapropos" href="./Apropos">
+
+                    <div style={{ cursor: 'pointer' }} className="categorie_items">
+                      <span></span>
+
+                      <h4 >A propos de nous</h4>
+
+                      <img style={{ height: "40px" }} src={require('./Images/logo-text.png')} alt="" />
+                      <br></br>
+                      <p>Découvrez nous d'avantage, votre confiance est notre priorité.</p>
+                    </div>
+                  </a>
                   <div id="rechercher" className="col-lg-12">
                     <br></br>
                     <div className="sidebar__item">
@@ -635,7 +647,7 @@ class HomeSheeps extends Component {
                         </div>
                       </div> */}
                       <hr></hr>
-                      <a className="lienapropos" href="./Apropos">
+{/*                       <a className="lienapropos" href="./Apropos">
 
                         <div style={{ cursor: 'pointer' }} className="categorie_items">
                           <span></span>
@@ -647,7 +659,7 @@ class HomeSheeps extends Component {
                           <p>Découvrez nous d'avantage, votre confiance est notre priorité.</p>
                         </div>
                       </a>
-
+ */}
 
 
 

@@ -434,51 +434,51 @@ class AllOffers extends Component {
     const { valueprice } = this.state;
     const { poids_max } = this.state;
 
-    
+
     return (
       <div>
         <section className="search-header">
-        <div   style={{backgroundImage: 'url("https://i.ibb.co/G54gS3V/secondsection.jpg")', backgroundSize: 'cover', height: '120px',paddingTop:'2%',textAlign:'center'}}>
+          <div style={{ backgroundImage: 'url("https://i.ibb.co/G54gS3V/secondsection.jpg")', backgroundSize: 'cover', height: '120px', paddingTop: '2%', textAlign: 'center' }}>
             <div className="searchheader">
-            <div className="col-lg-2 col-md-3"  style={{display: 'table-cell'}}>
-              <Select
-                value={selectedOptionEspece}
-                onChange={this.handleChangeEspece}
-                options={optionsEspece}
-                placeholder="Espece"
-                required
-              />
-              <br></br>
-            </div>
+              <div className="col-lg-2 col-md-3" style={{ display: 'table-cell' }}>
+                <Select
+                  value={selectedOptionEspece}
+                  onChange={this.handleChangeEspece}
+                  options={optionsEspece}
+                  placeholder="Espece"
+                  required
+                />
+                <br></br>
+              </div>
 
 
-            <div className="col-lg-2 col-md-3"  style={{display: 'table-cell'}}>
-              <Select
-                value={selectedOptionVille}
-                onChange={this.handleChangeVille}
-                options={optionsVille}
-                placeholder=" Ville"
-              />
-            </div>
+              <div className="col-lg-2 col-md-3" style={{ display: 'table-cell' }}>
+                <Select
+                  value={selectedOptionVille}
+                  onChange={this.handleChangeVille}
+                  options={optionsVille}
+                  placeholder=" Ville"
+                />
+              </div>
 
-            <div className="col-lg-2 col-md-3" style={{display: 'table-cell'}}>
-              <button
-                id="roundB"
-                className="newBtn site-btn"
-                onClick={this.handelChercher}
-              >
-                <i className="fa fa-search "></i> Rechercher{" "}
-              </button>
-            </div>
-            <div className="col-lg-2 col-md-3" style={{display: 'table-cell'}} >
-              <button
-                id="roundB"
-                className="newBtn site-btn"
-                onClick={this.handelReinitialiser}
-              >
-                <i className="fa fa-refresh"></i> Reinitialiser{" "}
-              </button>
-            </div>
+              <div className="col-lg-2 col-md-3" style={{ display: 'table-cell' }}>
+                <button
+                  id="roundB"
+                  className="newBtn site-btn"
+                  onClick={this.handelChercher}
+                >
+                  <i className="fa fa-search "></i> Rechercher{" "}
+                </button>
+              </div>
+              <div className="col-lg-2 col-md-3" style={{ display: 'table-cell' }} >
+                <button
+                  id="roundB"
+                  className="newBtn site-btn"
+                  onClick={this.handelReinitialiser}
+                >
+                  <i className="fa fa-refresh"></i> Reinitialiser{" "}
+                </button>
+              </div>
             </div>
           </div>
 
@@ -490,6 +490,18 @@ class AllOffers extends Component {
             <div className="container">
               <div className="row">
                 <div className="col-lg-3 col-md-6">
+                  <a className="lienapropos" href="./Apropos">
+
+                    <div style={{ cursor: 'pointer' }} className="categorie_items">
+                      <span></span>
+
+                      <h4 >A propos de nous</h4>
+
+                      <img style={{ height: "40px" }} src={require('./Images/logo-text.png')} alt="" />
+                      <br></br>
+                      <p>Découvrez nous d'avantage, votre confiance est notre priorité.</p>
+                    </div>
+                  </a>
                   <div id="rechercher" className="col-lg-12">
                     <br></br>
                     <br></br>

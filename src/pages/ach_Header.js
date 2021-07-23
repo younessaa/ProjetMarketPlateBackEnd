@@ -243,19 +243,36 @@ class Header extends Component {
                 </div>
                 <div className="col-lg-6 col-md-6">
                   <div className="header__top__right">
+                    <div className="header__top__right__button item">
+                      <div className="rulesButton">
+                        <i class="fa fa-gavel" aria-hidden="true"></i>
+                        <a
+                          href="./Regles"
+                          style={{
+                            textDecoration: "none",
+                            color: "white",
+                            fontSize: "1rem",
+                          }}
+                        >
+                          {" "}
+                          Règles de vente et d'achat
+                        </a>
+                      </div>
+                    </div>
                     {this.state.isLoged ? (
                       <div className="header__top__right__auth  item">
                         <div>
-                          <h6
+                          <a
                             style={{
                               color: "#009141",
                               fontFamily: "inherit",
                               fontSize: "0.924rem",
                             }}
+                            href=""
                           >
                             <i className="fa fa-user-circle" />
                             <b>{" " + this.state.connectedUser}</b>
-                          </h6>
+                          </a>
                         </div>
                       </div>
                     ) : null}
@@ -295,13 +312,8 @@ class Header extends Component {
                         </div>
                       ) : null}
                     </div>
-                    <div className="header__top__right__button item">
-                      <div className="rulesButton">
-                        <i class="fa fa-gavel" aria-hidden="true"></i>
-                        <a href="./Regles"> Règles de vente et d'achat</a>
-                      </div>
-                    </div>
-                    {
+
+                    {/* {
                       <div className="header__top__right__language item ">
                         <i className="fa fa-globe mr-2" aria-hidden="true">
                           {" "}
@@ -317,7 +329,7 @@ class Header extends Component {
                           </li>
                         </ul>
                       </div>
-                    }
+                    } */}
                   </div>
                 </div>
               </div>

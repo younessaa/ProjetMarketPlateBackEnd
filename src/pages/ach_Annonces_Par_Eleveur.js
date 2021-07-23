@@ -412,7 +412,6 @@ class AllOffers extends Component {
     });
   }
 
-
   render() {
     var elv = this.state.Eleveurs.filter(
       (Eleveurs) => Eleveurs.Especes !== undefined
@@ -434,13 +433,24 @@ class AllOffers extends Component {
     const { valueprice } = this.state;
     const { poids_max } = this.state;
 
-
     return (
       <div>
         <section className="search-header">
-          <div style={{ backgroundImage: 'url("https://i.ibb.co/G54gS3V/secondsection.jpg")', backgroundSize: 'cover', height: '120px', paddingTop: '2%', textAlign: 'center' }}>
+          <div
+            style={{
+              backgroundImage:
+                'url("https://i.ibb.co/G54gS3V/secondsection.jpg")',
+              backgroundSize: "cover",
+              height: "120px",
+              paddingTop: "2%",
+              textAlign: "center",
+            }}
+          >
             <div className="searchheader">
-              <div className="col-lg-2 col-md-3" style={{ display: 'table-cell' }}>
+              <div
+                className="col-lg-2 col-md-3"
+                style={{ display: "table-cell" }}
+              >
                 <Select
                   value={selectedOptionEspece}
                   onChange={this.handleChangeEspece}
@@ -451,8 +461,10 @@ class AllOffers extends Component {
                 <br></br>
               </div>
 
-
-              <div className="col-lg-2 col-md-3" style={{ display: 'table-cell' }}>
+              <div
+                className="col-lg-2 col-md-3"
+                style={{ display: "table-cell" }}
+              >
                 <Select
                   value={selectedOptionVille}
                   onChange={this.handleChangeVille}
@@ -461,7 +473,10 @@ class AllOffers extends Component {
                 />
               </div>
 
-              <div className="col-lg-2 col-md-3" style={{ display: 'table-cell' }}>
+              <div
+                className="col-lg-2 col-md-3"
+                style={{ display: "table-cell" }}
+              >
                 <button
                   id="roundB"
                   className="newBtn site-btn"
@@ -470,7 +485,10 @@ class AllOffers extends Component {
                   <i className="fa fa-search "></i> Rechercher{" "}
                 </button>
               </div>
-              <div className="col-lg-2 col-md-3" style={{ display: 'table-cell' }} >
+              <div
+                className="col-lg-2 col-md-3"
+                style={{ display: "table-cell" }}
+              >
                 <button
                   id="roundB"
                   className="newBtn site-btn"
@@ -481,8 +499,6 @@ class AllOffers extends Component {
               </div>
             </div>
           </div>
-
-
         </section>
         <div className="pageAnnonceEleveur">
           <section className="">
@@ -491,15 +507,24 @@ class AllOffers extends Component {
               <div className="row">
                 <div className="col-lg-3 col-md-6">
                   <a className="lienapropos" href="./Apropos">
-
-                    <div style={{ cursor: 'pointer' }} className="categorie_items">
+                    <div
+                      style={{ cursor: "pointer" }}
+                      className="categorie_items"
+                    >
                       <span></span>
 
-                      <h4 >A propos de nous</h4>
+                      <h4>A propos de nous</h4>
 
-                      <img style={{ height: "40px" }} src={require('./Images/logo-text.png')} alt="" />
+                      <img
+                        style={{ height: "40px" }}
+                        src={require("./Images/logo-text.png")}
+                        alt=""
+                      />
                       <br></br>
-                      <p>Découvrez nous d'avantage, votre confiance est notre priorité.</p>
+                      <p>
+                        Découvrez nous d'avantage, votre confiance est notre
+                        priorité.
+                      </p>
                     </div>
                   </a>
                   <div id="rechercher" className="col-lg-12">
@@ -635,7 +660,7 @@ class AllOffers extends Component {
                       <div
                         style={{
                           width: "100%",
-                          height: "100",
+                          height: "40rem",
                           display: "flex",
                           justifyContent: "center",
                           alignItems: "center",

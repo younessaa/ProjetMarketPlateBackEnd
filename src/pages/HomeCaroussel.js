@@ -30,6 +30,9 @@ class HomeCaroussel extends Component {
         this.setState({
           especes: res.data,
         });
+      })
+      .catch((error) => {
+        console.log(error);
       });
   }
 
@@ -101,26 +104,32 @@ class HomeCaroussel extends Component {
                   margin: "0 10px 0 10px",
                 }}
               >
-                <div data-setbg={Annonces.images}>
-                  <img
-                    src={Annonces.image_face}
-                    style={{
-                      borderRadius: "30%",
-                      height: "100px",
-                      margin: "15px",
-                    }}
-                  />
-                </div>
-                <div
-                  className="product__item__text p-2 text-justify"
-                  style={{ margin: "auto" }}
-                >
-                  <h6>
-                    <GiSheep className=" mr-1 fa-lg " />
-                    {Annonces.espece}
-                  </h6>
-                  <h5 id="mad">{Annonces.prix + " Dhs"}</h5>
-                </div>
+                {Annonces ? (
+                  <>
+                    <div>
+                      <img
+                        src={Annonces.image_face}
+                        style={{
+                          borderRadius: "30%",
+                          height: "100px",
+                          width: "100%",
+                        }}
+                      />
+                    </div>
+                    <div
+                      className="product__item__text p-2 text-justify"
+                      style={{ margin: "auto" }}
+                    >
+                      <h6>
+                        <GiSheep className=" mr-1 fa-lg " />
+                        {Annonces.espece}
+                      </h6>
+                      <h5 id="mad">{Annonces.prix + " Dhs"}</h5>
+                    </div>{" "}
+                  </>
+                ) : (
+                  <></>
+                )}
               </div>
             ))}
           </Carousel>

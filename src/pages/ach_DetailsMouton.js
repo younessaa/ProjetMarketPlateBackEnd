@@ -278,7 +278,7 @@ class DetailsMouton extends Component {
           <div
             style={{
               width: "100%",
-              height: "100",
+              height: "40rem",
               display: "flex",
               justifyContent: "center",
               alignItems: "center",

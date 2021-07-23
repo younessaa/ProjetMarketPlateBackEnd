@@ -59,8 +59,7 @@ class changePasswordLink extends Component {
           this.setState({ loading: false });
           Swal.fire({
             title: "Mot de Passe modifié!",
-            text:
-              "Connectez-vous avec le nouveau mot de passe.",
+            text: "Connectez-vous avec le nouveau mot de passe.",
             icon: "success",
             width: 400,
             heightAuto: false,
@@ -73,13 +72,11 @@ class changePasswordLink extends Component {
           this.setState({ loading: false });
           console.log(err.response.data.error);
           if (
-            err.response.data.error ===
-            "This password reset token is invalid."
+            err.response.data.error === "This password reset token is invalid."
           ) {
             Swal.fire({
               /* title: "Erreur de connection",*/
-              text:
-                "Lien de réinitailisation déja expiré. Veuillez reprendre la réinitialisation!",
+              text: "Lien de réinitailisation déja expiré. Veuillez reprendre la réinitialisation!",
               icon: "info",
               width: 400,
               heightAuto: false,
@@ -101,13 +98,10 @@ class changePasswordLink extends Component {
 
               confirmButtonText: "Ok",
             });
-          } else if (
-            this.state.password_confirmation != this.state.password
-          ) {
+          } else if (this.state.password_confirmation != this.state.password) {
             Swal.fire({
               /* title: "Erreur de connection",*/
-              text:
-                "Les mots de passe saisis ne sont pas identiques. Veuillez saisir le même mot de passe !",
+              text: "Les mots de passe saisis ne sont pas identiques. Veuillez saisir le même mot de passe !",
               icon: "error",
               width: 400,
               heightAuto: false,
@@ -220,7 +214,7 @@ class changePasswordLink extends Component {
                         <div
                           style={{
                             width: "100%",
-                            height: "100",
+                            height: "40rem",
                             display: "flex",
                             justifyContent: "center",
                             alignItems: "center",

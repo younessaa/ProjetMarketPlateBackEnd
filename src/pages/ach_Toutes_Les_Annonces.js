@@ -154,24 +154,30 @@ class HomeSheeps extends Component {
     const token = localStorage.getItem("usertoken");
     this.setState({ loading: true }, () => {
       axios
-        .get("http://127.0.0.1:8000/api/Espece?statut=disponible&order_by=espece&order_mode=asc&espece=mouton", {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          params: this.state.conditions,
-        })
+        .get(
+          "http://127.0.0.1:8000/api/Espece?statut=disponible&order_by=espece&order_mode=asc&espece=mouton",
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+            params: this.state.conditions,
+          }
+        )
         .then((res) => {
           this.setState({
             nbrmoutons: res.data.length,
           });
         });
       axios
-        .get("http://127.0.0.1:8000/api/Espece?statut=disponible&order_by=espece&order_mode=asc&espece=chevre", {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          params: this.state.conditions,
-        })
+        .get(
+          "http://127.0.0.1:8000/api/Espece?statut=disponible&order_by=espece&order_mode=asc&espece=chevre",
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+            params: this.state.conditions,
+          }
+        )
         .then((res) => {
           this.setState({
             nbrchevre: res.data.length,
@@ -419,8 +425,6 @@ class HomeSheeps extends Component {
     const { nbrmoutons } = this.state;
     const { nbrchevre } = this.state;
 
-
-
     return (
       <div>
         <section className="search-header">
@@ -430,10 +434,20 @@ class HomeSheeps extends Component {
             alt=""
           /> */}
 
-
-          <div style={{ backgroundImage: 'url("https://i.ibb.co/88zvScY/secondsectionespece.jpg")', backgroundSize: 'cover', height: '100%', textAlign: 'center' }}>
+          <div
+            style={{
+              backgroundImage:
+                'url("https://i.ibb.co/88zvScY/secondsectionespece.jpg")',
+              backgroundSize: "cover",
+              height: "100%",
+              textAlign: "center",
+            }}
+          >
             <div className="searchheader">
-              <div className="col-lg-2 col-md-3" style={{ display: 'table-cell' }}>
+              <div
+                className="col-lg-2 col-md-3"
+                style={{ display: "table-cell" }}
+              >
                 <Select
                   value={selectedOptionEspece}
                   onChange={this.handleChangeEspece}
@@ -444,7 +458,10 @@ class HomeSheeps extends Component {
                 <br></br>
               </div>
 
-              <div className="col-lg-2 col-md-3" style={{ display: 'table-cell', paddingTop: "3%" }}>
+              <div
+                className="col-lg-2 col-md-3"
+                style={{ display: "table-cell", paddingTop: "3%" }}
+              >
                 <Select
                   id="recherchePlace"
                   isDisabled={this.state.Disabled}
@@ -456,7 +473,10 @@ class HomeSheeps extends Component {
                 />
                 <br></br>
               </div>
-              <div className="col-lg-2 col-md-3" style={{ display: 'table-cell' }}>
+              <div
+                className="col-lg-2 col-md-3"
+                style={{ display: "table-cell" }}
+              >
                 <Select
                   value={selectedOptionVille}
                   onChange={this.handleChangeVille}
@@ -489,7 +509,7 @@ class HomeSheeps extends Component {
                 className="col-lg-2 col-md-3"
                 name="prix_max"
                 id="recherchePlace"
-                style={{ display: 'table-cell' }}
+                style={{ display: "table-cell" }}
               >
                 <RangeSlider
                   tooltip="auto"
@@ -506,12 +526,15 @@ class HomeSheeps extends Component {
                       valueprice: e.target.value,
                     })
                   }
-                /*  onAfterChange={e => this.setState({
+                  /*  onAfterChange={e => this.setState({
                   conditions: Object.assign(this.state.conditions, { [e.target.name]: e.target.value }),
                   valueprice: e.target.value
                 })} */
                 />
-                <div style={{ color: "white", }}> Prix max : {valueprice} DH</div>
+                <div style={{ color: "white" }}>
+                  {" "}
+                  Prix max : {valueprice} DH
+                </div>
                 <RangeSlider
                   tooltip="auto"
                   name="poids_max"
@@ -526,12 +549,15 @@ class HomeSheeps extends Component {
                       poids_max: e.target.value,
                     })
                   }
-                /*  onAfterChange={e => this.setState({
+                  /*  onAfterChange={e => this.setState({
                   conditions: Object.assign(this.state.conditions, { [e.target.name]: e.target.value }),
                   valueprice: e.target.value
                 })} */
                 />
-                <div style={{ color: "white", }}> Poids max : {poids_max} KG</div>
+                <div style={{ color: "white" }}>
+                  {" "}
+                  Poids max : {poids_max} KG
+                </div>
                 {/*   <input
                 id="recherchePlace"
                 type="text"
@@ -563,7 +589,10 @@ class HomeSheeps extends Component {
               />
             </div> */}
 
-              <div className="col-lg-2 col-md-3" style={{ display: 'table-cell' }}>
+              <div
+                className="col-lg-2 col-md-3"
+                style={{ display: "table-cell" }}
+              >
                 <button
                   id="roundB"
                   className="newBtn site-btn"
@@ -572,7 +601,10 @@ class HomeSheeps extends Component {
                   <i className="fa fa-search "></i> Rechercher{" "}
                 </button>
               </div>
-              <div className="col-lg-2 col-md-3" style={{ display: 'table-cell' }} >
+              <div
+                className="col-lg-2 col-md-3"
+                style={{ display: "table-cell" }}
+              >
                 <button
                   id="roundB"
                   className="newBtn site-btn"
@@ -597,15 +629,24 @@ class HomeSheeps extends Component {
               <div className="row">
                 <div className="col-lg-3 col-md-4">
                   <a className="lienapropos" href="./Apropos">
-
-                    <div style={{ cursor: 'pointer' }} className="categorie_items">
+                    <div
+                      style={{ cursor: "pointer" }}
+                      className="categorie_items"
+                    >
                       <span></span>
 
-                      <h4 >A propos de nous</h4>
+                      <h4>A propos de nous</h4>
 
-                      <img style={{ height: "40px" }} src={require('./Images/logo-text.png')} alt="" />
+                      <img
+                        style={{ height: "40px" }}
+                        src={require("./Images/logo-text.png")}
+                        alt=""
+                      />
                       <br></br>
-                      <p>Découvrez nous d'avantage, votre confiance est notre priorité.</p>
+                      <p>
+                        Découvrez nous d'avantage, votre confiance est notre
+                        priorité.
+                      </p>
                     </div>
                   </a>
                   <div id="rechercher" className="col-lg-12">
@@ -613,25 +654,38 @@ class HomeSheeps extends Component {
                     <div className="sidebar__item">
                       <h4>Catégorie</h4>
 
-                      <div id="gras" style={{ cursor: 'pointer' }} className="categorie_items" onClick={() => { }} >
+                      <div
+                        id="gras"
+                        style={{ cursor: "pointer" }}
+                        className="categorie_items"
+                        onClick={() => {}}
+                      >
                         <span></span>
                         <span></span>
                         <span></span>
                         <span></span>
-
                         <GiSheep className=" mr-1 fa-lg " />
                         Moutons
-                        <p style={{ textAlign: 'right' }}>  {nbrmoutons}  Annonces </p>
+                        <p style={{ textAlign: "right" }}>
+                          {" "}
+                          {nbrmoutons} Annonces{" "}
+                        </p>
                       </div>
-                      <div id="gras" style={{ cursor: 'pointer' }} className="categorie_items">
+                      <div
+                        id="gras"
+                        style={{ cursor: "pointer" }}
+                        className="categorie_items"
+                      >
                         <span></span>
                         <span></span>
                         <span></span>
                         <span></span>
                         <GiGoat className=" mr-1 fa-lg " />
                         Chèvres
-                        <p style={{ textAlign: 'right' }}>  {nbrchevre}  Annonces </p>
-
+                        <p style={{ textAlign: "right" }}>
+                          {" "}
+                          {nbrchevre} Annonces{" "}
+                        </p>
                       </div>
                       {/*  <div className="row">
                         <div className="col-lg-12 col-md-12">
@@ -647,7 +701,7 @@ class HomeSheeps extends Component {
                         </div>
                       </div> */}
                       <hr></hr>
-{/*                       <a className="lienapropos" href="./Apropos">
+                      {/*                       <a className="lienapropos" href="./Apropos">
 
                         <div style={{ cursor: 'pointer' }} className="categorie_items">
                           <span></span>
@@ -660,9 +714,6 @@ class HomeSheeps extends Component {
                         </div>
                       </a>
  */}
-
-
-
 
                       {/* <div className="row">
                         <div className="col-lg-12 col-md-12">
@@ -765,7 +816,7 @@ class HomeSheeps extends Component {
                             options={optionsVille}
                             placeholder=" Ville"
 
-                          // className="Select"
+                            // className="Select"
                           />
                           <br></br>
                           <br></br>
@@ -848,7 +899,7 @@ class HomeSheeps extends Component {
                       <div
                         style={{
                           width: "100%",
-                          height: "100",
+                          height: "40rem",
                           display: "flex",
                           justifyContent: "center",
                           alignItems: "center",

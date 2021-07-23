@@ -48,18 +48,17 @@ body {
   background-color: #f8f6f6;
   padding: 0 10%;
 }
-.searchheader{
+.searchheader {
   display: table;
-  margin: 0 auto;margin: 0 auto; 
-
+  margin: 0 auto;
+  margin: 0 auto;
 }
-.categorie_items span{
+.categorie_items span {
   display: block;
   position: absolute;
-  background-color:rgb(13, 131, 76);
-
+  background-color: rgb(13, 131, 76);
 }
-.categorie_items span:nth-child(1){
+.categorie_items span:nth-child(1) {
   left: 0;
   bottom: 0;
   width: 1px;
@@ -68,13 +67,13 @@ body {
   transform-origin: top;
   transition: transform 0.5s;
 }
-.categorie_items:hover span:nth-child(1){
+.categorie_items:hover span:nth-child(1) {
   transform: scaleY(1);
   transform-origin: bottom;
   transition: transform 0.5s;
 }
 
-.categorie_items:hover{
+.categorie_items:hover {
   color: rgb(13, 131, 76);
   transform: scaleY(0);
   transform-origin: top;
@@ -83,9 +82,8 @@ body {
   transform-origin: bottom;
   transition: transform 0.5s;
   box-shadow: 0 0 8px #c5f1bf, 0 0 8px #2196f3, 0 0 0px #2196f3;
-
 }
-.lienapropos:hover{
+.lienapropos:hover {
   text-decoration: none;
 }
 .test {
@@ -387,7 +385,6 @@ ol.gradient-list > li + li {
 #filterPlace {
   padding: 0;
   box-shadow: 0 3px 5px 0px rgba(141, 219, 141, 0.6);
-
 }
 /*------------------------------------------------------------------
 [Table of contents]
@@ -407,7 +404,168 @@ ol.gradient-list > li + li {
 9.  Contact
 10.  Footer Style
 -------------------------------------------------------------------*/
+/*******  custom footer -----------*/
+footer {
+  position: relative;
+  bottom: 0;
+}
+.footer-distributed {
+  background-color: #292c2f;
+  box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.12);
+  box-sizing: border-box;
+  width: 100%;
+  text-align: left;
+  font: bold 16px sans-serif;
 
+  padding: 55px 50px;
+  margin-top: 80px;
+}
+
+.footer-distributed .footer-left,
+.footer-distributed .footer-center,
+.footer-distributed .footer-right {
+  display: inline-block;
+  vertical-align: top;
+}
+
+.footer-distributed .footer-left {
+  width: 40%;
+}
+
+.footer-distributed h3 {
+  color: #ffffff;
+  font: normal 36px "Cookie", cursive;
+  margin: 0;
+}
+
+.footer-distributed h3 span {
+  color: #0ba522;
+}
+
+.footer-distributed .footer-links {
+  color: #ffffff;
+  margin: 20px 0 12px;
+  padding: 0;
+}
+
+.footer-distributed .footer-links a {
+  display: inline-block;
+  line-height: 1.8;
+  text-decoration: none;
+  color: inherit;
+}
+
+.footer-distributed .footer-company-name {
+  color: #8f9296;
+  font-size: 14px;
+  font-weight: normal;
+  margin: 0;
+}
+
+.footer-distributed .footer-center {
+  width: 35%;
+}
+
+.footer-distributed .footer-center i {
+  background-color: #33383b;
+  color: #ffffff;
+  font-size: 25px;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 42px;
+  margin: 10px 15px;
+  vertical-align: middle;
+}
+
+.footer-distributed .footer-center i.fa-envelope {
+  font-size: 17px;
+  line-height: 38px;
+}
+
+.footer-distributed .footer-center p {
+  display: inline-block;
+  color: #ffffff;
+  vertical-align: middle;
+  margin: 0;
+}
+
+.footer-distributed .footer-center p span {
+  display: block;
+  font-weight: normal;
+  font-size: 14px;
+  line-height: 2;
+}
+
+.footer-distributed .footer-center p a {
+  color: #5383d3;
+  text-decoration: none;
+}
+
+.footer-distributed .footer-right {
+  width: 20%;
+}
+
+.footer-distributed .footer-company-about {
+  line-height: 20px;
+  color: #92999f;
+  font-size: 13px;
+  font-weight: normal;
+  margin: 0;
+}
+
+.footer-distributed .footer-company-about span {
+  display: block;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.footer-distributed .footer-icons {
+  margin-top: 25px;
+}
+
+.footer-distributed .footer-icons a {
+  display: inline-block;
+  width: 35px;
+  height: 35px;
+  cursor: pointer;
+  background-color: #33383b;
+  border-radius: 2px;
+
+  font-size: 20px;
+  color: #ffffff;
+  text-align: center;
+  line-height: 35px;
+
+  margin-right: 10px;
+  margin-bottom: 5px;
+}
+
+@media (max-width: 880px) {
+  .footer-distributed {
+    font: bold 14px sans-serif;
+  }
+
+  .footer-distributed .footer-left,
+  .footer-distributed .footer-center,
+  .footer-distributed .footer-right {
+    display: block;
+    width: 100%;
+    margin-bottom: 40px;
+    text-align: center;
+  }
+
+  .footer-distributed .footer-center i {
+    margin-left: 0;
+  }
+  .main {
+    line-height: normal;
+    font-size: auto;
+  }
+}
 /*----------------------------------------*/
 /* Template default CSS
 /*----------------------------------------*/
@@ -528,6 +686,7 @@ ol {
   background-repeat: no-repeat;
   background-size: cover;
   background-position: top center;
+  object-fit: fill;
 }
 
 .spad {
@@ -536,10 +695,14 @@ ol {
 }
 
 #cadre {
-  border-style: inset;
-  border-color: black;
-  border: 1px ridge #d3d3d3;
   border-radius: 1px;
+}
+
+a:hover {
+  color: white;
+}
+#dashboardLink:hover {
+  color: white !important;
 }
 
 .text-white h1,
@@ -690,6 +853,7 @@ ol {
 .header__top__right__button a {
   color: white;
   font-size: 14px;
+  font-weight: 900;
 }
 .rulesButton {
   background: #fe6927;
@@ -766,7 +930,7 @@ ol {
 .header__top__right__auth {
   padding-top: 3%;
 
-  flex-basis: 20%;
+  flex-basis: 25%;
   text-align: center;
   margin-block: auto;
 }
@@ -1296,6 +1460,7 @@ ol {
   position: relative;
   overflow: hidden;
   background-position: center center;
+  border-radius: 15%;
 }
 
 .featured__item__pic__hover {
@@ -1892,12 +2057,10 @@ h3 {
   padding-top: 45px;
   border-top: 1px solid #ebebeb;
   padding-bottom: 20px;
-  
 }
 
 .filter__sort {
   margin-bottom: 15px;
-  
 }
 
 .filter__sort span {
@@ -1920,7 +2083,6 @@ h3 {
   color: #1c1c1c;
   font-weight: 700;
   cursor: pointer;
-  
 }
 
 .filter__sort .nice-select span {

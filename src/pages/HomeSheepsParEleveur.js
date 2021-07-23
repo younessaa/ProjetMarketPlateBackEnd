@@ -3,13 +3,13 @@ import axios from "axios";
 import Select from "react-select";
 import { Link } from "react-router-dom";
 import Loader from "react-loader-spinner";
-import { GiWeight, GiSheep } from 'react-icons/gi';
-import { HiOutlineBadgeCheck } from 'react-icons/hi';
+import { GiWeight, GiSheep } from "react-icons/gi";
+import { HiOutlineBadgeCheck } from "react-icons/hi";
 import ReactPaginate from "react-paginate";
-import Rating from '@material-ui/lab/Rating';
-import Box from '@material-ui/core/Box';
-import { FaShapes } from 'react-icons/fa';
-import { Badge, Modal, Button } from 'react-bootstrap'
+import Rating from "@material-ui/lab/Rating";
+import Box from "@material-ui/core/Box";
+import { FaShapes } from "react-icons/fa";
+import { Badge, Modal, Button } from "react-bootstrap";
 
 class HomeSheepsParEleveur extends Component {
   constructor() {
@@ -38,7 +38,6 @@ class HomeSheepsParEleveur extends Component {
       redirect: false,
       selectedOptionSort: null,
       optionsSort: [
-
         { value: "prix", label: "Moins cher au plus cher" },
         { value: "prix_dec", label: "Plus cher au moins cher" },
 
@@ -49,7 +48,6 @@ class HomeSheepsParEleveur extends Component {
         { value: "poids_dec", label: "Plus lourd au moins lourd" },
       ],
       showSearchModal: false,
-
     };
     this.onChange = this.onChange.bind(this);
     this.handelChercher = this.handelChercher.bind(this);
@@ -61,22 +59,27 @@ class HomeSheepsParEleveur extends Component {
   }
   showSearch = () => {
     this.setState({
-      showSearchModal: !this.state.showSearchModal
-    })
-  }
+      showSearchModal: !this.state.showSearchModal,
+    });
+  };
   handleChangeEspece = (selectedOptionEspece) => {
-    this.setState({ selectedOptionRace: null, selectedOptionEspece: selectedOptionEspece })
+    this.setState({
+      selectedOptionRace: null,
+      selectedOptionEspece: selectedOptionEspece,
+    });
     let annonce = this.state.AnnoncesN;
-    let c = selectedOptionEspece.value
+    let c = selectedOptionEspece.value;
     let races = [];
 
     let r = [];
-    (this.groupBy(annonce, 'espece')[c]).map((m) => {
+    this.groupBy(annonce, "espece")[c].map((m) => {
       races.push(m.race);
-    })
+    });
 
     races = [...new Set(races)];
-    races.map((e) => { r.splice(0, 0, { "value": e, "label": e }); });
+    races.map((e) => {
+      r.splice(0, 0, { value: e, label: e });
+    });
     this.setState({
       race: r,
 
@@ -84,11 +87,9 @@ class HomeSheepsParEleveur extends Component {
       conditions: Object.assign(this.state.conditions, {
         espece: c,
         race: null,
-      })
+      }),
     });
-
   };
-
 
   handleChangeRace = (selectedOptionRace) => {
     this.setState({ selectedOptionRace }, () =>
@@ -122,9 +123,7 @@ class HomeSheepsParEleveur extends Component {
       axios
         .get("http://127.0.0.1:8000/api/Espece", {
           headers: {
-
             "Content-Type": "application/json",
-
           },
           params: {
             order_by: "espece",
@@ -133,7 +132,9 @@ class HomeSheepsParEleveur extends Component {
         })
         .then((res) => {
           this.setState({
-            Annonces: res.data.filter((data) => data.id_eleveur === this.state.Eleveur._id).filter((f) => f.statut !== "produit avarié"),
+            Annonces: res.data
+              .filter((data) => data.id_eleveur === this.state.Eleveur._id)
+              .filter((f) => f.statut !== "produit avarié"),
             loading: false,
             conditions: {
               order_by: "espece",
@@ -144,18 +145,23 @@ class HomeSheepsParEleveur extends Component {
             Disabled: true,
             selectedOptionVille: null,
           });
-          var all = document.querySelectorAll('input[name="reference"],input[name="prix_min"],input[name="prix_max"],input[name="poids_min"],input[name="poids_max"]')
-          Array.from(all).map((a) => (a.value = null))
+          var all = document.querySelectorAll(
+            'input[name="reference"],input[name="prix_min"],input[name="prix_max"],input[name="poids_min"],input[name="poids_max"]'
+          );
+          Array.from(all).map((a) => (a.value = null));
 
           const pageNumbers = [];
-          for (let i = 1; i <= Math.ceil(this.state.Annonces.length / this.state.annoncesPerPage); i++
+          for (
+            let i = 1;
+            i <=
+            Math.ceil(this.state.Annonces.length / this.state.annoncesPerPage);
+            i++
           ) {
             pageNumbers.push(i);
           }
-          this.setState({ nombrePages: pageNumbers,showSearchModal:false  });
+          this.setState({ nombrePages: pageNumbers, showSearchModal: false });
         });
     });
-
   }
 
   groupBy(objectArray, property) {
@@ -190,7 +196,6 @@ class HomeSheepsParEleveur extends Component {
       ":" +
       appendLeadingZeroes(current_datetime.getSeconds());
 
-
     const expiredTimeToken = localStorage.getItem("expiredTimeToken");
     const token = localStorage.getItem("usertoken");
     const myToken = `Bearer ` + localStorage.getItem("myToken");
@@ -200,80 +205,104 @@ class HomeSheepsParEleveur extends Component {
     // } else {
     this.setState({ loading: true }, () => {
       axios
-        .get("http://127.0.0.1:8000/api/eleveur/" + this.props.match.params.id, {
-          headers: {
-            // "x-access-token": token, // the token is a variable which holds the token
-          },
-
-        })
+        .get(
+          "http://127.0.0.1:8000/api/eleveur/" + this.props.match.params.id,
+          {
+            headers: {
+              // "x-access-token": token, // the token is a variable which holds the token
+            },
+          }
+        )
         .then((res) => {
+          this.setState(
+            {
+              Eleveur: res.data,
+            },
+            () => {
+              console.log(this.state.Eleveur);
 
-          this.setState({
-            Eleveur: res.data
+              axios
+                .get("http://127.0.0.1:8000/api/Espece", {
+                  headers: {
+                    // "x-access-token": token, // the token is a variable which holds the token
+                  },
+                  params: {
+                    id_eleveur: this.state.Eleveur._id,
+                    order_by: "race",
+                    order_mode: "asc",
+                  },
+                })
+                .then((res) => {
+                  //espece
+                  let espece = [];
+                  Object.getOwnPropertyNames(
+                    this.groupBy(
+                      res.data.filter((f) => f.statut !== "produit avarié"),
+                      "espece"
+                    )
+                  ).map((e) => {
+                    espece.splice(0, 0, { value: e, label: e });
+                  });
 
-          }, () => {
-            console.log(this.state.Eleveur)
-
-            axios
-              .get("http://127.0.0.1:8000/api/Espece", {
-                headers: {
-                  // "x-access-token": token, // the token is a variable which holds the token
-                },
-                params: {
-                  id_eleveur: this.state.Eleveur._id,
-                  order_by: "race",
-                  order_mode: "asc",
-                },
-              })
-              .then((res) => {
-                //espece
-                let espece = [];
-                Object.getOwnPropertyNames(this.groupBy(res.data.filter((f) => f.statut !== "produit avarié"), 'espece')).map((e) => {
-                  espece.splice(0, 0, { "value": e, "label": e });
+                  let ville = [];
+                  res.data.map((e) => {
+                    ville.splice(0, 0, {
+                      value: e.localisation,
+                      label: e.localisation,
+                    });
+                  });
+                  ville = Array.from(new Set(ville.map((s) => s.value))).map(
+                    (value) => {
+                      return {
+                        value: value,
+                        label: ville.find((s) => s.value === value).label,
+                      };
+                    }
+                  );
+                  this.setState({
+                    optionsEspece: espece,
+                    AnnoncesN: res.data.filter(
+                      (f) => f.statut !== "produit avarié"
+                    ),
+                    Annonces: res.data.filter(
+                      (f) => f.statut !== "produit avarié"
+                    ),
+                    loading: false,
+                    optionsVille: [...new Set(ville)],
+                  });
+                  const pageNumbers = [];
+                  for (
+                    let i = 1;
+                    i <=
+                    Math.ceil(
+                      this.state.Annonces.length / this.state.annoncesPerPage
+                    );
+                    i++
+                  ) {
+                    pageNumbers.push(i);
+                  }
+                  this.setState({ nombrePages: pageNumbers });
                 });
-
-                let ville = [];
-                res.data.map((e) => {
-                  ville.splice(0, 0, { "value": e.localisation, "label": e.localisation });
-                });
-                ville = Array.from(new Set(ville.map(s => s.value))).map(value => {
-                  return { value: value, label: ville.find(s => s.value === value).label }
-                });
-                this.setState({
-                  optionsEspece: espece,
-                  AnnoncesN: res.data.filter((f) => f.statut !== "produit avarié"),
-                  Annonces: res.data.filter((f) => f.statut !== "produit avarié"),
-                  loading: false,
-                  optionsVille: [...new Set(ville)]
-
-                });
-                const pageNumbers = [];
-                for (let i = 1; i <= Math.ceil(this.state.Annonces.length / this.state.annoncesPerPage); i++
-                ) {
-                  pageNumbers.push(i);
-                }
-                this.setState({ nombrePages: pageNumbers });
-              });
-
-          });
-
+            }
+          );
         });
-
-
     });
     //}
   }
 
   sortData(e) {
-
     const sortProperty = Object.values(e)[0];
     const sorted = this.state.Annonces;
-    if (sortProperty === "prix" || sortProperty === "poids" || sortProperty === "age") {
+    if (
+      sortProperty === "prix" ||
+      sortProperty === "poids" ||
+      sortProperty === "age"
+    ) {
       this.setState({ loading: true }, () => {
         sorted.sort((a, b) => a[sortProperty] - b[sortProperty]);
         this.setState({
           Annonces: sorted,
-          loading: false
+          loading: false,
         });
       });
     } else if (sortProperty === "prix_dec") {
@@ -294,14 +323,11 @@ class HomeSheepsParEleveur extends Component {
         sorted.sort((a, b) => b[sort_] - a[sort_]);
         this.setState({ Annonces: sorted, loading: false });
       });
-    }
-    else {
+    } else {
       this.setState({ loading: true }, () => {
-        sorted.sort(
-          function (a, b) {
-
-            return new Date(b[sortProperty]) - new Date(a[sortProperty]);
-          });
+        sorted.sort(function (a, b) {
+          return new Date(b[sortProperty]) - new Date(a[sortProperty]);
+        });
         this.setState({ Annonces: sorted, loading: false });
       });
     }
@@ -310,7 +336,6 @@ class HomeSheepsParEleveur extends Component {
   paginate(pageNumber) {
     this.setState({ currentPage: pageNumber });
   }
-
 
   onChange(e) {
     const n = e.target.name,
@@ -334,15 +359,21 @@ class HomeSheepsParEleveur extends Component {
         })
         .then((res) => {
           this.setState({
-            Annonces: res.data.filter((data) => data.id_eleveur === this.state.Eleveur._id).filter((f) => f.statut !== "produit avarié"),
+            Annonces: res.data
+              .filter((data) => data.id_eleveur === this.state.Eleveur._id)
+              .filter((f) => f.statut !== "produit avarié"),
             loading: false,
           });
           const pageNumbers = [];
-          for (let i = 1; i <= Math.ceil(this.state.Annonces.length / this.state.annoncesPerPage); i++
+          for (
+            let i = 1;
+            i <=
+            Math.ceil(this.state.Annonces.length / this.state.annoncesPerPage);
+            i++
           ) {
             pageNumbers.push(i);
           }
-          this.setState({ nombrePages: pageNumbers,showSearchModal:false });
+          this.setState({ nombrePages: pageNumbers, showSearchModal: false });
         });
     });
   }
@@ -357,7 +388,10 @@ class HomeSheepsParEleveur extends Component {
     const indexOfLastAnnonce =
       this.state.currentPage * this.state.annoncesPerPage;
     const indexOfFirstAnnonce = indexOfLastAnnonce - this.state.annoncesPerPage;
-    const currentAnnonces = this.state.Annonces.slice(indexOfFirstAnnonce, indexOfLastAnnonce);
+    const currentAnnonces = this.state.Annonces.slice(
+      indexOfFirstAnnonce,
+      indexOfLastAnnonce
+    );
     const { selectedOptionEspece } = this.state;
     const { optionsEspece } = this.state;
     const { selectedOptionRace } = this.state;
@@ -378,54 +412,49 @@ class HomeSheepsParEleveur extends Component {
 
     return (
       <div>
-        
         {/**modal de recherche */}
         <Modal
-
-show={this.state.showSearchModal}
-onHide={this.showSearch}
-backdrop="static"
-keyboard={false}
-id="modalRecherche"
->
-<Modal.Header closeButton>
-  <h4 className="text-left mt-4">Rechercher</h4>
-</Modal.Header>
-<Modal.Body>
-
-  <div className="sidebar__item" style={{ backgroundColor:"#F3F6FA"}}>
-  <div className="">
-                <div  className="col-lg-12">
+          show={this.state.showSearchModal}
+          onHide={this.showSearch}
+          backdrop="static"
+          keyboard={false}
+          id="modalRecherche"
+        >
+          <Modal.Header closeButton>
+            <h4 className="text-left mt-4">Rechercher</h4>
+          </Modal.Header>
+          <Modal.Body>
+            <div
+              className="sidebar__item"
+              style={{ backgroundColor: "#F3F6FA" }}
+            >
+              <div className="">
+                <div className="col-lg-12">
                   <br></br>
                   <br></br>
                   <div className="sidebar__item">
-                   
-
                     <h6 id="gras" className="latest-product__item">
                       Espece
                     </h6>
                     <div className="row">
                       <div className="col-lg-12 col-md-12">
-
                         <Select
                           value={selectedOptionEspece}
                           onChange={this.handleChangeEspece}
                           options={optionsEspece}
                           placeholder="Espece"
                           required
-                        // className="Select"
+                          // className="Select"
                         />
                         <br></br>
                       </div>
                     </div>
-
 
                     <h6 id="gras" className="latest-product__item">
                       Race
                     </h6>
                     <div className="row">
                       <div className="col-lg-12 col-md-12">
-
                         <Select
                           isDisabled={this.state.Disabled}
                           value={selectedOptionRace}
@@ -433,7 +462,7 @@ id="modalRecherche"
                           options={this.state.race}
                           placeholder=" Race"
                           required
-                        // className="Select"
+                          // className="Select"
                         />
                         <br></br>
                       </div>
@@ -519,7 +548,7 @@ id="modalRecherche"
                           options={optionsVille}
                           placeholder=" Ville"
 
-                        // className="Select"
+                          // className="Select"
                         />
                         <br></br>
                         <br></br>
@@ -531,21 +560,18 @@ id="modalRecherche"
                         <button
                           id="roundB"
                           className="newBtn site-btn"
-                          onClick={this.handelChercher} >
-                          <i className="fa fa-search "></i>
-
-                          {" "}
-                          Rechercher{" "}
+                          onClick={this.handelChercher}
+                        >
+                          <i className="fa fa-search "></i> Rechercher{" "}
                         </button>
                         <br></br>
                         <br></br>
                         <button
                           id="roundB"
                           className="newBtn site-btn"
-                          onClick={this.handelReinitialiser} >
-                          <i className="fa fa-refresh"></i>
-                          {" "}
-                          Reinitialiser{" "}
+                          onClick={this.handelReinitialiser}
+                        >
+                          <i className="fa fa-refresh"></i> Reinitialiser{" "}
                         </button>
                         <br></br>
                         <br></br>
@@ -554,13 +580,9 @@ id="modalRecherche"
                   </div>
                 </div>
               </div>
-
- </div>
-
-
-</Modal.Body>
-
-</Modal>
+            </div>
+          </Modal.Body>
+        </Modal>
 
         {/**modal de recherche */}
         <section className="">
@@ -578,26 +600,23 @@ id="modalRecherche"
                     </h6>
                     <div className="row">
                       <div className="col-lg-12 col-md-12">
-
                         <Select
                           value={selectedOptionEspece}
                           onChange={this.handleChangeEspece}
                           options={optionsEspece}
                           placeholder="Espece"
                           required
-                        // className="Select"
+                          // className="Select"
                         />
                         <br></br>
                       </div>
                     </div>
-
 
                     <h6 id="gras" className="latest-product__item">
                       Race
                     </h6>
                     <div className="row">
                       <div className="col-lg-12 col-md-12">
-
                         <Select
                           isDisabled={this.state.Disabled}
                           value={selectedOptionRace}
@@ -605,7 +624,7 @@ id="modalRecherche"
                           options={this.state.race}
                           placeholder=" Race"
                           required
-                        // className="Select"
+                          // className="Select"
                         />
                         <br></br>
                       </div>
@@ -691,7 +710,7 @@ id="modalRecherche"
                           options={optionsVille}
                           placeholder=" Ville"
 
-                        // className="Select"
+                          // className="Select"
                         />
                         <br></br>
                         <br></br>
@@ -703,21 +722,18 @@ id="modalRecherche"
                         <button
                           id="roundB"
                           className="newBtn site-btn"
-                          onClick={this.handelChercher} >
-                          <i className="fa fa-search "></i>
-
-                          {" "}
-                          Rechercher{" "}
+                          onClick={this.handelChercher}
+                        >
+                          <i className="fa fa-search "></i> Rechercher{" "}
                         </button>
                         <br></br>
                         <br></br>
                         <button
                           id="roundB"
                           className="newBtn site-btn"
-                          onClick={this.handelReinitialiser} >
-                          <i className="fa fa-refresh"></i>
-                          {" "}
-                          Reinitialiser{" "}
+                          onClick={this.handelReinitialiser}
+                        >
+                          <i className="fa fa-refresh"></i> Reinitialiser{" "}
                         </button>
                         <br></br>
                         <br></br>
@@ -732,7 +748,7 @@ id="modalRecherche"
                   <div
                     style={{
                       width: "100%",
-                      height: "100",
+                      height: "40rem",
                       display: "flex",
                       justifyContent: "center",
                       alignItems: "center",
@@ -747,91 +763,149 @@ id="modalRecherche"
                   </div>
                 ) : (
                   <div className="filter__item">
-                      <div className="row"> 
-                      <div className="col-6">{" "}</div>
-                      <div className="col-5">{" "}</div>
-                        <div onClick={this.showSearch} className='ModalSearch'>
-<i class="fa fa-search fa-lg" aria-hidden="true"></i>
-</div></div>
-                
+                    <div className="row">
+                      <div className="col-6"> </div>
+                      <div className="col-5"> </div>
+                      <div onClick={this.showSearch} className="ModalSearch">
+                        <i class="fa fa-search fa-lg" aria-hidden="true"></i>
+                      </div>
+                    </div>
+
                     <div className="row">
                       <div className="col-lg-4 col-md-5"></div>
                       <div className="col-lg-12 col-md-12">
                         <br />
                         <div class="row mb-5">
-                          <div class="col-sm"> <img
-                            src={this.state.Eleveur.photo_profil}
-                            class=" product__item__pic  set-bg" />
-                            {this.state.Eleveur.anoc ?
-                              <h1 style={{ borderRadius: "0% 0% 0% 40%", fontSize: "14px" }} class=" badge badge-success  pt-1 w-100  ">
+                          <div class="col-sm">
+                            {" "}
+                            <img
+                              src={this.state.Eleveur.photo_profil}
+                              class=" product__item__pic  set-bg"
+                            />
+                            {this.state.Eleveur.anoc ? (
+                              <h1
+                                style={{
+                                  borderRadius: "0% 0% 0% 40%",
+                                  fontSize: "14px",
+                                }}
+                                class=" badge badge-success  pt-1 w-100  "
+                              >
                                 <HiOutlineBadgeCheck className=" mr-1 fa-lg " />
-                                <span>Labélisé ANOC</span>  </h1>
-                              :
-                              <span className="badge pt-3 w-100 mt-1   ">{"  "}</span>}</div>
-                          <div class="col-sm" >
+                                <span>Labélisé ANOC</span>{" "}
+                              </h1>
+                            ) : (
+                              <span className="badge pt-3 w-100 mt-1   ">
+                                {"  "}
+                              </span>
+                            )}
+                          </div>
+                          <div class="col-sm">
                             <h3 className="mt-1">
-                              <Box component="fieldset" mb={3} borderColor="transparent">
+                              <Box
+                                component="fieldset"
+                                mb={3}
+                                borderColor="transparent"
+                              >
                                 Eleveur :{" "}
                                 {this.state.Eleveur.nom +
                                   " " +
-                                  this.state.Eleveur.prenom}{" "}{" "}
-                                <Rating name="read-only" value={this.state.Eleveur.rating} readOnly />
+                                  this.state.Eleveur.prenom}{" "}
+                                <Rating
+                                  name="read-only"
+                                  value={this.state.Eleveur.rating}
+                                  readOnly
+                                />
                               </Box>
                             </h3>{" "}
-                            <h6 className="my-2">  <i class="fa fa-map"></i> <b>Region  : </b>{" " + this.state.Eleveur.region} </h6>
-                            <h6 className="mb-2"><i class="fa fa-home"></i>   <b>Ville : </b>{" " + this.state.Eleveur.ville}</h6>
-                            <h6 className="mb-2"><i class="fa fa-phone" aria-hidden="true"></i>   <b>Telephone : </b>{" " + this.state.Eleveur.tel}</h6>
-                            <h6 className="">  <img style={{ width: "18px", height: "20px", marginBottom: "5px" }}
-                              data-imgbigurl="Images/sheep-head.png"
-                              src="Images/sheep-head.png"
-                              alt=""
-                            />   <b> <span id="nbEspece">
-                              {this.state.Annonces.length}
-                            </span>{" "}
-                             Têtes au total</b></h6>
-                            {this.state.Eleveur.anoc ?
-                              <span className=" text-success" style={{ position: "relative", top: "40px" }}>
-                                <HiOutlineBadgeCheck className=" mr-1 fa-lg " /> Le label de l'ANOC est un gage de la qualité du produit. <br></br></span>
-                              : null}
+                            <h6 className="my-2">
+                              {" "}
+                              <i class="fa fa-map"></i> <b>Region : </b>
+                              {" " + this.state.Eleveur.region}{" "}
+                            </h6>
+                            <h6 className="mb-2">
+                              <i class="fa fa-home"></i> <b>Ville : </b>
+                              {" " + this.state.Eleveur.ville}
+                            </h6>
+                            <h6 className="mb-2">
+                              <i class="fa fa-phone" aria-hidden="true"></i>{" "}
+                              <b>Telephone : </b>
+                              {" " + this.state.Eleveur.tel}
+                            </h6>
+                            <h6 className="">
+                              {" "}
+                              <img
+                                style={{
+                                  width: "18px",
+                                  height: "20px",
+                                  marginBottom: "5px",
+                                }}
+                                data-imgbigurl="Images/sheep-head.png"
+                                src="Images/sheep-head.png"
+                                alt=""
+                              />{" "}
+                              <b>
+                                {" "}
+                                <span id="nbEspece">
+                                  {this.state.Annonces.length}
+                                </span>{" "}
+                                Têtes au total
+                              </b>
+                            </h6>
+                            {this.state.Eleveur.anoc ? (
+                              <span
+                                className=" text-success"
+                                style={{ position: "relative", top: "40px" }}
+                              >
+                                <HiOutlineBadgeCheck className=" mr-1 fa-lg " />{" "}
+                                Le label de l'ANOC est un gage de la qualité du
+                                produit. <br></br>
+                              </span>
+                            ) : null}
                           </div>
                         </div>
                         <div>
-                          <br></br></div>
+                          <br></br>
+                        </div>
                         <h6 id="centrerT" className="mt-3">
-                          <b id="nbEspece">{vendu.length}{" "}</b> Vendus{" "}
-                          <b className="ml-3" id="nbEspece">{dispo.length}{" "}</b> Disponibles{" "}
-                          <b className="ml-3" id="nbEspece">{reserv.length}{" "}</b> Réservés{" "}
+                          <b id="nbEspece">{vendu.length} </b> Vendus{" "}
+                          <b className="ml-3" id="nbEspece">
+                            {dispo.length}{" "}
+                          </b>{" "}
+                          Disponibles{" "}
+                          <b className="ml-3" id="nbEspece">
+                            {reserv.length}{" "}
+                          </b>{" "}
+                          Réservés{" "}
                         </h6>
                         <br></br>
                         <h5>Ce qu'il vous propose :</h5>
                         <br></br>
                         <div>
-                          <div id="filterPlace" className="col-lg-5 col-md-5 fa ">
+                          <div
+                            id="filterPlace"
+                            className="col-lg-5 col-md-5 fa "
+                          >
                             <Select
                               id="filterPlace"
                               value={this.state.selectedOptionSort}
                               onChange={this.sortData}
                               options={optionsSort}
                               placeholder="&#xf161; Trier par"
-                            //
-                            //f0b0
+                              //
+                              //f0b0
 
-                            // className="Select"
+                              // className="Select"
                             />
                           </div>
-
                         </div>
                         <br></br>
-
                       </div>
                     </div>
                   </div>
                 )}
                 {/*<!-- Sheeps Grid Section Begin --> */}
                 <div>
-                  {loading ? (
-                    null
-                  ) : (
+                  {loading ? null : (
                     <div>
                       <div className="row">
                         {currentAnnonces.map((Annonces) => (
@@ -847,9 +921,10 @@ id="modalRecherche"
                                 />
 
                                 <ul className="product__item__pic__hover">
-
                                   <li>
-                                    <Link to={`/DetailsMouton/${Annonces._id.$oid}`}>
+                                    <Link
+                                      to={`/DetailsMouton/${Annonces._id.$oid}`}
+                                    >
                                       <a href="#">
                                         <i class="fa fa-eye"></i>
                                       </a>
@@ -857,40 +932,74 @@ id="modalRecherche"
                                   </li>
                                 </ul>
                               </div>
-                              {Annonces.anoc ?
-                                <h1 style={{ borderRadius: "0% 0% 0% 40%", fontSize: "14px" }} class=" badge badge-success  pt-1 w-100  ">
+                              {Annonces.anoc ? (
+                                <h1
+                                  style={{
+                                    borderRadius: "0% 0% 0% 40%",
+                                    fontSize: "14px",
+                                  }}
+                                  class=" badge badge-success  pt-1 w-100  "
+                                >
                                   <HiOutlineBadgeCheck className=" mr-1 fa-lg " />
-                                  <span>Labélisé ANOC</span>  </h1>
-                                : <h1 style={{ borderRadius: "0% 0% 0% 40%", fontSize: "14px" }} class=" badge  pt-4 w-100  ">
-
-                                  <span>{" "} </span>  </h1>}
+                                  <span>Labélisé ANOC</span>{" "}
+                                </h1>
+                              ) : (
+                                <h1
+                                  style={{
+                                    borderRadius: "0% 0% 0% 40%",
+                                    fontSize: "14px",
+                                  }}
+                                  class=" badge  pt-4 w-100  "
+                                >
+                                  <span> </span>{" "}
+                                </h1>
+                              )}
                               <div className="product__item__text p-2 text-justify">
-                                <h6 ><GiSheep className=" mr-1 fa-lg " />{Annonces.espece}
-
+                                <h6>
+                                  <GiSheep className=" mr-1 fa-lg " />
+                                  {Annonces.espece}
                                   <span className="float-right">
-                                    < FaShapes />{" " + this.annonceVision(Annonces)}
-                                  </span> </h6>
+                                    <FaShapes />
+                                    {" " + this.annonceVision(Annonces)}
+                                  </span>{" "}
+                                </h6>
 
                                 <h6>
                                   <img
-                                    style={{ width: "18px", height: "18px", marginRight: "5px" }}
-                                    src="./Images/age.png" />
+                                    style={{
+                                      width: "18px",
+                                      height: "18px",
+                                      marginRight: "5px",
+                                    }}
+                                    src="./Images/age.png"
+                                  />
 
                                   {Annonces.age + " mois"}
 
                                   <span className="float-right ">
                                     <GiWeight className=" mr-1 fa-lg " />
-                                    {Annonces.poids + " Kg"}</span></h6>
+                                    {Annonces.poids + " Kg"}
+                                  </span>
+                                </h6>
 
-                                <h6 className=" nbrm" style={{ color: "black", fontSize: "18px" }}>
-                                  <i class="fa fa-map-marker"></i> {Annonces.region}
+                                <h6
+                                  className=" nbrm"
+                                  style={{ color: "black", fontSize: "18px" }}
+                                >
+                                  <i class="fa fa-map-marker"></i>{" "}
+                                  {Annonces.region}
                                 </h6>
 
                                 <h5 id="mad">
                                   <i class="fa fa-usd" aria-hidden="true"></i>
                                   {"         " + Annonces.prix + " Dhs"}
-                                  <h5 style={{ color: "rgb(187, 33, 36)" }} className="  float-right" >
-                                    {"         " + Annonces.statut}</h5></h5>
+                                  <h5
+                                    style={{ color: "rgb(187, 33, 36)" }}
+                                    className="  float-right"
+                                  >
+                                    {"         " + Annonces.statut}
+                                  </h5>
+                                </h5>
                               </div>
                             </div>
                           </div>

@@ -813,7 +813,7 @@ a:hover {
   Header
 -----------------------*/
 .Header {
-  margin: 0 0 0 5rem;
+  margin: 0 0 0 4em;
 }
 
 .header__top {
@@ -954,7 +954,7 @@ a:hover {
 }
 
 .header__menu {
-  padding: 14px 10%;
+  padding: 14px 14%;
   background-color: #2a2f36;
   width: 100%;
 }
@@ -2782,7 +2782,7 @@ h3 {
 
 .shoping__checkout ul li span {
   font-size: 18px;
-  color: #dd2222;
+  color: #fe6927;
   float: right;
 }
 
@@ -2819,7 +2819,9 @@ h3 {
   text-decoration: underline;
   color: #999999;
 }
-
+.checkout__form {
+  margin-top: 5%;
+}
 .checkout__form h4 {
   color: #1c1c1c;
   font-weight: 700;
@@ -3640,14 +3642,14 @@ h3 {
 
 /*--------------------------------- Responsive Media Quaries -----------------------------*/
 
-@media only screen and (min-width: 1200px) {
+@media only screen and (min-width: 1358px) {
   .container {
     max-width: 100%;
   }
 }
 
 /* Medium Device = 1200px */
-
+/* 
 @media only screen and (min-width: 992px) and (max-width: 1199px) {
   .header__menu ul li {
     margin-right: 45px;
@@ -3675,9 +3677,9 @@ h3 {
   }
 }
 
-/* Tablet Device = 768px */
+Tablet Device = 768px */
 
-@media only screen and (min-width: 768px) and (max-width: 991px) {
+@media only screen and (min-width: 768px) and (max-width: 1357px) {
   .ModalSearch {
     display: block;
   }

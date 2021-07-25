@@ -21,6 +21,7 @@
     "react-intl-tel-input": "^8.0.4",
     "react-js-pagination": "^3.0.3",
     "react-loader-spinner": "^3.1.14",
+    "react-multi-carousel": "^2.6.3",
     "react-multistep": "^5.1.0",
     "react-paginate": "^6.5.0",
     "react-responsive-carousel": "^3.2.19",
@@ -30,8 +31,7 @@
     "react-share": "^4.4.0",
     "react-switch": "^6.0.0",
     "react-youtube": "^7.13.1",
-    "sweetalert2": "^9.17.2",
-    "react-multi-carousel": "^2.6.3"
+    "sweetalert2": "^9.17.2"
   },
   "scripts": {
     "start": "react-scripts start",

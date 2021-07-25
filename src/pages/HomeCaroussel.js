@@ -105,28 +105,108 @@ class HomeCaroussel extends Component {
                 }}
               >
                 {Annonces ? (
-                  <>
-                    <div>
-                      <img
-                        src={Annonces.image_face}
+                  <Link
+                    to={`/DetailsMouton/${Annonces._id.$oid}`}
+                    style={{ textDecoration: "none" }}
+                  >
+                    {" "}
+                    <img
+                      src={Annonces.image_face}
+                      alt="item"
+                      style={{
+                        width: "355px",
+                        height: "170px",
+                        borderTopRightRadius: "10%",
+                        borderTopLeftRadius: "10%",
+                      }}
+                    />
+                    {Annonces.anoc ? (
+                      <h1
                         style={{
-                          borderRadius: "30%",
-                          height: "100px",
-                          width: "100%",
+                          borderRadius: "0% 0% 0% 40%",
+                          fontSize: "14px",
                         }}
-                      />
+                        class=" badge badge-success py-1 w-100  "
+                      >
+                        <HiOutlineBadgeCheck className=" mr-1 fa-lg " />
+                        <span>Labélisé ANOC</span>{" "}
+                      </h1>
+                    ) : (
+                      <span className="badge pt-3 w-100  mt-1  ">{"  "}</span>
+                    )}
+                    <div className="product__item__text p-2 text-justify">
+                      <div
+                        className="region"
+                        style={{
+                          color: "#aaa",
+                          fontSize: "15px",
+                          textAlign: "center",
+                        }}
+                      >
+                        <i
+                          class="fa fa-map-marker"
+                          style={{ marginRight: "0.5rem" }}
+                        ></i>
+                        {Annonces.localisation}
+                      </div>
+                      <div
+                        className="product__item__information"
+                        style={{
+                          color: "black",
+                          fontSize: "15px",
+                        }}
+                      >
+                        <div className=" nbrm">
+                          <img
+                            style={{
+                              width: "18px",
+                              height: "18px",
+                              marginBottom: "5px",
+                              marginRight: "0.5rem",
+                            }}
+                            data-imgbigurl="Images/sheep-head.png"
+                            src="Images/sheep-head.png"
+                            alt=""
+                          />
+                          {" " + Annonces.espece}
+                          <span className="float-right">
+                            <FaShapes style={{ marginRight: "0.5rem" }} />
+                            {" " + Annonces.race}
+                          </span>
+                        </div>
+                        <div>
+                          <img
+                            style={{
+                              width: "18px",
+                              height: "18px",
+                              marginRight: "0.5rem",
+                            }}
+                            src="./Images/age.png"
+                          />
+
+                          {Annonces.age + " mois"}
+
+                          <span className="float-right ">
+                            <GiWeight
+                              className=" mr-1 fa-lg "
+                              style={{ marginRight: "0.5rem" }}
+                            />
+                            {Annonces.poids + " Kg"}
+                          </span>
+                        </div>
+                        <div
+                          style={{
+                            color: "#fe6927",
+                            fontSize: "15px",
+                            fontWeight: "1000",
+                            textDecoration: "bold",
+                          }}
+                        >
+                          {"Prix : " + Annonces.prix + "  Dhs"}
+                        </div>
+                      </div>
                     </div>
-                    <div
-                      className="product__item__text p-2 text-justify"
-                      style={{ margin: "auto" }}
-                    >
-                      <h6>
-                        <GiSheep className=" mr-1 fa-lg " />
-                        {Annonces.espece}
-                      </h6>
-                      <h5 id="mad">{Annonces.prix + " Dhs"}</h5>
-                    </div>{" "}
-                  </>
+                  </Link>
                 ) : (
                   <></>
                 )}

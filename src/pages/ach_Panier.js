@@ -354,8 +354,8 @@ class Commandes extends Component {
         <section className="">
           <div className="container">
             <br></br>
-            <h3 class="latest-product__item">
-              Mon Panier <i class="fa fa-shopping-cart"></i>
+            <h3 className="latest-product__item">
+              Mon Panier <i className="fa fa-shopping-cart"></i>
             </h3>
 
             <div className="row">
@@ -394,7 +394,7 @@ class Commandes extends Component {
                           >
                             <p style={{ color: "#fba502" }}>
                               <i
-                                class="fa fa-frown-o fa-5x"
+                                className="fa fa-frown-o fa-5x"
                                 aria-hidden="true"
                               ></i>
                             </p>
@@ -410,7 +410,7 @@ class Commandes extends Component {
                               this.state.currentPage * 2
                             )
                             .map((p) => (
-                              <div class="row  mb-2">
+                              <div className="row  mb-2">
                                 <div className=" col-lg-12 col-md-12 col-sm-12 mt-3">
                                   <b className="text-dark">Cooperative : </b>
                                   <b className="text-primary">{p.nom}</b>
@@ -523,7 +523,7 @@ class Commandes extends Component {
                                           }}
                                         >
                                           <i
-                                            class="fa fa-map-marker"
+                                            className="fa fa-map-marker"
                                             style={{ marginRight: "0.5rem" }}
                                           ></i>
                                           {Annonces.localisation}
@@ -634,17 +634,15 @@ class Commandes extends Component {
 
                       {
                         <div className="center-div">
-                          <nav className="row">
-                            <Pagination
-                              activePage={this.state.currentPage}
-                              itemsCountPerPage={9}
-                              totalItemsCount={this.state.panier.length}
-                              pageRangeDisplayed={7}
-                              onChange={this.paginate.bind(this)}
-                              itemClass="page-item"
-                              linkClass="page-link"
-                            />
-                          </nav>
+                          <Pagination
+                            activePage={this.state.currentPage}
+                            itemsCountPerPage={9}
+                            totalItemsCount={this.state.panier.length}
+                            pageRangeDisplayed={7}
+                            onChange={this.paginate.bind(this)}
+                            itemClass="page-item"
+                            linkClass="page-link"
+                          />
                         </div>
                       }
                       <br></br>

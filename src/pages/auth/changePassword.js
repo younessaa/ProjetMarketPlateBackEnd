@@ -133,8 +133,11 @@ class changePassword extends Component {
                       <div className="row">
                         <div id="LoginIcon" className="col-lg-1 col-md-1">
                           <p></p>
-                          <span class="symbol-input100">
-                            <i class="fa fa-envelope" aria-hidden="true"></i>
+                          <span className="symbol-input100">
+                            <i
+                              className="fa fa-envelope"
+                              aria-hidden="true"
+                            ></i>
                           </span>{" "}
                         </div>
                         <div id="LoginIcon" className="col-lg-11 col-md-11">

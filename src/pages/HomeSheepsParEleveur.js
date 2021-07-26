@@ -474,7 +474,7 @@ class HomeSheepsParEleveur extends Component {
                       <div className="col-lg-12 col-md-12">
                         <input
                           type="text"
-                          class="form-control"
+                          className="form-control"
                           placeholder=" Reference de l'annonce"
                           name="reference"
                           onChange={this.onChange}
@@ -489,7 +489,7 @@ class HomeSheepsParEleveur extends Component {
                       <div className="col-lg-12 col-md-12">
                         <input
                           type="text"
-                          class="form-control"
+                          className="form-control"
                           placeholder=" Budget min"
                           name="prix_min"
                           onChange={this.onChange}
@@ -501,7 +501,7 @@ class HomeSheepsParEleveur extends Component {
                       <div className="col-lg-12 col-md-12">
                         <input
                           type="text"
-                          class="form-control"
+                          className="form-control"
                           placeholder=" Budget max"
                           name="prix_max"
                           onChange={this.onChange}
@@ -517,7 +517,7 @@ class HomeSheepsParEleveur extends Component {
                       <div className="col-lg-12 col-md-12">
                         <input
                           type="text"
-                          class="form-control"
+                          className="form-control"
                           placeholder=" Poids min"
                           name="poids_min"
                           onChange={this.onChange}
@@ -528,7 +528,7 @@ class HomeSheepsParEleveur extends Component {
                       <div className="col-lg-12 col-md-12">
                         <input
                           type="text"
-                          class="form-control"
+                          className="form-control"
                           placeholder=" Poids max"
                           name="poids_max"
                           onChange={this.onChange}
@@ -636,7 +636,7 @@ class HomeSheepsParEleveur extends Component {
                       <div className="col-lg-12 col-md-12">
                         <input
                           type="text"
-                          class="form-control"
+                          className="form-control"
                           placeholder=" Reference de l'annonce"
                           name="reference"
                           onChange={this.onChange}
@@ -651,7 +651,7 @@ class HomeSheepsParEleveur extends Component {
                       <div className="col-lg-12 col-md-12">
                         <input
                           type="text"
-                          class="form-control"
+                          className="form-control"
                           placeholder=" Budget min"
                           name="prix_min"
                           onChange={this.onChange}
@@ -663,7 +663,7 @@ class HomeSheepsParEleveur extends Component {
                       <div className="col-lg-12 col-md-12">
                         <input
                           type="text"
-                          class="form-control"
+                          className="form-control"
                           placeholder=" Budget max"
                           name="prix_max"
                           onChange={this.onChange}
@@ -679,7 +679,7 @@ class HomeSheepsParEleveur extends Component {
                       <div className="col-lg-12 col-md-12">
                         <input
                           type="text"
-                          class="form-control"
+                          className="form-control"
                           placeholder=" Poids min"
                           name="poids_min"
                           onChange={this.onChange}
@@ -690,7 +690,7 @@ class HomeSheepsParEleveur extends Component {
                       <div className="col-lg-12 col-md-12">
                         <input
                           type="text"
-                          class="form-control"
+                          className="form-control"
                           placeholder=" Poids max"
                           name="poids_max"
                           onChange={this.onChange}
@@ -767,7 +767,10 @@ class HomeSheepsParEleveur extends Component {
                       <div className="col-6"> </div>
                       <div className="col-5"> </div>
                       <div onClick={this.showSearch} className="ModalSearch">
-                        <i class="fa fa-search fa-lg" aria-hidden="true"></i>
+                        <i
+                          className="fa fa-search fa-lg"
+                          aria-hidden="true"
+                        ></i>
                       </div>
                     </div>
 
@@ -775,12 +778,12 @@ class HomeSheepsParEleveur extends Component {
                       <div className="col-lg-4 col-md-5"></div>
                       <div className="col-lg-12 col-md-12">
                         <br />
-                        <div class="row mb-5">
-                          <div class="col-sm">
+                        <div className="row mb-5">
+                          <div className="col-sm">
                             {" "}
                             <img
                               src={this.state.Eleveur.photo_profil}
-                              class=" product__item__pic  set-bg"
+                              className=" product__item__pic  set-bg"
                             />
                             {this.state.Eleveur.anoc ? (
                               <h1
@@ -788,7 +791,7 @@ class HomeSheepsParEleveur extends Component {
                                   borderRadius: "0% 0% 0% 40%",
                                   fontSize: "14px",
                                 }}
-                                class=" badge badge-success  pt-1 w-100  "
+                                className=" badge badge-success  pt-1 w-100  "
                               >
                                 <HiOutlineBadgeCheck className=" mr-1 fa-lg " />
                                 <span>Labélisé ANOC</span>{" "}
@@ -799,7 +802,7 @@ class HomeSheepsParEleveur extends Component {
                               </span>
                             )}
                           </div>
-                          <div class="col-sm">
+                          <div className="col-sm">
                             <h3 className="mt-1">
                               <Box
                                 component="fieldset"
@@ -819,15 +822,15 @@ class HomeSheepsParEleveur extends Component {
                             </h3>{" "}
                             <h6 className="my-2">
                               {" "}
-                              <i class="fa fa-map"></i> <b>Region : </b>
+                              <i className="fa fa-map"></i> <b>Region : </b>
                               {" " + this.state.Eleveur.region}{" "}
                             </h6>
                             <h6 className="mb-2">
-                              <i class="fa fa-home"></i> <b>Ville : </b>
+                              <i className="fa fa-home"></i> <b>Ville : </b>
                               {" " + this.state.Eleveur.ville}
                             </h6>
                             <h6 className="mb-2">
-                              <i class="fa fa-phone" aria-hidden="true"></i>{" "}
+                              <i className="fa fa-phone" aria-hidden="true"></i>{" "}
                               <b>Telephone : </b>
                               {" " + this.state.Eleveur.tel}
                             </h6>
@@ -926,7 +929,7 @@ class HomeSheepsParEleveur extends Component {
                                       to={`/DetailsMouton/${Annonces._id.$oid}`}
                                     >
                                       <a href="#">
-                                        <i class="fa fa-eye"></i>
+                                        <i className="fa fa-eye"></i>
                                       </a>
                                     </Link>
                                   </li>
@@ -938,7 +941,7 @@ class HomeSheepsParEleveur extends Component {
                                     borderRadius: "0% 0% 0% 40%",
                                     fontSize: "14px",
                                   }}
-                                  class=" badge badge-success  pt-1 w-100  "
+                                  className=" badge badge-success  pt-1 w-100  "
                                 >
                                   <HiOutlineBadgeCheck className=" mr-1 fa-lg " />
                                   <span>Labélisé ANOC</span>{" "}
@@ -949,7 +952,7 @@ class HomeSheepsParEleveur extends Component {
                                     borderRadius: "0% 0% 0% 40%",
                                     fontSize: "14px",
                                   }}
-                                  class=" badge  pt-4 w-100  "
+                                  className=" badge  pt-4 w-100  "
                                 >
                                   <span> </span>{" "}
                                 </h1>
@@ -986,12 +989,15 @@ class HomeSheepsParEleveur extends Component {
                                   className=" nbrm"
                                   style={{ color: "black", fontSize: "18px" }}
                                 >
-                                  <i class="fa fa-map-marker"></i>{" "}
+                                  <i className="fa fa-map-marker"></i>{" "}
                                   {Annonces.region}
                                 </h6>
 
                                 <h5 id="mad">
-                                  <i class="fa fa-usd" aria-hidden="true"></i>
+                                  <i
+                                    className="fa fa-usd"
+                                    aria-hidden="true"
+                                  ></i>
                                   {"         " + Annonces.prix + " Dhs"}
                                   <h5
                                     style={{ color: "rgb(187, 33, 36)" }}

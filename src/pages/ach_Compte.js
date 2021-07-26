@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
-import Pagination from "react-js-pagination";
 import "bootstrap-less";
 import Loader from "react-loader-spinner";
 import Swal from "sweetalert2";

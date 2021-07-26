@@ -11,7 +11,7 @@ class Apropos extends Component {
     return (
       <section className="product spad">
         <div id="apropos" className="container">
-          <div class="col-lg-12 col-md-6">
+          <div className="col-lg-12 col-md-6">
             <h2 id="aproposh">Qui sommes nous ?</h2> <br></br>
             <h5 id="apropo1">
               L’ANOC (Association Nationale Ovine et Caprine) est une
@@ -26,7 +26,7 @@ class Apropos extends Component {
             <br></br>
             <h2 id="aproposh">Nos objectifs ?</h2> <br></br>
             <main>
-              <ol class="gradient-list">
+              <ol className="gradient-list">
                 <li>
                   Développer l’élevage ovin caprin et préserver le patrimoine
                   animal national ;

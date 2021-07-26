@@ -81,40 +81,40 @@ class Commander1 extends Component {
                             <br></br>
                             {this.props.data.check5 ? (
                               <div className=" ml-3">
-                                <div class="form-check">
+                                <div className="form-check">
                                   <input
                                     checked={
                                       this.props.data.standard === "domicile"
                                     }
                                     onChange={this.props.onPaiementChanged}
-                                    class="form-check-input"
+                                    className="form-check-input"
                                     type="radio"
                                     name="standard"
                                     value="domicile"
                                     id="domicile"
                                   />
                                   <label
-                                    class="form-check-label"
+                                    className="form-check-label"
                                     for="domicile"
                                   >
                                     Me faire livrer a domicile
                                   </label>
                                 </div>
-                                <div class="form-check">
+                                <div className="form-check">
                                   <input
                                     checked={
                                       this.props.data.standard ===
                                       "point_relais"
                                     }
                                     onChange={this.props.onPaiementChanged}
-                                    class="form-check-input"
+                                    className="form-check-input"
                                     type="radio"
                                     name="standard"
                                     value="point_relais"
                                     id="point_relais"
                                   />
                                   <label
-                                    class="form-check-label"
+                                    className="form-check-label"
                                     for="point_relais"
                                   >
                                     Me faire livrer en point relais
@@ -192,12 +192,12 @@ class Commander1 extends Component {
                                         : "mb-2 mt-3"
                                     }
                                   >
-                                    <i class="fa fa-home fa-lg"></i>{" "}
+                                    <i className="fa fa-home fa-lg"></i>{" "}
                                     <b>Cooperative : </b>
                                     {" " + this.props.data.cooperative.nom}
                                   </h6>
                                   <h6 className="mb-2">
-                                    <i class="fa fa-map-marker fa-lg"></i>{" "}
+                                    <i className="fa fa-map-marker fa-lg"></i>{" "}
                                     <b>Adresse :</b>
                                     {" " +
                                       this.props.data.cooperative.adresse}{" "}
@@ -205,7 +205,7 @@ class Commander1 extends Component {
 
                                   <h6 className="my-2">
                                     {" "}
-                                    <i class="fa fa-map"></i> <b>Ville :</b>
+                                    <i className="fa fa-map"></i> <b>Ville :</b>
                                     {" " +
                                       this.props.data.cooperative.ville}{" "}
                                   </h6>
@@ -296,7 +296,10 @@ class Commander1 extends Component {
               </div>{" "}
               {this.props.data.occasion === "aid" ? (
                 <h6 style={{ color: "#fe6927", marginBottom: "10px" }}>
-                  <i class="fa fa-exclamation-circle" aria-hidden="true"></i>{" "}
+                  <i
+                    className="fa fa-exclamation-circle"
+                    aria-hidden="true"
+                  ></i>{" "}
                   Votre commande sera livre 24h a 48h avant le jour de l'aid.
                   Nous vous contacterons par telephone preciser vous informer du
                   jour et de l'heure exacte.{" "}

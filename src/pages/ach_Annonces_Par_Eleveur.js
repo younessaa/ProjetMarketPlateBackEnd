@@ -679,7 +679,7 @@ class AllOffers extends Component {
                           <div className="text-center my-5">
                             <p style={{ color: "#fba502" }}>
                               <i
-                                class="fa fa-frown-o fa-5x"
+                                className="fa fa-frown-o fa-5x"
                                 aria-hidden="true"
                               ></i>
                             </p>
@@ -798,17 +798,15 @@ class AllOffers extends Component {
                         )}
 
                         <div className="center-div">
-                          <nav className="row">
-                            <Pagination
-                              activePage={this.state.currentPage}
-                              itemsCountPerPage={9}
-                              totalItemsCount={elv.length}
-                              pageRangeDisplayed={7}
-                              onChange={this.paginate.bind(this)}
-                              itemClass="page-item"
-                              linkClass="page-link"
-                            />
-                          </nav>
+                          <Pagination
+                            activePage={this.state.currentPage}
+                            itemsCountPerPage={9}
+                            totalItemsCount={elv.length}
+                            pageRangeDisplayed={7}
+                            onChange={this.paginate.bind(this)}
+                            itemClass="page-item"
+                            linkClass="page-link"
+                          />
                         </div>
                         <br></br>
                       </div>

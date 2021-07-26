@@ -332,7 +332,10 @@ class Commandes extends Component {
                         style={{ height: "30rem" }}
                       >
                         <p style={{ color: "#fba502" }}>
-                          <i class="fa fa-frown-o fa-5x" aria-hidden="true"></i>
+                          <i
+                            className="fa fa-frown-o fa-5x"
+                            aria-hidden="true"
+                          ></i>
                         </p>
 
                         <h3 style={{ color: "#28a745" }}>
@@ -411,7 +414,7 @@ class Commandes extends Component {
                                   }}
                                 >
                                   <i
-                                    class="fa fa-map-marker"
+                                    className="fa fa-map-marker"
                                     style={{ marginRight: "0.5rem" }}
                                   ></i>
                                   {Annonces.localisation}
@@ -513,17 +516,15 @@ class Commandes extends Component {
                   </div>
                 )}
                 <div className="center-div">
-                  <nav className="row">
-                    <Pagination
-                      activePage={this.state.currentPage}
-                      itemsCountPerPage={9}
-                      totalItemsCount={this.state.Favoris.length}
-                      pageRangeDisplayed={7}
-                      onChange={this.paginate.bind(this)}
-                      itemClass="page-item"
-                      linkClass="page-link"
-                    />
-                  </nav>
+                  <Pagination
+                    activePage={this.state.currentPage}
+                    itemsCountPerPage={9}
+                    totalItemsCount={this.state.Favoris.length}
+                    pageRangeDisplayed={7}
+                    onChange={this.paginate.bind(this)}
+                    itemClass="page-item"
+                    linkClass="page-link"
+                  />
                 </div>
 
                 <br></br>

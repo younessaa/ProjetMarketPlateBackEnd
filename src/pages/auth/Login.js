@@ -164,8 +164,11 @@ class Login extends Component {
                       <div className="row">
                         <div id="LoginIcon" className="col-lg-1 col-md-1">
                           <p></p>
-                          <span class="symbol-input100">
-                            <i class="fa fa-envelope" aria-hidden="true"></i>
+                          <span className="symbol-input100">
+                            <i
+                              className="fa fa-envelope"
+                              aria-hidden="true"
+                            ></i>
                           </span>{" "}
                         </div>
                         <div id="LoginIcon" className="col-lg-11 col-md-11">
@@ -182,8 +185,8 @@ class Login extends Component {
                       <div className="row">
                         <div id="LoginIcon" className="col-lg-1 col-md-1">
                           <p></p>
-                          <span class="symbol-input100">
-                            <i class="fa fa-lock" aria-hidden="true"></i>
+                          <span className="symbol-input100">
+                            <i className="fa fa-lock" aria-hidden="true"></i>
                           </span>{" "}
                         </div>
                         <div id="LoginIcon" className="col-lg-11 col-md-11">
@@ -194,17 +197,17 @@ class Login extends Component {
                             onChange={this.onChange}
                           />
                         </div>
-                        <div class="custom-control custom-checkbox mt-4">
+                        <div className="custom-control custom-checkbox mt-4">
                           <input
                             type="checkbox"
                             name="remember"
-                            class="custom-control-input"
+                            className="custom-control-input"
                             id="checkbox-1"
                             onChange={() => this.handleChecked()}
                             checked={this.state.isChecked}
                           />
                           <label
-                            class="custom-control-label"
+                            className="custom-control-label"
                             for="checkbox-1"
                             onChange={() => this.handleChecked()}
                           >

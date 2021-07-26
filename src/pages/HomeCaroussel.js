@@ -126,7 +126,7 @@ class HomeCaroussel extends Component {
                           borderRadius: "0% 0% 0% 40%",
                           fontSize: "14px",
                         }}
-                        class=" badge badge-success py-1 w-100  "
+                        className=" badge badge-success py-1 w-100  "
                       >
                         <HiOutlineBadgeCheck className=" mr-1 fa-lg " />
                         <span>Labélisé ANOC</span>{" "}
@@ -144,7 +144,7 @@ class HomeCaroussel extends Component {
                         }}
                       >
                         <i
-                          class="fa fa-map-marker"
+                          className="fa fa-map-marker"
                           style={{ marginRight: "0.5rem" }}
                         ></i>
                         {Annonces.localisation}

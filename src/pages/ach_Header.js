@@ -245,7 +245,7 @@ class Header extends Component {
                   <div className="header__top__right">
                     <div className="header__top__right__button item">
                       <div className="rulesButton">
-                        <i class="fa fa-gavel" aria-hidden="true"></i>
+                        <i className="fa fa-gavel" aria-hidden="true"></i>
                         <a
                           href="./Regles"
                           style={{

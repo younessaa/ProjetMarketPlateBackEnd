@@ -928,7 +928,7 @@ class Commandes extends Component {
                 >
                   {message !== null ? (
                     <i
-                      class="fa fa-exclamation-circle fa-sm "
+                      className="fa fa-exclamation-circle fa-sm "
                       aria-hidden="true"
                     ></i>
                   ) : null}
@@ -1000,7 +1000,7 @@ class Commandes extends Component {
                                         <CgFileAdd className="fa-lg" />
                                       ) : Annonces.isDelivered === true ? (
                                         <i
-                                          class="fa fa-star fa-lg"
+                                          className="fa fa-star fa-lg"
                                           aria-hidden="true"
                                         ></i>
                                       ) : (
@@ -1484,17 +1484,15 @@ class Commandes extends Component {
                     ))}
                   </div>
                   <div className="center-div">
-                    <nav className="row">
-                      <Pagination
-                        activePage={this.state.currentPage}
-                        itemsCountPerPage={9}
-                        totalItemsCount={currentAnnonces.length}
-                        pageRangeDisplayed={7}
-                        onChange={this.paginate.bind(this)}
-                        itemClass="page-item"
-                        linkClass="page-link"
-                      />
-                    </nav>
+                    <Pagination
+                      activePage={this.state.currentPage}
+                      itemsCountPerPage={9}
+                      totalItemsCount={currentAnnonces.length}
+                      pageRangeDisplayed={7}
+                      onChange={this.paginate.bind(this)}
+                      itemClass="page-item"
+                      linkClass="page-link"
+                    />
                   </div>
                   <br></br>
                   <br></br>

@@ -552,7 +552,7 @@ class Commander extends Component {
     return (
       <div>
         <div
-          class="container"
+          className="container"
           style={{ display: "block", marginLeft: "auto", marginRight: "auto" }}
         >
           <br></br>

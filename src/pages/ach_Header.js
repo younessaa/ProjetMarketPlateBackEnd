@@ -268,7 +268,7 @@ class Header extends Component {
                               fontFamily: "inherit",
                               fontSize: "0.924rem",
                             }}
-                            href=""
+                            href="/Compte"
                           >
                             <i className="fa fa-user-circle" />
                             <b>{" " + this.state.connectedUser}</b>

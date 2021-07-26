@@ -730,122 +730,121 @@ class HomeSheeps extends Component {
                           <br></br>
                         </div>
                       </div> */}
-                      <h6 id="gras" className="latest-product__item">
-                        Reference
-                      </h6>
-                      <div className="row">
-                        <div className="col-lg-12 col-md-12">
-                          <input
-                            id="recherchePlace"
-                            type="text"
-                            class="form-control"
-                            placeholder=" Reference de l'annonce"
-                            name="reference"
-                            onChange={this.onChange}
-                          />
+                      <div className="mobileSearch">
+                        {" "}
+                        <h6 id="gras" className="latest-product__item">
+                          Reference
+                        </h6>
+                        <div className="row">
+                          <div className="col-lg-12 col-md-12">
+                            <input
+                              id="recherchePlace"
+                              type="text"
+                              class="form-control"
+                              placeholder=" Reference de l'annonce"
+                              name="reference"
+                              onChange={this.onChange}
+                            />
+                          </div>
                         </div>
-                      </div>
-                      <br />
-                      <h6 id="gras" className="latest-product__item">
-                        Prix
-                      </h6>
-                      <div className="row">
-                        <div className="col-lg-12 col-md-12">
-                          <input
-                            id="recherchePlace"
-                            type="text"
-                            class="form-control"
-                            placeholder=" Budget min"
-                            name="prix_min"
-                            onChange={this.onChange}
-                          />
+                        <br />
+                        <h6 id="gras" className="latest-product__item">
+                          Prix
+                        </h6>
+                        <div className="row">
+                          <div className="col-lg-12 col-md-12">
+                            <input
+                              id="recherchePlace"
+                              type="text"
+                              class="form-control"
+                              placeholder=" Budget min"
+                              name="prix_min"
+                              onChange={this.onChange}
+                            />
+                          </div>
                         </div>
-                      </div>
+                        <div className="row">
+                          <div className="col-lg-12 col-md-12">
+                            <input
+                              id="recherchePlace"
+                              type="text"
+                              class="form-control"
+                              placeholder=" Budget max"
+                              name="prix_max"
+                              onChange={this.onChange}
+                            />
+                          </div>
+                        </div>
+                        <br></br>
+                        <h6 id="gras" className="latest-product__item">
+                          Poids Environ
+                        </h6>
+                        <div className="row">
+                          <div className="col-lg-12 col-md-12">
+                            <input
+                              id="recherchePlace"
+                              type="text"
+                              class="form-control"
+                              placeholder=" Poids min"
+                              name="poids_min"
+                              onChange={this.onChange}
+                            />
+                          </div>
+                        </div>
+                        <div className="row">
+                          <div className="col-lg-12 col-md-12">
+                            <input
+                              id="recherchePlace"
+                              type="text"
+                              class="form-control"
+                              placeholder=" Poids max"
+                              name="poids_max"
+                              onChange={this.onChange}
+                            />
+                          </div>
+                        </div>
+                        <br></br>
+                        <h6 id="gras" className="latest-product__item">
+                          Ville
+                        </h6>
+                        <div className="row">
+                          <div className="col-lg-12 col-md-12">
+                            <Select
+                              value={selectedOptionVille}
+                              onChange={this.handleChangeVille}
+                              options={optionsVille}
+                              placeholder=" Ville"
 
-                      <div className="row">
-                        <div className="col-lg-12 col-md-12">
-                          <input
-                            id="recherchePlace"
-                            type="text"
-                            class="form-control"
-                            placeholder=" Budget max"
-                            name="prix_max"
-                            onChange={this.onChange}
-                          />
+                              // className="Select"
+                            />
+                            <br></br>
+                            <br></br>
+                          </div>
+                        </div>
+                        <div className="row">
+                          <div className="col-lg-12 col-md-12">
+                            {/* <button className="btn btn-success" onClick={this.handelChercher}> Rechercher </button><br/> */}
+                            <button
+                              id="roundB"
+                              className="newBtn site-btn"
+                              onClick={this.handelChercher}
+                            >
+                              <i className="fa fa-search "></i> Rechercher{" "}
+                            </button>
+                            <br></br>
+                            <br></br>
+                            <button
+                              id="roundB"
+                              className="newBtn site-btn"
+                              onClick={this.handelReinitialiser}
+                            >
+                              <i className="fa fa-refresh"></i> Reinitialiser{" "}
+                            </button>
+                            <br></br>
+                            <br></br>
+                          </div>
                         </div>
                       </div>
-                      <br></br>
-
-                      <h6 id="gras" className="latest-product__item">
-                        Poids Environ
-                      </h6>
-                      <div className="row">
-                        <div className="col-lg-12 col-md-12">
-                          <input
-                            id="recherchePlace"
-                            type="text"
-                            class="form-control"
-                            placeholder=" Poids min"
-                            name="poids_min"
-                            onChange={this.onChange}
-                          />
-                        </div>
-                      </div>
-                      <div className="row">
-                        <div className="col-lg-12 col-md-12">
-                          <input
-                            id="recherchePlace"
-                            type="text"
-                            class="form-control"
-                            placeholder=" Poids max"
-                            name="poids_max"
-                            onChange={this.onChange}
-                          />
-                        </div>
-                      </div>
-                      <br></br>
-
-                      <h6 id="gras" className="latest-product__item">
-                        Ville
-                      </h6>
-                      <div className="row">
-                        <div className="col-lg-12 col-md-12">
-                          <Select
-                            value={selectedOptionVille}
-                            onChange={this.handleChangeVille}
-                            options={optionsVille}
-                            placeholder=" Ville"
-
-                            // className="Select"
-                          />
-                          <br></br>
-                          <br></br>
-                        </div>
-                      </div>
-                      <div className="row">
-                        <div className="col-lg-12 col-md-12">
-                          {/* <button className="btn btn-success" onClick={this.handelChercher}> Rechercher </button><br/> */}
-                          <button
-                            id="roundB"
-                            className="newBtn site-btn"
-                            onClick={this.handelChercher}
-                          >
-                            <i className="fa fa-search "></i> Rechercher{" "}
-                          </button>
-                          <br></br>
-                          <br></br>
-                          <button
-                            id="roundB"
-                            className="newBtn site-btn"
-                            onClick={this.handelReinitialiser}
-                          >
-                            <i className="fa fa-refresh"></i> Reinitialiser{" "}
-                          </button>
-                          <br></br>
-                          <br></br>
-                        </div>
-                      </div>
-
                       {/* <label className="latest-product__item">
                       <input name="withImages" type="checkbox" /> Avec photos
                     </label> */}

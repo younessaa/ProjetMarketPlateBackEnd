@@ -1,0 +1,36 @@
+.cont {
+  display: flex;
+  flex-direction: row;
+}
+
+.first {
+  display: flex;
+  flex-direction: column;
+}
+
+.picture {
+  flex-basis: 50%;
+}
+.information {
+  flex-basis: 50%;
+}
+.details {
+  background-color: white;
+  border-radius: 50px;
+  margin: 10em;
+}
+.details ul {
+  margin-top: 35px;
+}
+.details ul li {
+  font-size: 16px;
+  color: #1c1c1c;
+  list-style: none;
+  line-height: 36px;
+}
+
+.Selector ul li b {
+  font-weight: 700;
+  width: 170px;
+  display: inline-block;
+}

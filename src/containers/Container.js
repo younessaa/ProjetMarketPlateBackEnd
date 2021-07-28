@@ -22,7 +22,7 @@ import Commandes from "../pages/ach_Commandes";
 import DetailsMouton from "../pages/ach_DetailsMouton";
 // import Login from "../pages/ach_Login";
 // import SignUp from "../pages/ach_SignUp";
-import Espaces from "../pages/ach_Espaces";
+//import Espaces from "../pages/ach_Espaces";
 import Regles from "../pages/ach_Regles";
 import Apropos from "../pages/ach_Apropos";
 import AlerteCommande from "../pages/ach_AlerteCommande";
@@ -36,9 +36,9 @@ import changePassword from "../pages/auth/changePassword";
 import changePasswordLink from "../pages/auth/changePasswordLink";
 import commandesParStatut from "../pages/ach_CommandesParStatut";
 
-import Commander1 from "../pages/step1";
-import Commander2 from "../pages/step2";
-import Commander3 from "../pages/step3";
+// import Commander1 from "../pages/step1";
+// import Commander2 from "../pages/step2";
+// import Commander3 from "../pages/step3";
 import Compte from "../pages/ach_Compte";
 
 class Container extends Component {

@@ -255,20 +255,20 @@ class DetailsMouton extends Component {
   }
 
   render() {
-    var mois = new Array(
-      "Janvier",
-      "Février",
-      "Mars",
-      "Avril",
-      "Mai",
-      "Juin",
-      "Juillet",
-      "Août",
-      "Septembre",
-      "Octobre",
-      "Novembre",
-      "Décembre"
-    );
+    // var mois = new Array(
+    //   "Janvier",
+    //   "Février",
+    //   "Mars",
+    //   "Avril",
+    //   "Mai",
+    //   "Juin",
+    //   "Juillet",
+    //   "Août",
+    //   "Septembre",
+    //   "Octobre",
+    //   "Novembre",
+    //   "Décembre"
+    // );
     const { loading } = this.state;
     const shareUrl = "http://localhost:3000/DetailsMouton";
     return (

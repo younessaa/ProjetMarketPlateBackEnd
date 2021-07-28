@@ -5,9 +5,11 @@ class Footer extends Component {
     return (
       <footer className="footer-distributed">
         <div className="footer-left">
-          <h3>
-            My<span>Anoc</span>
-          </h3>
+          <img
+            style={{ height: "40px" }}
+            src={require("./Images/logo-text.png")}
+            alt=""
+          />
           <p className="footer-company-name">anoc &copy; 2021</p>
         </div>
 

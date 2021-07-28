@@ -1,15 +1,15 @@
 import React, { Component } from "react";
-import ReactDOM from "react-dom";
+//import ReactDOM from "react-dom";
 import MultiStep from "../react-multistep";
 import Commander1 from "./step1";
 import Commander2 from "./step2";
 import Commander3 from "./step3";
 
 import axios from "axios";
-import Select from "react-select";
+//import Select from "react-select";
 import Swal from "sweetalert2";
 
-import { Link } from "react-router-dom";
+//import { Link } from "react-router-dom";
 class Commander extends Component {
   constructor(props) {
     super(props);

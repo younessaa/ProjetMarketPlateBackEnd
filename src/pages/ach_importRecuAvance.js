@@ -107,7 +107,7 @@ class ach_importRecuAvance extends Component {
 
     const expiredTimeToken = localStorage.getItem("expiredTimeToken");
     const token = localStorage.getItem("usertoken");
-    const myToken = `Bearer ` + localStorage.getItem("myToken");
+    //const myToken = `Bearer ` + localStorage.getItem("myToken");
     console.log(expiredTimeToken);
 
     if (!token || expiredTimeToken < formatted_date) {
@@ -139,6 +139,7 @@ class ach_importRecuAvance extends Component {
                 id="img-background"
                 className="product__details__pic__item--large"
                 src={this.state.dataUrl}
+                alt=""
               />
             </div>
             <button id="roundB" className="site-btn" type="submit">

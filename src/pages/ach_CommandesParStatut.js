@@ -161,6 +161,7 @@ class CommandesParStatut extends Component {
                                   src="Images/info.png"
                                   width="95px"
                                   height="95px"
+                                  alt=""
                                 />
                                 <h4 style={{ color: "white" }}>
                                   <br></br>

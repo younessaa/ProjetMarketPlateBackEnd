@@ -523,10 +523,10 @@ class HomeSheeps extends Component {
                       valueprice: e.target.value,
                     })
                   }
-                  /*  onAfterChange={e => this.setState({
-                  conditions: Object.assign(this.state.conditions, { [e.target.name]: e.target.value }),
-                  valueprice: e.target.value
-                })} */
+                /*  onAfterChange={e => this.setState({
+                conditions: Object.assign(this.state.conditions, { [e.target.name]: e.target.value }),
+                valueprice: e.target.value
+              })} */
                 />
                 <div style={{ color: "white" }}>
                   {" "}
@@ -546,10 +546,10 @@ class HomeSheeps extends Component {
                       poids_max: e.target.value,
                     })
                   }
-                  /*  onAfterChange={e => this.setState({
-                  conditions: Object.assign(this.state.conditions, { [e.target.name]: e.target.value }),
-                  valueprice: e.target.value
-                })} */
+                /*  onAfterChange={e => this.setState({
+                conditions: Object.assign(this.state.conditions, { [e.target.name]: e.target.value }),
+                valueprice: e.target.value
+              })} */
                 />
                 <div style={{ color: "white" }}>
                   {" "}
@@ -625,215 +625,56 @@ class HomeSheeps extends Component {
             <div className="container">
               <div className="row">
                 <div className="col-lg-3 col-md-4">
-                  <a className="lienapropos" href="./Apropos">
-                    <div
-                      style={{ cursor: "pointer" }}
-                      className="categorie_items"
-                    >
-                      <span></span>
-
-                      <img
-                        style={{ height: "40px" }}
-                        src={require("./Images/logo-text.png")}
-                        alt=""
-                      />
-                      <br></br>
-                      <p>
-                        Découvrez nous d'avantage, votre confiance est notre
-                        priorité.
+                  <h4 style={{ fontWeight: "900" }}>Catégorie</h4>
+                  <br></br>
+                  <div
+                    id="gras"
+                    style={{
+                      cursor: "pointer",
+                      backgroundColor: "white",
+                      paddingRight: "1px",
+                      borderRadius: "10px",
+                      textAlign: "center",
+                      boxShadow: "1px 1px 1px 1px rgb(158 158 158 / 60%)",
+                    }}
+                    className=" categorie_items"
+                    onClick={() => { }}
+                  >
+                    <div>
+                      {" "}
+                      <GiSheep className=" mr-1 fa-lg " />
+                      Moutons
+                      <p style={{ margin: "0px" }}>
+                        {" "}
+                        {nbrmoutons} Annonces{" "}
                       </p>
                     </div>
-                  </a>
-
-                  <div id="rechercher" className="col-lg-12">
-                    <div className="sidebar__item">
-                      <h4 style={{ fontWeight: "900" }}>Catégorie</h4>
-                      <div
-                        id="gras"
-                        style={{
-                          cursor: "pointer",
-                          backgroundColor: "white",
-                          paddingRight: "1px",
-                          borderRadius: "10px",
-                          textAlign: "center",
-                          boxShadow: "1px 1px 1px 1px rgb(158 158 158 / 60%)",
-                        }}
-                        className=" categorie_items"
-                        onClick={() => {}}
-                      >
-                        <div>
-                          {" "}
-                          <GiSheep className=" mr-1 fa-lg " />
-                          Moutons
-                          <p style={{ margin: "0px" }}>
-                            {" "}
-                            {nbrmoutons} Annonces{" "}
-                          </p>
-                        </div>
-                      </div>
-                      <div
-                        id="gras"
-                        style={{
-                          cursor: "pointer",
-                          backgroundColor: "white",
-                          paddingRight: "1px",
-                          borderRadius: "10px",
-                          textAlign: "center",
-                          boxShadow: "1px 1px 1px 1px rgb(158 158 158 / 60%)",
-                        }}
-                        className=" categorie_items"
-                      >
-                        <div
-                          style={{ verticalAlign: "middle", padding: "auto" }}
-                        >
-                          {" "}
-                          <GiGoat className=" mr-1 fa-lg " />
-                          Chèvres
-                          <p style={{ margin: "0px" }}>
-                            {" "}
-                            {nbrchevre} Annonces{" "}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="mobileSearch">
+                  </div>
+                  <div
+                    id="gras"
+                    style={{
+                      cursor: "pointer",
+                      backgroundColor: "white",
+                      paddingRight: "1px",
+                      borderRadius: "10px",
+                      textAlign: "center",
+                      boxShadow: "1px 1px 1px 1px rgb(158 158 158 / 60%)",
+                    }}
+                    className=" categorie_items"
+                  >
+                    <div
+                      style={{ verticalAlign: "middle", padding: "auto" }}
+                    >
+                      {" "}
+                      <GiGoat className=" mr-1 fa-lg " />
+                      Chèvres
+                      <p style={{ margin: "0px" }}>
                         {" "}
-                        <h6 id="gras" className="latest-product__item">
-                          Reference
-                        </h6>
-                        <div className="row">
-                          <div className="col-lg-12 col-md-12">
-                            <input
-                              id="recherchePlace"
-                              type="text"
-                              className="form-control"
-                              placeholder=" Reference de l'annonce"
-                              name="reference"
-                              onChange={this.onChange}
-                            />
-                          </div>
-                        </div>
-                        <br />
-                        <h6 id="gras" className="latest-product__item">
-                          Prix
-                        </h6>
-                        <div className="row">
-                          <div className="col-lg-12 col-md-12">
-                            <input
-                              id="recherchePlace"
-                              type="text"
-                              className="form-control"
-                              placeholder=" Budget min"
-                              name="prix_min"
-                              onChange={this.onChange}
-                            />
-                          </div>
-                        </div>
-                        <div className="row">
-                          <div className="col-lg-12 col-md-12">
-                            <input
-                              id="recherchePlace"
-                              type="text"
-                              className="form-control"
-                              placeholder=" Budget max"
-                              name="prix_max"
-                              onChange={this.onChange}
-                            />
-                          </div>
-                        </div>
-                        <br></br>
-                        <h6 id="gras" className="latest-product__item">
-                          Poids Environ
-                        </h6>
-                        <div className="row">
-                          <div className="col-lg-12 col-md-12">
-                            <input
-                              id="recherchePlace"
-                              type="text"
-                              className="form-control"
-                              placeholder=" Poids min"
-                              name="poids_min"
-                              onChange={this.onChange}
-                            />
-                          </div>
-                        </div>
-                        <div className="row">
-                          <div className="col-lg-12 col-md-12">
-                            <input
-                              id="recherchePlace"
-                              type="text"
-                              className="form-control"
-                              placeholder=" Poids max"
-                              name="poids_max"
-                              onChange={this.onChange}
-                            />
-                          </div>
-                        </div>
-                        <br></br>
-                        <h6 id="gras" className="latest-product__item">
-                          Ville
-                        </h6>
-                        <div className="row">
-                          <div className="col-lg-12 col-md-12">
-                            <Select
-                              value={selectedOptionVille}
-                              onChange={this.handleChangeVille}
-                              options={optionsVille}
-                              placeholder=" Ville"
-
-                              // className="Select"
-                            />
-                            <br></br>
-                            <br></br>
-                          </div>
-                        </div>
-                        <div className="row">
-                          <div className="col-lg-12 col-md-12">
-                            {/* <button className="btn btn-success" onClick={this.handelChercher}> Rechercher </button><br/> */}
-                            <button
-                              id="roundB"
-                              className="newBtn site-btn"
-                              onClick={this.handelChercher}
-                            >
-                              <i className="fa fa-search "></i> Rechercher{" "}
-                            </button>
-                            <br></br>
-                            <br></br>
-                            <button
-                              id="roundB"
-                              className="newBtn site-btn"
-                              onClick={this.handelReinitialiser}
-                            >
-                              <i className="fa fa-refresh"></i> Reinitialiser{" "}
-                            </button>
-                            <br></br>
-                            <br></br>
-                          </div>
-                        </div>
-                      </div>
-                      {/* <label className="latest-product__item">
-                      <input name="withImages" type="checkbox" /> Avec photos
-                    </label> */}
-                      {/* <label className="latest-product__item">
-                      <input name="withVideos" type="checkbox" /> Avec video
-                    </label> */}
-                      <h4 style={{ fontWeight: "900", marginTop: "25px" }}>
-                        Informations aux éleveurs
-                      </h4>
-                      <div className="infoCards">
-                        <center>
-                          {" "}
-                          <img
-                            style={{ width: "100%" }}
-                            src="http://www.anoc.ma/wp-content/uploads/2021/06/6-01.jpg"
-                            alt=""
-                          />
-                          <h6 style={{ marginTop: "10px" }}>
-                            Une marketplace digitale de vente de différentes
-                            races ovines et caprines
-                          </h6>
-                        </center>
-                      </div>
-                      <div className="mymap">
+                        {nbrchevre} Annonces{" "}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="mymap">
                         {" "}
                         <h4 style={{ fontWeight: "900", marginTop: "25px" }}>
                           Régions
@@ -936,6 +777,171 @@ class HomeSheeps extends Component {
                           </svg>
                         </center>
                       </div>{" "}
+                  <br></br>
+                  <hr></hr>
+                  <a className="lienapropos" href="./Apropos">
+                    <div
+                      style={{ cursor: "pointer" }}
+                      className="categorie_items"
+                    >
+                      <span></span>
+
+                      <img
+                        style={{ height: "40px" }}
+                        src={require("./Images/logo-text.png")}
+                        alt=""
+                      />
+                      <br></br>
+                      <p>
+                        Découvrez nous d'avantage, votre confiance est notre
+                        priorité.
+                      </p>
+                    </div>
+                  </a>
+                  <h4 style={{ fontWeight: "900", marginTop: "25px" }}>
+                    Informations aux éleveurs
+                  </h4>
+                  <div className="infoCards">
+                    <center>
+                      {" "}
+                      <img
+                        style={{ width: "100%" }}
+                        src="http://www.anoc.ma/wp-content/uploads/2021/06/6-01.jpg"
+                        alt=""
+                      />
+                      <h6 style={{ marginTop: "10px" }}>
+                        Une marketplace digitale de vente de différentes
+                        races ovines et caprines
+                      </h6>
+                    </center>
+                  </div>
+
+                  <div id="rechercher" className="col-lg-12">
+                    <div className="sidebar__item">
+
+                      <div className="mobileSearch">
+                        {" "}
+                        <h6 id="gras" className="latest-product__item">
+                          Reference
+                        </h6>
+                        <div className="row">
+                          <div className="col-lg-12 col-md-12">
+                            <input
+                              id="recherchePlace"
+                              type="text"
+                              className="form-control"
+                              placeholder=" Reference de l'annonce"
+                              name="reference"
+                              onChange={this.onChange}
+                            />
+                          </div>
+                        </div>
+                        <br />
+                        <h6 id="gras" className="latest-product__item">
+                          Prix
+                        </h6>
+                        <div className="row">
+                          <div className="col-lg-12 col-md-12">
+                            <input
+                              id="recherchePlace"
+                              type="text"
+                              className="form-control"
+                              placeholder=" Budget min"
+                              name="prix_min"
+                              onChange={this.onChange}
+                            />
+                          </div>
+                        </div>
+                        <div className="row">
+                          <div className="col-lg-12 col-md-12">
+                            <input
+                              id="recherchePlace"
+                              type="text"
+                              className="form-control"
+                              placeholder=" Budget max"
+                              name="prix_max"
+                              onChange={this.onChange}
+                            />
+                          </div>
+                        </div>
+                        <br></br>
+                        <h6 id="gras" className="latest-product__item">
+                          Poids Environ
+                        </h6>
+                        <div className="row">
+                          <div className="col-lg-12 col-md-12">
+                            <input
+                              id="recherchePlace"
+                              type="text"
+                              className="form-control"
+                              placeholder=" Poids min"
+                              name="poids_min"
+                              onChange={this.onChange}
+                            />
+                          </div>
+                        </div>
+                        <div className="row">
+                          <div className="col-lg-12 col-md-12">
+                            <input
+                              id="recherchePlace"
+                              type="text"
+                              className="form-control"
+                              placeholder=" Poids max"
+                              name="poids_max"
+                              onChange={this.onChange}
+                            />
+                          </div>
+                        </div>
+                        <br></br>
+                        <h6 id="gras" className="latest-product__item">
+                          Ville
+                        </h6>
+                        <div className="row">
+                          <div className="col-lg-12 col-md-12">
+                            <Select
+                              value={selectedOptionVille}
+                              onChange={this.handleChangeVille}
+                              options={optionsVille}
+                              placeholder=" Ville"
+
+                            // className="Select"
+                            />
+                            <br></br>
+                            <br></br>
+                          </div>
+                        </div>
+                        <div className="row">
+                          <div className="col-lg-12 col-md-12">
+                            {/* <button className="btn btn-success" onClick={this.handelChercher}> Rechercher </button><br/> */}
+                            <button
+                              id="roundB"
+                              className="newBtn site-btn"
+                              onClick={this.handelChercher}
+                            >
+                              <i className="fa fa-search "></i> Rechercher{" "}
+                            </button>
+                            <br></br>
+                            <br></br>
+                            <button
+                              id="roundB"
+                              className="newBtn site-btn"
+                              onClick={this.handelReinitialiser}
+                            >
+                              <i className="fa fa-refresh"></i> Reinitialiser{" "}
+                            </button>
+                            <br></br>
+                            <br></br>
+                          </div>
+                        </div>
+                      </div>
+                      {/* <label className="latest-product__item">
+                      <input name="withImages" type="checkbox" /> Avec photos
+                    </label> */}
+                      {/* <label className="latest-product__item">
+                      <input name="withVideos" type="checkbox" /> Avec video
+                    </label> */}
+
+                      
                     </div>
                   </div>
                 </div>
@@ -1080,6 +1086,7 @@ class HomeSheeps extends Component {
                                             {" " + Annonces.race}
                                           </span>
                                         </div>
+    
                                         <div>
                                           <img
                                             style={{
@@ -1100,7 +1107,17 @@ class HomeSheeps extends Component {
                                             {Annonces.poids + " Kg"}
                                           </span>
                                         </div>
+                                        <div>
+                                          <span className="float-left ">
+                                            <FaShapes
+                                              className=" mr-1 fa-lg "
+                                              style={{ marginRight: "0.5rem" }}
+                                            />
+                                            {Annonces.sexe }
+                                          </span>
+                                        </div>
                                         <div
+                                        className="float-right "
                                           style={{
                                             color: "#fe6927",
                                             fontSize: "20px",

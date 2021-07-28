@@ -292,6 +292,34 @@ class DetailsMouton extends Component {
             <div className="container">
               <div className="row">
                 <div className="col-lg-6 col-md-6">
+                <h4 className="d-inline" >
+                          {this.state.isFav ? (
+                            <span className="text-left text-danger col-lg-4 col-md-4">
+                              {" "}
+                              <a
+                                id={this.state.Espece._id}
+                                onClick={(e) => {
+                                  this.handleDeleteFav(e.currentTarget.id);
+                                }}
+                              >
+                                <i className="fa fa-heart "></i>
+                              </a>{" "}
+                            </span>
+                          ) : null}
+                          {!this.state.isFav ? (
+                            <span className="text-left text-muted col-lg-2 col-md-2">
+                              {" "}
+                              <a
+                                id={this.state.Espece._id}
+                                onClick={(e) =>
+                                  this.handleFavoris(e.currentTarget.id)
+                                }
+                              >
+                                <i className="fa fa-heart"></i>
+                              </a>{" "}
+                            </span>
+                          ) : null}
+                        </h4>
                   <div className="product__details__pic">
                     {this.state.Espece.anoc ? (
                       <div className="product__details__pic__item mb-1">
@@ -341,6 +369,7 @@ class DetailsMouton extends Component {
                               alt=""
                               onClick={this.onClickImageFace}
                             />
+                            
                             <img
                               style={{
                                 height: "100px",
@@ -465,10 +494,17 @@ class DetailsMouton extends Component {
                   <div className="product__details__text">
                     <h3 className="col-lg-12 col-md-12  ">
                       <span className="col-lg-11 col-md-11">
-                        {" "}
-                        Détails annonce espèce{"              "}
-                        <h4 className="d-inline">
-                          {this.state.isFav ? (
+                      <button
+                                style={{
+                                  borderColor: "transparent",
+                                  backgroundColor: "#f87171",
+                                  paddingLeft: "19px",
+                                  paddingRight: "19px",
+                                }}
+                                className="primary-btn rounded     "
+                                onClick={(e) =>
+                                  {this.state.isFav ? (this.handleDeleteFav(e.currentTarget.id)): this.handleFavoris(e.currentTarget.id)} }  >
+                                {this.state.isFav ? (
                             <span className="text-left text-danger col-lg-2 col-md-2">
                               {" "}
                               <a
@@ -494,7 +530,10 @@ class DetailsMouton extends Component {
                               </a>{" "}
                             </span>
                           ) : null}
-                        </h4>
+{/*                                 <i className="fa fa-plus"></i>
+ */}                                 Ajouter aux favories
+                              </button>
+                        
                       </span>
                     </h3>
                     <div className="single-price-wrap">

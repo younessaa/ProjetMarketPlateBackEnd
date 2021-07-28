@@ -100,7 +100,7 @@ class Compte extends Component {
                   <div className="details">
                     <ul className="pt-4">
                       <li>
-                        <b>civilisation</b>{" "}
+                        <b>Civilisation</b>{" "}
                         <span>{this.state.Data.civilisation}</span>{" "}
                         <button>
                           {" "}
@@ -108,7 +108,7 @@ class Compte extends Component {
                         </button>{" "}
                       </li>
                       <li>
-                        <b>nom</b> <span>{this.state.Data.nom}</span>{" "}
+                        <b>Nom</b> <span>{this.state.Data.nom}</span>{" "}
                         <button>
                           {" "}
                           <img src="/Images/edit.png" alt="item" />
@@ -118,35 +118,35 @@ class Compte extends Component {
                           <b>Categorie</b> <span>{this.state.Espece.categorie}</span>
                         </li>*/}
                       <li>
-                        <b>prenom</b> <span>{this.state.Data.prenom}</span>{" "}
+                        <b>Prenom</b> <span>{this.state.Data.prenom}</span>{" "}
                         <button>
                           {" "}
                           <img src="/Images/edit.png" alt="item" />
                         </button>{" "}
                       </li>
                       <li>
-                        <b>tel</b> <span>{this.state.Data.tel} </span>{" "}
+                        <b>Tel</b> <span>{this.state.Data.tel} </span>{" "}
                         <button>
                           {" "}
                           <img src="/Images/edit.png" alt="item" />
                         </button>{" "}
                       </li>
                       <li>
-                        <b>email</b> <span>{this.state.Data.email} </span>{" "}
+                        <b>Email</b> <span>{this.state.Data.email} </span>{" "}
                         <button>
                           {" "}
                           <img src="/Images/edit.png" alt="item" />
                         </button>{" "}
                       </li>
                       <li>
-                        <b>adresse</b> <span>{this.state.Data.adresse} </span>{" "}
+                        <b>Adresse</b> <span>{this.state.Data.adresse} </span>{" "}
                         <button>
                           {" "}
                           <img src="/Images/edit.png" alt="item" />
                         </button>{" "}
                       </li>
                       <li>
-                        <b>ville</b> <span>{this.state.Data.ville} </span>{" "}
+                        <b>Ville</b> <span>{this.state.Data.ville} </span>{" "}
                         <button>
                           {" "}
                           <img src="/Images/edit.png" alt="item" />

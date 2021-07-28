@@ -526,6 +526,24 @@ class AllOffers extends Component {
                         priorité.
                       </p>
                     </div>
+
+                    <h4 style={{ fontWeight: "900", marginTop: "25px" }}>
+                    Informations aux éleveurs
+                  </h4>
+                  <div className="infoCards">
+                    <center>
+                      {" "}
+                      <img
+                        style={{ width: "100%" }}
+                        src="http://www.anoc.ma/wp-content/uploads/2021/06/6-01.jpg"
+                        alt=""
+                      />
+                      <h6 style={{ marginTop: "10px" }}>
+                        Une marketplace digitale de vente de différentes
+                        races ovines et caprines
+                      </h6>
+                    </center>
+                  </div>
                   </a>
                   <div id="rechercher" className="col-lg-12">
                     <br></br>

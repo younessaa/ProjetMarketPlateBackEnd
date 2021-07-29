@@ -638,9 +638,37 @@ class HomeSheeps extends Component {
                       boxShadow: "1px 1px 1px 1px rgb(158 158 158 / 60%)",
                     }}
                     className=" categorie_items"
-                    onClick={() => { }}
+                    onClick={() => {this.setState({
+                      selectedOptionEspece: "mouton",
+                      
+                    });
+                    let annonce = this.state.AnnoncesN;
+                    let c = "mouton";
+                    let races = [];
+                
+                    let r = [];
+                    this.groupBy(annonce, "espece")[c].map((m) => {
+                      races.push(m.race);
+                    });
+                    races = [...new Set(races)];
+                    races.map((e) => {
+                      r.splice(0, 0, { value: e, label: e });
+                    });
+                
+                    this.setState({
+                      race: r,
+                      Disabled: false,
+                      conditions: Object.assign(this.state.conditions, {
+                        espece: c,
+                        race: null,
+                      }),
+                    });
+                    this.handelChercher()
+
+                   }}
                   >
-                    <div>
+                    <div
+                    >
                       {" "}
                       <GiSheep className=" mr-1 fa-lg " />
                       Moutons
@@ -661,6 +689,34 @@ class HomeSheeps extends Component {
                       boxShadow: "1px 1px 1px 1px rgb(158 158 158 / 60%)",
                     }}
                     className=" categorie_items"
+                    onClick={() => {this.setState({
+                      selectedOptionEspece: "chevre",
+                      
+                    });
+                    let annonce = this.state.AnnoncesN;
+                    let c = "chevre";
+                    let races = [];
+                
+                    let r = [];
+                    this.groupBy(annonce, "espece")[c].map((m) => {
+                      races.push(m.race);
+                    });
+                    races = [...new Set(races)];
+                    races.map((e) => {
+                      r.splice(0, 0, { value: e, label: e });
+                    });
+                
+                    this.setState({
+                      race: r,
+                      Disabled: false,
+                      conditions: Object.assign(this.state.conditions, {
+                        espece: c,
+                        race: null,
+                      }),
+                    });
+                    this.handelChercher()
+
+                   }}
                   >
                     <div
                       style={{ verticalAlign: "middle", padding: "auto" }}
@@ -1120,7 +1176,7 @@ class HomeSheeps extends Component {
                                         className="float-right "
                                           style={{
                                             color: "#fe6927",
-                                            fontSize: "20px",
+                                            fontSize: "18px",
                                             fontWeight: "1000",
                                             textDecoration: "bold",
                                           }}
@@ -1208,7 +1264,7 @@ class HomeSheeps extends Component {
                                 2{" "}
                               </div>
                               <div className="service-content">
-                                <h5>consulter les annonces rapidement</h5>
+                                <h5>Consulter les annonces rapidement</h5>
                                 <p>
                                   Decouvrir l'ensemble des especes proposées sur
                                   notre platforme

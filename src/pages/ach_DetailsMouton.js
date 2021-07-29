@@ -587,11 +587,11 @@ class DetailsMouton extends Component {
                           <b>Race</b> <span>{this.state.Espece.race}</span>
                         </li>
                         <li>
-                          <b>localisation</b>{" "}
+                          <b>Ville</b>{" "}
                           <span>{this.state.Espece.localisation} </span>
                         </li>
                         <li>
-                          <b>sexe</b> <span>{this.state.Espece.sexe} </span>
+                          <b>Sexe</b> <span>{this.state.Espece.sexe} </span>
                         </li>
                         <li>
                           <b>Age</b> <span>{this.state.Espece.age} mois</span>
@@ -721,7 +721,7 @@ class DetailsMouton extends Component {
                   margin: "20px",
                 }}
               >
-                Annonce similaire
+                Annonces similaire
               </div>
               <div>
                 <HomeCaroussel />

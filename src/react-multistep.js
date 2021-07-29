@@ -125,7 +125,7 @@ export default function MultiStep(props) {
       }
     }
   };
-  const a = ["Livraison", "Montan à payer", "Moyens de paiement"];
+  const a = ["Livraison", "Montant à payer", "Moyens de paiement"];
   const ab = [1, 2, 3];
   const renderSteps = () =>
     props.steps.map((s, i) => (
@@ -148,7 +148,7 @@ export default function MultiStep(props) {
           }
           onClick={previous}
         >
-          Préc
+          Précedent
         </button>
 
         <button
@@ -157,7 +157,7 @@ export default function MultiStep(props) {
           }
           onClick={next}
         >
-          Suiv
+          Suivant
         </button>
       </div>
     );

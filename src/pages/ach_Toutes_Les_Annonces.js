@@ -1220,7 +1220,7 @@ class HomeSheeps extends Component {
                                           className="float-right "
                                           style={{
                                             color: "#fe6927",
-                                            fontSize: "20px",
+                                            fontSize: "18px",
                                             fontWeight: "1000",
                                             textDecoration: "bold",
                                             alignContent: "center",
@@ -1317,7 +1317,7 @@ class HomeSheeps extends Component {
                                 2{" "}
                               </div>
                               <div className="service-content">
-                                <h5>consulter les annonces rapidement</h5>
+                                <h5>Consulter les annonces rapidement</h5>
                                 <p>
                                   Decouvrir l'ensemble des especes proposées sur
                                   notre platforme

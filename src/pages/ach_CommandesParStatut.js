@@ -114,9 +114,9 @@ class CommandesParStatut extends Component {
               <section className="featured spad">
                 <div className="container">
                   {/*<!-- Categorie Menus Grid Section Begin --> */}
-                  <div className="row featured__filter">
+                  <div className="row justify-content-center">
                     {/* à ajouter */}
-                    <div className="col-lg-6 col-md-6 col-sm-6">
+                    <div className="col-lg-3 col-md-3 col-sm-3">
                       <Link
                         to={{
                           pathname: "/Commandes",
@@ -170,38 +170,7 @@ class CommandesParStatut extends Component {
                                     : "Compléments à payer "}
                                 </h4>
                                 <br></br>
-                                {cmdComplement != 0 ? (
-                                  <h2 style={{ color: "white" }}>
-                                    <b>
-                                      {cmdComplement}{" "}
-                                      <img
-                                        style={{
-                                          width: "40px",
-                                          height: "40px",
-                                          marginBottom: "8px",
-                                        }}
-                                        data-imgbigurl="Images/sheep-headB.png"
-                                        src="Images/sheep-headB.png"
-                                        alt=""
-                                      />
-                                    </b>
-                                  </h2>
-                                ) : (
-                                  <h2 style={{ color: "white" }}>
-                                    <b>
-                                      <img
-                                        style={{
-                                          width: "40px",
-                                          height: "40px",
-                                          marginBottom: "8px",
-                                        }}
-                                        data-imgbigurl="Images/sheep-headB.png"
-                                        src="Images/sheep-headB.png"
-                                        alt=""
-                                      />
-                                    </b>
-                                  </h2>
-                                )}
+                                <br></br>
                               </center>
                             </a>
                           </div>
@@ -209,7 +178,7 @@ class CommandesParStatut extends Component {
                       </Link>
                     </div>
 
-                    <div className="col-lg-6 col-md-6 col-sm-6">
+                    <div className="col-lg-3 col-md-3 col-sm-3">
                       <Link
                         to={{
                           pathname: "/Commandes",
@@ -271,7 +240,7 @@ class CommandesParStatut extends Component {
                     </div>
 
                     {/* à ajouter */}
-                    <div className="col-lg-6 col-md-6 col-sm-6">
+                    <div className="col-lg-3 col-md-3 col-sm-3">
                       <Link
                         to={{
                           pathname: "/Commandes",
@@ -343,8 +312,9 @@ class CommandesParStatut extends Component {
                         </div>
                       </Link>
                     </div>
-
-                    <div className="col-lg-6 col-md-6 col-sm-6">
+                  </div>
+                  <div className="row justify-content-center">
+                    <div className="col-lg-3 col-md-3 col-sm-3">
                       <Link
                         to={{
                           pathname: "/Commandes",
@@ -398,7 +368,7 @@ class CommandesParStatut extends Component {
                       </Link>
                     </div>
 
-                    <div className="col-lg-6 col-md-6 col-sm-6">
+                    <div className="col-lg-3 col-md-3 col-sm-3">
                       <Link
                         to={{
                           pathname: "/Commandes",
@@ -469,7 +439,7 @@ class CommandesParStatut extends Component {
                       </Link>
                     </div>
 
-                    <div className="col-lg-6 col-md-6 col-sm-6">
+                    <div className="col-lg-3 col-md-3 col-sm-3">
                       <Link
                         to={{
                           pathname: "/Commandes",

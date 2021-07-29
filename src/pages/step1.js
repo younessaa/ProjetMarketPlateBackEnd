@@ -41,7 +41,7 @@ class Commander1 extends Component {
                             width={48}
                           />
                           <span style={{ marginLeft: "20px" }}>
-                            Recuperer a la cooperative{" "}
+                            Récupérer  à la coopérative{" "}
                           </span>
                         </h6>
                         <br></br>
@@ -59,7 +59,7 @@ class Commander1 extends Component {
                                 width={48}
                               />{" "}
                               <span style={{ marginLeft: "20px" }}>
-                                Me faire livrer a domicile{" "}
+                                Me faire livrer à domicile{" "}
                               </span>
                             </h6>
                             <br></br>
@@ -145,8 +145,8 @@ class Commander1 extends Component {
                     <div className="checkout__form">
                       <form action="#" name="commander">
                         {this.props.data.check2 ||
-                        this.props.data.check3 ||
-                        this.props.data.check1 ? (
+                          this.props.data.check3 ||
+                          this.props.data.check1 ? (
                           <>
                             {" "}
                             <div className="col-lg-12  col-md-12 ">
@@ -164,25 +164,25 @@ class Commander1 extends Component {
                         })()}
 
                       </select>*/ null : (
-                                <>
-                                  <i
-                                    className="fa fa-calendar-o"
-                                    aria-hidden="true"
-                                  >
-                                    {" "}
-                                    Date de Livraison{" "}
-                                  </i>
-                                  <br></br>
-                                  <input
-                                    type="date"
-                                    min={this.props.data.date_min}
-                                    defaultValue={this.props.data.date}
-                                    onChange={this.props.onPaiementChanged}
-                                    id="date"
-                                    name="date"
-                                  />
-                                </>
-                              )}
+                                  <>
+                                    <i
+                                      className="fa fa-calendar-o"
+                                      aria-hidden="true"
+                                    >
+                                      {" "}
+                                      Date de Livraison{" "}
+                                    </i>
+                                    <br></br>
+                                    <input
+                                      type="date"
+                                      min={this.props.data.date_min}
+                                      defaultValue={this.props.data.date}
+                                      onChange={this.props.onPaiementChanged}
+                                      id="date"
+                                      name="date"
+                                    />
+                                  </>
+                                )}
                               {this.props.data.check1 ? (
                                 <>
                                   <h6
@@ -193,21 +193,27 @@ class Commander1 extends Component {
                                     }
                                   >
                                     <i className="fa fa-home fa-lg"></i>{" "}
-                                    <b>Cooperative : </b>
-                                    {" " + this.props.data.cooperative.nom}
+                                    <span> &nbsp;  &nbsp;</span>
+
+                                    <b>  Coopérative : </b>
+                                    {"   " + this.props.data.cooperative.nom}
                                   </h6>
                                   <h6 className="mb-2">
                                     <i className="fa fa-map-marker fa-lg"></i>{" "}
-                                    <b>Adresse :</b>
-                                    {" " +
+                                    <span> &nbsp;  &nbsp; &nbsp;</span>
+
+                                    <b>  Adresse :</b>
+                                    {"    " +
                                       this.props.data.cooperative.adresse}{" "}
                                   </h6>
 
-                                  <h6 className="my-2">
+                                  <h6 className="my-2" >
                                     {" "}
-                                    <i className="fa fa-map"></i> <b>Ville :</b>
+                                    <i className="fa fa-map"></i><span> &nbsp;  &nbsp; &nbsp;</span>
+                                    <b>Ville :</b>
                                     {" " +
                                       this.props.data.cooperative.ville}{" "}
+                             
                                   </h6>
                                 </>
                               ) : null}
@@ -217,14 +223,13 @@ class Commander1 extends Component {
 
                         <div className="  row col-lg-12 col-md-12">
                           {this.props.data.check2 ||
-                          this.props.data.check3 ||
-                          this.props.data.check4 ||
-                          this.props.data.check5 ? (
+                            this.props.data.check3 ||
+                            this.props.data.check4 ||
+                            this.props.data.check5 ? (
                             <div className="col-lg-8 col-md-8 mt-2">
-                              <i className="fa fa-map-o " aria-hidden="true">
-                                {" "}
-                                Ville de Livraison{" "}
-                              </i>
+                              <i className="fa fa-map-o " aria-hidden="true" > </i>
+                              <span>&nbsp;&nbsp;</span>
+                              <b>Ville de livraison</b>
                               <Select
                                 value={this.props.data.selectedOptionVille}
                                 onChange={this.props.handleChangeVille}
@@ -235,8 +240,8 @@ class Commander1 extends Component {
                             </div>
                           ) : null}
                           {this.props.data.check2 ||
-                          (this.props.data.check5 &&
-                            this.props.data.standard === "point_relais") ? (
+                            (this.props.data.check5 &&
+                              this.props.data.standard === "point_relais") ? (
                             this.props.data.entrée_ville === false ? (
                               <div className="col-lg-8 col-md-8 mt-2">
                                 <i
@@ -258,8 +263,8 @@ class Commander1 extends Component {
                           {(this.props.data.check2 ||
                             (this.props.data.check5 &&
                               this.props.data.standard === "point_relais")) &&
-                          this.props.data.entrée_ville === true &&
-                          this.props.data.selectedOptionVille !== "" ? (
+                            this.props.data.entrée_ville === true &&
+                            this.props.data.selectedOptionVille !== "" ? (
                             <h6 style={{ color: "#fe6927", marginTop: "4px" }}>
                               Un technicien ANOC va vous contacter le jour de
                               livraison que vous avez choisi pour vous informer
@@ -267,17 +272,18 @@ class Commander1 extends Component {
                             </h6>
                           ) : null}
                           {this.props.data.check3 ||
-                          this.props.data.check4 ||
-                          (this.props.data.check5 &&
-                            this.props.data.standard === "domicile") ? (
+                            this.props.data.check4 ||
+                            (this.props.data.check5 &&
+                              this.props.data.standard === "domicile") ? (
                             <div className="col-lg-6  col-md-6 mt-2">
                               <i
                                 className="fa fa-map-marker "
                                 aria-hidden="true"
                               >
-                                {" "}
-                                Adresse{" "}
                               </i>
+                              <span>&nbsp;&nbsp;&nbsp;</span>
+                              <b>Adresse</b>
+
                               <br></br>
                               <textarea
                                 defaultValue={this.props.data.adresse}

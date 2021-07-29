@@ -201,7 +201,15 @@ class HomeCaroussel extends Component {
                             {Annonces.poids + " Kg"}
                           </span>
                         </div>
-                        <div
+                        <div>
+                        <span className="float-left">
+                            <FaShapes style={{ marginRight: "0.5rem" }} />
+                            {" " + Annonces.sexe}
+                          </span>
+                        </div>
+                        <br></br>
+                        
+                        <div className="float-right "
                           style={{
                             color: "#fe6927",
                             fontSize: "15px",
@@ -209,7 +217,8 @@ class HomeCaroussel extends Component {
                             textDecoration: "bold",
                           }}
                         >
-                          {"Prix : " + Annonces.prix + "  Dhs"}
+                          
+                          {"Prix:" + Annonces.prix + "  Dhs"}
                         </div>
                       </div>
                     </div>

@@ -224,7 +224,7 @@ class Login extends Component {
                         <div
                           style={{
                             width: "100%",
-                            height: "100%",
+                            height: "80%",
                             margin: "5px",
                             display: "flex",
                             justifyContent: "center",

@@ -5,9 +5,12 @@ import Pagination from "react-js-pagination";
 import "bootstrap-less";
 import Loader from "react-loader-spinner";
 import Swal from "sweetalert2";
-import { GiWeight, GiSheep } from "react-icons/gi";
-import { HiOutlineBadgeCheck } from "react-icons/hi";
+import { GiWeight, GiSheep, GiGoat } from "react-icons/gi";
+import { FaDollarSign } from "react-icons/fa";
+import { IoMdMale } from "react-icons/io";
 import { FaShapes } from "react-icons/fa";
+import { MdCake } from "react-icons/md";
+import { HiOutlineBadgeCheck } from "react-icons/hi";
 require("bootstrap-less/bootstrap/bootstrap.less");
 
 class Commandes extends Component {
@@ -357,11 +360,10 @@ class Commandes extends Component {
                                   <img
                                     src={Annonces.image_face}
                                     alt="item"
-                                    className="product__item__pic set-bg"
                                     style={{
-                                      width: "100%",
                                       borderTopRightRadius: "10%",
                                       borderTopLeftRadius: "10%",
+                                      objectFit: "contain",
                                     }}
                                   />
                                 </centre>
@@ -432,28 +434,27 @@ class Commandes extends Component {
                                         width: "18px",
                                         height: "18px",
                                         marginBottom: "5px",
-                                        marginRight: "0.5rem",
+                                        marginRight: "5px",
                                       }}
                                       data-imgbigurl="Images/sheep-head.png"
                                       src="Images/sheep-head.png"
                                       alt=""
                                     />
-                                    {" " + Annonces.espece}
+                                    {Annonces.espece == "chevre"
+                                      ? "Chèvre"
+                                      : "Mouton"}
                                     <span className="float-right">
                                       <FaShapes
-                                        style={{ marginRight: "0.5rem" }}
+                                        style={{ marginRight: "5px" }}
                                       />
                                       {" " + Annonces.race}
                                     </span>
                                   </div>
+
                                   <div>
-                                    <img
-                                      style={{
-                                        width: "18px",
-                                        height: "18px",
-                                        marginRight: "0.5rem",
-                                      }}
-                                      src="./Images/age.png"
+                                    <MdCake
+                                      className=" mr-1 fa-lg "
+                                      style={{ marginRight: "5px" }}
                                     />
 
                                     {Annonces.age + " mois"}
@@ -461,21 +462,45 @@ class Commandes extends Component {
                                     <span className="float-right ">
                                       <GiWeight
                                         className=" mr-1 fa-lg "
-                                        style={{ marginRight: "0.5rem" }}
+                                        style={{ marginRight: "5px" }}
                                       />
                                       {Annonces.poids + " Kg"}
                                     </span>
                                   </div>
+                                  <div>
+                                    <span className="float-left ">
+                                      <IoMdMale
+                                        className=" mr-1 fa-lg "
+                                        style={{
+                                          width: "18px",
+                                          height: "18px",
+                                          marginRight: "5px",
+                                        }}
+                                      />
+                                      {Annonces.sexe}
+                                    </span>
+                                  </div>
                                   <div
+                                    className="float-right "
                                     style={{
                                       color: "#fe6927",
-                                      fontSize: "20px",
+                                      fontSize: "18px",
                                       fontWeight: "1000",
                                       textDecoration: "bold",
+                                      alignContent: "center",
                                     }}
                                   >
-                                    {"Prix : " + Annonces.prix + "  Dhs"}
+                                    <FaDollarSign
+                                      className=" mr-1 fa-lg "
+                                      style={{
+                                        width: "18px",
+                                        height: "18px",
+                                        marginRight: "0.5rem",
+                                      }}
+                                    />
+                                    {Annonces.prix + "  Dhs"}
                                   </div>
+                                  <br></br>
                                   {Annonces.statut == "disponible" ? (
                                     <div style={{ textAlign: "center" }}>
                                       <br></br>

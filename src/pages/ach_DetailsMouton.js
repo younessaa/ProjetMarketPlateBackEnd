@@ -582,7 +582,12 @@ class DetailsMouton extends Component {
                           <span>{this.state.Espece.boucle}</span>
                         </li>
                         <li>
-                          <b>Espece</b> <span>{this.state.Espece.espece}</span>
+                          <b>Espece</b>{" "}
+                          <span>
+                            {this.state.Espece.espece == "chevre"
+                              ? "Chèvre"
+                              : "Mouton"}
+                          </span>
                         </li>
                         {/*<li>
                           <b>Categorie</b> <span>{this.state.Espece.categorie}</span>
@@ -725,7 +730,7 @@ class DetailsMouton extends Component {
                   margin: "20px",
                 }}
               >
-                Annonce similaire
+                Annonces similaire
               </div>
               <div>
                 <HomeCaroussel

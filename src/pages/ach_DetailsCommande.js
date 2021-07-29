@@ -1722,7 +1722,7 @@ class DetailsCommande extends Component {
                                   aria-hidden="true"
                                 ></i>{" "}
                                 Ville de livraison :{" "}
-                                <b style={{ fontWeight: "normal" }}>
+                                <b >
                                   {" " + commandes.ville_livraison}
                                 </b>{" "}
                               </li>
@@ -1732,7 +1732,7 @@ class DetailsCommande extends Component {
                                   aria-hidden="true"
                                 ></i>{" "}
                                 Adresse de livraison :{" "}
-                                <b style={{ fontWeight: "normal" }}>
+                                <b >
                                   {commandes.adresse_domicile
                                     ? commandes.adresse_domicile
                                     : commandes.point_relais}

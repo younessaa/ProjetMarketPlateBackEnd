@@ -8,24 +8,31 @@ import { FaShapes } from "react-icons/fa";
 
 import axios from "axios";
 class HomeCaroussel extends Component {
-  constructor() {
+  constructor(props) {
     super();
+    console.log(props.espece);
     this.state = {
       especes: [],
+      Cville: props.ville,
+      Cespece: props.espece,
     };
   }
 
   async componentDidMount() {
     await axios
-      .get(
-        "http://127.0.0.1:8000/api/Espece?statut=disponible&order_by=espece&order_mode=asc",
-        {
-          headers: {
-            // "x-access-token": token, // the token is a variable which holds the token
-            "Content-Type": "application/json",
-          },
-        }
-      )
+      .get("http://127.0.0.1:8000/api/Espece", {
+        headers: {
+          // "x-access-token": token, // the token is a variable which holds the token
+          "Content-Type": "application/json",
+        },
+        params: {
+          statut: "disponible",
+          order_by: "espece",
+          order_mode: "asc",
+          espece: this.state.Cespece,
+          localisation: this.state.Cville,
+        },
+      })
       .then((res) => {
         this.setState({
           especes: res.data,
@@ -82,7 +89,7 @@ class HomeCaroussel extends Component {
             responsive={responsive}
             swipeable={false}
             draggable={false}
-            showDots={true}
+            showDots={false}
             ssr={true} // means to render carousel on server-side.
             infinite={true}
             autoPlay={this.props.deviceType !== "mobile" ? true : false}

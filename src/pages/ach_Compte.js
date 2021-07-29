@@ -7,6 +7,8 @@ import Swal from "sweetalert2";
 import { GiWeight, GiSheep } from "react-icons/gi";
 import { HiOutlineBadgeCheck } from "react-icons/hi";
 import { FaShapes } from "react-icons/fa";
+import Modal from "../containers/Modal";
+
 require("bootstrap-less/bootstrap/bootstrap.less");
 
 class Compte extends Component {
@@ -16,8 +18,10 @@ class Compte extends Component {
       Data: [],
       nbr: null,
       loading: true,
+      isOpen: false,
     };
   }
+
   componentDidMount() {
     function appendLeadingZeroes(n) {
       if (n <= 9) {
@@ -64,107 +68,95 @@ class Compte extends Component {
       });
     }
   }
+  toggleModal = () => {
+    console.log(this.state.isOpen);
+    this.setState({
+      isOpen: !this.state.isOpen,
+    });
+  };
   render() {
     return (
-      <div className="container">
-        {this.state.Data.length != 0 ? (
-          <>
-            <div className="cont">
-              <div className="first item">
-                <div className="picture item">
-                  <centre>
-                    {this.state.Data.civilisation == "Mr" ? (
-                      <img
-                        src="/Images/man.png"
-                        alt="item"
-                        className="product__item__pic set-bg"
-                        style={{
-                          width: "200px",
-                          height: "200px",
-                        }}
-                      />
-                    ) : (
-                      <img
-                        src="/Images/woman.png"
-                        alt="item"
-                        className="product__item__pic set-bg"
-                        style={{
-                          width: "200px",
-                          height: "200px",
-                        }}
-                      />
-                    )}
-                  </centre>{" "}
-                </div>
-                <div className="information item">
-                  <div className="details">
-                    <ul className="pt-4">
-                      <li>
-                        <b>civilisation</b>{" "}
-                        <span>{this.state.Data.civilisation}</span>{" "}
-                        <button>
-                          {" "}
-                          <img src="/Images/edit.png" alt="item" />
-                        </button>{" "}
-                      </li>
-                      <li>
-                        <b>nom</b> <span>{this.state.Data.nom}</span>{" "}
-                        <button>
-                          {" "}
-                          <img src="/Images/edit.png" alt="item" />
-                        </button>{" "}
-                      </li>
-                      {/*<li>
+      <div>
+        <Modal show={this.state.isOpen} onClose={this.toggleModal}>
+          Here's some content for the modal
+        </Modal>
+
+        <div className="container">
+          {this.state.Data.length != 0 ? (
+            <>
+              <div className="cont">
+                <div className="first item">
+                  <div className="picture item">
+                    <centre>
+                      {this.state.Data.civilisation == "Mr" ? (
+                        <img
+                          src="/Images/man.png"
+                          alt="item"
+                          className="product__item__pic set-bg"
+                          style={{
+                            width: "200px",
+                            height: "200px",
+                          }}
+                        />
+                      ) : (
+                        <img
+                          src="/Images/woman.png"
+                          alt="item"
+                          className="product__item__pic set-bg"
+                          style={{
+                            width: "200px",
+                            height: "200px",
+                          }}
+                        />
+                      )}
+                    </centre>{" "}
+                  </div>
+                  <div className="information item">
+                    <div className="details">
+                      <ul className="pt-4">
+                        <li>
+                          <b>Civilisation</b>{" "}
+                          <span>{this.state.Data.civilisation}</span>{" "}
+                        </li>
+                        <li>
+                          <b>Nom</b> <span>{this.state.Data.nom}</span>{" "}
+                        </li>
+                        {/*<li>
                           <b>Categorie</b> <span>{this.state.Espece.categorie}</span>
                         </li>*/}
-                      <li>
-                        <b>prenom</b> <span>{this.state.Data.prenom}</span>{" "}
-                        <button>
-                          {" "}
-                          <img src="/Images/edit.png" alt="item" />
-                        </button>{" "}
-                      </li>
-                      <li>
-                        <b>tel</b> <span>{this.state.Data.tel} </span>{" "}
-                        <button>
-                          {" "}
-                          <img src="/Images/edit.png" alt="item" />
-                        </button>{" "}
-                      </li>
-                      <li>
-                        <b>email</b> <span>{this.state.Data.email} </span>{" "}
-                        <button>
-                          {" "}
-                          <img src="/Images/edit.png" alt="item" />
-                        </button>{" "}
-                      </li>
-                      <li>
-                        <b>adresse</b> <span>{this.state.Data.adresse} </span>{" "}
-                        <button>
-                          {" "}
-                          <img src="/Images/edit.png" alt="item" />
-                        </button>{" "}
-                      </li>
-                      <li>
-                        <b>ville</b> <span>{this.state.Data.ville} </span>{" "}
-                        <button>
-                          {" "}
-                          <img src="/Images/edit.png" alt="item" />
-                        </button>{" "}
-                      </li>
-                    </ul>
+                        <li>
+                          <b>Prenom</b> <span>{this.state.Data.prenom}</span>{" "}
+                        </li>
+                        <li>
+                          <b>Tel</b> <span>{this.state.Data.tel} </span>{" "}
+                        </li>
+                        <li>
+                          <b>Email</b> <span>{this.state.Data.email} </span>{" "}
+                          <button onClick={this.toggleModal}>
+                            {" "}
+                            <img src="/Images/edit.png" alt="item" />
+                          </button>
+                        </li>
+                        <li>
+                          <b>Adresse</b> <span>{this.state.Data.adresse} </span>{" "}
+                        </li>
+                        <li>
+                          <b>Ville</b> <span>{this.state.Data.ville} </span>{" "}
+                        </li>
+                      </ul>
+                    </div>
                   </div>
                 </div>
+                <div className="item"></div>
               </div>
-              <div className="item"></div>
-            </div>
-          </>
-        ) : (
-          <>
-            {" "}
-            <div style={{ height: "80em" }}></div>
-          </>
-        )}
+            </>
+          ) : (
+            <>
+              {" "}
+              <div style={{ height: "80em" }}></div>
+            </>
+          )}
+        </div>
       </div>
     );
   }

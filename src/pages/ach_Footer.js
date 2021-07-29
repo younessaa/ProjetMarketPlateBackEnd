@@ -36,7 +36,7 @@ class Footer extends Component {
 
         <div className="footer-right">
           <p className="footer-company-about">
-            <span>About</span>
+            <span>A propos</span>
             ASSOCIATION NATIONALE DES ÉLEVEURS OVINS ET CAPRINS
           </p>
 

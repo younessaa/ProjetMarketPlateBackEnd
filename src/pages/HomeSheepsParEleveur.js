@@ -10,6 +10,7 @@ import Rating from "@material-ui/lab/Rating";
 import Box from "@material-ui/core/Box";
 import { FaShapes } from "react-icons/fa";
 import { Badge, Modal, Button } from "react-bootstrap";
+import Pagination from "react-js-pagination";
 
 class HomeSheepsParEleveur extends Component {
   constructor() {
@@ -912,15 +913,24 @@ class HomeSheepsParEleveur extends Component {
                     <div>
                       <div className="row">
                         {currentAnnonces.map((Annonces) => (
-                          <div className="col-lg-4 col-md-6 col-sm-6">
+                          <div className="col-lg-4 col-md-6 col-sm-6" 
+                            key={Annonces.$oid}
+                          >
                             <div id="anonce" className="product__item">
                               <div
                                 className="product__item__pic set-bg"
                                 data-setbg={Annonces.images}
                               >
                                 <img
-                                  src={Annonces.image_face}
-                                  className="product__item__pic set-bg"
+                                      src={Annonces.image_face}
+                                      alt="item"
+                                      style={{
+                                        width: "355px",
+                                        height: "170px",
+                                        borderTopRightRadius: "10%",
+                                        borderTopLeftRadius: "10%",
+                                        objectFit: "contain",
+                                      }}
                                 />
 
                                 <ul className="product__item__pic__hover">
@@ -1013,24 +1023,16 @@ class HomeSheepsParEleveur extends Component {
                       </div>
 
                       <div className="center-div">
-                        <nav className="row">
-                          <ul className="pagination center-div">
-                            {this.state.nombrePages.map((number) => (
-                              <li
-                                key={number}
-                                className="page-item stylePagination"
-                              >
-                                <a
-                                  onClick={() => this.paginate(number)}
-                                  className="page-link"
-                                >
-                                  {number}
-                                </a>
-                              </li>
-                            ))}
-                          </ul>
-                        </nav>
-                      </div>
+                          <Pagination
+                            activePage={this.state.currentPage}
+                            itemsCountPerPage={9}
+                            totalItemsCount={this.state.Annonces.length}
+                            pageRangeDisplayed={7}
+                            onChange={this.paginate.bind(this)}
+                            itemClass="page-item"
+                            linkClass="page-link"
+                          />
+                        </div>
                       <br></br>
                     </div>
                   )}
